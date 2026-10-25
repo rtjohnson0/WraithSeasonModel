@@ -1,0 +1,717 @@
+{
+ "sample": true,
+ "generatedAt": "2026-10-24T14:00:00Z",
+ "board": {
+  "date": "2026-10-24",
+  "staked": 1,
+  "plays": 8,
+  "games": [
+   {
+    "id": 1,
+    "matchup": "AAA @ BBB",
+    "plays": [
+     {
+      "player": "Sample Center",
+      "team": "BBB",
+      "stat": "rebounds",
+      "side": "UNDER",
+      "line": 9.5,
+      "prob": 0.612,
+      "edge": 0.088,
+      "grade": "A-",
+      "tier": "PICK",
+      "odds": -115,
+      "book": "draftkings",
+      "projStat": 8.1,
+      "projMin": 31,
+      "units": 0.5,
+      "why": "back-to-back; tough defense -7%",
+      "last5": [
+       {
+        "date": "2026-10-15",
+        "opp": "EEE",
+        "home": true,
+        "value": 8,
+        "minutes": 26
+       },
+       {
+        "date": "2026-10-17",
+        "opp": "FFF",
+        "home": false,
+        "value": 10,
+        "minutes": 25
+       },
+       {
+        "date": "2026-10-19",
+        "opp": "GGG",
+        "home": true,
+        "value": 9,
+        "minutes": 35
+       },
+       {
+        "date": "2026-10-21",
+        "opp": "HHH",
+        "home": false,
+        "value": 10,
+        "minutes": 28
+       },
+       {
+        "date": "2026-10-23",
+        "opp": "III",
+        "home": true,
+        "value": 10,
+        "minutes": 28
+       }
+      ],
+      "l5Avg": 9.4,
+      "minAvg5": 28.4,
+      "l5Hits": 2,
+      "seasonAvg": 9.1,
+      "seasonGames": 3,
+      "label": "Max play",
+      "badges": [
+       {
+        "key": "tough-defense",
+        "label": "Tough defense against his position",
+        "tone": "good"
+       },
+       {
+        "key": "back-to-back",
+        "label": "Second game in two nights",
+        "tone": "good"
+       }
+      ]
+     },
+     {
+      "player": "Sample Guard",
+      "team": "AAA",
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 6.5,
+      "prob": 0.637,
+      "edge": 0.113,
+      "grade": "B+",
+      "tier": "PAPER",
+      "odds": -146,
+      "book": "draftkings",
+      "projStat": 3.7,
+      "projMin": 19,
+      "units": 0.0,
+      "why": "minutes -3 vs recent",
+      "last5": [
+       {
+        "date": "2026-10-15",
+        "opp": "EEE",
+        "home": true,
+        "value": 10,
+        "minutes": 15
+       },
+       {
+        "date": "2026-10-17",
+        "opp": "FFF",
+        "home": false,
+        "value": 6,
+        "minutes": 21
+       },
+       {
+        "date": "2026-10-19",
+        "opp": "GGG",
+        "home": true,
+        "value": 9,
+        "minutes": 23
+       },
+       {
+        "date": "2026-10-21",
+        "opp": "HHH",
+        "home": false,
+        "value": 6,
+        "minutes": 19
+       },
+       {
+        "date": "2026-10-23",
+        "opp": "III",
+        "home": true,
+        "value": 7,
+        "minutes": 22
+       }
+      ],
+      "l5Avg": 7.6,
+      "minAvg5": 20.0,
+      "l5Hits": 2,
+      "seasonAvg": 6.1,
+      "seasonGames": 3,
+      "label": "Great play",
+      "badges": []
+     },
+     {
+      "player": "Sample Wing",
+      "team": "BBB",
+      "stat": "points",
+      "side": "UNDER",
+      "line": 14.5,
+      "prob": 0.532,
+      "edge": 0.008,
+      "grade": "C+",
+      "tier": "PAPER",
+      "odds": -125,
+      "book": "fanduel",
+      "projStat": 13.2,
+      "projMin": 31,
+      "units": 0.0,
+      "why": "soft defense +5%",
+      "last5": [
+       {
+        "date": "2026-10-15",
+        "opp": "EEE",
+        "home": true,
+        "value": 16,
+        "minutes": 25
+       },
+       {
+        "date": "2026-10-17",
+        "opp": "FFF",
+        "home": false,
+        "value": 11,
+        "minutes": 35
+       },
+       {
+        "date": "2026-10-19",
+        "opp": "GGG",
+        "home": true,
+        "value": 16,
+        "minutes": 31
+       },
+       {
+        "date": "2026-10-21",
+        "opp": "HHH",
+        "home": false,
+        "value": 15,
+        "minutes": 34
+       },
+       {
+        "date": "2026-10-23",
+        "opp": "III",
+        "home": true,
+        "value": 13,
+        "minutes": 36
+       }
+      ],
+      "l5Avg": 14.2,
+      "minAvg5": 32.2,
+      "l5Hits": 2,
+      "seasonAvg": 14.1,
+      "seasonGames": 3,
+      "label": "Lean",
+      "badges": [
+       {
+        "key": "weak-defense",
+        "label": "Weak defense against his position",
+        "tone": "bad"
+       }
+      ]
+     },
+     {
+      "player": "Sample Forward",
+      "team": "AAA",
+      "stat": "rebounds",
+      "side": "OVER",
+      "line": 3.5,
+      "prob": 0.552,
+      "edge": 0.028,
+      "grade": "B-",
+      "tier": "CHECK",
+      "odds": -112,
+      "book": "bovada",
+      "projStat": 5.2,
+      "projMin": 34,
+      "units": 0.0,
+      "why": "line far from projection: confirm the line",
+      "last5": [
+       {
+        "date": "2026-10-15",
+        "opp": "EEE",
+        "home": true,
+        "value": 5,
+        "minutes": 39
+       },
+       {
+        "date": "2026-10-17",
+        "opp": "FFF",
+        "home": false,
+        "value": 6,
+        "minutes": 39
+       },
+       {
+        "date": "2026-10-19",
+        "opp": "GGG",
+        "home": true,
+        "value": 3,
+        "minutes": 29
+       },
+       {
+        "date": "2026-10-21",
+        "opp": "HHH",
+        "home": false,
+        "value": 6,
+        "minutes": 30
+       },
+       {
+        "date": "2026-10-23",
+        "opp": "III",
+        "home": true,
+        "value": 3,
+        "minutes": 31
+       }
+      ],
+      "l5Avg": 4.6,
+      "minAvg5": 33.6,
+      "l5Hits": 3,
+      "seasonAvg": 3.1,
+      "seasonGames": 3,
+      "label": "Risky play",
+      "badges": [
+       {
+        "key": "odd-line",
+        "label": "Odd line: confirm it in your book",
+        "tone": "note"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": 2,
+    "matchup": "CCC @ DDD",
+    "plays": [
+     {
+      "player": "Sample Big",
+      "team": "DDD",
+      "stat": "rebounds",
+      "side": "UNDER",
+      "line": 8.5,
+      "prob": 0.563,
+      "edge": 0.039,
+      "grade": "B",
+      "tier": "PAPER",
+      "odds": -120,
+      "book": "betmgm",
+      "projStat": 7.2,
+      "projMin": 22,
+      "units": 0.0,
+      "why": "tough defense -4%",
+      "last5": [
+       {
+        "date": "2026-10-15",
+        "opp": "EEE",
+        "home": true,
+        "value": 12,
+        "minutes": 21
+       },
+       {
+        "date": "2026-10-17",
+        "opp": "FFF",
+        "home": false,
+        "value": 8,
+        "minutes": 20
+       },
+       {
+        "date": "2026-10-19",
+        "opp": "GGG",
+        "home": true,
+        "value": 9,
+        "minutes": 23
+       },
+       {
+        "date": "2026-10-21",
+        "opp": "HHH",
+        "home": false,
+        "value": 7,
+        "minutes": 23
+       },
+       {
+        "date": "2026-10-23",
+        "opp": "III",
+        "home": true,
+        "value": 9,
+        "minutes": 27
+       }
+      ],
+      "l5Avg": 9.0,
+      "minAvg5": 22.8,
+      "l5Hits": 2,
+      "seasonAvg": 8.1,
+      "seasonGames": 3,
+      "label": "Lean",
+      "badges": [
+       {
+        "key": "tough-defense",
+        "label": "Tough defense against his position",
+        "tone": "good"
+       }
+      ]
+     },
+     {
+      "player": "Sample Playmaker",
+      "team": "CCC",
+      "stat": "assists",
+      "side": "OVER",
+      "line": 2.5,
+      "prob": 0.601,
+      "edge": 0.077,
+      "grade": "B+",
+      "tier": "LEAN",
+      "odds": -150,
+      "book": "espnbet",
+      "projStat": 4.5,
+      "projMin": 33,
+      "units": 0.0,
+      "why": "",
+      "last5": [
+       {
+        "date": "2026-10-15",
+        "opp": "EEE",
+        "home": true,
+        "value": 4,
+        "minutes": 29
+       },
+       {
+        "date": "2026-10-17",
+        "opp": "FFF",
+        "home": false,
+        "value": 6,
+        "minutes": 37
+       },
+       {
+        "date": "2026-10-19",
+        "opp": "GGG",
+        "home": true,
+        "value": 5,
+        "minutes": 39
+       },
+       {
+        "date": "2026-10-21",
+        "opp": "HHH",
+        "home": false,
+        "value": 6,
+        "minutes": 38
+       },
+       {
+        "date": "2026-10-23",
+        "opp": "III",
+        "home": true,
+        "value": 4,
+        "minutes": 34
+       }
+      ],
+      "l5Avg": 5.0,
+      "minAvg5": 35.4,
+      "l5Hits": 5,
+      "seasonAvg": 2.1,
+      "seasonGames": 3,
+      "label": "Lean",
+      "badges": [
+       {
+        "key": "trend-for",
+        "label": "The over hit in 5 of his last 5",
+        "tone": "good"
+       }
+      ]
+     },
+     {
+      "player": "Sample Shooter",
+      "team": "DDD",
+      "stat": "points",
+      "side": "UNDER",
+      "line": 21.5,
+      "prob": 0.529,
+      "edge": 0.005,
+      "grade": "C+",
+      "tier": "LEAN",
+      "odds": -123,
+      "book": "draftkings",
+      "projStat": 20.3,
+      "projMin": 29,
+      "units": 0.0,
+      "why": "",
+      "last5": [
+       {
+        "date": "2026-10-15",
+        "opp": "EEE",
+        "home": true,
+        "value": 23,
+        "minutes": 24
+       },
+       {
+        "date": "2026-10-17",
+        "opp": "FFF",
+        "home": false,
+        "value": 19,
+        "minutes": 33
+       },
+       {
+        "date": "2026-10-19",
+        "opp": "GGG",
+        "home": true,
+        "value": 24,
+        "minutes": 35
+       },
+       {
+        "date": "2026-10-21",
+        "opp": "HHH",
+        "home": false,
+        "value": 22,
+        "minutes": 24
+       },
+       {
+        "date": "2026-10-23",
+        "opp": "III",
+        "home": true,
+        "value": 20,
+        "minutes": 33
+       }
+      ],
+      "l5Avg": 21.6,
+      "minAvg5": 29.8,
+      "l5Hits": 2,
+      "seasonAvg": 21.1,
+      "seasonGames": 3,
+      "label": "Lean",
+      "badges": []
+     },
+     {
+      "player": "Sample Reserve",
+      "team": "CCC",
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 3.5,
+      "prob": 0.51,
+      "edge": -0.014,
+      "grade": "D",
+      "tier": "LEAN",
+      "odds": -105,
+      "book": "betmgm",
+      "projStat": 3.2,
+      "projMin": 29,
+      "units": 0.0,
+      "why": "",
+      "last5": [
+       {
+        "date": "2026-10-15",
+        "opp": "EEE",
+        "home": true,
+        "value": 3,
+        "minutes": 24
+       },
+       {
+        "date": "2026-10-17",
+        "opp": "FFF",
+        "home": false,
+        "value": 1,
+        "minutes": 30
+       },
+       {
+        "date": "2026-10-19",
+        "opp": "GGG",
+        "home": true,
+        "value": 2,
+        "minutes": 24
+       },
+       {
+        "date": "2026-10-21",
+        "opp": "HHH",
+        "home": false,
+        "value": 5,
+        "minutes": 32
+       },
+       {
+        "date": "2026-10-23",
+        "opp": "III",
+        "home": true,
+        "value": 6,
+        "minutes": 27
+       }
+      ],
+      "l5Avg": 3.4,
+      "minAvg5": 27.4,
+      "l5Hits": 3,
+      "seasonAvg": 3.1,
+      "seasonGames": 3,
+      "label": "Lean",
+      "badges": []
+     }
+    ]
+   }
+  ]
+ },
+ "record": {
+  "since": "2026-10-21",
+  "until": "2026-10-23",
+  "days": 3,
+  "duplicatesCollapsed": 0,
+  "tiers": [
+   {
+    "name": "Max plays (staked)",
+    "picks": 3,
+    "wins": 2,
+    "losses": 1,
+    "pushes": 0,
+    "hitRate": 0.6666666666666666,
+    "predicted": 0.58,
+    "units": 0.4,
+    "avgClv": 0.0,
+    "clvN": 0
+   },
+   {
+    "name": "Not staked: unproven stat or early season",
+    "picks": 8,
+    "wins": 5,
+    "losses": 3,
+    "pushes": 0,
+    "hitRate": 0.625,
+    "predicted": 0.56,
+    "units": 1.8,
+    "avgClv": 0.0,
+    "clvN": 0
+   },
+   {
+    "name": "Everything tracked",
+    "picks": 11,
+    "wins": 7,
+    "losses": 4,
+    "pushes": 0,
+    "hitRate": 0.6363636363636364,
+    "predicted": 0.57,
+    "units": 2.2,
+    "avgClv": 0.0,
+    "clvN": 0
+   }
+  ],
+  "stats": [
+   {
+    "name": "rebounds",
+    "picks": 6,
+    "wins": 4,
+    "losses": 2,
+    "pushes": 0,
+    "hitRate": 0.6666666666666666,
+    "predicted": 0.57,
+    "units": 1.1,
+    "avgClv": 0.0,
+    "clvN": 0
+   },
+   {
+    "name": "assists",
+    "picks": 5,
+    "wins": 3,
+    "losses": 2,
+    "pushes": 0,
+    "hitRate": 0.6,
+    "predicted": 0.58,
+    "units": 0.6,
+    "avgClv": 0.0,
+    "clvN": 0
+   }
+  ],
+  "sides": [
+   {
+    "name": "OVER",
+    "picks": 5,
+    "wins": 3,
+    "losses": 2,
+    "pushes": 0,
+    "hitRate": 0.6,
+    "predicted": 0.57,
+    "units": 0.7,
+    "avgClv": 0.0,
+    "clvN": 0
+   },
+   {
+    "name": "UNDER",
+    "picks": 6,
+    "wins": 4,
+    "losses": 2,
+    "pushes": 0,
+    "hitRate": 0.6666666666666666,
+    "predicted": 0.57,
+    "units": 1.5,
+    "avgClv": 0.0,
+    "clvN": 0
+   }
+  ],
+  "buckets": [
+   {
+    "label": "55-58%",
+    "picks": 6,
+    "predicted": 0.565,
+    "actual": 0.667
+   },
+   {
+    "label": "58-62%",
+    "picks": 5,
+    "predicted": 0.6,
+    "actual": 0.6
+   }
+  ],
+  "recent": [
+   {
+    "date": "2026-10-23",
+    "player": "Sample Guard",
+    "team": "AAA",
+    "matchup": "AAA @ BBB",
+    "stat": "assists",
+    "side": "UNDER",
+    "line": 6.5,
+    "actual": 5,
+    "result": "WIN",
+    "tier": "PAPER",
+    "prob": 0.637,
+    "grade": "B+",
+    "label": "Great play"
+   },
+   {
+    "date": "2026-10-23",
+    "player": "Sample Big",
+    "team": "DDD",
+    "matchup": "CCC @ DDD",
+    "stat": "rebounds",
+    "side": "OVER",
+    "line": 7.5,
+    "actual": 6,
+    "result": "LOSS",
+    "tier": "PICK",
+    "prob": 0.6,
+    "grade": "A-",
+    "label": "Max play"
+   }
+  ],
+  "daily": [
+   {
+    "date": "2026-10-21",
+    "wins": 3,
+    "losses": 2,
+    "stakedUnits": 0.45,
+    "flatUnits": 0.9,
+    "stakedWins": 1,
+    "stakedLosses": 0
+   },
+   {
+    "date": "2026-10-22",
+    "wins": 4,
+    "losses": 3,
+    "stakedUnits": -0.05,
+    "flatUnits": 0.3,
+    "stakedWins": 0,
+    "stakedLosses": 1
+   },
+   {
+    "date": "2026-10-23",
+    "wins": 5,
+    "losses": 3,
+    "stakedUnits": 0.4,
+    "flatUnits": 2.2,
+    "stakedWins": 1,
+    "stakedLosses": 0
+   }
+  ]
+ }
+}

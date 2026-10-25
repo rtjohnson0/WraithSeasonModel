@@ -1,0 +1,172 @@
+name: WraithPicksSZN daily
+
+# Runs the model on a schedule and publishes the site to GitHub Pages.
+#   9:17 am Eastern (13:17 UTC)  morning run: refresh box scores, grade picks, retrain, pull lines, make picks, publish
+#   3:17 pm Eastern (19:17 UTC)  refresh lines and injuries, make picks, publish
+#   6:17 pm Eastern (22:17 UTC)  refresh lines and injuries, make picks, publish
+#   8:17 pm Eastern (00:17 UTC)  late games: refresh lines and injuries, make picks, publish
+# GitHub schedules are in UTC and do not follow daylight saving: after the clocks go back in
+# November (Nov 1, 2026) every run is an hour earlier on the Eastern clock (8:17 am, 2:17 pm,
+# 5:17 pm, 7:17 pm). Change the hours below then if you want the Eastern times to stay put.
+# Scheduled runs can also start a few minutes late when GitHub is busy.
+#
+# Run it by hand from the Actions tab (Run workflow) with a mode:
+#   bootstrap  first time only: download all box scores and train (takes a while)
+#   daily      the morning run
+#   pretip     the lines-and-picks refresh (the 3 pm, 6 pm and 8 pm runs)
+#   site       rebuild and publish the site from the data already saved (after a code change)
+#
+# State that must never be lost (the pick log, graded results, the calibration) is committed back to
+# the repo. Everything that can be downloaded again lives in the Actions cache.
+on:
+  schedule:
+    - cron: "17 13 * * *"
+    - cron: "17 19 * * *"
+    - cron: "17 22 * * *"
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "What to run"
+        type: choice
+        default: daily
+        options: [bootstrap, daily, pretip, site]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: wraithpicks
+  cancel-in-progress: false
+
+env:
+  BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+  SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
+  TZ: America/New_York
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pick the mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mode=${{ inputs.mode }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" = "17 13 * * *" ]; then
+            echo "mode=daily" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=pretip" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      # Downloaded data and the trained model come from the newest cache. The committed state
+      # files are put back afterwards so an older cached copy can never replace them.
+      - name: Restore saved data
+        uses: actions/cache/restore@v4
+        with:
+          path: data
+          key: data-${{ github.run_id }}
+          restore-keys: data-
+      - name: Keep the committed state files
+        run: git checkout -- data/ 2>/dev/null || true
+
+      - name: Check the keys are set
+        if: steps.mode.outputs.mode != 'site'
+        run: |
+          [ -n "$BALLDONTLIE_API_KEY" ] || { echo "Add the BALLDONTLIE_API_KEY secret: repo Settings > Secrets and variables > Actions"; exit 1; }
+
+      - name: Bootstrap (download history and train)
+        if: steps.mode.outputs.mode == 'bootstrap'
+        run: |
+          YEAR=$(date +%Y); MONTH=$((10#$(date +%m)))
+          if [ "$MONTH" -ge 8 ]; then CUR=$YEAR; else CUR=$((YEAR-1)); fi
+          SEASONS=$(seq -s, 2022 "$CUR")
+          go run ./cmd/pull stats -seasons "$SEASONS"
+          go run ./cmd/pull advanced -seasons "$SEASONS" || echo "advanced pull skipped"
+          go run ./cmd/pull players
+          go run ./cmd/train
+
+      - name: Morning run
+        if: steps.mode.outputs.mode == 'daily'
+        run: bash scripts/daily.sh
+
+      - name: Pre-tip run
+        if: steps.mode.outputs.mode == 'pretip'
+        run: bash scripts/pretip.sh
+
+      - name: Export the site data
+        run: go run ./cmd/export
+
+      - name: Refuse to publish sample data
+        run: |
+          if grep -q '"sample": *true' site/public/data/picks.json; then
+            echo "picks.json is still the made-up sample."
+            exit 1
+          fi
+
+      - name: Save downloaded data for the next run
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data
+          key: data-${{ github.run_id }}
+
+      - name: Commit the pick log and results
+        run: |
+          git config user.name "wraithpicks-bot"
+          git config user.email "wraithpicks-bot@users.noreply.github.com"
+          git add -f data/picklog.jsonl data/settled.jsonl data/calibration.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing new to commit"
+          else
+            git commit -m "data: picks and results ${{ steps.mode.outputs.mode }} [skip ci]"
+            git pull --rebase
+            git push
+          fi
+
+      - name: Keep the CSVs
+        uses: actions/upload-artifact@v4
+        with:
+          name: csv
+          path: |
+            data/picks_*.csv
+            data/gamepicks_*.csv
+            data/review_*.csv
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Build the site
+        working-directory: site
+        run: |
+          npm ci
+          npm run build
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+  deploy:
+    needs: run
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

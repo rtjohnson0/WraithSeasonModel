@@ -1,0 +1,325 @@
+# NBA player-prop model (Go)
+
+Predicts the probability that a player goes OVER or UNDER a sportsbook line for **points, rebounds
+or assists**, for players averaging 20+ minutes (or projected for 18+). It posts a pick only when
+the calibrated probability is **>= 55% (OVER) or <= 45% (UNDER)**, sizes a small stake, logs
+every pick permanently, then grades it and measures closing line value (CLV).
+
+**Read this first.** Sportsbook lines already contain most of what box scores say. This project
+gives you a model, a fair way to test it, and a live scorecard. It does not give you an edge by
+itself: the backtest on *your* data decides that. If `go run ./cmd/backtest` shows no gain over a
+coin flip, do not bet it.
+
+## Setup (once)
+
+1. Install Go 1.22+ and open this folder in VS Code.
+2. Copy `.env.example` to `.env` and paste your keys (no quotes needed). `.env` and `data/` are
+   git-ignored. Keys that have been pasted into a chat should be rotated.
+3. Pull history (a few minutes; BALLDONTLIE GOAT allows 600 requests/minute):
+
+```
+go run ./cmd/pull stats    -seasons 2022,2023,2024,2025
+go run ./cmd/pull advanced -seasons 2022,2023,2024,2025
+go run ./cmd/pull props    -season 2025
+```
+
+4. Test the model honestly, then train it:
+
+```
+go run ./cmd/backtest -season 2025 -ablate
+go run ./cmd/train
+```
+
+## Daily use
+
+```
+.\scripts\daily.ps1          # Windows (refresh, retrain, snapshot, picks, grade)
+./scripts/daily.sh           # macOS / Linux
+.\scripts\pretip.ps1         # quick refresh near tip-off
+```
+
+or run the steps yourself: `pull stats` -> `train` -> `pull snapshot` -> `sgo snapshot` ->
+`predict` -> (next day) `pull stats` -> `settle`.
+
+Run `pull snapshot` several times on game day (`go run ./cmd/pull snapshot -every 30m`) so
+`settle` has a closing line to measure CLV against.
+
+## Dry run with no API (simulated league)
+
+```
+go run ./cmd/synth -out demo_data
+go run ./cmd/backtest -data demo_data -season 2025 -ablate -lineup
+go run ./cmd/train    -data demo_data -lineup
+go run ./cmd/predict  -data demo_data -date <date synth prints>
+```
+
+The simulated league has real structure (opponents, pace, injuries, blowouts, streaks) and a
+simulated sportsbook that only partly sees it. It proves the code finds structure that is there.
+It says **nothing** about real sportsbooks, which are far sharper. The positive ROI it shows is
+a property of that toy book, not a forecast.
+
+## How the model works
+
+1. **Minutes model.** Ridge regression on recent minutes (EWMA, last game, 5/30-game averages,
+   starter share), rest, home court, strength gap, and which rotation teammates are out. Residuals
+   are kept as empirical quantiles per predicted-minutes bucket, so the minutes distribution is
+   skewed and fat-tailed (blowouts, early exits). Most prop surprise is minutes surprise.
+2. **Stat model.** Negative binomial regression per stat, `mean = minutes * exp(x.beta)`, fitted
+   with the minutes actually played as exposure, so it learns a per-minute rate that depends on
+   context. Dispersion alpha is estimated from the data.
+3. **Probability.** P(over) averages the negative binomial tail over the 15-point minutes
+   distribution. Whole-number lines remove the push probability.
+4. **Calibration.** A logistic correction (per stat when there is enough data) fitted on
+   out-of-sample backtest results, which shrinks overconfident probabilities toward 50%.
+   This is also the "blend with the market" step: the line sits near 50/50.
+5. **Posting and staking.** 55% / 45% rule, best price across BALLDONTLIE and SportsGameOdds
+   books, at most 4 picks per game and 2 per player (they are correlated), stake = quarter
+   Kelly in units of 1% of bankroll, capped (default 2u). Start at 0.5u flat while paper trading.
+
+### Features (groups can be switched off for ablation)
+
+| group | what it captures |
+|---|---|
+| minutes, base | minutes history; baseline per-minute rate (recency-weighted, shrunk to the league) |
+| form | last-10 rate vs long run; shot volume trend |
+| slump | recent FG% vs the player's norm (shooting luck tends to revert; volume persists) |
+| opp | opponent's recent points/rebounds/assists allowed vs league; game pace |
+| game | strength gap (blowout risk cuts starters' minutes) |
+| rest | back-to-back, days of rest, games in the last 7 days |
+| home | home court |
+| teammates | rotation players out: their minutes, starters out, and their per-game production |
+| usage | advanced-stat trends: usage, assist share, rebound share, passes per minute (the double-team proxy: usage down, passing up) |
+
+The backtest's `-ablate` retrains once per group and reports whether each helped. Keep only
+groups that help on *your* data.
+
+## Honest limitations
+
+- **Teammates-out is flattered by a backtest on opening lines.** For history it is derived from
+  who actually played, which a live run would know from the injury report near tip-off, but the
+  opening line had not seen late scratches. So `backtest` leaves that group off by default
+  (feature set "pregame"). Use `-lineup` (and `train -lineup`) only when you run live with
+  injury snapshots, and judge that version by `settle` (live CLV), not by the backtest.
+- **No double-team data.** Doubles are inferred from usage and passing trends, not tracking.
+- **No Vegas spread/total feature yet.** The strength gap is a proxy. BALLDONTLIE odds are
+  captured by `pull snapshot` going forward; historical depth is unverified, so it is not wired in.
+- **SportsGameOdds is unproven.** Field names follow the provider's docs but I could not call
+  the API. Run `go run ./cmd/sgo sample` and check the printed lines. The BALLDONTLIE field shapes
+  are also from docs; if `pull` or `backtest` shows odd counts, send me the first lines of
+  `data/stats_*.jsonl` and `data/opening_props_2025.jsonl`.
+- **Model is refit monthly in the backtest, daily live.** Early season relies on prior seasons.
+- **Lineup news speed is where books beat models.** A model that reads a stale injury report
+  loses to one that acts on the late scratch. Re-run `predict` close to tip-off.
+- A backtest with 55%+ hit rate over a few hundred picks is promising, not proof. Paper-trade
+  with the pick log until `settle` shows positive average CLV over 100+ picks.
+
+## Layout
+
+```
+cmd/pull       download stats, advanced stats, opening props, injuries, snapshots (BALLDONTLIE)
+cmd/sgo        SportsGameOdds sample + snapshot
+cmd/backtest   walk-forward test, calibration fit, ablation, scorecard
+cmd/train      fit the model -> data/model.json
+cmd/predict    score today's lines, post picks, log them
+cmd/settle     grade logged picks, CLV, live record
+cmd/synth      simulated data for a dry run
+internal/feat  feature engine (no look-ahead; tested)
+internal/predictor, glm, linalg   minutes + negative binomial models
+internal/eval  walk-forward, metrics, calibration, ablation
+internal/model, proj, backtest    probability math, baseline projection, baseline backtest
+internal/props, sgo, bdl, data    data access
+internal/bets, picklog            stake sizing, permanent pick log
+scripts        daily pipeline (PowerShell and bash)
+```
+
+`go test ./...` runs the unit tests, including a test that deletes the future and checks no
+feature changes (look-ahead), and an ablation test on the simulated league.
+
+## Game markets (spread, moneyline, total)
+
+    go run ./cmd/pull gameodds -season 2025          # once: last season's opening lines
+    go run ./cmd/games -backtest -season 2025        # tests the team model against them, saves data/gamecal.json
+    go run ./cmd/pull snapshot                       # today's odds
+    go run ./cmd/games                               # best play per game per market (PICK or LEAN)
+
+Game lines are far sharper than player props. The model blends the sportsbook line with a
+team-ratings projection, weighted by what worked on past games. If the backtest's z is under
+about 2, the ratings add nothing the line did not already know: treat every play as a paper bet.
+Game picks are not yet in picklog/settle; they are saved to data/gamepicks_DATE.csv.
+
+## Pick tiers and guards (predict)
+
+- PICK: cleared 55%/45% and the edge rule. Staked (capped at 0.5u).
+- CHECK: cleared the bar, but projected minutes are 8+ away from his recent average (-maxshift). Staked 0
+  until you confirm the minutes (minutes limit, role change, stale average).
+- LEAN: fill-in so every game has plays (-pergame). Staked 0.
+All three are written to data/picklog.jsonl with their tier; `settle` reports full picks as the headline
+record and CHECK/LEAN beside it, so you can see whether the guard and the 55% bar earn their keep.
+Predict also warns when 75%+ of the board is one side or projected minutes shift as a group.
+
+PAPER: plays on stats outside -stakestats (default: rebounds only, from the 2025 backtest where assists lost
+money and points posted nothing). They are logged with 0 units so live results can confirm or overturn that.
+
+Warm-up: while a team has played fewer than -warmup (default 8) games this season, its plays are PAPER.
+Early in a season the inputs are last season's averages and nearly empty rolling windows, which the backtest
+(fitted mostly on mid-season games) never validated. Use -warmup 0 to override.
+
+## Model upgrades (season phase, minutes volatility)
+
+- `season` feature group: `early` (1 at the opener, 0 after 15 team games) and `early_m` (early x 30-game minutes),
+  so the model can learn to trust last season's averages differently early on. It is an ablation group like the others.
+- Per-player minutes volatility: each player's minutes spread is scaled by a ratio (0.75 to 1.35) learned from
+  his own past misses, shrunk toward 1 with 20 pseudo-games. `go run ./cmd/backtest -novol` measures what it adds.
+- Ablation fix: each ablation run now keeps the base configuration's disabled groups off (before, the teammates
+  group was silently ON in every ablation run, so every group looked harmful). Earlier ablation output is invalid.
+- More history helps the minutes and rate models (not the calibration, which needs odds):
+  `go run ./cmd/pull stats -seasons 2018,2019` (a long pull; 2020 and 2021 have unusual bubble/COVID schedules).
+
+## Game environment, injury status, live calibration
+
+- `market` feature group: the game's spread and total (`abs_spread`, `fav_spread`, `game_total`) are model inputs
+  for minutes and for every stat (blowout risk cuts starters' minutes; the total tracks pace). History comes from
+  `pull gameodds` (last season's opening lines) and the daily `snapshots/odds_*.jsonl`; where a game has no line the
+  features are empty and treated as average. Today's lines are loaded by predict from the snapshot.
+- Injury status: a player listed questionable / doubtful / day-to-day is tiered CHECK (0 units) with
+  "HIS STATUS" in the why column; uncertain teammates are listed too. Re-run `scripts\pretip.ps1` after lineups are known.
+- Live calibration: `go run ./cmd/backtest -season 2025 -live` also scores every saved daily props snapshot once its
+  games are final, so the calibration learns from current-season lines. `scripts\weekly.ps1` does the weekly refit.
+  Keep data\snapshots\ (the daily script writes it); it is the only source of this season's lines.
+
+## Game-line sanity checks
+
+`go run ./cmd/games` ignores prediction markets (Kalshi, Polymarket) and drops odds rows that do not look like real, current
+sportsbook lines: off the half-point grid, prices outside -200/+200 or with a sum that makes no sense, spreads more than 1.5
+or totals more than 2.5 from the median, a number no second book posts, a moneyline favourite that disagrees with the spread,
+and rows over 4 hours older than the newest in that game. Plays where the model sits more than 4 points (side) or 7 points
+(total) from the books are tiered CHECK: the model has no injury or lineup information, so a big gap is usually its blind spot.
+
+## Tracking features: the `chances` group
+
+Rebound chances, passes, touches and secondary assists come from `pull advanced` (the raw
+`/nba/v2/stats/advanced` rows already hold them, so no re-pull is needed for seasons you have
+pulled since the API added the fields). The `chances` feature group turns them into:
+
+| stat | feature | meaning |
+| --- | --- | --- |
+| rebounds | `rch_tr` | rebound chances per minute, last 10 games vs last 40 (role/opportunity change) |
+| rebounds | `rch_conv` | rebounds per chance, last 10 vs last 40 (luck that tends to correct) |
+| rebounds | `rch_off` | share of chances that are offensive, recent vs norm |
+| assists | `pass_conv` | assists per pass, recent vs norm |
+| assists, points | `touch_tr` | touches per minute, recent vs norm |
+| assists | `sec_tr` | secondary plus free-throw assists per minute, recent vs norm |
+
+All are shrunk log ratios against the player's own history and are empty (treated as average)
+when tracking data is missing. Whether they help is a question for the data, not for me:
+`go run ./cmd/backtest -season 2025 -ablate` lists `chances` with a log-loss change. Keep it only if
+removing it makes the model worse. The feature set changed, so run train and backtest again before predict.
+
+## Line sanity in predict
+
+* A line with no price on one side is skipped (the calibration would treat the missing side as a
+  coin flip and invent an edge). The skipped count is printed.
+* `-maxgap 1.0`: a line more than 100% of max(projection, 2) away from the projection is marked
+  CHECK with a note, since it is more often a bad or alternate line than a real edge. `-maxgap 0` turns it off.
+
+## Next-day review: what hit, what missed, and why
+
+```powershell
+go run ./cmd/review                      # yesterday (daily.ps1 does this right after settle)
+go run ./cmd/review -date 2026-10-22     # a specific day
+go run ./cmd/review -all                 # every logged day in one file
+```
+
+Writes `data\review_DATE.csv` (every tier: PICK, CHECK, PAPER, LEAN), one row per player, stat and side
+(the same play logged twice counts once). Columns include the result, pick, line, actual, how far past the
+line it landed, the model's projected stat and minutes, the minutes actually played, the game margin,
+`reason_type`, a plain-English `reason`, and `why_picked` (the model's own notes at pick time, saved
+from now on). The terminal summary shows W-L by tier, stat and side, why the losses lost, and whether the
+minutes and stat projections ran high or low.
+
+Reason types for a loss: `minutes` (blowout, left early, or more minutes than projected), `close_call`
+(missed by a point or less), `projection_miss` (stat far from the projection with minutes on track: the
+model misread the player) and `variance` (projection was close). The reason is a diagnosis from the box
+score, not proof. One game cannot separate skill from luck, so read the counts across many days.
+
+## One game: `-game`
+
+```powershell
+go run ./cmd/predict -game "ORL CHA"      # or ORL@CHA, or one abbreviation, or a game id
+go run ./cmd/predict -game ORL -top 30
+```
+
+Prints the game's market spread and total (context only), its best lines in any tier (`LOOK` means
+below the 55% bar), and then a **projection table with no restrictions**: every player and stat, at
+the consensus line, starters first, with the projection, the calibrated lean and probability, the edge
+against the price, and a plain-language read ("slight lean: inside the noise", "stat unproven in
+backtest" and so on). Writes `data\game_<teams>_<date>.csv` and `..._projections.csv`. Nothing from this
+view is logged. A projection above the line is not an edge: books use the same information.
+
+## Position matchups: five groups
+
+`pos5_allow` (points, rebounds and assists) measures how much the opponent has allowed to this
+player's position group over its last 30 games, against the league average. The feed only has G, F, C
+and hybrids, so the groups are guard (G), wing (G-F, F-G), forward (F), big forward (F-C, C-F) and
+center (C). It replaced the older three-group `pos_allow`, so the feature set changed: run
+`go run ./cmd/backtest -season 2025 -ablate` and `go run ./cmd/train` before predict. The ablation lists
+`matchup` with a log-loss change; keep the group only if removing it makes the model worse.
+
+## The website (`site/`)
+
+React + Vite + SCSS, built to plain static files and published with GitHub Pages. It reads one file,
+`site/public/data/picks.json`, which `go run ./cmd/export` writes from your pick logs. The code
+repo can be private; the published site and that JSON file are public, so the file contains only what
+a visitor should see: players, lines, picks, grades, tiers and results.
+
+Pages: **Board** (today's plays by matchup with letter grades, filters, and a "why" on each play),
+**Record** (every graded play, by group, by stat and side, a check that the percentages hold up, and
+recent results) and **How it works**. Grades come from the calibrated probability, and only staked
+plays can earn an A; everything else is capped at B+.
+
+### Running it on GitHub (scheduled, hands-off)
+
+`.github/workflows/daily.yml` runs the model on a schedule and publishes the site. Four runs a day, Eastern:
+9:17 am (the daily pipeline: box scores, grade, retrain, lines, picks), then 3:17 pm, 6:17 pm and
+8:17 pm (newest lines and injuries, picks; the 8 pm one is for the late games). GitHub schedules are
+in UTC, so after the clocks go back on Nov 1 they run an hour earlier on the Eastern clock; edit the
+hours in `daily.yml` if you want the Eastern times to stay put.
+
+One-time setup
+1. `cd site; npm install` (creates `package-lock.json`: commit it).
+2. Make a **private** repo and push (commands below). `data/` is not pushed except three files:
+   `picklog.jsonl` (every posted pick), `settled.jsonl` (graded results) and `calibration.json`
+   (from your local `go run ./cmd/backtest -season 2025 -ablate`).
+3. Repo Settings > Secrets and variables > Actions > New repository secret:
+   `BALLDONTLIE_API_KEY` and `SPORTSGAMEODDS_API_KEY` (the same values as your `.env`).
+4. Settings > Pages > Source: **GitHub Actions**. Pages from a private repo needs a paid GitHub plan
+   (Pro, Team or Enterprise); on the Free plan the repo must be public to use Pages.
+5. Actions tab > "WraithPicksSZN daily" > Run workflow > mode **bootstrap**. It downloads all the box
+   scores and trains the model (a while). After that the two daily runs go on their own.
+
+Run by hand any time with mode `daily`, `pretip`, or `site` (rebuild the site after a code change).
+Each run saves the downloaded data to the Actions cache and commits the three state files. The CSVs
+(`picks_*.csv`, `review_*.csv`) are attached to each run as a downloadable artifact for 14 days.
+Local preview: `cd site; npm run dev`. The old `publish` scripts are no longer needed.
+
+### Play names and icons on the site
+
+The site shows four play names instead of the internal tiers: **Max play** (the only staked kind), **Great play** (58%+ but unstaked: unproven stat or early season), **Risky play** (needs a check: minutes, status or odd line) and **Lean** (smaller edge, not a recommendation). Small icons show weak or tough defense against the position, hot or cold form, minutes up or down, back-to-back, teammates out, status and odd lines. Green helps the pick, red works against it. The names describe the evidence, not a guarantee.
+
+### Blowout-adjusted minutes
+
+Starters sit early in lopsided games (final margin of 18 or more). Before the minutes averages are taken, a short night in a blowout is raised to the player's normal minutes (the average of his non-blowout games), so a 24-minute night in a 25-point game does not make the model expect fewer minutes next time. A night where he still played more than normal is left alone. A new feature, `m_blowcut`, tells the minutes model how much was added. Because the features changed, rerun `go run ./cmd/backtest -season 2025 -ablate` and then `go run ./cmd/train` before the next `predict`.
+
+### Team names on the site
+
+`go run ./cmd/export` now fills in "AWAY @ HOME" for plays that were logged with only a game number, using that day's snapshot and the stats history.
+
+### Three-pointers made
+
+The model now also predicts three-pointers made (threes), using the `threes` props from BALLDONTLIE and `threePointersMade` from SportsGameOdds. Its features are his three-point attempt volume and percentage trends over the last 10 games against his own norm, plus form, opponent, home/away and matchup. It is new and unvalidated: it is tiered PAPER (never staked) until a backtest on your own data shows it holds up. Run `go run ./cmd/backtest -season 2025 -ablate` and `go run ./cmd/train` before the next `predict`; the feature list changed, so the old calibration no longer applies.
+
+### Minutes projection: what changed and how to check it
+
+New minutes features: `m_med10` (median of his last 10 games, so one injury exit does not drag it), `m_low10` (share of the last 10 games well below his normal), and `star_spread` (the game's spread scaled by how big a part of the game he plays, since a lopsided spread costs starters minutes). Together with the blowout correction these are the only changes.
+
+`go run ./cmd/backtest -season 2025 -ablate` now starts with a **MINUTES CHECK** table: out-of-sample minutes error and bias for the model against the plain recent average, split by projected minutes and for the first three weeks of a season. Bias is actual minus projected, so a positive number means the projection was too low (what the Oct 24 review showed). To measure what the blowout correction adds, run the backtest once with `-noblowout` and compare the two tables. If the new features or the correction do not lower the minutes error, remove them.

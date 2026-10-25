@@ -1,0 +1,169 @@
+// Package props parses sportsbook player-prop lines from BALLDONTLIE responses.
+package props
+
+import (
+	"bufio"
+	"encoding/json"
+	"os"
+	"strconv"
+	"strings"
+
+	"propsmodel/internal/data"
+)
+
+// Line is one sportsbook over/under line for one player and stat.
+type Line struct {
+	GameID    int
+	PlayerID  int
+	Vendor    string
+	Stat      data.Stat
+	Line      float64
+	OverOdds  int // American odds, 0 if unknown
+	UnderOdds int
+	UpdatedAt string
+}
+
+type apiProp struct {
+	GameID    int             `json:"game_id"`
+	PlayerID  int             `json:"player_id"`
+	Vendor    string          `json:"vendor"`
+	PropType  string          `json:"prop_type"`
+	LineValue json.RawMessage `json:"line_value"`
+	Market    struct {
+		Type      string `json:"type"`
+		OverOdds  int    `json:"over_odds"`
+		UnderOdds int    `json:"under_odds"`
+	} `json:"market"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+func parseFloatRaw(raw json.RawMessage) (float64, bool) {
+	s := strings.Trim(strings.TrimSpace(string(raw)), `"`)
+	if s == "" || s == "null" {
+		return 0, false
+	}
+	v, err := strconv.ParseFloat(s, 64)
+	return v, err == nil
+}
+
+func statFor(propType string) (data.Stat, bool) {
+	switch strings.ToLower(propType) {
+	case "points":
+		return data.Points, true
+	case "rebounds":
+		return data.Rebounds, true
+	case "assists":
+		return data.Assists, true
+	case "threes":
+		return data.Threes, true
+	}
+	return "", false
+}
+
+// ParseResponse extracts the over/under points, rebounds and assists lines from one API
+// response body ({"data": [...]}). fallbackGame is used if a row has no game_id.
+func ParseResponse(body json.RawMessage, fallbackGame int) []Line {
+	var resp struct {
+		Data []apiProp `json:"data"`
+	}
+	if json.Unmarshal(body, &resp) != nil {
+		return nil
+	}
+	var out []Line
+	for _, p := range resp.Data {
+		stat, ok := statFor(p.PropType)
+		if !ok {
+			continue
+		}
+		isOU := p.Market.Type == "over_under" || (p.Market.Type == "" && p.Market.OverOdds != 0)
+		if !isOU {
+			continue
+		}
+		line, ok := parseFloatRaw(p.LineValue)
+		if !ok || p.PlayerID == 0 {
+			continue
+		}
+		game := p.GameID
+		if game == 0 {
+			game = fallbackGame
+		}
+		out = append(out, Line{
+			GameID:    game,
+			PlayerID:  p.PlayerID,
+			Vendor:    p.Vendor,
+			Stat:      stat,
+			Line:      line,
+			OverOdds:  p.Market.OverOdds,
+			UnderOdds: p.Market.UnderOdds,
+			UpdatedAt: p.UpdatedAt,
+		})
+	}
+	return out
+}
+
+func readLines(path string, fn func(line []byte)) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	sc := bufio.NewScanner(f)
+	sc.Buffer(make([]byte, 1<<20), 1<<28)
+	for sc.Scan() {
+		fn(sc.Bytes())
+	}
+	return sc.Err()
+}
+
+type lineKey struct {
+	game, player int
+	vendor       string
+	stat         data.Stat
+}
+
+// LoadSnapshot reads a data/snapshots/props_DATE.jsonl file. Where a snapshot ran several
+// times, the latest capture of each (game, player, stat, vendor) line wins.
+func LoadSnapshot(path string) ([]Line, error) {
+	latest := map[lineKey]Line{}
+	var order []lineKey
+	err := readLines(path, func(b []byte) {
+		var row struct {
+			GameID   int             `json:"game_id"`
+			Response json.RawMessage `json:"response"`
+		}
+		if json.Unmarshal(b, &row) != nil {
+			return
+		}
+		for _, l := range ParseResponse(row.Response, row.GameID) {
+			k := lineKey{l.GameID, l.PlayerID, l.Vendor, l.Stat}
+			if _, seen := latest[k]; !seen {
+				order = append(order, k)
+			}
+			latest[k] = l
+		}
+	})
+	if err != nil {
+		return nil, err
+	}
+	out := make([]Line, 0, len(order))
+	for _, k := range order {
+		out = append(out, latest[k])
+	}
+	return out, nil
+}
+
+// LoadOpening reads a data/opening_props_SEASON.jsonl file.
+func LoadOpening(path string) ([]Line, error) {
+	var out []Line
+	err := readLines(path, func(b []byte) {
+		var row struct {
+			GameID   int             `json:"_game_id"`
+			Response json.RawMessage `json:"response"`
+		}
+		if json.Unmarshal(b, &row) != nil {
+			return
+		}
+		out = append(out, ParseResponse(row.Response, row.GameID)...)
+	})
+	return out, err
+}

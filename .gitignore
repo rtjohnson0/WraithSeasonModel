@@ -1,0 +1,12 @@
+.env
+# Downloaded data and trained models stay out of git. The pick log, graded results and calibration
+# are the record of the project, so those three are kept (git add -f works around the rule below).
+data/*
+!data/picklog.jsonl
+!data/settled.jsonl
+!data/calibration.json
+demo_data/
+bin/
+*.exe
+site/node_modules/
+site/dist/

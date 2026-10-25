@@ -1,0 +1,179 @@
+package main
+
+import (
+	"encoding/json"
+	"testing"
+
+	"propsmodel/internal/picklog"
+)
+
+func e(player string, id int, stat, side, tier string, prob float64, odds int) picklog.Entry {
+	return picklog.Entry{Date: "2026-10-24", GameID: id, PlayerID: id*100 + len(player), Player: player, Stat: stat, Side: side,
+		Line: 5.5, Odds: odds, Prob: prob, Tier: tier, Units: 0, Matchup: "CHI @ MIL", Team: "CHI"}
+}
+
+func TestGradeCapsUnprovenPlays(t *testing.T) {
+	if g := grade(0.67, "PICK"); g != "A+" {
+		t.Errorf("staked 67%% = %s", g)
+	}
+	if g := grade(0.67, "PAPER"); g != "B+" {
+		t.Errorf("a PAPER play must not earn above B+, got %s", g)
+	}
+	if g := grade(0.67, "CHECK"); g != "B+" {
+		t.Errorf("a CHECK play must not earn above B+, got %s", g)
+	}
+	if g := grade(0.51, "LEAN"); g != "D" {
+		t.Errorf("51%% = %s", g)
+	}
+	if g := grade(0.59, ""); g != "B+" {
+		t.Errorf("an old untiered pick counts as PICK, got %s", g)
+	}
+}
+
+func TestBoardDedupesAndGroups(t *testing.T) {
+	a := e("Alpha", 1, "rebounds", "UNDER", "LEAN", 0.56, -110)
+	a2 := e("Alpha", 1, "rebounds", "UNDER", "PAPER", 0.58, -120) // same play, better tier
+	a2.PlayerID = a.PlayerID
+	b := e("Beta", 2, "assists", "OVER", "PICK", 0.62, -110)
+	b.Units = 0.5
+	old := e("Gamma", 1, "points", "OVER", "PAPER", 0.54, -110)
+	old.Date = "2026-10-23"
+	board := buildBoard([]picklog.Entry{a, a2, b, old}, "2026-10-24", nil)
+	if board.Plays != 2 {
+		t.Fatalf("expected 2 plays after collapsing the repeat and ignoring other days, got %d", board.Plays)
+	}
+	if board.Staked != 1 {
+		t.Fatalf("expected 1 staked play, got %d", board.Staked)
+	}
+	if len(board.Games) != 2 || board.Games[0].ID != 1 {
+		t.Fatalf("games out of order: %+v", board.Games)
+	}
+	if board.Games[0].Plays[0].Tier != "PAPER" {
+		t.Fatalf("the repeat should keep the PAPER version, got %s", board.Games[0].Plays[0].Tier)
+	}
+}
+
+func TestRecordTiersAndJSON(t *testing.T) {
+	mk := func(tier, res string, prob, profit, flat float64, units float64, id int) picklog.Settled {
+		return picklog.Settled{
+			Entry:  picklog.Entry{Date: "2026-10-23", PlayerID: id, Player: "P", Stat: "rebounds", Side: "OVER", Tier: tier, Prob: prob, Units: units, Matchup: "A @ B"},
+			Result: res, Profit: profit, Flat: flat, Actual: 7,
+		}
+	}
+	in := []picklog.Settled{
+		mk("PICK", "WIN", 0.6, 0.45, 0.91, 0.5, 1),
+		mk("PICK", "LOSS", 0.6, -0.5, -1, 0.5, 2),
+		mk("PAPER", "WIN", 0.56, 0.91, 0.91, 0, 3),
+		mk("PAPER", "WIN", 0.56, 0.91, 0.91, 0, 3), // duplicate
+		mk("LEAN", "VOID", 0.52, 0, 0, 0, 4),
+	}
+	rec := buildRecord(in, 10)
+	if rec.Dups != 1 {
+		t.Fatalf("expected 1 duplicate collapsed, got %d", rec.Dups)
+	}
+	if rec.Tiers[0].Name != "Max plays (staked)" || rec.Tiers[0].Wins != 1 || rec.Tiers[0].Losses != 1 {
+		t.Fatalf("staked row wrong: %+v", rec.Tiers[0])
+	}
+	if u := rec.Tiers[0].Units; u < -0.06 || u > -0.04 {
+		t.Fatalf("staked units should be the real profit (-0.05), got %v", u)
+	}
+	if _, err := json.Marshal(Site{Record: rec}); err != nil {
+		t.Fatalf("record does not marshal: %v", err)
+	}
+	for _, r := range rec.Recent {
+		if r.Result == "VOID" && r.Actual != 0 {
+			t.Fatalf("a void play should carry no actual")
+		}
+	}
+}
+
+func TestBoardFormAndHits(t *testing.T) {
+	a := e("Alpha", 1, "rebounds", "UNDER", "PICK", 0.60, -110)
+	a.Line = 6.5
+	form := func(pid int, stat, before string) ([]Game5, float64, int) {
+		vals := []float64{4, 8, 5, 7, 6}
+		var out []Game5
+		for i, v := range vals {
+			out = append(out, Game5{Date: "2026-10-2" + string(rune('0'+i)), Opp: "AAA", Value: v, Minutes: 30})
+		}
+		return out, 6.2, 12
+	}
+	board := buildBoard([]picklog.Entry{a}, "2026-10-24", form)
+	p := board.Games[0].Plays[0]
+	if p.L5Hits != 3 { // 4, 5 and 6 are under 6.5
+		t.Fatalf("an under on 6.5 should have hit 3 of the last 5, got %d", p.L5Hits)
+	}
+	if p.L5Avg != 6 || p.MinAvg5 != 30 || p.SeasonGP != 12 {
+		t.Fatalf("form summary wrong: %+v", p)
+	}
+}
+
+func TestDailySeriesIsCumulative(t *testing.T) {
+	mk := func(date, res string, id int, units, profit, flat float64) picklog.Settled {
+		return picklog.Settled{Entry: picklog.Entry{Date: date, PlayerID: id, Stat: "rebounds", Side: "OVER", Tier: "PICK", Units: units},
+			Result: res, Profit: profit, Flat: flat}
+	}
+	rec := buildRecord([]picklog.Settled{
+		mk("2026-10-22", "WIN", 1, 0.5, 0.45, 0.91),
+		mk("2026-10-23", "LOSS", 2, 0.5, -0.5, -1),
+		mk("2026-10-23", "WIN", 3, 0.5, 0.45, 0.91),
+	}, 10)
+	if len(rec.Daily) != 2 {
+		t.Fatalf("expected 2 days, got %d", len(rec.Daily))
+	}
+	if d := rec.Daily[1]; d.StakedUnits < 0.39 || d.StakedUnits > 0.41 || d.Wins != 1 || d.Losses != 1 {
+		t.Fatalf("second day wrong: %+v", d)
+	}
+}
+
+func TestLabelsDescribeEvidence(t *testing.T) {
+	cases := []struct {
+		tier string
+		prob float64
+		want string
+	}{
+		{"PICK", 0.57, "Max play"}, {"", 0.60, "Max play"}, {"CHECK", 0.66, "Risky play"},
+		{"PAPER", 0.64, "Great play"}, {"PAPER", 0.55, "Lean"}, {"LEAN", 0.60, "Lean"},
+	}
+	for _, c := range cases {
+		if got := label(c.tier, c.prob); got != c.want {
+			t.Errorf("label(%q, %.2f) = %s, want %s", c.tier, c.prob, got, c.want)
+		}
+	}
+}
+
+func has(bs []Badge, key, tone string) bool {
+	for _, b := range bs {
+		if b.Key == key && (tone == "" || b.Tone == tone) {
+			return true
+		}
+	}
+	return false
+}
+
+func TestBadgesAreFromThePicksPointOfView(t *testing.T) {
+	soft := Play{Side: "OVER", Why: "back-to-back; soft defense +8%; out: A, B"}
+	b := badgesFor(soft)
+	if !has(b, "weak-defense", "good") || !has(b, "back-to-back", "bad") || !has(b, "teammates-out", "note") {
+		t.Fatalf("over badges wrong: %+v", b)
+	}
+	under := Play{Side: "UNDER", Why: "soft defense +8%"}
+	if !has(badgesFor(under), "weak-defense", "bad") {
+		t.Fatalf("a weak defense should be a bad sign for an under")
+	}
+	hot := Play{Side: "UNDER", SeasonGP: 10, SeasonAvg: 6, L5Avg: 8, ProjMin: 30, MinAvg5: 30,
+		Last5: make([]Game5, 5), L5Hits: 0}
+	b = badgesFor(hot)
+	if !has(b, "hot", "bad") || !has(b, "trend-against", "bad") {
+		t.Fatalf("hot streak against an under should warn: %+v", b)
+	}
+	cold := Play{Side: "UNDER", SeasonGP: 10, SeasonAvg: 8, L5Avg: 5, ProjMin: 20, MinAvg5: 30,
+		Last5: make([]Game5, 5), L5Hits: 5}
+	b = badgesFor(cold)
+	if !has(b, "cold", "good") || !has(b, "minutes-down", "good") || !has(b, "trend-for", "good") {
+		t.Fatalf("cold streak and minutes cut should back an under: %+v", b)
+	}
+	if len(badgesFor(Play{Side: "OVER"})) != 0 {
+		t.Fatal("a play with no signals should have no badges")
+	}
+}
