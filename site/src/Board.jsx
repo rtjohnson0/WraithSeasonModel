@@ -31,6 +31,68 @@ function reasons(p) {
   return out
 }
 
+const pc = (x) => `${Math.round(x * 100)}%`
+
+// The full argument for a play: the arithmetic, the evidence on both sides, and how far to trust it.
+function CaseView({ p }) {
+  const c = p.case
+  const dir = p.side === 'OVER' ? 'above' : 'below'
+  return (
+    <div className="case">
+      <h4>The numbers</h4>
+      <p className="math">
+        {Math.round(c.minutes)} projected minutes at {c.perMin.toFixed(2)} per minute is a projection of{' '}
+        <b>{c.projected.toFixed(1)}</b> against a line of <b>{c.line}</b>
+        {c.gap >= 0.05 ? `, ${c.gap.toFixed(1)} ${dir} the line in our favor.` : '.'}
+      </p>
+      <div className="probs">
+        <span>
+          <b>{pc(c.modelProb)}</b>
+          <small>model alone</small>
+        </span>
+        <span>
+          <b>{pc(c.bookProb)}</b>
+          <small>odds imply</small>
+        </span>
+        <span>
+          <b>{pc(c.finalProb)}</b>
+          <small>shown (blend)</small>
+        </span>
+      </div>
+      <p className="tiernote">The shown percentage leans mostly on the book's price on purpose: the model alone has been too confident before.</p>
+      {c.for?.length > 0 && (
+        <>
+          <h4>What supports it</h4>
+          <ul className="reasons for">
+            {c.for.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+        </>
+      )}
+      {c.against?.length > 0 && (
+        <>
+          <h4>What could go wrong</h4>
+          <ul className="reasons against">
+            {c.against.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+        </>
+      )}
+      <h4>How much to trust it</h4>
+      {c.track?.length > 0 && (
+        <ul className="reasons">
+          {c.track.map((r) => (
+            <li key={r}>{r}</li>
+          ))}
+        </ul>
+      )}
+      <p className="tiernote">{c.trust}</p>
+    </div>
+  )
+}
+
 function PlayRow({ p }) {
   const [open, setOpen] = useState(false)
   const info = labelInfo[p.label] || labelInfo.Lean
@@ -153,12 +215,16 @@ function PlayRow({ p }) {
             </p>
           )}
 
-          <h4>Why the model likes it</h4>
-          <ul className="reasons">
-            {reasons(p).map((r) => (
-              <li key={r}>{r}</li>
-            ))}
-          </ul>
+          {p.case ? <CaseView p={p} /> : (
+            <>
+              <h4>Why the model likes it</h4>
+              <ul className="reasons">
+                {reasons(p).map((r) => (
+                  <li key={r}>{r}</li>
+                ))}
+              </ul>
+            </>
+          )}
           <p className="tiernote">{p.label}: {info.note}</p>
         </div>
       )}

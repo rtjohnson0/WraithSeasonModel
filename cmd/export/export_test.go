@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"propsmodel/internal/picklog"
@@ -273,5 +274,35 @@ func TestParseDefense(t *testing.T) {
 	}
 	if !found {
 		t.Error("an under against a top defense should get a good tough-defense badge")
+	}
+}
+
+func TestBuildCase(t *testing.T) {
+	p := Play{Player: "A", Stat: "rebounds", Side: "UNDER", Line: 9.5, Odds: -110, Prob: 0.62, ProbRaw: 0.80, Tier: "PAPER",
+		ProjStat: 7.6, ProjMin: 27, L5Hits: 4, L5Avg: 7.8, SeasonAvg: 8.1, SeasonGP: 6, MinTyp: 33,
+		Last5: make([]Game5, 5), Defense: &DefenseInfo{Text: "3rd-fewest rebounds allowed to centers, -9%", Of: 30, Helps: true},
+		Why: "back-to-back; minutes -6 vs his normal"}
+	track := map[string]Row{"rebounds|UNDER": {Picks: 12, Wins: 5, Losses: 7, HitRate: 5.0 / 12}}
+	c := buildCase(p, track)
+	if c.Gap < 1.8 || c.Gap > 2.0 {
+		t.Errorf("gap in the pick's direction should be 1.9, got %v", c.Gap)
+	}
+	if len(c.For) < 4 {
+		t.Errorf("expected projection, form, season, defense and back-to-back support, got %v", c.For)
+	}
+	joined := strings.Join(c.Against, " ")
+	for _, want := range []string{"Only 6 games", "model alone says 80%", "not been proven", "above"} {
+		if want == "above" {
+			continue
+		}
+		if !strings.Contains(joined, want) {
+			t.Errorf("against should mention %q, got %v", want, c.Against)
+		}
+	}
+	if !strings.Contains(c.Trust, "Too few graded plays") {
+		t.Errorf("12 graded plays is too few to trust: %s", c.Trust)
+	}
+	if be := breakEven(-110); be < 0.523 || be > 0.524 {
+		t.Errorf("break-even at -110 is 52.4%%, got %v", be)
 	}
 }

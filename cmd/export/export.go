@@ -21,6 +21,7 @@ type Play struct {
 	Side     string  `json:"side"`
 	Line     float64 `json:"line"`
 	Prob     float64 `json:"prob"`
+	ProbRaw  float64 `json:"probRaw"`
 	Edge     float64 `json:"edge"`
 	Grade    string  `json:"grade"`
 	Tier     string  `json:"tier"`
@@ -41,6 +42,10 @@ type Play struct {
 
 	// Defense is where the opponent ranks against his position in this stat, read from the model's note.
 	Defense *DefenseInfo `json:"defense,omitempty"`
+
+	// Case is the full argument for the play: the numbers, what supports it, what could go wrong
+	// and how much the model's record on this kind of play deserves trust.
+	Case *Case `json:"case,omitempty"`
 
 	Label  string  `json:"label"`  // Max play, Great play, Risky play or Lean
 	Badges []Badge `json:"badges"` // quick-read signals: weak defense, hot streak, back-to-back and so on
@@ -465,7 +470,7 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 		t := normTier(e.Tier)
 		p := Play{
 			Player: e.Player, Team: e.Team, Stat: e.Stat, Side: e.Side, Line: e.Line, Prob: e.Prob,
-			Edge: edgeOf(e), Grade: grade(e.Prob, t), Tier: t, Odds: e.Odds, Book: e.Book,
+			ProbRaw: e.ProbRaw, Edge: edgeOf(e), Grade: grade(e.Prob, t), Tier: t, Odds: e.Odds, Book: e.Book,
 			ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why,
 		}
 		if form != nil {

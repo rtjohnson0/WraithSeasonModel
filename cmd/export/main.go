@@ -59,6 +59,7 @@ func main() {
 		Board:       buildBoard(entries, *date, form, runlog.ForDate(runs, *date)),
 		Record:      buildRecord(settled, *recent),
 	}
+	attachCases(&site.Board, trackRecords(settled))
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		fatal(err)
 	}

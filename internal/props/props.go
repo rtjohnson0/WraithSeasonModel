@@ -4,6 +4,7 @@ package props
 import (
 	"bufio"
 	"encoding/json"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -21,6 +22,7 @@ type Line struct {
 	OverOdds  int // American odds, 0 if unknown
 	UnderOdds int
 	UpdatedAt string
+	Row       int // which response row of the snapshot file the line came from (LoadAllLines only)
 }
 
 type apiProp struct {
@@ -121,8 +123,37 @@ type lineKey struct {
 	stat         data.Stat
 }
 
+func impliedProb(odds int) float64 {
+	if odds > 0 {
+		return 100 / float64(odds+100)
+	}
+	if odds < 0 {
+		return float64(-odds) / float64(-odds+100)
+	}
+	return 0
+}
+
+// mainLine picks the real posted line out of several lines one book listed for the same player and
+// stat. Books list alternate lines too (a high or low number with a lopsided price); the main line is
+// the one whose over and under prices are closest to even. Lines with a missing price lose to
+// lines with both, and ties keep the first. A single line is returned as is.
+func mainLine(c []Line) Line {
+	best, bestGap := c[0], 2.0
+	for _, l := range c {
+		gap := 1.5
+		if l.OverOdds != 0 && l.UnderOdds != 0 {
+			gap = math.Abs(impliedProb(l.OverOdds) - impliedProb(l.UnderOdds))
+		}
+		if gap < bestGap {
+			best, bestGap = l, gap
+		}
+	}
+	return best
+}
+
 // LoadSnapshot reads a data/snapshots/props_DATE.jsonl file. Where a snapshot ran several
-// times, the latest capture of each (game, player, stat, vendor) line wins.
+// times, the latest capture of each (game, player, stat, vendor) line wins. If a book listed several
+// lines for the same market in one capture (alternate lines), the main line wins, not whichever came last.
 func LoadSnapshot(path string) ([]Line, error) {
 	latest := map[lineKey]Line{}
 	var order []lineKey
@@ -134,12 +165,20 @@ func LoadSnapshot(path string) ([]Line, error) {
 		if json.Unmarshal(b, &row) != nil {
 			return
 		}
+		inRow := map[lineKey][]Line{}
+		var rowOrder []lineKey
 		for _, l := range ParseResponse(row.Response, row.GameID) {
 			k := lineKey{l.GameID, l.PlayerID, l.Vendor, l.Stat}
+			if _, seen := inRow[k]; !seen {
+				rowOrder = append(rowOrder, k)
+			}
+			inRow[k] = append(inRow[k], l)
+		}
+		for _, k := range rowOrder {
 			if _, seen := latest[k]; !seen {
 				order = append(order, k)
 			}
-			latest[k] = l
+			latest[k] = mainLine(inRow[k])
 		}
 	})
 	if err != nil {
@@ -150,6 +189,28 @@ func LoadSnapshot(path string) ([]Line, error) {
 		out = append(out, latest[k])
 	}
 	return out, nil
+}
+
+// LoadAllLines returns every over/under line in a snapshot file exactly as the feed gave it, with no
+// choosing between captures or between alternate lines. It exists for audits (cmd/audit).
+func LoadAllLines(path string) ([]Line, error) {
+	var out []Line
+	row := 0
+	err := readLines(path, func(b []byte) {
+		var r struct {
+			GameID   int             `json:"game_id"`
+			Response json.RawMessage `json:"response"`
+		}
+		row++
+		if json.Unmarshal(b, &r) != nil {
+			return
+		}
+		for _, l := range ParseResponse(r.Response, r.GameID) {
+			l.Row = row
+			out = append(out, l)
+		}
+	})
+	return out, err
 }
 
 // LoadOpening reads a data/opening_props_SEASON.jsonl file.

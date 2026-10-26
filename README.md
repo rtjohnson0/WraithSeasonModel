@@ -382,3 +382,17 @@ The board is flat and quiet: one purple accent, a cropped banner, a one-line str
 Each game on the board shows its tip-off time (Eastern), and games are listed in tip-off order. The time comes from the game snapshot (`datetime`, or `status` for games not yet played) and is saved with each logged pick; older picks are filled in from the day's snapshot when the site data is exported.
 
 The old "soft defense" / "tough defense" note is replaced by a ranking against the player's position group (guard, wing, forward, big forward, center) in the stat being picked, for example "Allows the 3rd-most rebounds to centers (+9%)". Teams are ranked on what players at that position produced against them, using this season's games once every team has played three, and last season's games too before that (the line then says "early"). Each team's number is blended with the league average as if it had six extra average games, so a few games cannot put a team first or last. Red or green shows whether the ranking helps or hurts the pick. The badge icon appears only for the top eight at either end.
+
+## Why is the board all Unders? (`cmd/audit`)
+
+Run `go run ./cmd/audit` after a pull. It checks the line data before blaming the model:
+alternate lines per book (the loader now keeps the main line, the one with the most even over/under prices),
+each book's offset from the others, which side the books price as more likely, and how the lines sit against each
+player's last-10 and season averages. If most lines sit well above recent averages, the books are running high
+early in the season and an all-Unders board is the market's doing. Pair it with `go run ./cmd/linecheck`.
+
+## Play reasoning
+
+Expanding a play shows the arithmetic (minutes x per-minute rate = projection vs line), three probabilities
+(model alone, what the odds imply, the blended percentage shown), evidence for and against, and the live record on
+that stat and side with a plain note on how much a record of that size can be trusted. Built in `cmd/export/casefile.go`.

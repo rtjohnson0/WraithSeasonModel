@@ -251,3 +251,15 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
   li { display: flex; align-items: center; gap: 10px; color: var(--silver); } }
 
 .bars .bar.short { opacity: 0.35; stroke: var(--muted); stroke-dasharray: 3 2; fill-opacity: 0.4; }
+
+.case {
+  .math { margin: 0 0 10px; line-height: 1.5; }
+  .probs {
+    display: flex; gap: 8px; margin: 6px 0;
+    span { flex: 1; padding: 8px 10px; border: 1px solid var(--edge); border-radius: 6px; display: flex; flex-direction: column; }
+    b { font-size: 1.15rem; }
+    small { opacity: .7; }
+  }
+  .reasons.for li::marker { color: var(--win); }
+  .reasons.against li::marker { color: var(--loss); }
+}

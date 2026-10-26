@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 
 	"propsmodel/internal/data"
@@ -175,3 +176,30 @@ func TestStartTime(t *testing.T) {
 		t.Errorf("a bare date is not a tip-off: %q", got)
 	}
 }
+
+func TestLoadSnapshotPicksMainLineAmongAlternates(t *testing.T) {
+	mk := func(line string, over, under int) string {
+		return `{"game_id":50,"player_id":7,"vendor":"draftkings","prop_type":"points","line_value":"` + line +
+			`","market":{"type":"over_under","over_odds":` + itoa(over) + `,"under_odds":` + itoa(under) + `}}`
+	}
+	// The main line is listed in the middle and an alternate comes last, as a feed might send them.
+	row := `{"captured_at":"t1","game_id":50,"game":{},"response":{"data":[` +
+		mk("19.5", -320, 250) + "," + mk("24.5", -115, -105) + "," + mk("29.5", 260, -340) + `]}}`
+	p := filepath.Join(t.TempDir(), "props_2026-10-20.jsonl")
+	if err := os.WriteFile(p, []byte(row+"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	got, err := LoadSnapshot(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 1 || got[0].Line != 24.5 {
+		t.Fatalf("want the main line 24.5, got %+v", got)
+	}
+	all, err := LoadAllLines(p)
+	if err != nil || len(all) != 3 || all[0].Row != 1 {
+		t.Fatalf("LoadAllLines should return all three lines untouched: %v %+v", err, all)
+	}
+}
+
+func itoa(n int) string { return strconv.Itoa(n) }
