@@ -25,7 +25,9 @@ function reasons(p) {
     .split(';')
     .map((x) => x.trim())
     .filter(Boolean)
+    .filter((x) => !x.startsWith('defense vs '))
     .forEach((x) => out.push(x.charAt(0).toUpperCase() + x.slice(1) + '.'))
+  if (p.defense) out.push(`${p.defense.text}, out of ${p.defense.of} teams.`)
   return out
 }
 
@@ -48,6 +50,12 @@ function PlayRow({ p }) {
             <b className={p.side === 'OVER' ? 'over' : 'under'}>{p.side === 'OVER' ? 'Over' : 'Under'}</b> {p.line}{' '}
             {statLabel[p.stat] || p.stat}
           </span>
+          {p.defense && (
+            <span className={`defense ${p.defense.helps ? 'helps' : 'hurts'}`} title={p.defense.early ? 'Early in the season: this ranking still leans on last season' : undefined}>
+              {p.defense.text}
+              {p.defense.early ? ', early' : ''}
+            </span>
+          )}
           {p.multi && (
             <span className="seen" title={`On the board in: ${p.seenIn.join(', ')}`}>
               In {p.runs} runs: {p.seenIn.join(', ')}
@@ -205,6 +213,13 @@ function RunChanges({ runs }) {
   )
 }
 
+function tipText(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }) + ' ET'
+}
+
 function updatedText(iso) {
   if (!iso) return ''
   const d = new Date(iso)
@@ -235,12 +250,6 @@ export default function Board({ site }) {
 
   const all = useMemo(() => board.games.flatMap((g) => g.plays), [board])
   const count = (f) => all.filter(f).length
-  const lopsided = useMemo(() => {
-    if (all.length < 10) return null
-    const unders = all.filter((p) => p.side === 'UNDER').length
-    const n = Math.max(unders, all.length - unders)
-    return n / all.length >= 0.85 ? { n, side: unders * 2 >= all.length ? 'UNDER' : 'OVER' } : null
-  }, [all])
 
   const games = useMemo(
     () =>
@@ -256,9 +265,7 @@ export default function Board({ site }) {
               (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
           ),
         }))
-        .filter((g) => g.plays.length)
-        // Games with a Max play come first: that is what most people scroll for.
-        .sort((a, b) => Number(b.plays.some((p) => p.label === 'Max play')) - Number(a.plays.some((p) => p.label === 'Max play'))),
+        .filter((g) => g.plays.length),
     [board, stat, label, side, q, repeatsOnly],
   )
   const shown = games.reduce((n, g) => n + g.plays.length, 0)
@@ -293,19 +300,7 @@ export default function Board({ site }) {
             )}
           </dl>
         </div>
-        <p className="honest">
-          Only Max plays carry a stake. Great, risky and lean plays are tracked so the record shows whether they work.
-          None of it is a promise.
-        </p>
       </section>
-
-      {lopsided && (
-        <p className="warn" role="note">
-          Lopsided board: {lopsided.n} of {all.length} plays are {lopsided.side === 'UNDER' ? 'Unders' : 'Overs'}. Books do not
-          price a whole slate one way, so this usually means the model is running {lopsided.side === 'UNDER' ? 'high' : 'low'} today.
-          Treat these as tracking plays, not recommendations.
-        </p>
-      )}
 
       <RunChanges runs={board.runsToday} />
 
@@ -368,6 +363,7 @@ export default function Board({ site }) {
                   )}
                 </h2>
                 <span>
+                  {g.tip && <b className="tip">{tipText(g.tip)}</b>}
                   {g.plays.length} {g.plays.length === 1 ? 'play' : 'plays'}
                 </span>
               </header>

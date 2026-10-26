@@ -35,8 +35,10 @@ type Entry struct {
 	// next-day review can show what the model thought next to what happened.
 	Why string `json:"why,omitempty"`
 	// Matchup (for example "CHI @ MIL") and Edge are kept for the website and the review.
-	Matchup string  `json:"matchup,omitempty"`
-	Edge    float64 `json:"edge,omitempty"`
+	Matchup string `json:"matchup,omitempty"`
+	// Tip is the game's scheduled tip-off (RFC3339 UTC), for showing the start time on the site.
+	Tip  string  `json:"tip,omitempty"`
+	Edge float64 `json:"edge,omitempty"`
 }
 
 func (e Entry) key() string {

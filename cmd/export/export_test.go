@@ -248,3 +248,30 @@ func TestMarkShortIgnoresOneCutShortNight(t *testing.T) {
 		}
 	}
 }
+
+func TestParseDefense(t *testing.T) {
+	d := parseDefense("minutes +3 vs his normal; defense vs centers: 3rd-most rebounds allowed (+9%, of 30 teams)", "OVER")
+	if d == nil || d.Rank != 3 || d.Kind != "most" || d.Pos != "centers" || d.Pct != 9 || d.Of != 30 || !d.Helps {
+		t.Fatalf("parsed %+v", d)
+	}
+	if d.Text != "Allows the 3rd-most rebounds to centers (+9%)" {
+		t.Errorf("text %q", d.Text)
+	}
+	u := parseDefense("defense vs guards: 2nd-fewest 3-pointers allowed (-7%, of 30 teams, early season)", "OVER")
+	if u == nil || u.Helps || !u.Early || u.Kind != "fewest" {
+		t.Fatalf("parsed %+v", u)
+	}
+	if parseDefense("out: A. Duren", "OVER") != nil {
+		t.Error("no defense note means nil")
+	}
+	p := Play{Side: "UNDER", Defense: parseDefense("defense vs guards: 2nd-fewest 3-pointers allowed (-7%, of 30 teams)", "UNDER")}
+	found := false
+	for _, b := range badgesFor(p) {
+		if b.Key == "tough-defense" && b.Tone == "good" {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("an under against a top defense should get a good tough-defense badge")
+	}
+}

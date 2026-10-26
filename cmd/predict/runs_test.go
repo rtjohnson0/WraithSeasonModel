@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"propsmodel/internal/data"
+	"propsmodel/internal/feat"
 	"propsmodel/internal/runlog"
 )
 
@@ -35,5 +36,19 @@ func TestExplainDrop(t *testing.T) {
 	capped := []scored{{PlayerID: 7, Stat: data.Points, Side: "OVER", Line: 22.5, Prob: 0.60, Edge: 0.05, ProjMean: 25, ProjMin: 32}}
 	if got := explainDrop(prior, capped, nil, nil, hi, minEdge); !strings.Contains(got, "lost its place") {
 		t.Errorf("capped: %q", got)
+	}
+}
+
+func TestDefenseNote(t *testing.T) {
+	got := defenseNote(feat.DefRank{Rank: 3, Of: 30, Pct: 0.093, Pos: 4}, data.Rebounds)
+	if got != "defense vs centers: 3rd-most rebounds allowed (+9%, of 30 teams)" {
+		t.Errorf("most: %q", got)
+	}
+	got = defenseNote(feat.DefRank{Rank: 29, Of: 30, Pct: -0.07, Pos: 0, Early: true}, data.Threes)
+	if got != "defense vs guards: 2nd-fewest 3-pointers allowed (-7%, of 30 teams, early season)" {
+		t.Errorf("fewest: %q", got)
+	}
+	if ordinal(11) != "11th" || ordinal(22) != "22nd" || ordinal(1) != "1st" {
+		t.Error("ordinals")
 	}
 }

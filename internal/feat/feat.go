@@ -1284,3 +1284,115 @@ func (r *Row) TypicalMinutes() float64 {
 	}
 	return r.AvgMin15
 }
+
+// DefRank says how a team's defense ranks against one position group in one stat.
+type DefRank struct {
+	Rank  int     // 1 = allows the most of that stat to the position, Of = allows the fewest
+	Of    int     // teams ranked
+	Pct   float64 // how far above (+) or below (-) the league average it allows, as a fraction
+	Games int     // games behind the opponent's number
+	Pos   int     // position group, see PosGroup
+	Early bool    // too early in the season: the ranking leans on last season's games too
+}
+
+// PosName is a plural, plain-language name for a position group.
+func PosName(pg int) string {
+	switch pg {
+	case 0:
+		return "guards"
+	case 1:
+		return "wings"
+	case 3:
+		return "big forwards"
+	case 4:
+		return "centers"
+	}
+	return "forwards"
+}
+
+// DefenseRank ranks every active team by what the players at one position produced against it,
+// in one stat, and returns where the player's opponent sits. It uses this season's games once every
+// team has played at least three; before that it falls back to each team's last 30 games, which
+// include last season, and marks the result Early. Each team's number is blended with the league
+// average (as if it had six extra average games) so a few games cannot put a team first or last.
+func (b *Builder) DefenseRank(playerID, opp int, stat data.Stat, date string) (DefRank, bool) {
+	day := data.DayNumber(date)
+	hist := b.history(playerID, day)
+	if len(hist) == 0 || opp == 0 {
+		return DefRank{}, false
+	}
+	k := data.StatIndex(stat)
+	if k < 0 {
+		return DefRank{}, false
+	}
+	pg := PosGroup(hist[len(hist)-1].Pos)
+	season := data.SeasonOf(date)
+	seasonStart := data.DayNumber(fmt.Sprintf("%d-08-01", season))
+	type tm struct {
+		id      int
+		cur, ln []*teamGame
+	}
+	var teams []tm
+	for id := range b.team {
+		list := onlyWithOpp(b.teamBefore(id, day))
+		if len(list) == 0 || day-list[len(list)-1].Day > 60 {
+			continue // not an active team
+		}
+		var cur []*teamGame
+		for _, g := range list {
+			if g.Day >= seasonStart {
+				cur = append(cur, g)
+			}
+		}
+		teams = append(teams, tm{id, cur, lastN(list, 30)})
+	}
+	if len(teams) < 2 {
+		return DefRank{}, false
+	}
+	early := false
+	for _, t := range teams {
+		if len(t.cur) < 3 {
+			early = true
+		}
+	}
+	// The baseline is the average team's own number, so the ranking does not depend on how many
+	// league games are on file. Each team is then blended toward it.
+	raw := map[int]float64{}
+	win := map[int][]*teamGame{}
+	var base float64
+	for _, t := range teams {
+		w := t.cur
+		if early {
+			w = t.ln
+		}
+		win[t.id] = w
+		var sum float64
+		for _, g := range w {
+			sum += g.PosAgainst[pg][k]
+		}
+		raw[t.id] = sum / float64(len(w))
+		base += raw[t.id] / float64(len(teams))
+	}
+	if base <= 0 {
+		return DefRank{}, false
+	}
+	allowed := map[int]float64{}
+	games := 0
+	for _, t := range teams {
+		allowed[t.id] = shrunkMean(win[t.id], base, func(g *teamGame) float64 { return g.PosAgainst[pg][k] })
+		if t.id == opp {
+			games = len(win[t.id])
+		}
+	}
+	mine, found := allowed[opp]
+	if !found {
+		return DefRank{}, false
+	}
+	rank := 1
+	for id, v := range allowed {
+		if id != opp && (v > mine || (v == mine && id < opp)) {
+			rank++
+		}
+	}
+	return DefRank{Rank: rank, Of: len(teams), Pct: mine/base - 1, Games: games, Pos: pg, Early: early}, true
+}

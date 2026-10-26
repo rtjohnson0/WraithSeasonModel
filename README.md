@@ -371,8 +371,14 @@ A night cut short by an injury exit or foul trouble no longer drags a player's m
 
 ## Site look
 
-The board is flat and quiet: one purple accent, a cropped banner, a one-line strip on each play (the line, his last five games as dots, the projection as a triangle), a bar for confidence, and filters that show one choice at a time. Games with a Max play come first.
+The board is flat and quiet: one purple accent, a cropped banner, a one-line strip on each play (the line, his last five games as dots, the projection as a triangle), a bar for confidence, and filters that show one choice at a time. Games are listed by tip-off time.
 
 ## Are the books high too? (linecheck)
 
 `go run ./cmd/linecheck` takes every saved prop line (the median across books) for games that have finished, and compares it with what the player did: average line, average actual, and the share that went over and under, by stat and by day. Nothing is selected, so it shows whether the market itself is running high early in the season. Read it next to `go run ./cmd/bias`, which measures the model against results.
+
+## Tip-off times and defense by position
+
+Each game on the board shows its tip-off time (Eastern), and games are listed in tip-off order. The time comes from the game snapshot (`datetime`, or `status` for games not yet played) and is saved with each logged pick; older picks are filled in from the day's snapshot when the site data is exported.
+
+The old "soft defense" / "tough defense" note is replaced by a ranking against the player's position group (guard, wing, forward, big forward, center) in the stat being picked, for example "Allows the 3rd-most rebounds to centers (+9%)". Teams are ranked on what players at that position produced against them, using this season's games once every team has played three, and last season's games too before that (the line then says "early"). Each team's number is blended with the league average as if it had six extra average games, so a few games cannot put a team first or last. Red or green shows whether the ranking helps or hurts the pick. The badge icon appears only for the top eight at either end.

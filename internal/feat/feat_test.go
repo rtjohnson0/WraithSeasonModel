@@ -479,3 +479,25 @@ func TestAdjustShortExits(t *testing.T) {
 		t.Errorf("a bench player's short night should stay, got %v", got4[4].Minutes)
 	}
 }
+
+func TestDefenseRank(t *testing.T) {
+	b := NewBuilder(miniLeague(), nil)
+	// Team 1's players outproduce team 2's, so team 2 allows more to forwards than team 1 does.
+	r, ok := b.DefenseRank(11, 2, data.Points, "2025-11-24")
+	if !ok {
+		t.Fatal("expected a ranking")
+	}
+	if r.Rank != 1 || r.Of != 2 || r.Pct <= 0 || r.Early {
+		t.Errorf("team 2 should allow the most: %+v", r)
+	}
+	r2, ok := b.DefenseRank(21, 1, data.Points, "2025-11-24")
+	if !ok || r2.Rank != 2 || r2.Pct >= 0 {
+		t.Errorf("team 1 should allow the fewest: %+v ok=%v", r2, ok)
+	}
+	if _, ok := b.DefenseRank(11, 0, data.Points, "2025-11-24"); ok {
+		t.Error("no opponent means no ranking")
+	}
+	if PosName(4) != "centers" || PosName(0) != "guards" || PosName(2) != "forwards" {
+		t.Error("position names")
+	}
+}

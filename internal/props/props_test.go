@@ -163,3 +163,15 @@ func TestLineMoves(t *testing.T) {
 		t.Errorf("one capture should give no moves, got %v", moves)
 	}
 }
+
+func TestStartTime(t *testing.T) {
+	if got := startTime("2026-10-26T23:30:00.000Z", "Final"); got != "2026-10-26T23:30:00Z" {
+		t.Errorf("datetime: %q", got)
+	}
+	if got := startTime("2026-10-26T00:00:00.000Z", "2026-10-27T00:30:00Z"); got != "2026-10-27T00:30:00Z" {
+		t.Errorf("status fallback: %q", got)
+	}
+	if got := startTime("2026-10-26", "Final"); got != "" {
+		t.Errorf("a bare date is not a tip-off: %q", got)
+	}
+}

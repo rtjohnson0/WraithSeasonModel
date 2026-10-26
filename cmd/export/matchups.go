@@ -30,6 +30,14 @@ func newMatchupResolver(dir string, abbr map[int]string) *matchupResolver {
 	return &matchupResolver{dir: dir, abbr: abbr, games: map[string]map[int]props.GameInfo{}}
 }
 
+// tip returns a game's scheduled tip-off (RFC3339 UTC) from the day's snapshot, or "".
+func (r *matchupResolver) tip(date string, gameID int) string {
+	if _, _, _, _ = r.lookup(date, gameID); r.games[date] == nil {
+		return ""
+	}
+	return r.games[date][gameID].Start
+}
+
 // lookup returns the matchup and each side's abbreviation, or ok=false if it cannot tell.
 func (r *matchupResolver) lookup(date string, gameID int) (matchup, home, visitor string, ok bool) {
 	gs, seen := r.games[date]
@@ -62,6 +70,9 @@ func (r *matchupResolver) fill(entries []picklog.Entry) int {
 	n := 0
 	for i := range entries {
 		e := &entries[i]
+		if e.Tip == "" {
+			e.Tip = r.tip(e.Date, e.GameID)
+		}
 		if !placeholder(e.Matchup) && !strings.HasPrefix(e.Team, "team ") && e.Team != "" {
 			continue
 		}

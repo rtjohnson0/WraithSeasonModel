@@ -3,6 +3,7 @@ package props
 import (
 	"encoding/json"
 	"strings"
+	"time"
 )
 
 // GameInfo says which teams play in a game and when.
@@ -13,6 +14,24 @@ type GameInfo struct {
 	Date    string
 	// Team abbreviations such as BOS, for display (empty if the snapshot lacks them).
 	HomeAbbr, VisitorAbbr string
+	// Start is the scheduled tip-off as an RFC3339 UTC time, or empty when the feed has no time.
+	Start string
+}
+
+// startTime picks the tip-off from the game's datetime or, for games not yet played, its status
+// (which holds the start time). A bare date with no clock time is not a tip-off.
+func startTime(datetime, status string) string {
+	for _, v := range []string{datetime, status} {
+		t, err := time.Parse(time.RFC3339, v)
+		if err != nil {
+			continue
+		}
+		if t.UTC().Hour() == 0 && t.UTC().Minute() == 0 && t.UTC().Second() == 0 {
+			continue // midnight UTC is a date placeholder, not a start time
+		}
+		return t.UTC().Format(time.RFC3339)
+	}
+	return ""
 }
 
 // LoadGames reads the games embedded in a data/snapshots/props_DATE.jsonl file (each row
@@ -23,9 +42,11 @@ func LoadGames(path string) (map[int]GameInfo, error) {
 		var row struct {
 			GameID int `json:"game_id"`
 			Game   struct {
-				ID   int    `json:"id"`
-				Date string `json:"date"`
-				Home struct {
+				ID       int    `json:"id"`
+				Date     string `json:"date"`
+				Datetime string `json:"datetime"`
+				Status   string `json:"status"`
+				Home     struct {
 					ID   int    `json:"id"`
 					Abbr string `json:"abbreviation"`
 				} `json:"home_team"`
@@ -41,7 +62,8 @@ func LoadGames(path string) (map[int]GameInfo, error) {
 			return
 		}
 		g := GameInfo{ID: row.GameID, Home: row.Game.Home.ID, Visitor: row.Game.Visitor.ID, Date: row.Game.Date,
-			HomeAbbr: row.Game.Home.Abbr, VisitorAbbr: row.Game.Visitor.Abbr}
+			HomeAbbr: row.Game.Home.Abbr, VisitorAbbr: row.Game.Visitor.Abbr,
+			Start: startTime(row.Game.Datetime, row.Game.Status)}
 		if g.Home == 0 {
 			g.Home = row.Game.HomeID
 		}

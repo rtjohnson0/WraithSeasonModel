@@ -122,6 +122,9 @@ nav { display: flex; gap: 2px;
   .name { font-weight: 600; font-size: 1.05rem; overflow-wrap: anywhere; }
   .team { margin-left: 8px; font-size: 0.74rem; font-weight: 500; color: var(--muted); border: 1px solid var(--edge); padding: 0 5px; }
   .pick { color: var(--silver); b { font-weight: 700; &.over { color: var(--win); } &.under { color: var(--amber); } } } }
+.defense { justify-self: start; font-size: 0.82rem; color: var(--muted);
+  &.helps { color: var(--win); } &.hurts { color: var(--loss); } }
+.game > header span .tip { color: var(--silver); font-weight: 600; margin-right: 12px; }
 .seen { justify-self: start; font-size: 0.78rem; color: var(--amber);
   &::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); margin-right: 6px; vertical-align: 1px; } }
 .strip-wrap { display: grid; gap: 1px; justify-items: start;

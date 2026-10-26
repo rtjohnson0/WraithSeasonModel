@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"math"
+	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 
 	"propsmodel/internal/bets"
@@ -37,6 +39,9 @@ type Play struct {
 	SeenIn []string `json:"seenIn,omitempty"`
 	Multi  bool     `json:"multi,omitempty"`
 
+	// Defense is where the opponent ranks against his position in this stat, read from the model's note.
+	Defense *DefenseInfo `json:"defense,omitempty"`
+
 	Label  string  `json:"label"`  // Max play, Great play, Risky play or Lean
 	Badges []Badge `json:"badges"` // quick-read signals: weak defense, hot streak, back-to-back and so on
 
@@ -47,6 +52,51 @@ type Play struct {
 	SeasonGP  int     `json:"seasonGames"`
 	MinAvg5   float64 `json:"minAvg5"`
 	MinTyp    float64 `json:"minTypical"` // median minutes of the last five, cut-short nights left out
+}
+
+// DefenseInfo is the opponent's defense against the player's position, for example "3rd-most
+// rebounds allowed to centers, +9%". Helps is true when that is good news for this pick.
+type DefenseInfo struct {
+	Text  string  `json:"text"`
+	Rank  int     `json:"rank"` // 1 = allows the most, counted from the nearer end
+	Of    int     `json:"of"`
+	Kind  string  `json:"kind"` // most or fewest
+	Pos   string  `json:"pos"`
+	Pct   float64 `json:"pct"`
+	Early bool    `json:"early,omitempty"`
+	Helps bool    `json:"helps"`
+}
+
+var defenseRe = regexp.MustCompile(`defense vs ([a-z ]+): (\d+)(?:st|nd|rd|th)-(most|fewest) ([a-z0-9-]+) allowed \(([+-]\d+)%, of (\d+) teams(, early season)?\)`)
+
+// parseDefense reads the defense note out of the model's reasoning, or returns nil.
+func parseDefense(why, side string) *DefenseInfo {
+	m := defenseRe.FindStringSubmatch(why)
+	if m == nil {
+		return nil
+	}
+	rank, _ := strconv.Atoi(m[2])
+	pct, _ := strconv.Atoi(m[5])
+	of, _ := strconv.Atoi(m[6])
+	d := &DefenseInfo{Rank: rank, Of: of, Kind: m[3], Pos: m[1], Pct: float64(pct), Early: m[7] != ""}
+	d.Helps = (side == "OVER") == (d.Kind == "most")
+	d.Text = fmt.Sprintf("Allows the %s %s to %s (%+d%%)", ordinalOf(rank, m[3]), m[4], m[1], pct)
+	return d
+}
+
+func ordinalOf(n int, kind string) string {
+	suffix := "th"
+	if n%100 < 11 || n%100 > 13 {
+		switch n % 10 {
+		case 1:
+			suffix = "st"
+		case 2:
+			suffix = "nd"
+		case 3:
+			suffix = "rd"
+		}
+	}
+	return fmt.Sprintf("%d%s-%s", n, suffix, kind)
 }
 
 // Badge is one quick-read signal about a play. Tone is from the point of view of the pick.
@@ -75,6 +125,7 @@ type Form func(playerID int, stat, before string) (games []Game5, seasonAvg floa
 type Game struct {
 	ID      int    `json:"id"`
 	Matchup string `json:"matchup"`
+	Tip     string `json:"tip,omitempty"` // scheduled tip-off, RFC3339 UTC
 	Plays   []Play `json:"plays"`
 }
 
@@ -261,10 +312,18 @@ func badgesFor(p Play) []Badge {
 	over := p.Side == "OVER"
 	why := strings.ToLower(p.Why)
 
-	if strings.Contains(why, "soft defense") {
+	if d := p.Defense; d != nil {
+		// Only the ends of the ranking get a badge; the text line shows the rest.
+		if d.Rank <= 8 {
+			if d.Kind == "most" {
+				add("weak-defense", d.Text, over)
+			} else {
+				add("tough-defense", d.Text, !over)
+			}
+		}
+	} else if strings.Contains(why, "soft defense") { // picks logged before defense ranks existed
 		add("weak-defense", "Weak defense against his position", over)
-	}
-	if strings.Contains(why, "tough defense") {
+	} else if strings.Contains(why, "tough defense") {
 		add("tough-defense", "Tough defense against his position", !over)
 	}
 	if len(p.Last5) >= 4 && p.SeasonGP >= 6 && p.SeasonAvg > 0 {
@@ -396,9 +455,12 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 		e := best[k]
 		g := byGame[e.GameID]
 		if g == nil {
-			g = &Game{ID: e.GameID, Matchup: matchupOf(e)}
+			g = &Game{ID: e.GameID, Matchup: matchupOf(e), Tip: e.Tip}
 			byGame[e.GameID] = g
 			ids = append(ids, e.GameID)
+		}
+		if g.Tip == "" {
+			g.Tip = e.Tip
 		}
 		t := normTier(e.Tier)
 		p := Play{
@@ -425,6 +487,7 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 		if n := count[k]; n > 0 {
 			p.Runs, p.SeenIn, p.Multi = n, seenIn[k], n >= 2
 		}
+		p.Defense = parseDefense(e.Why, e.Side)
 		p.Label = label(t, e.Prob)
 		p.Badges = badgesFor(p)
 		g.Plays = append(g.Plays, p)
@@ -454,6 +517,14 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 		b.RunsToday[i].New = len(added)
 	}
 	sort.Ints(ids)
+	// Earliest tip-off first; games without a time keep game-id order after the timed ones.
+	sort.SliceStable(ids, func(i, j int) bool {
+		a, c := byGame[ids[i]].Tip, byGame[ids[j]].Tip
+		if (a == "") != (c == "") {
+			return a != ""
+		}
+		return a < c
+	})
 	for _, id := range ids {
 		g := byGame[id]
 		sort.SliceStable(g.Plays, func(i, j int) bool {

@@ -60,6 +60,7 @@ type scored struct {
 	Tier     string  // "PICK" cleared the thresholds; "CHECK" cleared them but the minutes need a look; "LEAN" fills a game
 	Shift    float64 // projected minutes minus his recent (15-game) average
 	Far      bool    // the line sits far from the projection: often a bad or alternate line, not an edge
+	Tip      string  // the game's scheduled tip-off, RFC3339 UTC
 	Maybe    string  // his own injury status when it is uncertain (questionable, doubtful, day-to-day)
 }
 
@@ -324,8 +325,8 @@ func main() {
 			PlayerID: l.PlayerID, GameID: l.GameID, Player: name, Team: teamAbbr, Matchup: matchup, Stat: l.Stat, Side: side, Line: l.Line,
 			Prob: prob, ProbRaw: raw, Edge: bets.Edge(prob, odds), Units: bets.Units(prob, odds, *maxUnits),
 			Vendor: l.Vendor, Odds: odds, ProjMean: pred.Mean(l.Stat), ProjMin: pred.Minutes,
-			Why:   why(b, ix, row, l.Stat, pred, team, map[bool]int{true: g.Home, false: g.Visitor}[team == g.Visitor], out, *date),
-			Shift: pred.Minutes - row.TypicalMinutes(),
+			Why:   why(b, ix, row, l.PlayerID, l.Stat, pred, team, map[bool]int{true: g.Home, false: g.Visitor}[team == g.Visitor], out, *date),
+			Shift: pred.Minutes - row.TypicalMinutes(), Tip: g.Start,
 		}
 		if st, ok := statuses[l.PlayerID]; ok && props.IsUncertain(st) {
 			s.Maybe = st
@@ -491,7 +492,7 @@ func main() {
 			entries = append(entries, picklog.Entry{
 				Date: *date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 				Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-				ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why,
+				ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip,
 			})
 		}
 		n, err := picklog.Append(filepath.Join(*dir, "picklog.jsonl"), entries)
@@ -712,7 +713,7 @@ func sgoLines(dir, date string, b *feat.Builder, gameOf map[int]props.GameInfo) 
 }
 
 // why gives a short human reason for the projection.
-func why(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, stat data.Stat, pred predictor.Pred, team, oppTeam int, out map[int]string, date string) string {
+func why(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, pid int, stat data.Stat, pred predictor.Pred, team, oppTeam int, out map[int]string, date string) string {
 	var parts []string
 	var names []string
 	for _, pid := range b.RotationOf(team, row.G.Day) {
@@ -744,15 +745,8 @@ func why(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, stat 
 	if d := pred.Minutes - row.TypicalMinutes(); math.Abs(d) >= 3 {
 		parts = append(parts, fmt.Sprintf("minutes %+.0f vs his normal", d))
 	}
-	if _, pi := feat.FeatureIndex("opp_allow", stat); pi >= 0 {
-		if v := row.S[data.StatIndex(stat)][pi]; !math.IsNaN(v) {
-			switch {
-			case v > 0.04:
-				parts = append(parts, fmt.Sprintf("soft defense %+.0f%%", 100*math.Expm1(v)))
-			case v < -0.04:
-				parts = append(parts, fmt.Sprintf("tough defense %+.0f%%", 100*math.Expm1(v)))
-			}
-		}
+	if dr, ok := b.DefenseRank(pid, oppTeam, stat, date); ok {
+		parts = append(parts, defenseNote(dr, stat))
 	}
 	return strings.Join(parts, "; ")
 }
@@ -1077,4 +1071,36 @@ HOW TO READ THIS HONESTLY
 		fatal(err)
 	}
 	fmt.Printf("\nSaved %s.\n", path)
+}
+
+// ordinal writes 1st, 2nd, 3rd, 4th and so on.
+func ordinal(n int) string {
+	suffix := "th"
+	if n%100 < 11 || n%100 > 13 {
+		switch n % 10 {
+		case 1:
+			suffix = "st"
+		case 2:
+			suffix = "nd"
+		case 3:
+			suffix = "rd"
+		}
+	}
+	return fmt.Sprintf("%d%s", n, suffix)
+}
+
+var statNoun = map[data.Stat]string{data.Points: "points", data.Rebounds: "rebounds", data.Assists: "assists", data.Threes: "3-pointers"}
+
+// defenseNote says where the opponent's defense ranks against the player's position, for example
+// "defense vs centers: 3rd-most rebounds allowed (+9%, of 30 teams)". The site reads this exact shape.
+func defenseNote(dr feat.DefRank, stat data.Stat) string {
+	kind, n := "most", dr.Rank
+	if dr.Rank > dr.Of/2 {
+		kind, n = "fewest", dr.Of-dr.Rank+1
+	}
+	note := fmt.Sprintf("defense vs %s: %s-%s %s allowed (%+.0f%%, of %d teams", feat.PosName(dr.Pos), ordinal(n), kind, statNoun[stat], 100*dr.Pct, dr.Of)
+	if dr.Early {
+		note += ", early season"
+	}
+	return note + ")"
 }

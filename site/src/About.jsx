@@ -45,10 +45,6 @@ export default function About() {
         the same information, and the model's lean is often small.
       </p>
 
-      <p className="small">
-        For information and entertainment. 21+ only. Bet only what you can afford to lose. If gambling is a problem, call
-        1-800-GAMBLER.
-      </p>
     </article>
   )
 }

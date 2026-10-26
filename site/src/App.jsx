@@ -69,10 +69,6 @@ export default function App() {
       </main>
 
       <footer className="foot">
-        <p>
-          Picks are model output, not advice, and nothing here is guaranteed to win. 21+ only. If gambling is a
-          problem for you or someone you know, call 1-800-GAMBLER.
-        </p>
         <p>@wraithpicksszn on Instagram, X and Discord.</p>
       </footer>
     </>
