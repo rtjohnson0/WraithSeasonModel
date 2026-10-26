@@ -18,6 +18,7 @@ import (
 	"propsmodel/internal/data"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/pipeline"
+	"propsmodel/internal/runlog"
 )
 
 func main() {
@@ -32,6 +33,10 @@ func main() {
 		fatal(err)
 	}
 	settled, err := picklog.LoadSettled(filepath.Join(*dir, "settled.jsonl"))
+	if err != nil {
+		fatal(err)
+	}
+	runs, err := runlog.Load(filepath.Join(*dir, "runs.jsonl"))
 	if err != nil {
 		fatal(err)
 	}
@@ -51,7 +56,7 @@ func main() {
 	}
 	site := Site{
 		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
-		Board:       buildBoard(entries, *date, form),
+		Board:       buildBoard(entries, *date, form, runlog.ForDate(runs, *date)),
 		Record:      buildRecord(settled, *recent),
 	}
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {

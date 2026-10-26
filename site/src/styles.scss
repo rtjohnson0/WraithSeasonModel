@@ -111,6 +111,14 @@ nav { display: flex; gap: 4px;
 
 .play { border-top: 1px solid var(--edge); position: relative;
   &:has(.playbtn:hover)::before, &:has(.playbtn[aria-expanded='true'])::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--purple-hi); box-shadow: 0 0 12px var(--purple-hi); } }
+.play.multi::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--amber); }
+.seen { justify-self: start; font-size: 0.78rem; color: var(--amber); border: 1px solid var(--amber); padding: 0 8px; margin-top: 2px; }
+.changes { margin: 0 0 1.2rem; border: 1px solid var(--edge); background: var(--panel); padding: 0 16px;
+  summary { cursor: pointer; padding: 12px 0; font-weight: 600; }
+  .runchange { padding: 4px 0 14px; border-top: 1px solid var(--edge);
+    h3 { font-size: 1.05rem; margin: 10px 0 2px; }
+    ul { margin: 6px 0 0; padding-left: 1.1rem; } li { margin: 4px 0; max-width: 80ch; }
+    .reason { color: var(--muted); } } }
 .playbtn { width: 100%; display: grid; grid-template-columns: 56px 1fr 112px auto; gap: 16px; align-items: center; text-align: left;
   background: transparent; border: 0; padding: 14px 18px; cursor: pointer;
   &:hover { background: rgba(124, 58, 237, 0.07); } }

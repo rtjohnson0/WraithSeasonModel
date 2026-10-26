@@ -37,7 +37,7 @@ function PlayRow({ p }) {
   const [open, setOpen] = useState(false)
   const info = labelInfo[p.label] || labelInfo.Lean
   return (
-    <li className="play">
+    <li className={`play${p.multi ? ' multi' : ''}`}>
       <button type="button" className="playbtn" aria-expanded={open} onClick={() => setOpen(!open)}>
         <span className={`grade ${gradeTone(p.grade)}`} aria-label={`Grade ${p.grade}`}>
           {p.grade}
@@ -50,6 +50,11 @@ function PlayRow({ p }) {
           <span className="pick">
             <b className={p.side === 'OVER' ? 'over' : 'under'}>{p.side}</b> {p.line} {statLabel[p.stat] || p.stat}
           </span>
+          {p.multi && (
+            <span className="seen" title={`On the board in: ${p.seenIn.join(', ')}`}>
+              Back again: in {p.runs} runs ({p.seenIn.join(', ')})
+            </span>
+          )}
           {p.badges?.length > 0 && (
             <span className="badges">
               {p.badges.slice(0, 5).map((b) => (
@@ -126,6 +131,13 @@ function PlayRow({ p }) {
             </ul>
           )}
 
+          {p.runs > 0 && (
+            <p className="tiernote">
+              On today's board in {p.runs} {p.runs === 1 ? 'run' : 'runs'}: {p.seenIn.join(', ')}.
+              {p.multi && ' The model kept choosing it as lines and lineups changed.'}
+            </p>
+          )}
+
           <h4>Why the model likes it</h4>
           <ul className="reasons">
             {reasons(p).map((r) => (
@@ -139,12 +151,60 @@ function PlayRow({ p }) {
   )
 }
 
+const tierName = { PICK: 'Max play', CHECK: 'Risky play', PAPER: 'Great play', LEAN: 'Lean' }
+
+// What each later run dropped from the run before it, and why.
+function RunChanges({ runs }) {
+  const later = (runs || []).filter((r) => r.prev)
+  if (later.length === 0) return null
+  const dropped = later.reduce((n, r) => n + (r.dropped?.length || 0), 0)
+  return (
+    <details className="changes">
+      <summary>
+        What changed between runs today: {dropped} {dropped === 1 ? 'play' : 'plays'} dropped
+      </summary>
+      {later.map((r) => (
+        <section key={`${r.label}-${r.clock}`} className="runchange">
+          <h3>
+            {r.label} run ({r.clock}) compared with the {r.prev} run
+          </h3>
+          <p className="small">
+            {r.plays} plays now, {r.new} new, {r.dropped?.length || 0} dropped
+            {r.changed?.length ? `, ${r.changed.length} moved tier` : ''}.
+          </p>
+          {r.dropped?.length > 0 && (
+            <ul>
+              {r.dropped.map((d) => (
+                <li key={`${d.player}-${d.stat}-${d.side}`}>
+                  <b>{d.player}</b> {d.side.toLowerCase()} {d.line} {statLabel[d.stat] || d.stat}
+                  {d.matchup ? ` (${d.matchup})` : ''}: <span className="reason">{d.reason}.</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {r.changed?.length > 0 && (
+            <ul>
+              {r.changed.map((c) => (
+                <li key={`${c.player}-${c.stat}-${c.side}-t`}>
+                  <b>{c.player}</b> {c.side.toLowerCase()} {statLabel[c.stat] || c.stat}: {tierName[c.from] || c.from} became{' '}
+                  {tierName[c.to] || c.to}.
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
+    </details>
+  )
+}
+
 export default function Board({ site }) {
   const { board } = site
   const [stats, setStats] = useState(new Set(STATS))
   const [labels, setLabels] = useState(new Set(LABELS))
   const [side, setSide] = useState('ALL')
   const [q, setQ] = useState('')
+  const [repeatsOnly, setRepeatsOnly] = useState(false)
 
   const toggle = (set, setter, v) => {
     const n = new Set(set)
@@ -162,11 +222,12 @@ export default function Board({ site }) {
               stats.has(p.stat) &&
               labels.has(p.label) &&
               (side === 'ALL' || p.side === side) &&
+              (!repeatsOnly || p.multi) &&
               (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
           ),
         }))
         .filter((g) => g.plays.length),
-    [board, stats, labels, side, q],
+    [board, stats, labels, side, q, repeatsOnly],
   )
 
   return (
@@ -185,6 +246,8 @@ export default function Board({ site }) {
           whether they work, but they are not recommendations.
         </p>
       </section>
+
+      <RunChanges runs={board.runsToday} />
 
       <section className="filters" aria-label="Filters">
         <div className="group" role="group" aria-label="Stat">
@@ -208,6 +271,13 @@ export default function Board({ site }) {
             </Chip>
           ))}
         </div>
+        {board.runsToday?.length > 1 && (
+          <div className="group" role="group" aria-label="Runs">
+            <Chip on={repeatsOnly} onClick={() => setRepeatsOnly(!repeatsOnly)}>
+              Back again in several runs
+            </Chip>
+          </div>
+        )}
         <label className="search">
           <span className="sr">Search player or team</span>
           <input type="search" placeholder="Player or team" value={q} onChange={(e) => setQ(e.target.value)} />

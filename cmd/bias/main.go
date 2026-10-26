@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"path/filepath"
 	"text/tabwriter"
 	"time"
 
@@ -27,6 +28,8 @@ func main() {
 	dir := flag.String("data", "data", "data directory")
 	season := flag.Int("season", 0, "season start year (default: the current season)")
 	noBlowout := flag.Bool("noblowout", false, "leave out the blowout correction to the minutes averages (to see whether it is what moves the bias)")
+	lineup := flag.Bool("lineup", false, "check the model with the teammates-out and opponent-out features (use the same setting you trained with)")
+	write := flag.Bool("write", false, "save a conservative per-stat correction to data/biasfix.json, which predict applies (only a large, statistically clear bias is used)")
 	flag.Parse()
 	feat.BlowoutAdjust = !*noBlowout
 	if *season == 0 {
@@ -42,7 +45,7 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Printf("Projecting every eligible player-game of the %d season with a model trained on earlier months only...\n\n", *season)
-	samples, err := eval.BiasCheck(d.Rows, *season, pipeline.DisabledFor(false))
+	samples, err := eval.BiasCheck(d.Rows, *season, pipeline.DisabledFor(*lineup))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
 		os.Exit(1)
@@ -54,6 +57,23 @@ func main() {
 	table("ALL GAMES", samples, func(eval.BiasSample) bool { return true })
 	table("FIRST THREE WEEKS OF THE SEASON", samples, func(s eval.BiasSample) bool { return s.EarlySeason })
 	table("AFTER THE FIRST THREE WEEKS", samples, func(s eval.BiasSample) bool { return !s.EarlySeason })
+	if *write {
+		bf := eval.FitBiasFix(samples)
+		bf.Season, bf.Updated = *season, time.Now().Format("2006-01-02")
+		path := filepath.Join(*dir, "biasfix.json")
+		if err := bf.Save(path); err != nil {
+			fmt.Fprintln(os.Stderr, "error:", err)
+			os.Exit(1)
+		}
+		fmt.Printf("Saved %s from %d player-games.\n", path, bf.Samples)
+		for _, st := range data.Stats {
+			fmt.Printf("  %-9s raw x%.3f (z %+.1f) -> applied x%.3f\n", st, bf.Raw[string(st)], bf.Z[string(st)], bf.For(st))
+		}
+		if !bf.Active() {
+			fmt.Println("  Nothing is large and clear enough yet, so predict will not change anything.")
+		}
+		fmt.Println()
+	}
 	fmt.Println("How to read this: bias is actual minus projected, so a positive number means the model projected too low.")
 	fmt.Println("'above projection' is the share of games where the player beat the projection; about 45 to 50% is normal")
 	fmt.Println("for low counts, and 60% or more means the projections are systematically low (and the unders it posts too many).")

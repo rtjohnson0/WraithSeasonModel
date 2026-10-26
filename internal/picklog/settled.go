@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -220,4 +221,36 @@ func DedupeSettled(in []Settled) ([]Settled, int) {
 		}
 	}
 	return out, len(in) - len(out)
+}
+
+// Flags reads the model's reasoning note and returns which situations a play was in, so results
+// can be compared with and without them: "teammates-out", "opponent-out", "opponent-starter-out",
+// "back-to-back". Works on every entry already logged, since the note was always kept.
+func Flags(why string) []string {
+	var out []string
+	for _, part := range strings.Split(why, "; ") {
+		part = strings.TrimSpace(part)
+		switch {
+		case strings.HasPrefix(part, "opponent out:"):
+			out = append(out, "opponent-out")
+			if strings.Contains(part, "(starter)") {
+				out = append(out, "opponent-starter-out")
+			}
+		case strings.HasPrefix(part, "out:"):
+			out = append(out, "teammates-out")
+		case part == "back-to-back":
+			out = append(out, "back-to-back")
+		}
+	}
+	return out
+}
+
+// HasFlag reports whether the note carries the flag.
+func HasFlag(why, flag string) bool {
+	for _, f := range Flags(why) {
+		if f == flag {
+			return true
+		}
+	}
+	return false
 }

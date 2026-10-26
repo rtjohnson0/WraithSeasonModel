@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"propsmodel/internal/picklog"
+	"propsmodel/internal/runlog"
 )
 
 func e(player string, id int, stat, side, tier string, prob float64, odds int) picklog.Entry {
@@ -38,7 +39,7 @@ func TestBoardDedupesAndGroups(t *testing.T) {
 	b.Units = 0.5
 	old := e("Gamma", 1, "points", "OVER", "PAPER", 0.54, -110)
 	old.Date = "2026-10-23"
-	board := buildBoard([]picklog.Entry{a, a2, b, old}, "2026-10-24", nil)
+	board := buildBoard([]picklog.Entry{a, a2, b, old}, "2026-10-24", nil, nil)
 	if board.Plays != 2 {
 		t.Fatalf("expected 2 plays after collapsing the repeat and ignoring other days, got %d", board.Plays)
 	}
@@ -98,7 +99,7 @@ func TestBoardFormAndHits(t *testing.T) {
 		}
 		return out, 6.2, 12
 	}
-	board := buildBoard([]picklog.Entry{a}, "2026-10-24", form)
+	board := buildBoard([]picklog.Entry{a}, "2026-10-24", form, nil)
 	p := board.Games[0].Plays[0]
 	if p.L5Hits != 3 { // 4, 5 and 6 are under 6.5
 		t.Fatalf("an under on 6.5 should have hit 3 of the last 5, got %d", p.L5Hits)
@@ -191,5 +192,39 @@ func TestOffMarketLineBadge(t *testing.T) {
 	}
 	if n != 1 {
 		t.Errorf("want exactly one odd-line badge, got %d", n)
+	}
+}
+
+func TestBoardUsesLatestRunAndMarksRepeats(t *testing.T) {
+	mk := func(id int, player string) picklog.Entry {
+		return picklog.Entry{Date: "2026-10-26", GameID: 1, PlayerID: id, Player: player, Stat: "points", Side: "OVER",
+			Line: 20.5, Prob: 0.58, Odds: -110, Tier: "PAPER", Matchup: "AAA @ BBB"}
+	}
+	rp := func(id int, player string) runlog.Play {
+		return runlog.Play{PlayerID: id, Player: player, Stat: "points", Side: "OVER", Tier: "PAPER", Prob: 0.58}
+	}
+	day := []runlog.Run{
+		{Date: "2026-10-26", Label: "9 AM", Plays: []runlog.Play{rp(1, "Stays"), rp(2, "Leaves")}},
+		{Date: "2026-10-26", Label: "3 PM", Prev: "9 AM", Plays: []runlog.Play{rp(1, "Stays"), rp(3, "Arrives")},
+			Dropped: []runlog.Dropped{{Play: rp(2, "Leaves"), Reason: "line moved 20.5 to 22.5"}}},
+	}
+	board := buildBoard([]picklog.Entry{mk(1, "Stays"), mk(2, "Leaves"), mk(3, "Arrives")}, "2026-10-26", nil, day)
+	names := map[string]Play{}
+	for _, g := range board.Games {
+		for _, p := range g.Plays {
+			names[p.Player] = p
+		}
+	}
+	if _, ok := names["Leaves"]; ok {
+		t.Error("a play the latest run dropped must not be on the live board")
+	}
+	if p := names["Stays"]; !p.Multi || p.Runs != 2 || len(p.SeenIn) != 2 {
+		t.Errorf("repeat play = %+v", p)
+	}
+	if p := names["Arrives"]; p.Multi || p.Runs != 1 {
+		t.Errorf("new play = %+v", p)
+	}
+	if len(board.RunsToday) != 2 || len(board.RunsToday[1].Dropped) != 1 || board.RunsToday[1].New != 1 {
+		t.Errorf("runs = %+v", board.RunsToday)
 	}
 }

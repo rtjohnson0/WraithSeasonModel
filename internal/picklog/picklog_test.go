@@ -56,3 +56,22 @@ func TestGradeAndSummarize(t *testing.T) {
 		t.Errorf("CLV summary: %+v", s)
 	}
 }
+
+func TestFlags(t *testing.T) {
+	got := Flags("out: A. Duren; opponent out: R. Gobert (starter), N. Reid; back-to-back")
+	want := []string{"teammates-out", "opponent-out", "opponent-starter-out", "back-to-back"}
+	if len(got) != len(want) {
+		t.Fatalf("flags = %v, want %v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("flags = %v, want %v", got, want)
+		}
+	}
+	if HasFlag("opponent out: N. Reid", "teammates-out") {
+		t.Error("an opponent absence must not count as a teammate absence")
+	}
+	if len(Flags("")) != 0 {
+		t.Error("an empty note has no flags")
+	}
+}

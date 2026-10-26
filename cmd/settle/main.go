@@ -140,6 +140,51 @@ func main() {
 	}
 	tw.Flush()
 
+	// Situations, across every tier (most plays are PAPER right now, so this is where the sample is).
+	// CLV as a share of the line is comparable across stats; stat points are not.
+	fmt.Println("\nSITUATIONS (every tier, one row per player/stat/side/day)")
+	fmt.Fprintln(tw, "situation\tplays\tW-L\thit rate\tpredicted\tavg CLV\tCLV % of line\tCLV>0")
+	sit := func(name string, keep func(picklog.Settled) bool) {
+		var sub []picklog.Settled
+		var pct float64
+		var pn int
+		for _, r := range every {
+			if !keep(r) {
+				continue
+			}
+			sub = append(sub, r)
+			if r.CloseLine > 0 && r.Line > 0 {
+				pct += r.CLV / r.Line
+				pn++
+			}
+		}
+		s := picklog.Summarize(sub)
+		if s.Picks-s.Voids == 0 {
+			return
+		}
+		clv, share, pos := "n/a", "n/a", "n/a"
+		if s.CLVN > 0 {
+			clv, pos = fmt.Sprintf("%+.2f", s.AvgCLV), fmt.Sprintf("%.0f%%", 100*s.CLVPositive)
+		}
+		if pn > 0 {
+			share = fmt.Sprintf("%+.1f%%", 100*pct/float64(pn))
+		}
+		fmt.Fprintf(tw, "%s\t%d\t%d-%d\t%.1f%%\t%.1f%%\t%s\t%s\t%s\n",
+			name, s.Picks-s.Voids, s.Wins, s.Losses, 100*s.HitRate(), 100*s.AvgProb, clv, share, pos)
+	}
+	sit("every play", func(picklog.Settled) bool { return true })
+	for _, f := range []string{"teammates-out", "opponent-out", "opponent-starter-out", "back-to-back"} {
+		f := f
+		sit(f, func(r picklog.Settled) bool { return picklog.HasFlag(r.Why, f) })
+		sit("no "+f, func(r picklog.Settled) bool { return !picklog.HasFlag(r.Why, f) })
+	}
+	for _, side := range []string{"OVER", "UNDER"} {
+		side := side
+		sit(side, func(r picklog.Settled) bool { return r.Side == side })
+	}
+	tw.Flush()
+	fmt.Println("A situation helps only if its plays beat the 'no ...' row on CLV and hit rate across a few hundred plays.")
+
 	// Calibration of live picks: does a 60% pick win 60% of the time?
 	fmt.Println("\nDO THE PROBABILITIES HOLD UP? (graded picks)")
 	fmt.Fprintln(tw, "predicted\tpicks\tactual hit rate")

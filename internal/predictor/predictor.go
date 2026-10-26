@@ -227,6 +227,12 @@ func (m *Model) Predict(r *feat.Row) Pred {
 }
 
 // Mean is the expected value of a stat.
+// Scaled returns a copy whose mean for stat s is multiplied by f (the bias correction).
+func (p Pred) Scaled(s data.Stat, f float64) Pred {
+	p.Rate[data.StatIndex(s)] *= f
+	return p
+}
+
 func (p Pred) Mean(s data.Stat) float64 { return p.Minutes * p.Rate[data.StatIndex(s)] }
 
 // ProbOver is P(stat > line) with pushes removed, mixing over the minutes distribution.

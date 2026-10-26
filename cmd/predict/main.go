@@ -123,6 +123,18 @@ func main() {
 			"(usually overconfident). Run: go run ./cmd/backtest -season 2025   then   go run ./cmd/train   (same -lineup setting for both)", cal.Config, config))
 	}
 
+	biasFix, _ := eval.LoadBiasFix(filepath.Join(*dir, "biasfix.json"))
+	if biasFix.Active() {
+		fmt.Printf("Bias correction on (fitted %s from %d player-games):", biasFix.Updated, biasFix.Samples)
+		for _, st := range data.Stats {
+			if f := biasFix.For(st); f != 1 {
+				fmt.Printf(" %s x%.3f", st, f)
+			}
+		}
+		fmt.Println()
+		fmt.Println()
+	}
+
 	snapDir := filepath.Join(*dir, "snapshots")
 	propsPath := filepath.Join(snapDir, fmt.Sprintf("props_%s.jsonl", *date))
 	lines, err := props.LoadSnapshot(propsPath)
@@ -291,6 +303,7 @@ func main() {
 			skip.minutes++
 			continue
 		}
+		pred = pred.Scaled(l.Stat, biasFix.For(l.Stat))
 		pr, err := pred.ProbOver(l.Stat, l.Line)
 		if err != nil {
 			continue
@@ -472,6 +485,7 @@ func main() {
 	fmt.Printf("\nSaved %d picks to %s.\n", len(picks), csvPath)
 
 	if !*noLog && len(picks) > 0 {
+		recordRun(*dir, *date, picks, all, out, *hi, *minEdge)
 		var entries []picklog.Entry
 		for _, s := range picks {
 			entries = append(entries, picklog.Entry{

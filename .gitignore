@@ -7,6 +7,8 @@ data/*
 !data/calibration.json
 !data/model.json
 !data/gamecal.json
+!data/biasfix.json
+!data/runs.jsonl
 demo_data/
 bin/
 *.exe

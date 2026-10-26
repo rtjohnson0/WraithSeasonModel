@@ -8,6 +8,7 @@ import (
 
 	"propsmodel/internal/bets"
 	"propsmodel/internal/picklog"
+	"propsmodel/internal/runlog"
 )
 
 // Play is one pick on the board.
@@ -30,6 +31,12 @@ type Play struct {
 
 	// Form is how he has done against this line recently: the last five games, his average and how
 	// often this side would have hit. Empty when the stats are not available to the export.
+	// Runs is how many of today's runs (9 AM, 3 PM, 6 PM, 8 PM) had this play on the board, and
+	// SeenIn names them. Multi is true when it showed up in more than one: the model kept choosing it.
+	Runs   int      `json:"runs,omitempty"`
+	SeenIn []string `json:"seenIn,omitempty"`
+	Multi  bool     `json:"multi,omitempty"`
+
 	Label  string  `json:"label"`  // Max play, Great play, Risky play or Lean
 	Badges []Badge `json:"badges"` // quick-read signals: weak defense, hot streak, back-to-back and so on
 
@@ -73,6 +80,42 @@ type Board struct {
 	Staked int    `json:"staked"`
 	Plays  int    `json:"plays"`
 	Games  []Game `json:"games"`
+
+	// RunsToday lists the day's runs in order, each with what it dropped from the run before it.
+	RunsToday []RunSummary `json:"runsToday,omitempty"`
+}
+
+// RunSummary is one run of the day and how its board differed from the previous run's.
+type RunSummary struct {
+	Label   string        `json:"label"`
+	Clock   string        `json:"clock"`
+	Prev    string        `json:"prev,omitempty"`
+	Plays   int           `json:"plays"`
+	New     int           `json:"new"`
+	Dropped []DroppedPlay `json:"dropped,omitempty"`
+	Changed []TierMove    `json:"changed,omitempty"`
+}
+
+// DroppedPlay is a play that left the board between runs, with the reason.
+type DroppedPlay struct {
+	Player  string  `json:"player"`
+	Team    string  `json:"team,omitempty"`
+	Matchup string  `json:"matchup,omitempty"`
+	Stat    string  `json:"stat"`
+	Side    string  `json:"side"`
+	Line    float64 `json:"line"`
+	Tier    string  `json:"tier"`
+	Prob    float64 `json:"prob"`
+	Reason  string  `json:"reason"`
+}
+
+// TierMove is a play that stayed on the board but changed tier between runs.
+type TierMove struct {
+	Player string `json:"player"`
+	Stat   string `json:"stat"`
+	Side   string `json:"side"`
+	From   string `json:"from"`
+	To     string `json:"to"`
 }
 
 // Row is one line of a record table.
@@ -307,14 +350,29 @@ func matchupOf(e picklog.Entry) string {
 
 // buildBoard collapses repeats of the same player, stat and side (keeping the most trusted tier,
 // then the best edge) and groups the plays by game.
-func buildBoard(entries []picklog.Entry, date string, form Form) Board {
+func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Run) Board {
 	best := map[string]picklog.Entry{}
 	var order []string
+	// With run history, the board is the latest run's plays. A play from an earlier run that the
+	// latest run dropped is listed under that run's changes, with the reason, not shown as live.
+	var live map[string]bool
+	var count map[string]int
+	var seenIn map[string][]string
+	if len(day) > 0 {
+		live = map[string]bool{}
+		for _, p := range day[len(day)-1].Plays {
+			live[p.Key()] = true
+		}
+		count, seenIn = runlog.Appearances(day)
+	}
 	for _, e := range entries {
 		if e.Date != date {
 			continue
 		}
 		k := fmt.Sprintf("%d|%s|%s", e.PlayerID, e.Stat, e.Side)
+		if live != nil && !live[k] {
+			continue
+		}
 		cur, ok := best[k]
 		if !ok {
 			order = append(order, k)
@@ -358,6 +416,9 @@ func buildBoard(entries []picklog.Entry, date string, form Form) Board {
 				p.L5Avg, p.MinAvg5 = sum/n, mins/n
 			}
 		}
+		if n := count[k]; n > 0 {
+			p.Runs, p.SeenIn, p.Multi = n, seenIn[k], n >= 2
+		}
 		p.Label = label(t, e.Prob)
 		p.Badges = badgesFor(p)
 		g.Plays = append(g.Plays, p)
@@ -365,6 +426,26 @@ func buildBoard(entries []picklog.Entry, date string, form Form) Board {
 		if t == "PICK" && e.Units > 0 {
 			b.Staked++
 		}
+	}
+	for _, r := range day {
+		rs := RunSummary{Label: r.Label, Clock: r.Clock, Prev: r.Prev, Plays: len(r.Plays)}
+		for _, d := range r.Dropped {
+			rs.Dropped = append(rs.Dropped, DroppedPlay{Player: d.Player, Team: d.Team, Matchup: d.Matchup, Stat: d.Stat,
+				Side: d.Side, Line: d.Line, Tier: normTier(d.Tier), Prob: d.Prob, Reason: d.Reason})
+		}
+		for _, c := range r.Changed {
+			rs.Changed = append(rs.Changed, TierMove{Player: c.Player, Stat: c.Stat, Side: c.Side, From: normTier(c.From), To: normTier(c.Tier)})
+		}
+		b.RunsToday = append(b.RunsToday, rs)
+	}
+	for i := range b.RunsToday {
+		// New plays: on this run's board but not the previous run's.
+		if i == 0 {
+			b.RunsToday[i].New = b.RunsToday[i].Plays
+			continue
+		}
+		_, added, _ := runlog.Diff(day[i-1].Plays, day[i].Plays)
+		b.RunsToday[i].New = len(added)
 	}
 	sort.Ints(ids)
 	for _, id := range ids {
