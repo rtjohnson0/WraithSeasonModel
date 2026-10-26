@@ -27,7 +27,7 @@ export function FormBars({ games, line, lineLabel, side, tone = 'stat', height =
       {games.map((g, i) => {
         const x = i * slot + (slot - bw) / 2
         const hit = tone === 'stat' ? (side === 'OVER' ? g.value > line : g.value < line) : null
-        const cls = `${hit === null ? 'neutral' : hit ? 'hit' : 'miss'}${g.short ? ' short' : ''}`
+        const cls = `${hit === null ? 'neutral' : hit ? 'hit' : 'miss'}${g.short || g.prior ? ' short' : ''}`
         return (
           <g key={`${g.date}-${i}`}>
             <rect className={`bar ${cls}`} x={x} y={y(g.value)} width={bw} height={Math.max(1, h - padB - y(g.value))} />

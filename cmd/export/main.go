@@ -125,7 +125,7 @@ func loadForm(dir string) (Form, map[int]string) {
 			if !home {
 				opp = g.HomeTeamID
 			}
-			out = append(out, Game5{Date: g.Date, Opp: abbr[opp], Home: home, Value: g.Value(data.Stat(stat)), Minutes: g.Minutes})
+			out = append(out, Game5{Date: g.Date, Opp: abbr[opp], Home: home, Value: g.Value(data.Stat(stat)), Minutes: g.Minutes, Prior: g.Season != season})
 		}
 		avg := 0.0
 		if n > 0 {

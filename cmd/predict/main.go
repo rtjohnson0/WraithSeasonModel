@@ -86,6 +86,8 @@ func main() {
 	allowStale := flag.Bool("allowstale", false, "run even if calibration.json does not match the model's feature set (probabilities will be unreliable)")
 	gameQ := flag.String("game", "", "look at one game only: team abbreviations such as \"ORL CHA\" or \"ORL@CHA\", or a game id. Prints that game's best lines (any tier), writes data/game_<teams>_<date>.csv, and logs nothing")
 	topN := flag.Int("top", 20, "with -game: how many lines to show")
+	anchor := flag.Bool("anchor", false, "rescale each stat's projections so the slate's average projection equals its average line (the books are unbiased on average); replaces the bias file")
+	noBias := flag.Bool("nobias", false, "ignore data/biasfix.json (diagnosis: shows whether the bias correction is what pushes every line under)")
 	noLog := flag.Bool("nolog", false, "do not append picks to data/picklog.jsonl")
 	flag.Parse()
 
@@ -125,6 +127,10 @@ func main() {
 	}
 
 	biasFix, _ := eval.LoadBiasFix(filepath.Join(*dir, "biasfix.json"))
+	if *noBias {
+		biasFix = eval.BiasFix{}
+		fmt.Println("Bias correction OFF (-nobias): projections are the raw model's.")
+	}
 	if biasFix.Active() {
 		fmt.Printf("Bias correction on (fitted %s from %d player-games):", biasFix.Updated, biasFix.Samples)
 		for _, st := range data.Stats {
@@ -245,6 +251,71 @@ func main() {
 		boardSet[data.Stat(strings.TrimSpace(st))] = true
 	}
 	rowCache := map[int]*feat.Row{}
+	rowFor := func(pid int, g props.GameInfo, team int) *feat.Row {
+		if row, cached := rowCache[pid]; cached {
+			return row
+		}
+		opp := g.Visitor
+		if team == g.Visitor {
+			opp = g.Home
+		}
+		outSet := map[int]bool{}
+		for p := range out {
+			outSet[p] = true
+		}
+		row := b.Live(pid, team, opp, team == g.Home, *date, outSet)
+		rowCache[pid] = row
+		return row
+	}
+
+	// -anchor: the books' lines are unbiased on average (see cmd/linecheck: the actual numbers sit
+	// within a few hundredths of the line), so if the model's projections sit far below the lines
+	// across the whole slate, the level is off, not the games. Rescale each stat so the slate's
+	// average projection matches its average line. Only the model's level moves: which players it
+	// likes more or less than the book still decides the picks. This replaces the bias file.
+	anchorScale := map[data.Stat]float64{}
+	if *anchor && gid == 0 {
+		biasFix = eval.BiasFix{}
+		sumP, sumL := map[data.Stat]float64{}, map[data.Stat]float64{}
+		seenM := map[marketKey]bool{}
+		for _, l := range lines {
+			mk := marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}
+			if seenM[mk] || !boardSet[l.Stat] || l.OverOdds == 0 || l.UnderOdds == 0 {
+				continue
+			}
+			g, ok := games[l.GameID]
+			if _, isOut := out[l.PlayerID]; !ok || isOut {
+				continue
+			}
+			team, ok := teamOf(l.PlayerID)
+			if !ok || (team != g.Home && team != g.Visitor) {
+				continue
+			}
+			row := rowFor(l.PlayerID, g, team)
+			if row == nil {
+				continue
+			}
+			pred := m.Predict(row)
+			if !model.Eligible(row.AvgMin15, pred.Minutes) {
+				continue
+			}
+			seenM[mk] = true
+			ls := append([]float64(nil), byMarket[mk]...)
+			sort.Float64s(ls)
+			sumP[l.Stat] += pred.Mean(l.Stat)
+			sumL[l.Stat] += ls[len(ls)/2]
+		}
+		fmt.Print("Anchor to the market (-anchor):")
+		for _, st := range data.Stats {
+			f := 1.0
+			if sumP[st] > 0 {
+				f = math.Min(math.Max(sumL[st]/sumP[st], 0.8), 1.25)
+			}
+			anchorScale[st] = f
+			fmt.Printf(" %s x%.3f", st, f)
+		}
+		fmt.Println("  (model average projection x this = average line)")
+	}
 	var all, picks []scored
 	skip := struct{ noGame, noTeam, noHistory, minutes, out, noPrice int }{}
 	for _, l := range lines {
@@ -274,19 +345,7 @@ func main() {
 			skip.noTeam++
 			continue
 		}
-		row, cached := rowCache[l.PlayerID]
-		if !cached {
-			opp := g.Visitor
-			if team == g.Visitor {
-				opp = g.Home
-			}
-			outSet := map[int]bool{}
-			for pid := range out {
-				outSet[pid] = true
-			}
-			row = b.Live(l.PlayerID, team, opp, team == g.Home, *date, outSet)
-			rowCache[l.PlayerID] = row
-		}
+		row := rowFor(l.PlayerID, g, team)
 		if row == nil {
 			skip.noHistory++
 			continue
@@ -304,7 +363,11 @@ func main() {
 			skip.minutes++
 			continue
 		}
-		pred = pred.Scaled(l.Stat, biasFix.For(l.Stat))
+		if f, ok := anchorScale[l.Stat]; ok {
+			pred = pred.Scaled(l.Stat, f)
+		} else {
+			pred = pred.Scaled(l.Stat, biasFix.For(l.Stat))
+		}
 		pr, err := pred.ProbOver(l.Stat, l.Line)
 		if err != nil {
 			continue
@@ -456,6 +519,7 @@ func main() {
 		return
 	}
 	statBreakdown(all, picks, *hi)
+	centerCheck(all, *hi, cal, calOK)
 	boardChecks(picks, all)
 	fmt.Printf("skipped: %d no game info, %d player not on a team playing today, %d too little history, %d not enough minutes, %d ruled out, %d with no price on one side\n\n",
 		skip.noGame, skip.noTeam, skip.noHistory, skip.minutes, skip.out, skip.noPrice)
@@ -795,8 +859,8 @@ func fillLeans(picks, all []scored, games map[int]props.GameInfo, min, perPlayer
 			continue
 		}
 		k := [2]int{c.PlayerID, int(data.StatIndex(c.Stat))}
-		if used[k] {
-			continue
+		if used[k] || c.Edge < 0 {
+			continue // a fill-in play must at least beat the price; otherwise leave the game short
 		}
 		used[k] = true
 		c.Tier, c.Units = "LEAN", 0
@@ -1103,4 +1167,46 @@ func defenseNote(dr feat.DefRank, stat data.Stat) string {
 		note += ", early season"
 	}
 	return note + ")"
+}
+
+// centerCheck explains a lopsided board. The posting bar is symmetric around 50% (Over at 55% or more,
+// Under at 45% or less), but the calibrated probabilities are centred wherever the books and the
+// calibration put them. When that centre sits below 50%, an Under needs a small move to qualify
+// and an Over needs a large one, so Overs vanish even when the model is not biased at all.
+func centerCheck(all []scored, hi float64, cal eval.Calibration, calOK bool) {
+	if len(all) == 0 {
+		return
+	}
+	var sum float64
+	var overBar, underBar int
+	for _, s := range all {
+		pOver := s.Prob
+		if s.Side == "UNDER" {
+			pOver = 1 - s.Prob
+		}
+		sum += pOver
+		if pOver >= hi {
+			overBar++
+		}
+		if pOver <= 1-hi {
+			underBar++
+		}
+	}
+	mean := sum / float64(len(all))
+	fmt.Printf("\ncentre check: the average final P(over) across %d lines is %.1f%%; %d lines reach the Over bar (%.0f%%), %d reach the Under bar (%.0f%%)\n",
+		len(all), 100*mean, overBar, 100*hi, underBar, 100*(1-hi))
+	if calOK {
+		fmt.Println("  calibration (a negative intercept shifts every line toward Under before the model says anything):")
+		for _, st := range data.Stats {
+			c, ok := cal.ByStat[string(st)]
+			if !ok {
+				c = cal.Global
+			}
+			fmt.Printf("    %-9s intercept %+.3f, model weight %.2f, book weight %.2f\n", st, c.Intercept, c.Slope, c.Market)
+		}
+	}
+	if mean < 0.48 {
+		fmt.Printf("  the centre is %.1f points below 50%%: an Under needs a %.1f point move to post, an Over needs %.1f. That asymmetry, not a data fault, is what thins out the Overs.\n",
+			100*(0.5-mean), 100*(mean-(1-hi)), 100*(hi-mean))
+	}
 }

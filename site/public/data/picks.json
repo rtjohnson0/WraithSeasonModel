@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-26T18:49:12Z",
+  "generatedAt": "2026-10-26T21:40:04Z",
   "board": {
     "date": "2026-10-26",
     "staked": 0,
@@ -27,10 +27,12 @@
             "projMin": 25.47604989539815,
             "units": 0,
             "why": "out: Coby White, Grant Williams, Kon Knueppel; opponent out: Jamir Watkins (starter); minutes +6 vs recent; soft defense +13%; market line moved against the pick 5.5 to 6.5 since 12:50 am (4 of 6 books changed, 4 up 0 down; up)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 25.47604989539815,
               "perMin": 0.17385993306158132,
@@ -95,7 +97,8 @@
                 "opp": "NYK",
                 "home": false,
                 "value": 3,
-                "minutes": 18
+                "minutes": 18,
+                "prior": true
               },
               {
                 "date": "2026-05-23",
@@ -103,7 +106,8 @@
                 "home": true,
                 "value": 2,
                 "minutes": 9,
-                "short": true
+                "short": true,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -151,10 +155,12 @@
             "projMin": 24.531386863919497,
             "units": 0,
             "why": "out: Coby White, Grant Williams, Kon Knueppel; minutes +5 vs recent",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 24.531386863919497,
               "perMin": 0.041465014494959325,
@@ -203,7 +209,8 @@
                 "opp": "NYK",
                 "home": false,
                 "value": 0,
-                "minutes": 18
+                "minutes": 18,
+                "prior": true
               },
               {
                 "date": "2026-05-23",
@@ -211,7 +218,8 @@
                 "home": true,
                 "value": 1,
                 "minutes": 9,
-                "short": true
+                "short": true,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -248,42 +256,43 @@
             "stat": "threes",
             "side": "UNDER",
             "line": 0.5,
-            "prob": 0.5557210318871412,
-            "probRaw": 0.6437959991566731,
-            "edge": 0.04352590993592165,
-            "grade": "B-",
+            "prob": 0.5616608437783579,
+            "probRaw": 0.6707218319289525,
+            "edge": 0.0470977369822414,
+            "grade": "B",
             "tier": "PAPER",
-            "odds": -105,
-            "book": "sgo/bovada",
-            "projStat": 0.447726555318781,
-            "projMin": 30.703613860054567,
+            "odds": -106,
+            "book": "betparx",
+            "projStat": 0.4050633257698258,
+            "projMin": 31.49806328248256,
             "units": 0,
-            "why": "out: Jamir Watkins; opponent out: Coby White, Grant Williams, Kon Knueppel (starter)",
-            "runs": 1,
+            "why": "out: Jamir Watkins; opponent out: Coby White, Grant Williams, Kon Knueppel (starter); minutes -4 vs his normal",
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
-              "minutes": 30.703613860054567,
-              "perMin": 0.01458221033392013,
-              "projected": 0.447726555318781,
+              "minutes": 31.49806328248256,
+              "perMin": 0.012859943868202814,
+              "projected": 0.4050633257698258,
               "line": 0.5,
-              "gap": 0.05227344468121897,
-              "gapPct": 0.10454688936243794,
-              "modelProb": 0.6437959991566731,
-              "bookProb": 0.5121951219512195,
-              "finalProb": 0.5557210318871412,
-              "edge": 0.04352590993592165,
+              "gap": 0.09493667423017421,
+              "gapPct": 0.18987334846034842,
+              "modelProb": 0.6707218319289525,
+              "bookProb": 0.5145631067961165,
+              "finalProb": 0.5616608437783579,
+              "edge": 0.0470977369822414,
               "for": [
-                "He went under 0.5 in 4 of his last 5 (average 0.2).",
-                "Projected minutes (31) are 3 below his normal (34)."
+                "He went under 0.5 in 4 of his last 5 (average 0.2)."
               ],
               "against": [
                 "The projection (0.4) is almost exactly the line, so there is little cushion.",
                 "Only 3 games this season, so averages and the defense ranking still lean on last year.",
                 "Out: Jamir Watkins (teammates out usually push shots and touches toward the rest of the rotation).",
                 "Opponent out: Coby White, Grant Williams, Kon Knueppel (starter) (their defense is weaker without them).",
-                "The model alone says 64% but the odds only imply 51%. That is a big disagreement with the market, so the final 56% leans mostly on the book's price.",
+                "The model alone says 67% but the odds only imply 51%. That is a big disagreement with the market, so the final 56% leans mostly on the book's price.",
                 "threes has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -297,11 +306,6 @@
               {
                 "key": "trend-for",
                 "label": "The under hit in 4 of his last 5",
-                "tone": "good"
-              },
-              {
-                "key": "minutes-down",
-                "label": "Minutes down: projected 31 vs his normal 34",
                 "tone": "good"
               },
               {
@@ -321,14 +325,16 @@
                 "opp": "SAC",
                 "home": false,
                 "value": 0,
-                "minutes": 36
+                "minutes": 36,
+                "prior": true
               },
               {
                 "date": "2026-01-08",
                 "opp": "UTA",
                 "home": false,
                 "value": 0,
-                "minutes": 35
+                "minutes": 35,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -360,161 +366,48 @@
             "minTypical": 33.78333333333333
           },
           {
-            "player": "Ryan Kalkbrenner",
-            "team": "CHA",
-            "stat": "points",
-            "side": "UNDER",
-            "line": 6.5,
-            "prob": 0.5555084929156211,
-            "probRaw": 0.5177469406705588,
-            "edge": -0.04126570063276602,
-            "grade": "B-",
-            "tier": "PAPER",
-            "odds": -148,
-            "book": "betparx",
-            "projStat": 6.8884183042676,
-            "projMin": 19.41572444385448,
-            "units": 0,
-            "why": "out: Coby White, Grant Williams, Kon Knueppel; soft defense +8%; line 6.5 is 1.0 above the market median 5.5 across 8 books: off the market, in your favor",
-            "runs": 1,
-            "seenIn": [
-              "3 PM"
-            ],
-            "case": {
-              "minutes": 19.41572444385448,
-              "perMin": 0.35478554118272637,
-              "projected": 6.8884183042676,
-              "line": 6.5,
-              "gap": -0.38841830426760016,
-              "gapPct": -0.05975666219501541,
-              "modelProb": 0.5177469406705588,
-              "bookProb": 0.5967741935483871,
-              "finalProb": 0.5555084929156211,
-              "edge": -0.04126570063276602,
-              "for": [
-                "He went under 6.5 in 4 of his last 5 (average 5.8).",
-                "His season average is 5.3 over 3 games, 1.2 below the line.",
-                "The line is off the market in your favor: line 6.5 is 1.0 above the market median 5.5 across 8 books: off the market, in your favor."
-              ],
-              "against": [
-                "The projection (6.9) is almost exactly the line, so there is little cushion.",
-                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "Out: Coby White, Grant Williams, Kon Knueppel (teammates out usually push shots and touches toward the rest of the rotation).",
-                "points has not been proven profitable in backtests, so this play is tracked rather than staked."
-              ],
-              "track": [
-                "All points plays: 42-27 (61%) over 69 graded plays.",
-                "Unders on points: 36-22 (62%) over 58 graded plays."
-              ],
-              "trust": "Live record on points unders is 62% over 58 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
-            },
-            "label": "Lean",
-            "badges": [
-              {
-                "key": "weak-defense",
-                "label": "Weak defense against his position",
-                "tone": "bad"
-              },
-              {
-                "key": "trend-for",
-                "label": "The under hit in 4 of his last 5",
-                "tone": "good"
-              },
-              {
-                "key": "teammates-out",
-                "label": "Teammates out: roles and usage shift",
-                "tone": "note"
-              },
-              {
-                "key": "odd-line",
-                "label": "Soft line: this book is off the market in your favor",
-                "tone": "good"
-              }
-            ],
-            "last5": [
-              {
-                "date": "2026-04-10",
-                "opp": "DET",
-                "home": true,
-                "value": 4,
-                "minutes": 23
-              },
-              {
-                "date": "2026-04-12",
-                "opp": "NYK",
-                "home": false,
-                "value": 9,
-                "minutes": 21
-              },
-              {
-                "date": "2026-10-21",
-                "opp": "BKN",
-                "home": false,
-                "value": 4,
-                "minutes": 13.966666666666667
-              },
-              {
-                "date": "2026-10-23",
-                "opp": "ATL",
-                "home": true,
-                "value": 6,
-                "minutes": 19.133333333333333
-              },
-              {
-                "date": "2026-10-24",
-                "opp": "MIA",
-                "home": true,
-                "value": 6,
-                "minutes": 22.633333333333333
-              }
-            ],
-            "l5Avg": 5.8,
-            "l5Hits": 4,
-            "seasonAvg": 5.333333333333333,
-            "seasonGames": 3,
-            "minAvg5": 19.946666666666665,
-            "minTypical": 21
-          },
-          {
             "player": "Trae Young",
             "team": "WAS",
             "stat": "threes",
             "side": "UNDER",
             "line": 2.5,
-            "prob": 0.5547346541931344,
-            "probRaw": 0.6301068352892848,
-            "edge": 0.022024373819302667,
-            "grade": "B-",
+            "prob": 0.5614730854251736,
+            "probRaw": 0.6317555959831154,
+            "edge": 0.026589364494941092,
+            "grade": "B",
             "tier": "PAPER",
-            "odds": -114,
-            "book": "caesars",
-            "projStat": 2.182482680446625,
-            "projMin": 29.58576949972413,
+            "odds": -115,
+            "book": "fanduel",
+            "projStat": 2.175771317530786,
+            "projMin": 28.91314140202378,
             "units": 0,
-            "why": "out: Jamir Watkins; minutes +3 vs recent",
-            "runs": 1,
+            "why": "out: Jamir Watkins; opponent out: Coby White, Grant Williams, Kon Knueppel (starter)",
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
-              "minutes": 29.58576949972413,
-              "perMin": 0.07376798769648278,
-              "projected": 2.182482680446625,
+              "minutes": 28.91314140202378,
+              "perMin": 0.07525198619125116,
+              "projected": 2.175771317530786,
               "line": 2.5,
-              "gap": 0.3175173195533749,
-              "gapPct": 0.12700692782134998,
-              "modelProb": 0.6301068352892848,
-              "bookProb": 0.5327102803738317,
-              "finalProb": 0.5547346541931344,
-              "edge": 0.022024373819302667,
+              "gap": 0.3242286824692142,
+              "gapPct": 0.12969147298768569,
+              "modelProb": 0.6317555959831154,
+              "bookProb": 0.5348837209302325,
+              "finalProb": 0.5614730854251736,
+              "edge": 0.026589364494941092,
               "for": [
-                "Projected minutes (30) are 4 below his normal (34)."
+                "Projected minutes (29) are 5 below his normal (34)."
               ],
               "against": [
                 "The projection (2.2) is almost exactly the line, so there is little cushion.",
                 "He went under 2.5 in 2 of his last 5 (average 2.2). Recent form disagrees with the pick.",
                 "Only 3 games this season, so averages and the defense ranking still lean on last year.",
                 "Out: Jamir Watkins (teammates out usually push shots and touches toward the rest of the rotation).",
+                "Opponent out: Coby White, Grant Williams, Kon Knueppel (starter) (their defense is weaker without them).",
                 "threes has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -527,12 +420,17 @@
             "badges": [
               {
                 "key": "minutes-down",
-                "label": "Minutes down: projected 30 vs his normal 34",
+                "label": "Minutes down: projected 29 vs his normal 34",
                 "tone": "good"
               },
               {
                 "key": "teammates-out",
                 "label": "Teammates out: roles and usage shift",
+                "tone": "note"
+              },
+              {
+                "key": "opponent-out",
+                "label": "Opponent missing rotation players: their defense and rebounding change",
                 "tone": "note"
               }
             ],
@@ -542,14 +440,16 @@
                 "opp": "BOS",
                 "home": false,
                 "value": 0,
-                "minutes": 25
+                "minutes": 25,
+                "prior": true
               },
               {
                 "date": "2026-03-16",
                 "opp": "GSW",
                 "home": true,
                 "value": 3,
-                "minutes": 21
+                "minutes": 21,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -579,6 +479,124 @@
             "seasonGames": 3,
             "minAvg5": 31.01666666666667,
             "minTypical": 33.833333333333336
+          },
+          {
+            "player": "Alexandre Sarr",
+            "team": "WAS",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 11.5,
+            "prob": 0.5476255976673666,
+            "probRaw": 0.6599591122967087,
+            "edge": -0.011845767971399912,
+            "grade": "C+",
+            "tier": "PAPER",
+            "odds": -127,
+            "book": "sgo/draftkings",
+            "projStat": 10.067850288469012,
+            "projMin": 22.237443739956266,
+            "units": 0,
+            "why": "out: Jamir Watkins; opponent out: Coby White, Grant Williams, Kon Knueppel (starter); tough defense -5%",
+            "runs": 1,
+            "seenIn": [
+              "6 PM"
+            ],
+            "case": {
+              "minutes": 22.237443739956266,
+              "perMin": 0.4527431482773844,
+              "projected": 10.067850288469012,
+              "line": 11.5,
+              "gap": 1.4321497115309878,
+              "gapPct": 0.12453475752443373,
+              "modelProb": 0.6599591122967087,
+              "bookProb": 0.5594713656387665,
+              "finalProb": 0.5476255976673666,
+              "edge": -0.011845767971399912,
+              "for": [
+                "The projection (10.1) sits 1.4 below the line, a 12% gap.",
+                "He went under 11.5 in 4 of his last 5 (average 9.0).",
+                "His season average is 7.7 over 3 games, 3.8 below the line."
+              ],
+              "against": [
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "Out: Jamir Watkins (teammates out usually push shots and touches toward the rest of the rotation).",
+                "Opponent out: Coby White, Grant Williams, Kon Knueppel (starter) (their defense is weaker without them).",
+                "points has not been proven profitable in backtests, so this play is tracked rather than staked."
+              ],
+              "track": [
+                "All points plays: 42-27 (61%) over 69 graded plays.",
+                "Unders on points: 36-22 (62%) over 58 graded plays."
+              ],
+              "trust": "Live record on points unders is 62% over 58 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
+            },
+            "label": "Lean",
+            "badges": [
+              {
+                "key": "tough-defense",
+                "label": "Tough defense against his position",
+                "tone": "good"
+              },
+              {
+                "key": "trend-for",
+                "label": "The under hit in 4 of his last 5",
+                "tone": "good"
+              },
+              {
+                "key": "teammates-out",
+                "label": "Teammates out: roles and usage shift",
+                "tone": "note"
+              },
+              {
+                "key": "opponent-out",
+                "label": "Opponent missing rotation players: their defense and rebounding change",
+                "tone": "note"
+              }
+            ],
+            "last5": [
+              {
+                "date": "2026-03-21",
+                "opp": "OKC",
+                "home": true,
+                "value": 14,
+                "minutes": 22,
+                "prior": true
+              },
+              {
+                "date": "2026-03-27",
+                "opp": "GSW",
+                "home": false,
+                "value": 8,
+                "minutes": 23,
+                "prior": true
+              },
+              {
+                "date": "2026-10-21",
+                "opp": "MIL",
+                "home": true,
+                "value": 6,
+                "minutes": 24.3
+              },
+              {
+                "date": "2026-10-23",
+                "opp": "TOR",
+                "home": true,
+                "value": 7,
+                "minutes": 24.75
+              },
+              {
+                "date": "2026-10-24",
+                "opp": "CHI",
+                "home": false,
+                "value": 10,
+                "minutes": 23
+              }
+            ],
+            "l5Avg": 9,
+            "l5Hits": 4,
+            "seasonAvg": 7.666666666666667,
+            "seasonGames": 3,
+            "minAvg5": 23.41,
+            "minTypical": 23
           }
         ]
       },
@@ -593,34 +611,36 @@
             "stat": "threes",
             "side": "UNDER",
             "line": 3.5,
-            "prob": 0.6279782348309665,
-            "probRaw": 0.7309584354059857,
-            "edge": 0.0517070483902885,
+            "prob": 0.6631301275196946,
+            "probRaw": 0.7931703961117086,
+            "edge": 0.06473655322250582,
             "grade": "B+",
             "tier": "PAPER",
-            "odds": -136,
-            "book": "sgo/fanduel",
-            "projStat": 2.594620992666858,
-            "projMin": 30.71594106782816,
+            "odds": -149,
+            "book": "draftkings",
+            "projStat": 2.286007887813326,
+            "projMin": 30.700477877226113,
             "units": 0,
-            "why": "back-to-back",
-            "runs": 1,
+            "why": "back-to-back; minutes -3 vs his normal; HIS STATUS: Questionable",
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
-              "minutes": 30.71594106782816,
-              "perMin": 0.08447147970942231,
-              "projected": 2.594620992666858,
+              "minutes": 30.700477877226113,
+              "perMin": 0.07446163857628767,
+              "projected": 2.286007887813326,
               "line": 3.5,
-              "gap": 0.905379007333142,
-              "gapPct": 0.2586797163808977,
-              "modelProb": 0.7309584354059857,
-              "bookProb": 0.576271186440678,
-              "finalProb": 0.6279782348309665,
-              "edge": 0.0517070483902885,
+              "gap": 1.213992112186674,
+              "gapPct": 0.34685488919619256,
+              "modelProb": 0.7931703961117086,
+              "bookProb": 0.5983935742971888,
+              "finalProb": 0.6631301275196946,
+              "edge": 0.06473655322250582,
               "for": [
-                "The projection (2.6) sits 0.9 below the line, a 26% gap.",
+                "The projection (2.3) sits 1.2 below the line, a 35% gap.",
                 "He went under 3.5 in 4 of his last 5 (average 3.2).",
                 "Projected minutes (31) are 3 below his normal (33).",
                 "Back-to-back: legs and minutes tend to drop."
@@ -628,7 +648,7 @@
               "against": [
                 "His season average is 4.3 over 3 games, 0.8 above the line.",
                 "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "The model alone says 73% but the odds only imply 58%. That is a big disagreement with the market, so the final 63% leans mostly on the book's price.",
+                "The model alone says 79% but the odds only imply 60%. That is a big disagreement with the market, so the final 66% leans mostly on the book's price.",
                 "threes has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -648,6 +668,11 @@
                 "key": "back-to-back",
                 "label": "Second game in two nights",
                 "tone": "good"
+              },
+              {
+                "key": "status",
+                "label": "Injury status to check before tip-off",
+                "tone": "note"
               }
             ],
             "last5": [
@@ -656,14 +681,16 @@
                 "opp": "SAS",
                 "home": false,
                 "value": 1,
-                "minutes": 39
+                "minutes": 39,
+                "prior": true
               },
               {
                 "date": "2026-05-15",
                 "opp": "SAS",
                 "home": true,
                 "value": 2,
-                "minutes": 36
+                "minutes": 36,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -711,10 +738,12 @@
             "projMin": 27.45293462435548,
             "units": 0,
             "why": "back-to-back; minutes -5 vs his normal; teammates uncertain: Anthony Edwards (questionable)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 27.45293462435548,
               "perMin": 0.31449046669747854,
@@ -762,14 +791,16 @@
                 "opp": "SAS",
                 "home": false,
                 "value": 5,
-                "minutes": 23
+                "minutes": 23,
+                "prior": true
               },
               {
                 "date": "2026-05-15",
                 "opp": "SAS",
                 "home": true,
                 "value": 3,
-                "minutes": 22
+                "minutes": 22,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -801,108 +832,6 @@
             "minTypical": 29.566666666666666
           },
           {
-            "player": "LaMelo Ball",
-            "team": "MIN",
-            "stat": "assists",
-            "side": "UNDER",
-            "line": 7.5,
-            "prob": 0.5839662609698264,
-            "probRaw": 0.7336668980794513,
-            "edge": 0.018748869665478618,
-            "grade": "B+",
-            "tier": "PAPER",
-            "odds": -130,
-            "book": "sgo/espnbet",
-            "projStat": 5.8775208928753155,
-            "projMin": 26.11887238292927,
-            "units": 0,
-            "why": "back-to-back",
-            "runs": 1,
-            "seenIn": [
-              "3 PM"
-            ],
-            "case": {
-              "minutes": 26.11887238292927,
-              "perMin": 0.22502965697388744,
-              "projected": 5.8775208928753155,
-              "line": 7.5,
-              "gap": 1.6224791071246845,
-              "gapPct": 0.2163305476166246,
-              "modelProb": 0.7336668980794513,
-              "bookProb": 0.5652173913043478,
-              "finalProb": 0.5839662609698264,
-              "edge": 0.018748869665478618,
-              "for": [
-                "The projection (5.9) sits 1.6 below the line, a 22% gap.",
-                "He went under 7.5 in 3 of his last 5 (average 6.6).",
-                "His season average is 6.3 over 3 games, 1.2 below the line.",
-                "Projected minutes (26) are 3 below his normal (29).",
-                "Back-to-back: legs and minutes tend to drop."
-              ],
-              "against": [
-                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "The model alone says 73% but the odds only imply 57%. That is a big disagreement with the market, so the final 58% leans mostly on the book's price.",
-                "assists has not been proven profitable in backtests, so this play is tracked rather than staked."
-              ],
-              "track": [
-                "All assists plays: 46-28 (62%) over 74 graded plays.",
-                "Unders on assists: 44-23 (66%) over 67 graded plays."
-              ],
-              "trust": "Live record on assists unders is 66% over 67 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
-            },
-            "label": "Great play",
-            "badges": [
-              {
-                "key": "back-to-back",
-                "label": "Second game in two nights",
-                "tone": "good"
-              }
-            ],
-            "last5": [
-              {
-                "date": "2026-04-10",
-                "opp": "DET",
-                "home": true,
-                "value": 8,
-                "minutes": 33
-              },
-              {
-                "date": "2026-04-12",
-                "opp": "NYK",
-                "home": false,
-                "value": 6,
-                "minutes": 29
-              },
-              {
-                "date": "2026-10-21",
-                "opp": "MIA",
-                "home": false,
-                "value": 6,
-                "minutes": 29
-              },
-              {
-                "date": "2026-10-23",
-                "opp": "ORL",
-                "home": false,
-                "value": 5,
-                "minutes": 23.05
-              },
-              {
-                "date": "2026-10-25",
-                "opp": "TOR",
-                "home": true,
-                "value": 8,
-                "minutes": 16.733333333333334
-              }
-            ],
-            "l5Avg": 6.6,
-            "l5Hits": 3,
-            "seasonAvg": 6.333333333333333,
-            "seasonGames": 3,
-            "minAvg5": 26.156666666666666,
-            "minTypical": 29
-          },
-          {
             "player": "James Harden",
             "team": "CLE",
             "stat": "assists",
@@ -919,10 +848,12 @@
             "projMin": 31.572287496166243,
             "units": 0,
             "why": "minutes -5 vs his normal; defense vs guards: 6th-fewest assists allowed (-10%, of 30 teams, early season)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "defense": {
               "text": "Allows the 6th-fewest assists to guards (-10%)",
               "rank": 6,
@@ -979,21 +910,24 @@
                 "opp": "NYK",
                 "home": false,
                 "value": 2,
-                "minutes": 32
+                "minutes": 32,
+                "prior": true
               },
               {
                 "date": "2026-05-23",
                 "opp": "NYK",
                 "home": true,
                 "value": 5,
-                "minutes": 41
+                "minutes": 41,
+                "prior": true
               },
               {
                 "date": "2026-05-25",
                 "opp": "NYK",
                 "home": true,
                 "value": 2,
-                "minutes": 33
+                "minutes": 33,
+                "prior": true
               },
               {
                 "date": "2026-10-22",
@@ -1018,44 +952,46 @@
             "minTypical": 33
           },
           {
-            "player": "Jarrett Allen",
-            "team": "CLE",
+            "player": "Anthony Edwards",
+            "team": "MIN",
             "stat": "points",
             "side": "UNDER",
-            "line": 14.5,
-            "prob": 0.540556614070627,
-            "probRaw": 0.5924518069956486,
-            "edge": -0.004897931383918364,
-            "grade": "C+",
+            "line": 28.5,
+            "prob": 0.5512486764643054,
+            "probRaw": 0.8450085345490685,
+            "edge": 0.020732244539422795,
+            "grade": "B-",
             "tier": "PAPER",
-            "odds": -120,
-            "book": "sgo/betmgm",
-            "projStat": 13.817295036923301,
-            "projMin": 27.289891790894803,
+            "odds": -113,
+            "book": "sgo/draftkings",
+            "projStat": 20.38563389781882,
+            "projMin": 30.695910154700602,
             "units": 0,
-            "why": "line 14.5 is 1.0 above the market median 13.5 across 12 books: off the market, in your favor",
+            "why": "back-to-back",
             "runs": 1,
             "seenIn": [
-              "3 PM"
+              "6 PM"
             ],
             "case": {
-              "minutes": 27.289891790894803,
-              "perMin": 0.5063154937658421,
-              "projected": 13.817295036923301,
-              "line": 14.5,
-              "gap": 0.6827049630766986,
-              "gapPct": 0.047083100901841285,
-              "modelProb": 0.5924518069956486,
-              "bookProb": 0.5454545454545454,
-              "finalProb": 0.540556614070627,
-              "edge": -0.004897931383918364,
+              "minutes": 30.695910154700602,
+              "perMin": 0.6641156360922263,
+              "projected": 20.38563389781882,
+              "line": 28.5,
+              "gap": 8.11436610218118,
+              "gapPct": 0.2847146000765326,
+              "modelProb": 0.8450085345490685,
+              "bookProb": 0.5305164319248826,
+              "finalProb": 0.5512486764643054,
+              "edge": 0.020732244539422795,
               "for": [
-                "The projection (13.8) sits 0.7 below the line, a 5% gap.",
-                "He went under 14.5 in 3 of his last 5 (average 14.2).",
-                "The line is off the market in your favor: line 14.5 is 1.0 above the market median 13.5 across 12 books: off the market, in your favor."
+                "The projection (20.4) sits 8.1 below the line, a 28% gap.",
+                "He went under 28.5 in 4 of his last 5 (average 26.0).",
+                "Projected minutes (31) are 3 below his normal (33).",
+                "Back-to-back: legs and minutes tend to drop."
               ],
               "against": [
-                "Only 2 games this season, so averages and the defense ranking still lean on last year.",
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "The model alone says 85% but the odds only imply 53%. That is a big disagreement with the market, so the final 55% leans mostly on the book's price.",
                 "points has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -1067,128 +1003,127 @@
             "label": "Lean",
             "badges": [
               {
-                "key": "odd-line",
-                "label": "Soft line: this book is off the market in your favor",
+                "key": "trend-for",
+                "label": "The under hit in 4 of his last 5",
+                "tone": "good"
+              },
+              {
+                "key": "back-to-back",
+                "label": "Second game in two nights",
                 "tone": "good"
               }
             ],
             "last5": [
               {
-                "date": "2026-05-21",
-                "opp": "NYK",
+                "date": "2026-05-12",
+                "opp": "SAS",
                 "home": false,
-                "value": 13,
-                "minutes": 29
+                "value": 20,
+                "minutes": 39,
+                "prior": true
               },
               {
-                "date": "2026-05-23",
-                "opp": "NYK",
+                "date": "2026-05-15",
+                "opp": "SAS",
                 "home": true,
-                "value": 17,
-                "minutes": 36
+                "value": 24,
+                "minutes": 36,
+                "prior": true
               },
               {
-                "date": "2026-05-25",
-                "opp": "NYK",
-                "home": true,
-                "value": 6,
-                "minutes": 25
-              },
-              {
-                "date": "2026-10-22",
-                "opp": "PHI",
+                "date": "2026-10-21",
+                "opp": "MIA",
                 "home": false,
-                "value": 14,
-                "minutes": 28.216666666666665
+                "value": 45,
+                "minutes": 33.4
               },
               {
-                "date": "2026-10-24",
-                "opp": "BKN",
+                "date": "2026-10-23",
+                "opp": "ORL",
+                "home": false,
+                "value": 15,
+                "minutes": 33.233333333333334
+              },
+              {
+                "date": "2026-10-25",
+                "opp": "TOR",
                 "home": true,
-                "value": 21,
-                "minutes": 27.283333333333335
+                "value": 26,
+                "minutes": 27.716666666666665
               }
             ],
-            "l5Avg": 14.2,
-            "l5Hits": 3,
-            "seasonAvg": 17.5,
-            "seasonGames": 2,
-            "minAvg5": 29.1,
-            "minTypical": 28.216666666666665
+            "l5Avg": 26,
+            "l5Hits": 4,
+            "seasonAvg": 28.666666666666668,
+            "seasonGames": 3,
+            "minAvg5": 33.87,
+            "minTypical": 33.4
           },
           {
-            "player": "Terrence Shannon Jr.",
+            "player": "Jaden McDaniels",
             "team": "MIN",
-            "stat": "points",
+            "stat": "assists",
             "side": "UNDER",
-            "line": 9.5,
-            "prob": 0.5358491656095312,
-            "probRaw": 0.5769455118049107,
-            "edge": -0.025554343162398574,
-            "grade": "C+",
+            "line": 2.5,
+            "prob": 0.5505628184953277,
+            "probRaw": 0.746811216529028,
+            "edge": 0.04561232344582278,
+            "grade": "B-",
             "tier": "PAPER",
-            "odds": -128,
-            "book": "draftkings",
-            "projStat": 9.183957706778449,
-            "projMin": 19.49505009288089,
+            "odds": -102,
+            "book": "fanduel",
+            "projStat": 1.7226285771584333,
+            "projMin": 28.85782874485108,
             "units": 0,
-            "why": "back-to-back; minutes -3 vs his normal; defense vs wings: 1st-most points allowed (+124%, of 30 teams, early season); line 9.5 is 1.0 above the market median 8.5 across 8 books: off the market, in your favor; market line moved against the pick 8.5 to 9.5 since 9:06 am (3 of 3 books changed, 3 up 0 down; up); teammates uncertain: Anthony Edwards (questionable)",
+            "why": "back-to-back; minutes -4 vs his normal; defense vs forwards: 8th-fewest assists allowed (-11%, of 30 teams, early season); teammates uncertain: Anthony Edwards (questionable)",
             "runs": 1,
             "seenIn": [
-              "3 PM"
+              "6 PM"
             ],
             "defense": {
-              "text": "Allows the 1st-most points to wings (+124%)",
-              "rank": 1,
+              "text": "Allows the 8th-fewest assists to forwards (-11%)",
+              "rank": 8,
               "of": 30,
-              "kind": "most",
-              "pos": "wings",
-              "pct": 124,
+              "kind": "fewest",
+              "pos": "forwards",
+              "pct": -11,
               "early": true,
-              "helps": false
+              "helps": true
             },
             "case": {
-              "minutes": 19.49505009288089,
-              "perMin": 0.47109177268193847,
-              "projected": 9.183957706778449,
-              "line": 9.5,
-              "gap": 0.3160422932215514,
-              "gapPct": 0.033267609812794884,
-              "modelProb": 0.5769455118049107,
-              "bookProb": 0.5614035087719298,
-              "finalProb": 0.5358491656095312,
-              "edge": -0.025554343162398574,
+              "minutes": 28.85782874485108,
+              "perMin": 0.05969363088225378,
+              "projected": 1.7226285771584333,
+              "line": 2.5,
+              "gap": 0.7773714228415667,
+              "gapPct": 0.31094856913662666,
+              "modelProb": 0.746811216529028,
+              "bookProb": 0.504950495049505,
+              "finalProb": 0.5505628184953277,
+              "edge": 0.04561232344582278,
               "for": [
-                "Projected minutes (19) are 3 below his normal (22).",
-                "Back-to-back: legs and minutes tend to drop.",
-                "The line is off the market in your favor: line 9.5 is 1.0 above the market median 8.5 across 8 books: off the market, in your favor."
+                "The projection (1.7) sits 0.8 below the line, a 31% gap.",
+                "Matchup: Allows the 8th-fewest assists to forwards (-11%), out of 30 teams.",
+                "Back-to-back: legs and minutes tend to drop."
               ],
               "against": [
-                "The projection (9.2) is almost exactly the line, so there is little cushion.",
-                "He went under 9.5 in 1 of his last 5 (average 12.2). Recent form disagrees with the pick.",
-                "His season average is 12.7 over 3 games, 3.2 above the line.",
+                "He went under 2.5 in 2 of his last 5 (average 2.4). Recent form disagrees with the pick.",
                 "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "Matchup: Allows the 1st-most points to wings (+124%), out of 30 teams.",
-                "Market line moved against the pick 8.5 to 9.5 since 9:06 am (3 of 3 books changed, 3 up 0 down.",
-                "points has not been proven profitable in backtests, so this play is tracked rather than staked."
+                "The model alone says 75% but the odds only imply 50%. That is a big disagreement with the market, so the final 55% leans mostly on the book's price.",
+                "assists has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
-                "All points plays: 42-27 (61%) over 69 graded plays.",
-                "Unders on points: 36-22 (62%) over 58 graded plays."
+                "All assists plays: 46-28 (62%) over 74 graded plays.",
+                "Unders on assists: 44-23 (66%) over 67 graded plays."
               ],
-              "trust": "Live record on points unders is 62% over 58 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
+              "trust": "Live record on assists unders is 66% over 67 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
             },
             "label": "Lean",
             "badges": [
               {
-                "key": "weak-defense",
-                "label": "Allows the 1st-most points to wings (+124%)",
-                "tone": "bad"
-              },
-              {
-                "key": "trend-against",
-                "label": "The under hit in only 1 of his last 5",
-                "tone": "bad"
+                "key": "tough-defense",
+                "label": "Allows the 8th-fewest assists to forwards (-11%)",
+                "tone": "good"
               },
               {
                 "key": "back-to-back",
@@ -1199,16 +1134,6 @@
                 "key": "status",
                 "label": "Injury status to check before tip-off",
                 "tone": "note"
-              },
-              {
-                "key": "line-move",
-                "label": "The market line has moved away from this pick since the first snapshot",
-                "tone": "bad"
-              },
-              {
-                "key": "odd-line",
-                "label": "Soft line: this book is off the market in your favor",
-                "tone": "good"
               }
             ],
             "last5": [
@@ -1217,170 +1142,45 @@
                 "opp": "SAS",
                 "home": false,
                 "value": 2,
-                "minutes": 18
+                "minutes": 30,
+                "prior": true
               },
               {
                 "date": "2026-05-15",
                 "opp": "SAS",
                 "home": true,
-                "value": 21,
-                "minutes": 22
+                "value": 3,
+                "minutes": 23,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
                 "opp": "MIA",
                 "home": false,
-                "value": 10,
-                "minutes": 20
+                "value": 1,
+                "minutes": 29
               },
               {
                 "date": "2026-10-23",
                 "opp": "ORL",
                 "home": false,
-                "value": 13,
-                "minutes": 22.316666666666666
+                "value": 3,
+                "minutes": 29.833333333333332
               },
               {
                 "date": "2026-10-25",
                 "opp": "TOR",
                 "home": true,
-                "value": 15,
-                "minutes": 22.716666666666665
+                "value": 3,
+                "minutes": 31.416666666666668
               }
             ],
-            "l5Avg": 12.2,
-            "l5Hits": 1,
-            "seasonAvg": 12.666666666666666,
+            "l5Avg": 2.4,
+            "l5Hits": 2,
+            "seasonAvg": 2.3333333333333335,
             "seasonGames": 3,
-            "minAvg5": 21.006666666666668,
-            "minTypical": 22
-          },
-          {
-            "player": "Sam Merrill",
-            "team": "CLE",
-            "stat": "points",
-            "side": "UNDER",
-            "line": 8.5,
-            "prob": 0.5357675855656758,
-            "probRaw": 0.7098512576544287,
-            "edge": -0.009686959888869584,
-            "grade": "C+",
-            "tier": "PAPER",
-            "odds": -120,
-            "book": "betmgm",
-            "projStat": 6.790686170250422,
-            "projMin": 18.717151035940987,
-            "units": 0,
-            "why": "minutes -5 vs his normal; defense vs guards: 3rd-fewest points allowed (-6%, of 30 teams, early season); line 8.5 is 1.0 above the market median 7.5 across 11 books: off the market, in your favor",
-            "runs": 1,
-            "seenIn": [
-              "3 PM"
-            ],
-            "defense": {
-              "text": "Allows the 3rd-fewest points to guards (-6%)",
-              "rank": 3,
-              "of": 30,
-              "kind": "fewest",
-              "pos": "guards",
-              "pct": -6,
-              "early": true,
-              "helps": true
-            },
-            "case": {
-              "minutes": 18.717151035940987,
-              "perMin": 0.36280554434864754,
-              "projected": 6.790686170250422,
-              "line": 8.5,
-              "gap": 1.7093138297495782,
-              "gapPct": 0.20109574467642097,
-              "modelProb": 0.7098512576544287,
-              "bookProb": 0.5454545454545454,
-              "finalProb": 0.5357675855656758,
-              "edge": -0.009686959888869584,
-              "for": [
-                "The projection (6.8) sits 1.7 below the line, a 20% gap.",
-                "He went under 8.5 in 5 of his last 5 (average 5.4).",
-                "Projected minutes (19) are 4 below his normal (23).",
-                "Matchup: Allows the 3rd-fewest points to guards (-6%), out of 30 teams.",
-                "The line is off the market in your favor: line 8.5 is 1.0 above the market median 7.5 across 11 books: off the market, in your favor."
-              ],
-              "against": [
-                "Only 2 games this season, so averages and the defense ranking still lean on last year.",
-                "The model alone says 71% but the odds only imply 55%. That is a big disagreement with the market, so the final 54% leans mostly on the book's price.",
-                "points has not been proven profitable in backtests, so this play is tracked rather than staked."
-              ],
-              "track": [
-                "All points plays: 42-27 (61%) over 69 graded plays.",
-                "Unders on points: 36-22 (62%) over 58 graded plays."
-              ],
-              "trust": "Live record on points unders is 62% over 58 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
-            },
-            "label": "Lean",
-            "badges": [
-              {
-                "key": "tough-defense",
-                "label": "Allows the 3rd-fewest points to guards (-6%)",
-                "tone": "good"
-              },
-              {
-                "key": "trend-for",
-                "label": "The under hit in 5 of his last 5",
-                "tone": "good"
-              },
-              {
-                "key": "minutes-down",
-                "label": "Minutes down: projected 19 vs his normal 23",
-                "tone": "good"
-              },
-              {
-                "key": "odd-line",
-                "label": "Soft line: this book is off the market in your favor",
-                "tone": "good"
-              }
-            ],
-            "last5": [
-              {
-                "date": "2026-05-21",
-                "opp": "NYK",
-                "home": false,
-                "value": 4,
-                "minutes": 23
-              },
-              {
-                "date": "2026-05-23",
-                "opp": "NYK",
-                "home": true,
-                "value": 6,
-                "minutes": 23
-              },
-              {
-                "date": "2026-05-25",
-                "opp": "NYK",
-                "home": true,
-                "value": 5,
-                "minutes": 18
-              },
-              {
-                "date": "2026-10-22",
-                "opp": "PHI",
-                "home": false,
-                "value": 5,
-                "minutes": 24.266666666666666
-              },
-              {
-                "date": "2026-10-24",
-                "opp": "BKN",
-                "home": true,
-                "value": 7,
-                "minutes": 21.116666666666667
-              }
-            ],
-            "l5Avg": 5.4,
-            "l5Hits": 5,
-            "seasonAvg": 6,
-            "seasonGames": 2,
-            "minAvg5": 21.876666666666665,
-            "minTypical": 23
+            "minAvg5": 28.65,
+            "minTypical": 29.833333333333332
           }
         ]
       },
@@ -1406,10 +1206,12 @@
             "projMin": 19.89304717169114,
             "units": 0,
             "why": "tough defense -7%; teammates uncertain: Patrick Williams (questionable); 73% of today's lines lean UNDER: model may be biased",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 19.89304717169114,
               "perMin": 0.2974029370156197,
@@ -1462,7 +1264,8 @@
                 "opp": "HOU",
                 "home": true,
                 "value": 6,
-                "minutes": 26
+                "minutes": 26,
+                "prior": true
               },
               {
                 "date": "2026-03-25",
@@ -1470,7 +1273,8 @@
                 "home": false,
                 "value": 1,
                 "minutes": 6,
-                "short": true
+                "short": true,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -1502,104 +1306,123 @@
             "minTypical": 24.358333333333334
           },
           {
-            "player": "Jayson Tatum",
-            "team": "BOS",
-            "stat": "threes",
+            "player": "Jalen Smith",
+            "team": "CHI",
+            "stat": "assists",
             "side": "UNDER",
-            "line": 3.5,
-            "prob": 0.6327129162269884,
-            "probRaw": 0.7453206803771202,
-            "edge": 0.05824483112060541,
-            "grade": "B+",
+            "line": 1.5,
+            "prob": 0.5668373329089107,
+            "probRaw": 0.7470827899924714,
+            "edge": 0.03412705253507897,
+            "grade": "B",
             "tier": "PAPER",
-            "odds": -135,
-            "book": "draftkings",
-            "projStat": 2.5269434573128735,
-            "projMin": 31.532531537129437,
+            "odds": -114,
+            "book": "sgo/fanduel",
+            "projStat": 0.9666593190369879,
+            "projMin": 19.89304717169114,
             "units": 0,
-            "why": "minutes -5 vs recent",
+            "why": "tough defense -8%; teammates uncertain: Patrick Williams (questionable)",
             "runs": 1,
             "seenIn": [
-              "3 PM"
+              "6 PM"
             ],
             "case": {
-              "minutes": 31.532531537129437,
-              "perMin": 0.08013766526602557,
-              "projected": 2.5269434573128735,
-              "line": 3.5,
-              "gap": 0.9730565426871265,
-              "gapPct": 0.2780161550534647,
-              "modelProb": 0.7453206803771202,
-              "bookProb": 0.574468085106383,
-              "finalProb": 0.6327129162269884,
-              "edge": 0.05824483112060541,
+              "minutes": 19.89304717169114,
+              "perMin": 0.04859282294431973,
+              "projected": 0.9666593190369879,
+              "line": 1.5,
+              "gap": 0.5333406809630121,
+              "gapPct": 0.3555604539753414,
+              "modelProb": 0.7470827899924714,
+              "bookProb": 0.5327102803738317,
+              "finalProb": 0.5668373329089107,
+              "edge": 0.03412705253507897,
               "for": [
-                "The projection (2.5) sits 1.0 below the line, a 28% gap.",
-                "He went under 3.5 in 3 of his last 5 (average 2.8).",
-                "Projected minutes (32) are 5 below his normal (37)."
+                "The projection (1.0) sits 0.5 below the line, a 36% gap.",
+                "He went under 1.5 in 4 of his last 5 (average 1.0).",
+                "His season average is 1.0 over 3 games, 0.5 below the line.",
+                "Projected minutes (20) are 4 below his normal (24)."
               ],
               "against": [
-                "Only 2 games this season, so averages and the defense ranking still lean on last year.",
-                "The model alone says 75% but the odds only imply 57%. That is a big disagreement with the market, so the final 63% leans mostly on the book's price.",
-                "threes has not been proven profitable in backtests, so this play is tracked rather than staked."
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "The model alone says 75% but the odds only imply 53%. That is a big disagreement with the market, so the final 57% leans mostly on the book's price.",
+                "assists has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
-                "All threes plays: 5-5 (50%) over 10 graded plays.",
-                "Unders on threes: 5-5 (50%) over 10 graded plays."
+                "All assists plays: 46-28 (62%) over 74 graded plays.",
+                "Unders on assists: 44-23 (66%) over 67 graded plays."
               ],
-              "trust": "Too few graded plays on threes unders (10) to say whether the model is good at them yet; treat the percentage as the model's opinion, not a proven hit rate. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
+              "trust": "Live record on assists unders is 66% over 67 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
             },
-            "label": "Great play",
+            "label": "Lean",
             "badges": [
               {
-                "key": "minutes-down",
-                "label": "Minutes down: projected 32 vs his normal 37",
+                "key": "tough-defense",
+                "label": "Tough defense against his position",
                 "tone": "good"
+              },
+              {
+                "key": "trend-for",
+                "label": "The under hit in 4 of his last 5",
+                "tone": "good"
+              },
+              {
+                "key": "minutes-down",
+                "label": "Minutes down: projected 20 vs his normal 24",
+                "tone": "good"
+              },
+              {
+                "key": "status",
+                "label": "Injury status to check before tip-off",
+                "tone": "note"
               }
             ],
             "last5": [
               {
-                "date": "2026-04-26",
-                "opp": "PHI",
-                "home": false,
-                "value": 5,
-                "minutes": 35
-              },
-              {
-                "date": "2026-04-28",
-                "opp": "PHI",
+                "date": "2026-03-23",
+                "opp": "HOU",
                 "home": true,
-                "value": 4,
-                "minutes": 41
-              },
-              {
-                "date": "2026-04-30",
-                "opp": "PHI",
-                "home": false,
                 "value": 2,
-                "minutes": 29
+                "minutes": 26,
+                "prior": true
               },
               {
-                "date": "2026-10-20",
-                "opp": "DET",
+                "date": "2026-03-25",
+                "opp": "PHI",
                 "home": false,
                 "value": 0,
-                "minutes": 37
+                "minutes": 6,
+                "short": true,
+                "prior": true
+              },
+              {
+                "date": "2026-10-21",
+                "opp": "TOR",
+                "home": false,
+                "value": 1,
+                "minutes": 18.966666666666665
               },
               {
                 "date": "2026-10-23",
-                "opp": "NYK",
+                "opp": "MIL",
+                "home": false,
+                "value": 1,
+                "minutes": 24.366666666666667
+              },
+              {
+                "date": "2026-10-24",
+                "opp": "WAS",
                 "home": true,
-                "value": 3,
-                "minutes": 36.71666666666667
+                "value": 1,
+                "minutes": 24.35
               }
             ],
-            "l5Avg": 2.8,
-            "l5Hits": 3,
-            "seasonAvg": 1.5,
-            "seasonGames": 2,
-            "minAvg5": 35.74333333333333,
-            "minTypical": 36.71666666666667
+            "l5Avg": 1,
+            "l5Hits": 4,
+            "seasonAvg": 1,
+            "seasonGames": 3,
+            "minAvg5": 19.936666666666667,
+            "minTypical": 24.358333333333334
           },
           {
             "player": "Norman Powell",
@@ -1618,10 +1441,12 @@
             "projMin": 24.79927531553636,
             "units": 0,
             "why": "minutes -5 vs his normal; teammates uncertain: Patrick Williams (questionable)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 24.79927531553636,
               "perMin": 0.07315053233140094,
@@ -1662,14 +1487,16 @@
                 "opp": "TOR",
                 "home": false,
                 "value": 0,
-                "minutes": 17
+                "minutes": 17,
+                "prior": true
               },
               {
                 "date": "2026-04-12",
                 "opp": "ATL",
                 "home": true,
                 "value": 3,
-                "minutes": 23
+                "minutes": 23,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -1717,10 +1544,12 @@
             "projMin": 29.397559049890948,
             "units": 0,
             "why": "minutes -7 vs his normal",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 29.397559049890948,
               "perMin": 0.06631280539240991,
@@ -1762,21 +1591,24 @@
                 "opp": "PHI",
                 "home": true,
                 "value": 0,
-                "minutes": 36
+                "minutes": 36,
+                "prior": true
               },
               {
                 "date": "2026-04-30",
                 "opp": "PHI",
                 "home": false,
                 "value": 3,
-                "minutes": 32
+                "minutes": 32,
+                "prior": true
               },
               {
                 "date": "2026-05-02",
                 "opp": "PHI",
                 "home": true,
                 "value": 5,
-                "minutes": 45
+                "minutes": 45,
+                "prior": true
               },
               {
                 "date": "2026-10-20",
@@ -1801,45 +1633,174 @@
             "minTypical": 35
           },
           {
-            "player": "Payton Pritchard",
+            "player": "Josh Giddey",
+            "team": "CHI",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 11.5,
+            "prob": 0.5504249405929682,
+            "probRaw": 0.6331774030560695,
+            "edge": 0.007045945159178224,
+            "grade": "B-",
+            "tier": "PAPER",
+            "odds": -119,
+            "book": "sgo/draftkings",
+            "projStat": 10.416418396123097,
+            "projMin": 25.865606452508782,
+            "units": 0,
+            "why": "minutes -7 vs his normal; defense vs guards: 9th-most points allowed (+4%, of 30 teams, early season); line 11.5 is 1.0 above the market median 10.5 across 13 books: off the market, in your favor; market line moved 11.5 to 11.5 since 9:06 am (4 of 7 books changed, 1 up 3 down; no net change); teammates uncertain: Patrick Williams (questionable)",
+            "runs": 1,
+            "seenIn": [
+              "6 PM"
+            ],
+            "defense": {
+              "text": "Allows the 9th-most points to guards (+4%)",
+              "rank": 9,
+              "of": 30,
+              "kind": "most",
+              "pos": "guards",
+              "pct": 4,
+              "early": true,
+              "helps": false
+            },
+            "case": {
+              "minutes": 25.865606452508782,
+              "perMin": 0.40271309374664893,
+              "projected": 10.416418396123097,
+              "line": 11.5,
+              "gap": 1.0835816038769028,
+              "gapPct": 0.09422448729364373,
+              "modelProb": 0.6331774030560695,
+              "bookProb": 0.54337899543379,
+              "finalProb": 0.5504249405929682,
+              "edge": 0.007045945159178224,
+              "for": [
+                "The projection (10.4) sits 1.1 below the line, a 9% gap.",
+                "He went under 11.5 in 5 of his last 5 (average 6.4).",
+                "His season average is 5.7 over 3 games, 5.8 below the line.",
+                "The line is off the market in your favor: line 11.5 is 1.0 above the market median 10.5 across 13 books: off the market, in your favor."
+              ],
+              "against": [
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "Matchup: Allows the 9th-most points to guards (+4%), out of 30 teams.",
+                "Market line moved 11.5 to 11.5 since 9:06 am (4 of 7 books changed, 1 up 3 down.",
+                "points has not been proven profitable in backtests, so this play is tracked rather than staked."
+              ],
+              "track": [
+                "All points plays: 42-27 (61%) over 69 graded plays.",
+                "Unders on points: 36-22 (62%) over 58 graded plays."
+              ],
+              "trust": "Live record on points unders is 62% over 58 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
+            },
+            "label": "Lean",
+            "badges": [
+              {
+                "key": "trend-for",
+                "label": "The under hit in 5 of his last 5",
+                "tone": "good"
+              },
+              {
+                "key": "status",
+                "label": "Injury status to check before tip-off",
+                "tone": "note"
+              },
+              {
+                "key": "line-move",
+                "label": "The market line has moved since the first snapshot",
+                "tone": "note"
+              },
+              {
+                "key": "odd-line",
+                "label": "Soft line: this book is off the market in your favor",
+                "tone": "good"
+              }
+            ],
+            "last5": [
+              {
+                "date": "2026-03-30",
+                "opp": "SAS",
+                "home": false,
+                "value": 9,
+                "minutes": 33,
+                "prior": true
+              },
+              {
+                "date": "2026-04-03",
+                "opp": "NYK",
+                "home": false,
+                "value": 6,
+                "minutes": 26,
+                "prior": true
+              },
+              {
+                "date": "2026-10-21",
+                "opp": "TOR",
+                "home": false,
+                "value": 2,
+                "minutes": 24.016666666666666
+              },
+              {
+                "date": "2026-10-23",
+                "opp": "MIL",
+                "home": false,
+                "value": 6,
+                "minutes": 24.566666666666666
+              },
+              {
+                "date": "2026-10-24",
+                "opp": "WAS",
+                "home": true,
+                "value": 9,
+                "minutes": 29.616666666666667
+              }
+            ],
+            "l5Avg": 6.4,
+            "l5Hits": 5,
+            "seasonAvg": 5.666666666666667,
+            "seasonGames": 3,
+            "minAvg5": 27.439999999999998,
+            "minTypical": 26
+          },
+          {
+            "player": "Derrick White",
             "team": "BOS",
             "stat": "points",
             "side": "UNDER",
             "line": 16.5,
-            "prob": 0.539736620056755,
-            "probRaw": 0.753787881178771,
-            "edge": 0.0005661131443126521,
+            "prob": 0.5455187084465087,
+            "probRaw": 0.8266035372590591,
+            "edge": 0.017216821654055914,
             "grade": "C+",
             "tier": "PAPER",
-            "odds": -117,
+            "odds": -112,
             "book": "draftkings",
-            "projStat": 12.948214399622024,
-            "projMin": 27.036717968820064,
+            "projStat": 11.734540806858224,
+            "projMin": 29.408407971218722,
             "units": 0,
-            "why": "minutes -5 vs his normal; soft defense +8%",
+            "why": "minutes -7 vs his normal; soft defense +8%",
             "runs": 1,
             "seenIn": [
-              "3 PM"
+              "6 PM"
             ],
             "case": {
-              "minutes": 27.036717968820064,
-              "perMin": 0.4789122117024143,
-              "projected": 12.948214399622024,
+              "minutes": 29.408407971218722,
+              "perMin": 0.399019927169894,
+              "projected": 11.734540806858224,
               "line": 16.5,
-              "gap": 3.5517856003779755,
-              "gapPct": 0.21525973335624093,
-              "modelProb": 0.753787881178771,
-              "bookProb": 0.5391705069124424,
-              "finalProb": 0.539736620056755,
-              "edge": 0.0005661131443126521,
+              "gap": 4.765459193141776,
+              "gapPct": 0.2888157086752592,
+              "modelProb": 0.8266035372590591,
+              "bookProb": 0.5283018867924528,
+              "finalProb": 0.5455187084465087,
+              "edge": 0.017216821654055914,
               "for": [
-                "The projection (12.9) sits 3.6 below the line, a 22% gap.",
-                "He went under 16.5 in 4 of his last 5 (average 12.0).",
-                "Projected minutes (27) are 3 below his normal (30)."
+                "The projection (11.7) sits 4.8 below the line, a 29% gap.",
+                "He went under 16.5 in 3 of his last 5 (average 14.4).",
+                "Projected minutes (29) are 6 below his normal (35)."
               ],
               "against": [
                 "Only 2 games this season, so averages and the defense ranking still lean on last year.",
-                "The model alone says 75% but the odds only imply 54%. That is a big disagreement with the market, so the final 54% leans mostly on the book's price.",
+                "The model alone says 83% but the odds only imply 53%. That is a big disagreement with the market, so the final 55% leans mostly on the book's price.",
                 "points has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -1856,13 +1817,8 @@
                 "tone": "bad"
               },
               {
-                "key": "trend-for",
-                "label": "The under hit in 4 of his last 5",
-                "tone": "good"
-              },
-              {
                 "key": "minutes-down",
-                "label": "Minutes down: projected 27 vs his normal 30",
+                "label": "Minutes down: projected 29 vs his normal 35",
                 "tone": "good"
               }
             ],
@@ -1871,44 +1827,47 @@
                 "date": "2026-04-28",
                 "opp": "PHI",
                 "home": true,
-                "value": 12,
-                "minutes": 26
+                "value": 6,
+                "minutes": 36,
+                "prior": true
               },
               {
                 "date": "2026-04-30",
                 "opp": "PHI",
                 "home": false,
-                "value": 14,
-                "minutes": 36
+                "value": 11,
+                "minutes": 32,
+                "prior": true
               },
               {
                 "date": "2026-05-02",
                 "opp": "PHI",
                 "home": true,
-                "value": 13,
-                "minutes": 39
+                "value": 26,
+                "minutes": 45,
+                "prior": true
               },
               {
                 "date": "2026-10-20",
                 "opp": "DET",
                 "home": false,
                 "value": 17,
-                "minutes": 27
+                "minutes": 35
               },
               {
                 "date": "2026-10-23",
                 "opp": "NYK",
                 "home": true,
-                "value": 4,
-                "minutes": 30.433333333333334
+                "value": 12,
+                "minutes": 33.46666666666667
               }
             ],
-            "l5Avg": 12,
-            "l5Hits": 4,
-            "seasonAvg": 10.5,
+            "l5Avg": 14.4,
+            "l5Hits": 3,
+            "seasonAvg": 14.5,
             "seasonGames": 2,
-            "minAvg5": 31.686666666666667,
-            "minTypical": 30.433333333333334
+            "minAvg5": 36.29333333333334,
+            "minTypical": 35
           }
         ]
       },
@@ -1934,10 +1893,12 @@
             "projMin": 24.211179510991027,
             "units": 0,
             "why": "opponent out: Naji Marshall; minutes -4 vs recent; soft defense +4%; 73% of today's lines lean UNDER: model may be biased",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 24.211179510991027,
               "perMin": 0.34901107649866675,
@@ -1996,14 +1957,16 @@
                 "opp": "MIA",
                 "home": false,
                 "value": 6,
-                "minutes": 29
+                "minutes": 29,
+                "prior": true
               },
               {
                 "date": "2026-03-15",
                 "opp": "IND",
                 "home": true,
                 "value": 14,
-                "minutes": 23
+                "minutes": 23,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -2051,10 +2014,12 @@
             "projMin": 23.97408359442574,
             "units": 0,
             "why": "out: Naji Marshall; minutes -8 vs recent; HIS STATUS: Questionable",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 23.97408359442574,
               "perMin": 0.031485510821814666,
@@ -2107,21 +2072,24 @@
                 "opp": "PHX",
                 "home": false,
                 "value": 0,
-                "minutes": 32
+                "minutes": 32,
+                "prior": true
               },
               {
                 "date": "2026-04-10",
                 "opp": "SAS",
                 "home": false,
                 "value": 3,
-                "minutes": 32
+                "minutes": 32,
+                "prior": true
               },
               {
                 "date": "2026-04-12",
                 "opp": "CHI",
                 "home": true,
                 "value": 0,
-                "minutes": 10
+                "minutes": 10,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -2146,46 +2114,187 @@
             "minTypical": 32
           },
           {
-            "player": "Max Christie",
+            "player": "Giannis Antetokounmpo",
+            "team": "MIA",
+            "stat": "assists",
+            "side": "UNDER",
+            "line": 6.5,
+            "prob": 0.642650501951937,
+            "probRaw": 0.8388069108878211,
+            "edge": 0.04265050195193698,
+            "grade": "B+",
+            "tier": "PAPER",
+            "odds": -150,
+            "book": "fanatics",
+            "projStat": 4.170210782582063,
+            "projMin": 24.129200762932285,
+            "units": 0,
+            "why": "opponent out: Naji Marshall; minutes -4 vs his normal; defense vs forwards: 5th-most assists allowed (+14%, of 30 teams, early season); line 6.5 is 1.0 above the market median 5.5 across 12 books: off the market, in your favor",
+            "runs": 1,
+            "seenIn": [
+              "6 PM"
+            ],
+            "defense": {
+              "text": "Allows the 5th-most assists to forwards (+14%)",
+              "rank": 5,
+              "of": 30,
+              "kind": "most",
+              "pos": "forwards",
+              "pct": 14,
+              "early": true,
+              "helps": false
+            },
+            "case": {
+              "minutes": 24.129200762932285,
+              "perMin": 0.17282838431136172,
+              "projected": 4.170210782582063,
+              "line": 6.5,
+              "gap": 2.329789217417937,
+              "gapPct": 0.35842911037199027,
+              "modelProb": 0.8388069108878211,
+              "bookProb": 0.6,
+              "finalProb": 0.642650501951937,
+              "edge": 0.04265050195193698,
+              "for": [
+                "The projection (4.2) sits 2.3 below the line, a 36% gap.",
+                "He went under 6.5 in 4 of his last 5 (average 4.0).",
+                "His season average is 3.0 over 3 games, 3.5 below the line.",
+                "Projected minutes (24) are 5 below his normal (29).",
+                "The line is off the market in your favor: line 6.5 is 1.0 above the market median 5.5 across 12 books: off the market, in your favor."
+              ],
+              "against": [
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "Matchup: Allows the 5th-most assists to forwards (+14%), out of 30 teams.",
+                "Opponent out: Naji Marshall (their defense is weaker without them).",
+                "The model alone says 84% but the odds only imply 60%. That is a big disagreement with the market, so the final 64% leans mostly on the book's price.",
+                "assists has not been proven profitable in backtests, so this play is tracked rather than staked."
+              ],
+              "track": [
+                "All assists plays: 46-28 (62%) over 74 graded plays.",
+                "Unders on assists: 44-23 (66%) over 67 graded plays."
+              ],
+              "trust": "Live record on assists unders is 66% over 67 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
+            },
+            "label": "Great play",
+            "badges": [
+              {
+                "key": "weak-defense",
+                "label": "Allows the 5th-most assists to forwards (+14%)",
+                "tone": "bad"
+              },
+              {
+                "key": "trend-for",
+                "label": "The under hit in 4 of his last 5",
+                "tone": "good"
+              },
+              {
+                "key": "minutes-down",
+                "label": "Minutes down: projected 24 vs his normal 29",
+                "tone": "good"
+              },
+              {
+                "key": "teammates-out",
+                "label": "Teammates out: roles and usage shift",
+                "tone": "note"
+              },
+              {
+                "key": "opponent-out",
+                "label": "Opponent missing rotation players: their defense and rebounding change",
+                "tone": "note"
+              },
+              {
+                "key": "odd-line",
+                "label": "Soft line: this book is off the market in your favor",
+                "tone": "good"
+              }
+            ],
+            "last5": [
+              {
+                "date": "2026-03-12",
+                "opp": "MIA",
+                "home": false,
+                "value": 3,
+                "minutes": 29,
+                "prior": true
+              },
+              {
+                "date": "2026-03-15",
+                "opp": "IND",
+                "home": true,
+                "value": 8,
+                "minutes": 23,
+                "prior": true
+              },
+              {
+                "date": "2026-10-21",
+                "opp": "MIN",
+                "home": true,
+                "value": 1,
+                "minutes": 29.783333333333335
+              },
+              {
+                "date": "2026-10-23",
+                "opp": "DET",
+                "home": true,
+                "value": 5,
+                "minutes": 33.05
+              },
+              {
+                "date": "2026-10-24",
+                "opp": "CHA",
+                "home": false,
+                "value": 3,
+                "minutes": 24.733333333333334
+              }
+            ],
+            "l5Avg": 4,
+            "l5Hits": 4,
+            "seasonAvg": 3,
+            "seasonGames": 3,
+            "minAvg5": 27.913333333333334,
+            "minTypical": 29
+          },
+          {
+            "player": "Kyrie Irving",
             "team": "DAL",
             "stat": "threes",
             "side": "UNDER",
             "line": 2.5,
-            "prob": 0.6422391095694037,
-            "probRaw": 0.7210221454353496,
-            "edge": 0.032864109569403666,
+            "prob": 0.5922380083013812,
+            "probRaw": 0.6931448521538937,
+            "edge": 0.04268845875183158,
             "grade": "B+",
             "tier": "PAPER",
-            "odds": -156,
-            "book": "sgo/bovada",
-            "projStat": 1.8233052379682688,
-            "projMin": 25.587106280583605,
+            "odds": -122,
+            "book": "sgo/draftkings",
+            "projStat": 1.9354436879015242,
+            "projMin": 27.625341041080883,
             "units": 0,
-            "why": "out: Naji Marshall; teammates uncertain: Cooper Flagg (questionable)",
+            "why": "out: Naji Marshall; minutes -11 vs his normal",
             "runs": 1,
             "seenIn": [
-              "3 PM"
+              "6 PM"
             ],
             "case": {
-              "minutes": 25.587106280583605,
-              "perMin": 0.07125875110589809,
-              "projected": 1.8233052379682688,
+              "minutes": 27.625341041080883,
+              "perMin": 0.07006044504657442,
+              "projected": 1.9354436879015242,
               "line": 2.5,
-              "gap": 0.6766947620317312,
-              "gapPct": 0.2706779048126925,
-              "modelProb": 0.7210221454353496,
-              "bookProb": 0.609375,
-              "finalProb": 0.6422391095694037,
-              "edge": 0.032864109569403666,
+              "gap": 0.5645563120984758,
+              "gapPct": 0.2258225248393903,
+              "modelProb": 0.6931448521538937,
+              "bookProb": 0.5495495495495496,
+              "finalProb": 0.5922380083013812,
+              "edge": 0.04268845875183158,
               "for": [
-                "The projection (1.8) sits 0.7 below the line, a 27% gap.",
+                "The projection (1.9) sits 0.6 below the line, a 23% gap.",
                 "He went under 2.5 in 4 of his last 5 (average 2.0).",
-                "His season average is 1.3 over 3 games, 1.2 below the line.",
-                "Projected minutes (26) are 4 below his normal (30)."
+                "Projected minutes (28) are 4 below his normal (31)."
               ],
               "against": [
-                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "Only 2 games this season, so averages and the defense ranking still lean on last year.",
                 "Out: Naji Marshall (teammates out usually push shots and touches toward the rest of the rotation).",
+                "The model alone says 69% but the odds only imply 55%. That is a big disagreement with the market, so the final 59% leans mostly on the book's price.",
                 "threes has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -2203,186 +2312,62 @@
               },
               {
                 "key": "minutes-down",
-                "label": "Minutes down: projected 26 vs his normal 30",
+                "label": "Minutes down: projected 28 vs his normal 31",
                 "tone": "good"
               },
               {
                 "key": "teammates-out",
                 "label": "Teammates out: roles and usage shift",
                 "tone": "note"
-              },
-              {
-                "key": "status",
-                "label": "Injury status to check before tip-off",
-                "tone": "note"
               }
             ],
             "last5": [
               {
-                "date": "2026-04-10",
-                "opp": "SAS",
-                "home": false,
-                "value": 4,
-                "minutes": 31
-              },
-              {
-                "date": "2026-04-12",
-                "opp": "CHI",
+                "date": "2025-02-27",
+                "opp": "CHA",
                 "home": true,
                 "value": 2,
-                "minutes": 13,
-                "short": true
+                "minutes": 38,
+                "prior": true
+              },
+              {
+                "date": "2025-03-01",
+                "opp": "MIL",
+                "home": true,
+                "value": 2,
+                "minutes": 38,
+                "prior": true
+              },
+              {
+                "date": "2025-03-03",
+                "opp": "SAC",
+                "home": true,
+                "value": 0,
+                "minutes": 9,
+                "short": true,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
                 "opp": "HOU",
                 "home": false,
                 "value": 1,
-                "minutes": 28.533333333333335
+                "minutes": 23.75
               },
               {
                 "date": "2026-10-23",
                 "opp": "IND",
                 "home": false,
-                "value": 2,
-                "minutes": 37.85
-              },
-              {
-                "date": "2026-10-24",
-                "opp": "SAS",
-                "home": true,
-                "value": 1,
-                "minutes": 25.733333333333334
+                "value": 5,
+                "minutes": 24.9
               }
             ],
             "l5Avg": 2,
             "l5Hits": 4,
-            "seasonAvg": 1.3333333333333333,
-            "seasonGames": 3,
-            "minAvg5": 27.223333333333336,
-            "minTypical": 29.766666666666666
-          },
-          {
-            "player": "Max Christie",
-            "team": "DAL",
-            "stat": "assists",
-            "side": "UNDER",
-            "line": 2.5,
-            "prob": 0.5737681102638515,
-            "probRaw": 0.7789694502245135,
-            "edge": 0.041057829890019826,
-            "grade": "B",
-            "tier": "PAPER",
-            "odds": -114,
-            "book": "betparx",
-            "projStat": 1.5939486519835666,
-            "projMin": 25.626018359079396,
-            "units": 0,
-            "why": "out: Naji Marshall; soft defense +7%; teammates uncertain: Cooper Flagg (questionable)",
-            "runs": 1,
-            "seenIn": [
-              "3 PM"
-            ],
-            "case": {
-              "minutes": 25.626018359079396,
-              "perMin": 0.062200402327380076,
-              "projected": 1.5939486519835666,
-              "line": 2.5,
-              "gap": 0.9060513480164334,
-              "gapPct": 0.36242053920657336,
-              "modelProb": 0.7789694502245135,
-              "bookProb": 0.5327102803738317,
-              "finalProb": 0.5737681102638515,
-              "edge": 0.041057829890019826,
-              "for": [
-                "The projection (1.6) sits 0.9 below the line, a 36% gap.",
-                "He went under 2.5 in 4 of his last 5 (average 2.0).",
-                "Projected minutes (26) are 4 below his normal (30)."
-              ],
-              "against": [
-                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "Out: Naji Marshall (teammates out usually push shots and touches toward the rest of the rotation).",
-                "The model alone says 78% but the odds only imply 53%. That is a big disagreement with the market, so the final 57% leans mostly on the book's price.",
-                "assists has not been proven profitable in backtests, so this play is tracked rather than staked."
-              ],
-              "track": [
-                "All assists plays: 46-28 (62%) over 74 graded plays.",
-                "Unders on assists: 44-23 (66%) over 67 graded plays."
-              ],
-              "trust": "Live record on assists unders is 66% over 67 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
-            },
-            "label": "Lean",
-            "badges": [
-              {
-                "key": "weak-defense",
-                "label": "Weak defense against his position",
-                "tone": "bad"
-              },
-              {
-                "key": "trend-for",
-                "label": "The under hit in 4 of his last 5",
-                "tone": "good"
-              },
-              {
-                "key": "minutes-down",
-                "label": "Minutes down: projected 26 vs his normal 30",
-                "tone": "good"
-              },
-              {
-                "key": "teammates-out",
-                "label": "Teammates out: roles and usage shift",
-                "tone": "note"
-              },
-              {
-                "key": "status",
-                "label": "Injury status to check before tip-off",
-                "tone": "note"
-              }
-            ],
-            "last5": [
-              {
-                "date": "2026-04-10",
-                "opp": "SAS",
-                "home": false,
-                "value": 2,
-                "minutes": 31
-              },
-              {
-                "date": "2026-04-12",
-                "opp": "CHI",
-                "home": true,
-                "value": 1,
-                "minutes": 13,
-                "short": true
-              },
-              {
-                "date": "2026-10-21",
-                "opp": "HOU",
-                "home": false,
-                "value": 2,
-                "minutes": 28.533333333333335
-              },
-              {
-                "date": "2026-10-23",
-                "opp": "IND",
-                "home": false,
-                "value": 4,
-                "minutes": 37.85
-              },
-              {
-                "date": "2026-10-24",
-                "opp": "SAS",
-                "home": true,
-                "value": 1,
-                "minutes": 25.733333333333334
-              }
-            ],
-            "l5Avg": 2,
-            "l5Hits": 4,
-            "seasonAvg": 2.3333333333333335,
-            "seasonGames": 3,
-            "minAvg5": 27.223333333333336,
-            "minTypical": 29.766666666666666
+            "seasonAvg": 3,
+            "seasonGames": 2,
+            "minAvg5": 26.73,
+            "minTypical": 31.45
           }
         ]
       },
@@ -2408,10 +2393,12 @@
             "projMin": 29.99167831519935,
             "units": 0,
             "why": "minutes -4 vs recent; tough defense -7%; 73% of today's lines lean UNDER: model may be biased",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 29.99167831519935,
               "perMin": 0.09282195998630074,
@@ -2453,14 +2440,16 @@
                 "opp": "NYK",
                 "home": false,
                 "value": 0,
-                "minutes": 34
+                "minutes": 34,
+                "prior": true
               },
               {
                 "date": "2026-04-30",
                 "opp": "NYK",
                 "home": true,
                 "value": 1,
-                "minutes": 29
+                "minutes": 29,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -2508,10 +2497,12 @@
             "projMin": 31.821106118973116,
             "units": 0,
             "why": "minutes -8 vs his normal; line 6.5 is 1.0 above the market median 5.5 across 12 books: off the market, in your favor",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 31.821106118973116,
               "perMin": 0.13466554881412257,
@@ -2553,21 +2544,24 @@
                 "opp": "GSW",
                 "home": true,
                 "value": 2,
-                "minutes": 33
+                "minutes": 33,
+                "prior": true
               },
               {
                 "date": "2025-05-02",
                 "opp": "GSW",
                 "home": false,
                 "value": 8,
-                "minutes": 40
+                "minutes": 40,
+                "prior": true
               },
               {
                 "date": "2025-05-04",
                 "opp": "GSW",
                 "home": true,
                 "value": 3,
-                "minutes": 44
+                "minutes": 44,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -2608,10 +2602,12 @@
             "projMin": 31.56648113992992,
             "units": 0,
             "why": "minutes -5 vs his normal; tough defense -8%",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 31.56648113992992,
               "perMin": 0.1630066542461517,
@@ -2653,14 +2649,16 @@
                 "opp": "NYK",
                 "home": false,
                 "value": 6,
-                "minutes": 35
+                "minutes": 35,
+                "prior": true
               },
               {
                 "date": "2026-04-30",
                 "opp": "NYK",
                 "home": true,
                 "value": 6,
-                "minutes": 32
+                "minutes": 32,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -2708,10 +2706,12 @@
             "projMin": 31.56648113992992,
             "units": 0,
             "why": "minutes -5 vs his normal; tough defense -7%",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 31.56648113992992,
               "perMin": 0.23540729366600946,
@@ -2753,14 +2753,16 @@
                 "opp": "NYK",
                 "home": false,
                 "value": 10,
-                "minutes": 35
+                "minutes": 35,
+                "prior": true
               },
               {
                 "date": "2026-04-30",
                 "opp": "NYK",
                 "home": true,
                 "value": 8,
-                "minutes": 32
+                "minutes": 32,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -2790,112 +2792,6 @@
             "seasonGames": 3,
             "minAvg5": 32.31666666666666,
             "minTypical": 32
-          },
-          {
-            "player": "Luguentz Dort",
-            "team": "ATL",
-            "stat": "points",
-            "side": "UNDER",
-            "line": 6.5,
-            "prob": 0.5437073035515345,
-            "probRaw": 0.7724207813646446,
-            "edge": 0.0024228998818097702,
-            "grade": "C+",
-            "tier": "PAPER",
-            "odds": -118,
-            "book": "draftkings",
-            "projStat": 4.564515305947562,
-            "projMin": 18.64495929813144,
-            "units": 0,
-            "why": "minutes -4 vs his normal; tough defense -6%",
-            "runs": 1,
-            "seenIn": [
-              "3 PM"
-            ],
-            "case": {
-              "minutes": 18.64495929813144,
-              "perMin": 0.24481229660849987,
-              "projected": 4.564515305947562,
-              "line": 6.5,
-              "gap": 1.9354846940524384,
-              "gapPct": 0.29776687600806745,
-              "modelProb": 0.7724207813646446,
-              "bookProb": 0.5412844036697247,
-              "finalProb": 0.5437073035515345,
-              "edge": 0.0024228998818097702,
-              "for": [
-                "The projection (4.6) sits 1.9 below the line, a 30% gap.",
-                "Projected minutes (19) are 4 below his normal (23)."
-              ],
-              "against": [
-                "He went under 6.5 in 2 of his last 5 (average 6.4). Recent form disagrees with the pick.",
-                "His season average is 8.0 over 3 games, 1.5 above the line.",
-                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "The model alone says 77% but the odds only imply 54%. That is a big disagreement with the market, so the final 54% leans mostly on the book's price.",
-                "points has not been proven profitable in backtests, so this play is tracked rather than staked."
-              ],
-              "track": [
-                "All points plays: 42-27 (61%) over 69 graded plays.",
-                "Unders on points: 36-22 (62%) over 58 graded plays."
-              ],
-              "trust": "Live record on points unders is 62% over 58 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
-            },
-            "label": "Lean",
-            "badges": [
-              {
-                "key": "tough-defense",
-                "label": "Tough defense against his position",
-                "tone": "good"
-              },
-              {
-                "key": "minutes-down",
-                "label": "Minutes down: projected 19 vs his normal 23",
-                "tone": "good"
-              }
-            ],
-            "last5": [
-              {
-                "date": "2026-05-28",
-                "opp": "SAS",
-                "home": false,
-                "value": 5,
-                "minutes": 23
-              },
-              {
-                "date": "2026-05-30",
-                "opp": "SAS",
-                "home": true,
-                "value": 3,
-                "minutes": 16
-              },
-              {
-                "date": "2026-10-21",
-                "opp": "ORL",
-                "home": false,
-                "value": 8,
-                "minutes": 28.3
-              },
-              {
-                "date": "2026-10-23",
-                "opp": "CHA",
-                "home": false,
-                "value": 9,
-                "minutes": 18.716666666666665
-              },
-              {
-                "date": "2026-10-24",
-                "opp": "HOU",
-                "home": true,
-                "value": 7,
-                "minutes": 22.95
-              }
-            ],
-            "l5Avg": 6.4,
-            "l5Hits": 2,
-            "seasonAvg": 8,
-            "seasonGames": 3,
-            "minAvg5": 21.793333333333333,
-            "minTypical": 22.95
           }
         ]
       },
@@ -2921,10 +2817,12 @@
             "projMin": 25.788798725788773,
             "units": 0,
             "why": "back-to-back",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 25.788798725788773,
               "perMin": 0.08884638496679512,
@@ -2978,14 +2876,16 @@
                 "opp": "BOS",
                 "home": true,
                 "value": 2,
-                "minutes": 25
+                "minutes": 25,
+                "prior": true
               },
               {
                 "date": "2026-03-23",
                 "opp": "ATL",
                 "home": false,
                 "value": 3,
-                "minutes": 24
+                "minutes": 24,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -3033,10 +2933,12 @@
             "projMin": 27.71735277950109,
             "units": 0,
             "why": "back-to-back; soft defense +12%; line 7.5 is 1.0 above the market median 6.5 across 13 books: off the market, in your favor; market line moved with the pick 7.5 to 6.5 since 12:50 am (2 of 7 books changed, 0 up 2 down; down)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 27.71735277950109,
               "perMin": 0.17750828401778224,
@@ -3096,14 +2998,16 @@
                 "opp": "GSW",
                 "home": true,
                 "value": 2,
-                "minutes": 24
+                "minutes": 24,
+                "prior": true
               },
               {
                 "date": "2026-03-11",
                 "opp": "NYK",
                 "home": true,
                 "value": 5,
-                "minutes": 20
+                "minutes": 20,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -3151,10 +3055,12 @@
             "projMin": 23.88149814150344,
             "units": 0,
             "why": "back-to-back",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 23.88149814150344,
               "perMin": 0.05234561100102096,
@@ -3206,21 +3112,24 @@
                 "opp": "TOR",
                 "home": true,
                 "value": 2,
-                "minutes": 27
+                "minutes": 27,
+                "prior": true
               },
               {
                 "date": "2026-04-06",
                 "opp": "CLE",
                 "home": true,
                 "value": 2,
-                "minutes": 17
+                "minutes": 17,
+                "prior": true
               },
               {
                 "date": "2026-04-08",
                 "opp": "DEN",
                 "home": false,
                 "value": 3,
-                "minutes": 22
+                "minutes": 22,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -3250,42 +3159,55 @@
             "stat": "assists",
             "side": "UNDER",
             "line": 6.5,
-            "prob": 0.5503979934678553,
-            "probRaw": 0.7041869790707606,
-            "edge": 0.022096106675402516,
-            "grade": "B-",
+            "prob": 0.5670363991506142,
+            "probRaw": 0.7597078902328761,
+            "edge": 0.043226875341090376,
+            "grade": "B",
             "tier": "PAPER",
-            "odds": -112,
-            "book": "draftkings",
-            "projStat": 5.281148486415271,
-            "projMin": 25.788798725788773,
+            "odds": -110,
+            "book": "sgo/draftkings",
+            "projStat": 4.859502702042487,
+            "projMin": 25.306138785026466,
             "units": 0,
-            "why": "back-to-back; soft defense +12%",
-            "runs": 1,
+            "why": "back-to-back; defense vs guards: 5th-most assists allowed (+14%, of 30 teams, early season)",
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
+            "defense": {
+              "text": "Allows the 5th-most assists to guards (+14%)",
+              "rank": 5,
+              "of": 30,
+              "kind": "most",
+              "pos": "guards",
+              "pct": 14,
+              "early": true,
+              "helps": false
+            },
             "case": {
-              "minutes": 25.788798725788773,
-              "perMin": 0.20478458661721716,
-              "projected": 5.281148486415271,
+              "minutes": 25.306138785026466,
+              "perMin": 0.1920286118448791,
+              "projected": 4.859502702042487,
               "line": 6.5,
-              "gap": 1.2188515135847293,
-              "gapPct": 0.18751561747457374,
-              "modelProb": 0.7041869790707606,
-              "bookProb": 0.5283018867924528,
-              "finalProb": 0.5503979934678553,
-              "edge": 0.022096106675402516,
+              "gap": 1.6404972979575128,
+              "gapPct": 0.2523841996857712,
+              "modelProb": 0.7597078902328761,
+              "bookProb": 0.5238095238095238,
+              "finalProb": 0.5670363991506142,
+              "edge": 0.043226875341090376,
               "for": [
-                "The projection (5.3) sits 1.2 below the line, a 19% gap.",
+                "The projection (4.9) sits 1.6 below the line, a 25% gap.",
                 "He went under 6.5 in 4 of his last 5 (average 5.6).",
                 "His season average is 5.7 over 3 games, 0.8 below the line.",
-                "Projected minutes (26) are 6 below his normal (32).",
+                "Projected minutes (25) are 6 below his normal (32).",
                 "Back-to-back: legs and minutes tend to drop."
               ],
               "against": [
                 "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "The model alone says 70% but the odds only imply 53%. That is a big disagreement with the market, so the final 55% leans mostly on the book's price.",
+                "Matchup: Allows the 5th-most assists to guards (+14%), out of 30 teams.",
+                "The model alone says 76% but the odds only imply 52%. That is a big disagreement with the market, so the final 57% leans mostly on the book's price.",
                 "assists has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -3298,7 +3220,7 @@
             "badges": [
               {
                 "key": "weak-defense",
-                "label": "Weak defense against his position",
+                "label": "Allows the 5th-most assists to guards (+14%)",
                 "tone": "bad"
               },
               {
@@ -3308,7 +3230,7 @@
               },
               {
                 "key": "minutes-down",
-                "label": "Minutes down: projected 26 vs his normal 32",
+                "label": "Minutes down: projected 25 vs his normal 32",
                 "tone": "good"
               },
               {
@@ -3323,14 +3245,16 @@
                 "opp": "BOS",
                 "home": true,
                 "value": 7,
-                "minutes": 25
+                "minutes": 25,
+                "prior": true
               },
               {
                 "date": "2026-03-23",
                 "opp": "ATL",
                 "home": false,
                 "value": 4,
-                "minutes": 24
+                "minutes": 24,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -3360,6 +3284,141 @@
             "seasonGames": 3,
             "minAvg5": 28.843333333333334,
             "minTypical": 31.5
+          },
+          {
+            "player": "Cam Spencer",
+            "team": "MEM",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 7.5,
+            "prob": 0.5427680678110463,
+            "probRaw": 0.5112362485848168,
+            "edge": -0.03706386496206304,
+            "grade": "C+",
+            "tier": "PAPER",
+            "odds": -138,
+            "book": "fanduel",
+            "projStat": 7.999440227000375,
+            "projMin": 16.691410165263882,
+            "units": 0,
+            "why": "back-to-back; minutes -6 vs his normal; defense vs guards: 1st-most points allowed (+14%, of 30 teams, early season); line 7.5 is 1.0 above the market median 6.5 across 8 books: off the market, in your favor; market line moved with the pick 7.5 to 6.5 since 9:06 am (1 of 4 books changed, 0 up 1 down; down)",
+            "runs": 1,
+            "seenIn": [
+              "6 PM"
+            ],
+            "defense": {
+              "text": "Allows the 1st-most points to guards (+14%)",
+              "rank": 1,
+              "of": 30,
+              "kind": "most",
+              "pos": "guards",
+              "pct": 14,
+              "early": true,
+              "helps": false
+            },
+            "case": {
+              "minutes": 16.691410165263882,
+              "perMin": 0.47925490703282997,
+              "projected": 7.999440227000375,
+              "line": 7.5,
+              "gap": -0.4994402270003748,
+              "gapPct": -0.06659203026671665,
+              "modelProb": 0.5112362485848168,
+              "bookProb": 0.5798319327731093,
+              "finalProb": 0.5427680678110463,
+              "edge": -0.03706386496206304,
+              "for": [
+                "Back-to-back: legs and minutes tend to drop.",
+                "The line is off the market in your favor: line 7.5 is 1.0 above the market median 6.5 across 8 books: off the market, in your favor."
+              ],
+              "against": [
+                "The projection (8.0) is almost exactly the line, so there is little cushion.",
+                "He went under 7.5 in 1 of his last 5 (average 9.2). Recent form disagrees with the pick.",
+                "His season average is 9.0 over 3 games, 1.5 above the line.",
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "Matchup: Allows the 1st-most points to guards (+14%), out of 30 teams.",
+                "Market line moved with the pick 7.5 to 6.5 since 9:06 am (1 of 4 books changed, 0 up 1 down.",
+                "points has not been proven profitable in backtests, so this play is tracked rather than staked."
+              ],
+              "track": [
+                "All points plays: 42-27 (61%) over 69 graded plays.",
+                "Unders on points: 36-22 (62%) over 58 graded plays."
+              ],
+              "trust": "Live record on points unders is 62% over 58 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
+            },
+            "label": "Lean",
+            "badges": [
+              {
+                "key": "weak-defense",
+                "label": "Allows the 1st-most points to guards (+14%)",
+                "tone": "bad"
+              },
+              {
+                "key": "trend-against",
+                "label": "The under hit in only 1 of his last 5",
+                "tone": "bad"
+              },
+              {
+                "key": "back-to-back",
+                "label": "Second game in two nights",
+                "tone": "good"
+              },
+              {
+                "key": "line-move",
+                "label": "The market line has moved toward this pick since the first snapshot",
+                "tone": "good"
+              },
+              {
+                "key": "odd-line",
+                "label": "Soft line: this book is off the market in your favor",
+                "tone": "good"
+              }
+            ],
+            "last5": [
+              {
+                "date": "2026-04-01",
+                "opp": "NYK",
+                "home": true,
+                "value": 10,
+                "minutes": 21,
+                "prior": true
+              },
+              {
+                "date": "2026-04-06",
+                "opp": "CLE",
+                "home": true,
+                "value": 9,
+                "minutes": 21,
+                "prior": true
+              },
+              {
+                "date": "2026-10-21",
+                "opp": "UTA",
+                "home": true,
+                "value": 3,
+                "minutes": 16.283333333333335
+              },
+              {
+                "date": "2026-10-23",
+                "opp": "GSW",
+                "home": false,
+                "value": 11,
+                "minutes": 16.7
+              },
+              {
+                "date": "2026-10-25",
+                "opp": "SAC",
+                "home": false,
+                "value": 13,
+                "minutes": 16
+              }
+            ],
+            "l5Avg": 9.2,
+            "l5Hits": 1,
+            "seasonAvg": 9,
+            "seasonGames": 3,
+            "minAvg5": 18.196666666666665,
+            "minTypical": 16.7
           }
         ]
       },
@@ -3385,10 +3444,12 @@
             "projMin": 25.178576371031152,
             "units": 0,
             "why": "opponent out: Spencer Jones; line 4.5 is 1.0 above the market median 3.5 across 7 books: off the market, in your favor; teammates uncertain: Gui Santos (questionable)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 25.178576371031152,
               "perMin": 0.11691859994205467,
@@ -3451,21 +3512,24 @@
                 "opp": "SAC",
                 "home": true,
                 "value": 4,
-                "minutes": 25
+                "minutes": 25,
+                "prior": true
               },
               {
                 "date": "2026-04-10",
                 "opp": "SAC",
                 "home": false,
                 "value": 2,
-                "minutes": 27
+                "minutes": 27,
+                "prior": true
               },
               {
                 "date": "2026-04-12",
                 "opp": "LAC",
                 "home": false,
                 "value": 4,
-                "minutes": 29
+                "minutes": 29,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -3490,47 +3554,45 @@
             "minTypical": 27
           },
           {
-            "player": "Brandin Podziemski",
+            "player": "Gui Santos",
             "team": "GSW",
             "stat": "threes",
             "side": "UNDER",
-            "line": 2.5,
-            "prob": 0.6682137315683715,
-            "probRaw": 0.7680304391951127,
-            "edge": 0.03185009520473514,
+            "line": 1.5,
+            "prob": 0.6451957673609223,
+            "probRaw": 0.7084940411587073,
+            "edge": 0.015566137731292673,
             "grade": "B+",
             "tier": "PAPER",
-            "odds": -175,
-            "book": "betrivers",
-            "projStat": 1.635389357422616,
-            "projMin": 26.64680366972261,
+            "odds": -170,
+            "book": "sgo/espnbet",
+            "projStat": 1.0774126881564978,
+            "projMin": 22.290374432006757,
             "units": 0,
-            "why": "opponent out: Spencer Jones; minutes -5 vs his normal; line 2.5 is 1.0 above the market median 1.5 across 12 books: off the market, in your favor; market line moved 1.5 to 1.5 since 9:06 am (3 of 6 books changed, 2 up 1 down; no net change); teammates uncertain: Gui Santos (questionable)",
+            "why": "opponent out: Spencer Jones; minutes -8 vs his normal; HIS STATUS: Questionable",
             "runs": 1,
             "seenIn": [
-              "3 PM"
+              "6 PM"
             ],
             "case": {
-              "minutes": 26.64680366972261,
-              "perMin": 0.06137281520488045,
-              "projected": 1.635389357422616,
-              "line": 2.5,
-              "gap": 0.8646106425773841,
-              "gapPct": 0.3458442570309536,
-              "modelProb": 0.7680304391951127,
-              "bookProb": 0.6363636363636364,
-              "finalProb": 0.6682137315683715,
-              "edge": 0.03185009520473514,
+              "minutes": 22.290374432006757,
+              "perMin": 0.048335333775705466,
+              "projected": 1.0774126881564978,
+              "line": 1.5,
+              "gap": 0.4225873118435022,
+              "gapPct": 0.2817248745623348,
+              "modelProb": 0.7084940411587073,
+              "bookProb": 0.6296296296296297,
+              "finalProb": 0.6451957673609223,
+              "edge": 0.015566137731292673,
               "for": [
-                "The projection (1.6) sits 0.9 below the line, a 35% gap.",
-                "He went under 2.5 in 3 of his last 5 (average 2.4).",
-                "The line is off the market in your favor: line 2.5 is 1.0 above the market median 1.5 across 12 books: off the market, in your favor."
+                "He went under 1.5 in 5 of his last 5 (average 0.8).",
+                "His season average is 1.0 over 3 games, 0.5 below the line."
               ],
               "against": [
-                "Only 1 games this season, so averages and the defense ranking still lean on last year.",
+                "The projection (1.1) is almost exactly the line, so there is little cushion.",
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
                 "Opponent out: Spencer Jones (their defense is weaker without them).",
-                "Market line moved 1.5 to 1.5 since 9:06 am (3 of 6 books changed, 2 up 1 down.",
-                "The model alone says 77% but the odds only imply 64%. That is a big disagreement with the market, so the final 67% leans mostly on the book's price.",
                 "threes has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -3541,6 +3603,11 @@
             },
             "label": "Great play",
             "badges": [
+              {
+                "key": "trend-for",
+                "label": "The under hit in 5 of his last 5",
+                "tone": "good"
+              },
               {
                 "key": "teammates-out",
                 "label": "Teammates out: roles and usage shift",
@@ -3555,61 +3622,53 @@
                 "key": "status",
                 "label": "Injury status to check before tip-off",
                 "tone": "note"
-              },
-              {
-                "key": "line-move",
-                "label": "The market line has moved since the first snapshot",
-                "tone": "note"
-              },
-              {
-                "key": "odd-line",
-                "label": "Soft line: this book is off the market in your favor",
-                "tone": "good"
               }
             ],
             "last5": [
               {
-                "date": "2026-04-07",
-                "opp": "SAC",
-                "home": true,
-                "value": 4,
-                "minutes": 29
-              },
-              {
-                "date": "2026-04-09",
-                "opp": "LAL",
-                "home": true,
-                "value": 1,
-                "minutes": 24
-              },
-              {
                 "date": "2026-04-10",
                 "opp": "SAC",
                 "home": false,
-                "value": 3,
-                "minutes": 32
+                "value": 1,
+                "minutes": 27,
+                "prior": true
               },
               {
                 "date": "2026-04-12",
                 "opp": "LAC",
                 "home": false,
-                "value": 2,
-                "minutes": 21
+                "value": 0,
+                "minutes": 17,
+                "prior": true
+              },
+              {
+                "date": "2026-10-21",
+                "opp": "LAL",
+                "home": false,
+                "value": 1,
+                "minutes": 24.733333333333334
               },
               {
                 "date": "2026-10-23",
                 "opp": "MEM",
                 "home": true,
-                "value": 2,
-                "minutes": 32.88333333333333
+                "value": 1,
+                "minutes": 19.85
+              },
+              {
+                "date": "2026-10-24",
+                "opp": "PHX",
+                "home": false,
+                "value": 1,
+                "minutes": 23.266666666666666
               }
             ],
-            "l5Avg": 2.4,
-            "l5Hits": 3,
-            "seasonAvg": 2,
-            "seasonGames": 1,
-            "minAvg5": 27.776666666666664,
-            "minTypical": 29
+            "l5Avg": 0.8,
+            "l5Hits": 5,
+            "seasonAvg": 1,
+            "seasonGames": 3,
+            "minAvg5": 22.37,
+            "minTypical": 23.266666666666666
           },
           {
             "player": "Christian Braun",
@@ -3628,10 +3687,12 @@
             "projMin": 31.529252632641505,
             "units": 0,
             "why": "out: Spencer Jones; teammates uncertain: Cameron Johnson (doubtful)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 31.529252632641505,
               "perMin": 0.03140252302669713,
@@ -3683,21 +3744,24 @@
                 "opp": "MIN",
                 "home": false,
                 "value": 1,
-                "minutes": 34
+                "minutes": 34,
+                "prior": true
               },
               {
                 "date": "2026-04-27",
                 "opp": "MIN",
                 "home": true,
                 "value": 1,
-                "minutes": 31
+                "minutes": 31,
+                "prior": true
               },
               {
                 "date": "2026-04-30",
                 "opp": "MIN",
                 "home": false,
                 "value": 1,
-                "minutes": 28
+                "minutes": 28,
+                "prior": true
               },
               {
                 "date": "2026-10-22",
@@ -3738,10 +3802,12 @@
             "projMin": 24.227951714061014,
             "units": 0,
             "why": "out: Spencer Jones; minutes -4 vs recent; teammates uncertain: Cameron Johnson (doubtful)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 24.227951714061014,
               "perMin": 0.01999746758824383,
@@ -3787,14 +3853,16 @@
                 "opp": "TOR",
                 "home": false,
                 "value": 2,
-                "minutes": 35
+                "minutes": 35,
+                "prior": true
               },
               {
                 "date": "2026-04-03",
                 "opp": "NOP",
                 "home": true,
                 "value": 0,
-                "minutes": 23
+                "minutes": 23,
+                "prior": true
               },
               {
                 "date": "2026-04-05",
@@ -3802,7 +3870,8 @@
                 "home": true,
                 "value": 1,
                 "minutes": 10,
-                "short": true
+                "short": true,
+                "prior": true
               },
               {
                 "date": "2026-10-22",
@@ -3827,46 +3896,57 @@
             "minTypical": 25.883333333333333
           },
           {
-            "player": "Jamal Murray",
-            "team": "DEN",
+            "player": "Gui Santos",
+            "team": "GSW",
             "stat": "points",
             "side": "UNDER",
-            "line": 24.5,
-            "prob": 0.5420059093483318,
-            "probRaw": 0.6275868052575649,
-            "edge": 0.007122188418099307,
+            "line": 9.5,
+            "prob": 0.5366053129574423,
+            "probRaw": 0.5108027469906173,
+            "edge": -0.018950242598113287,
             "grade": "C+",
             "tier": "PAPER",
-            "odds": -115,
+            "odds": -125,
             "book": "sgo/betmgm",
-            "projStat": 22.591247911955094,
-            "projMin": 36.2123138491512,
+            "projStat": 10.015566663676035,
+            "projMin": 22.290374432006757,
             "units": 0,
-            "why": "out: Spencer Jones; minutes -3 vs recent; line 24.5 is 1.0 above the market median 23.5 across 10 books: off the market, in your favor; teammates uncertain: Cameron Johnson (doubtful)",
+            "why": "opponent out: Spencer Jones; minutes -8 vs his normal; defense vs forwards: 10th-most points allowed (+7%, of 30 teams, early season); HIS STATUS: Questionable; line 9.5 is 1.0 above the market median 8.5 across 11 books: off the market, in your favor",
             "runs": 1,
             "seenIn": [
-              "3 PM"
+              "6 PM"
             ],
+            "defense": {
+              "text": "Allows the 10th-most points to forwards (+7%)",
+              "rank": 10,
+              "of": 30,
+              "kind": "most",
+              "pos": "forwards",
+              "pct": 7,
+              "early": true,
+              "helps": false
+            },
             "case": {
-              "minutes": 36.2123138491512,
-              "perMin": 0.6238554102359471,
-              "projected": 22.591247911955094,
-              "line": 24.5,
-              "gap": 1.9087520880449063,
-              "gapPct": 0.07790824849162882,
-              "modelProb": 0.6275868052575649,
-              "bookProb": 0.5348837209302325,
-              "finalProb": 0.5420059093483318,
-              "edge": 0.007122188418099307,
+              "minutes": 22.290374432006757,
+              "perMin": 0.4493224954218211,
+              "projected": 10.015566663676035,
+              "line": 9.5,
+              "gap": -0.5155666636760348,
+              "gapPct": -0.05427017512379313,
+              "modelProb": 0.5108027469906173,
+              "bookProb": 0.5555555555555556,
+              "finalProb": 0.5366053129574423,
+              "edge": -0.018950242598113287,
               "for": [
-                "The projection (22.6) sits 1.9 below the line, a 8% gap.",
-                "He went under 24.5 in 3 of his last 5 (average 22.8).",
-                "Projected minutes (36) are 4 below his normal (40).",
-                "The line is off the market in your favor: line 24.5 is 1.0 above the market median 23.5 across 10 books: off the market, in your favor."
+                "He went under 9.5 in 4 of his last 5 (average 7.6).",
+                "His season average is 8.0 over 3 games, 1.5 below the line.",
+                "The line is off the market in your favor: line 9.5 is 1.0 above the market median 8.5 across 11 books: off the market, in your favor."
               ],
               "against": [
-                "Only 2 games this season, so averages and the defense ranking still lean on last year.",
-                "Out: Spencer Jones (teammates out usually push shots and touches toward the rest of the rotation).",
+                "The projection (10.0) is actually 0.5 on the wrong side of the line; the edge comes from the price, not the projection.",
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "Matchup: Allows the 10th-most points to forwards (+7%), out of 30 teams.",
+                "Opponent out: Spencer Jones (their defense is weaker without them).",
                 "points has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -3878,13 +3958,18 @@
             "label": "Lean",
             "badges": [
               {
-                "key": "minutes-down",
-                "label": "Minutes down: projected 36 vs his normal 40",
+                "key": "trend-for",
+                "label": "The under hit in 4 of his last 5",
                 "tone": "good"
               },
               {
                 "key": "teammates-out",
                 "label": "Teammates out: roles and usage shift",
+                "tone": "note"
+              },
+              {
+                "key": "opponent-out",
+                "label": "Opponent missing rotation players: their defense and rebounding change",
                 "tone": "note"
               },
               {
@@ -3900,47 +3985,49 @@
             ],
             "last5": [
               {
-                "date": "2026-04-25",
-                "opp": "MIN",
+                "date": "2026-04-10",
+                "opp": "SAC",
                 "home": false,
-                "value": 30,
-                "minutes": 42
+                "value": 7,
+                "minutes": 27,
+                "prior": true
               },
               {
-                "date": "2026-04-27",
-                "opp": "MIN",
-                "home": true,
-                "value": 24,
-                "minutes": 39
+                "date": "2026-04-12",
+                "opp": "LAC",
+                "home": false,
+                "value": 7,
+                "minutes": 17,
+                "prior": true
               },
               {
-                "date": "2026-04-30",
-                "opp": "MIN",
+                "date": "2026-10-21",
+                "opp": "LAL",
                 "home": false,
                 "value": 12,
-                "minutes": 40
+                "minutes": 24.733333333333334
               },
               {
-                "date": "2026-10-22",
-                "opp": "OKC",
-                "home": false,
-                "value": 6,
-                "minutes": 36.75
+                "date": "2026-10-23",
+                "opp": "MEM",
+                "home": true,
+                "value": 5,
+                "minutes": 19.85
               },
               {
                 "date": "2026-10-24",
-                "opp": "NOP",
-                "home": true,
-                "value": 42,
-                "minutes": 42.916666666666664
+                "opp": "PHX",
+                "home": false,
+                "value": 7,
+                "minutes": 23.266666666666666
               }
             ],
-            "l5Avg": 22.8,
-            "l5Hits": 3,
-            "seasonAvg": 24,
-            "seasonGames": 2,
-            "minAvg5": 40.13333333333333,
-            "minTypical": 40
+            "l5Avg": 7.6,
+            "l5Hits": 4,
+            "seasonAvg": 8,
+            "seasonGames": 3,
+            "minAvg5": 22.37,
+            "minTypical": 23.266666666666666
           }
         ]
       },
@@ -3948,100 +4035,6 @@
         "id": 21717966,
         "matchup": "IND @ MIL",
         "plays": [
-          {
-            "player": "Kyle Kuzma",
-            "team": "MIL",
-            "stat": "rebounds",
-            "side": "UNDER",
-            "line": 5.5,
-            "prob": 0.5503757548775455,
-            "probRaw": 0.6609713646435276,
-            "edge": 0.026566231068021695,
-            "grade": "B-",
-            "tier": "CHECK",
-            "odds": -110,
-            "book": "sgo/bovada",
-            "projStat": 4.696136089485448,
-            "projMin": 25.117563179331214,
-            "units": 0,
-            "why": "73% of today's lines lean UNDER: model may be biased",
-            "runs": 1,
-            "seenIn": [
-              "3 PM"
-            ],
-            "case": {
-              "minutes": 25.117563179331214,
-              "perMin": 0.18696622980328811,
-              "projected": 4.696136089485448,
-              "line": 5.5,
-              "gap": 0.8038639105145524,
-              "gapPct": 0.14615707463900954,
-              "modelProb": 0.6609713646435276,
-              "bookProb": 0.5238095238095238,
-              "finalProb": 0.5503757548775455,
-              "edge": 0.026566231068021695,
-              "for": [
-                "The projection (4.7) sits 0.8 below the line, a 15% gap."
-              ],
-              "against": [
-                "He went under 5.5 in 2 of his last 5 (average 6.4). Recent form disagrees with the pick.",
-                "His season average is 9.0 over 3 games, 3.5 above the line.",
-                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "The model alone says 66% but the odds only imply 52%. That is a big disagreement with the market, so the final 55% leans mostly on the book's price.",
-                "The minutes projection needs a human look before trusting this one."
-              ],
-              "track": [
-                "All rebounds plays: 63-50 (56%) over 113 graded plays.",
-                "Unders on rebounds: 53-43 (55%) over 96 graded plays."
-              ],
-              "trust": "Live record on rebounds unders is 55% over 96 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
-            },
-            "label": "Risky play",
-            "badges": null,
-            "last5": [
-              {
-                "date": "2026-04-05",
-                "opp": "MEM",
-                "home": true,
-                "value": 4,
-                "minutes": 22
-              },
-              {
-                "date": "2026-04-10",
-                "opp": "BKN",
-                "home": true,
-                "value": 1,
-                "minutes": 21
-              },
-              {
-                "date": "2026-10-21",
-                "opp": "WAS",
-                "home": false,
-                "value": 6,
-                "minutes": 27.083333333333332
-              },
-              {
-                "date": "2026-10-23",
-                "opp": "CHI",
-                "home": true,
-                "value": 9,
-                "minutes": 29.733333333333334
-              },
-              {
-                "date": "2026-10-24",
-                "opp": "PHI",
-                "home": false,
-                "value": 12,
-                "minutes": 35
-              }
-            ],
-            "l5Avg": 6.4,
-            "l5Hits": 2,
-            "seasonAvg": 9,
-            "seasonGames": 3,
-            "minAvg5": 26.96333333333333,
-            "minTypical": 27.083333333333332
-          },
           {
             "player": "Pascal Siakam",
             "team": "IND",
@@ -4059,10 +4052,12 @@
             "projMin": 28.44998291995478,
             "units": 0,
             "why": "back-to-back; minutes -5 vs his normal; defense vs forwards: 6th-fewest rebounds allowed (-8%, of 30 teams, early season); line 7.5 is 1.0 above the market median 6.5 across 12 books: off the market, in your favor; teammates uncertain: Kobe Brown (questionable), Jalen Slawson (questionable)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "defense": {
               "text": "Allows the 6th-fewest rebounds to forwards (-8%)",
               "rank": 6,
@@ -4137,14 +4132,16 @@
                 "opp": "CHI",
                 "home": false,
                 "value": 4,
-                "minutes": 21
+                "minutes": 21,
+                "prior": true
               },
               {
                 "date": "2026-04-03",
                 "opp": "CHA",
                 "home": false,
                 "value": 7,
-                "minutes": 34
+                "minutes": 34,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -4176,6 +4173,132 @@
             "minTypical": 28.95
           },
           {
+            "player": "Jay Huff",
+            "team": "IND",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 4.5,
+            "prob": 0.5664921830463749,
+            "probRaw": 0.6999442561103397,
+            "edge": 0.040425832335474476,
+            "grade": "B",
+            "tier": "PAPER",
+            "odds": -111,
+            "book": "fanduel",
+            "projStat": 3.5192067645034735,
+            "projMin": 19.24346315386847,
+            "units": 0,
+            "why": "back-to-back; minutes -4 vs his normal; defense vs big forwards: 14th-most rebounds allowed (+3%, of 30 teams, early season); teammates uncertain: Kobe Brown (questionable), Jalen Slawson (questionable)",
+            "runs": 1,
+            "seenIn": [
+              "6 PM"
+            ],
+            "defense": {
+              "text": "Allows the 14th-most rebounds to big forwards (+3%)",
+              "rank": 14,
+              "of": 30,
+              "kind": "most",
+              "pos": "big forwards",
+              "pct": 3,
+              "early": true,
+              "helps": false
+            },
+            "case": {
+              "minutes": 19.24346315386847,
+              "perMin": 0.18287803688786733,
+              "projected": 3.5192067645034735,
+              "line": 4.5,
+              "gap": 0.9807932354965265,
+              "gapPct": 0.21795405233256146,
+              "modelProb": 0.6999442561103397,
+              "bookProb": 0.5260663507109005,
+              "finalProb": 0.5664921830463749,
+              "edge": 0.040425832335474476,
+              "for": [
+                "The projection (3.5) sits 1.0 below the line, a 22% gap.",
+                "He went under 4.5 in 3 of his last 5 (average 4.8).",
+                "Projected minutes (19) are 5 below his normal (24).",
+                "Back-to-back: legs and minutes tend to drop."
+              ],
+              "against": [
+                "Only 2 games this season, so averages and the defense ranking still lean on last year.",
+                "Matchup: Allows the 14th-most rebounds to big forwards (+3%), out of 30 teams.",
+                "The model alone says 70% but the odds only imply 53%. That is a big disagreement with the market, so the final 57% leans mostly on the book's price.",
+                "rebounds has not been proven profitable in backtests, so this play is tracked rather than staked."
+              ],
+              "track": [
+                "All rebounds plays: 63-50 (56%) over 113 graded plays.",
+                "Unders on rebounds: 53-43 (55%) over 96 graded plays."
+              ],
+              "trust": "Live record on rebounds unders is 55% over 96 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
+            },
+            "label": "Lean",
+            "badges": [
+              {
+                "key": "minutes-down",
+                "label": "Minutes down: projected 19 vs his normal 24",
+                "tone": "good"
+              },
+              {
+                "key": "back-to-back",
+                "label": "Second game in two nights",
+                "tone": "good"
+              },
+              {
+                "key": "status",
+                "label": "Injury status to check before tip-off",
+                "tone": "note"
+              }
+            ],
+            "last5": [
+              {
+                "date": "2026-04-09",
+                "opp": "BKN",
+                "home": false,
+                "value": 7,
+                "minutes": 25,
+                "prior": true
+              },
+              {
+                "date": "2026-04-10",
+                "opp": "PHI",
+                "home": true,
+                "value": 10,
+                "minutes": 24,
+                "prior": true
+              },
+              {
+                "date": "2026-04-12",
+                "opp": "DET",
+                "home": true,
+                "value": 3,
+                "minutes": 24,
+                "prior": true
+              },
+              {
+                "date": "2026-10-23",
+                "opp": "DAL",
+                "home": true,
+                "value": 2,
+                "minutes": 5.416666666666667,
+                "short": true
+              },
+              {
+                "date": "2026-10-25",
+                "opp": "BKN",
+                "home": false,
+                "value": 2,
+                "minutes": 20.683333333333334
+              }
+            ],
+            "l5Avg": 4.8,
+            "l5Hits": 3,
+            "seasonAvg": 2,
+            "seasonGames": 2,
+            "minAvg5": 19.82,
+            "minTypical": 24
+          },
+          {
             "player": "Tyrese Haliburton",
             "team": "IND",
             "stat": "assists",
@@ -4192,10 +4315,12 @@
             "projMin": 30.131201724121958,
             "units": 0,
             "why": "back-to-back; minutes -4 vs his normal; soft defense +6%",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 30.131201724121958,
               "perMin": 0.23792908419724004,
@@ -4242,7 +4367,8 @@
                 "opp": "OKC",
                 "home": true,
                 "value": 5,
-                "minutes": 23
+                "minutes": 23,
+                "prior": true
               },
               {
                 "date": "2025-06-22",
@@ -4250,7 +4376,8 @@
                 "home": false,
                 "value": 0,
                 "minutes": 7,
-                "short": true
+                "short": true,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -4298,10 +4425,12 @@
             "projMin": 27.786073752449056,
             "units": 0,
             "why": "back-to-back; minutes -5 vs recent",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 27.786073752449056,
               "perMin": 0.07209600821699182,
@@ -4350,7 +4479,8 @@
                 "opp": "OKC",
                 "home": true,
                 "value": 3,
-                "minutes": 23
+                "minutes": 23,
+                "prior": true
               },
               {
                 "date": "2025-06-22",
@@ -4358,7 +4488,8 @@
                 "home": false,
                 "value": 3,
                 "minutes": 7,
-                "short": true
+                "short": true,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -4390,57 +4521,56 @@
             "minTypical": 31.799999999999997
           },
           {
-            "player": "Jaime Jaquez Jr.",
-            "team": "MIL",
+            "player": "Jay Huff",
+            "team": "IND",
             "stat": "points",
             "side": "UNDER",
-            "line": 16.5,
-            "prob": 0.5375124406651114,
-            "probRaw": 0.6759258631206995,
-            "edge": -0.012037108884438208,
+            "line": 10.5,
+            "prob": 0.5388314569486098,
+            "probRaw": 0.6508668493910434,
+            "edge": -0.014739971622818815,
             "grade": "C+",
             "tier": "PAPER",
-            "odds": -122,
+            "odds": -124,
             "book": "draftkings",
-            "projStat": 14.211713180963399,
-            "projMin": 26.217171856351847,
+            "projStat": 9.139364419141447,
+            "projMin": 19.24346315386847,
             "units": 0,
-            "why": "minutes -4 vs his normal; defense vs guards: 10th-most points allowed (+4%, of 30 teams, early season)",
+            "why": "back-to-back; minutes -4 vs his normal; defense vs big forwards: 8th-most points allowed (+16%, of 30 teams, early season); teammates uncertain: Kobe Brown (questionable), Jalen Slawson (questionable)",
             "runs": 1,
             "seenIn": [
-              "3 PM"
+              "6 PM"
             ],
             "defense": {
-              "text": "Allows the 10th-most points to guards (+4%)",
-              "rank": 10,
+              "text": "Allows the 8th-most points to big forwards (+16%)",
+              "rank": 8,
               "of": 30,
               "kind": "most",
-              "pos": "guards",
-              "pct": 4,
+              "pos": "big forwards",
+              "pct": 16,
               "early": true,
               "helps": false
             },
             "case": {
-              "minutes": 26.217171856351847,
-              "perMin": 0.5420765160648024,
-              "projected": 14.211713180963399,
-              "line": 16.5,
-              "gap": 2.2882868190366015,
-              "gapPct": 0.1386840496385819,
-              "modelProb": 0.6759258631206995,
-              "bookProb": 0.5495495495495496,
-              "finalProb": 0.5375124406651114,
-              "edge": -0.012037108884438208,
+              "minutes": 19.24346315386847,
+              "perMin": 0.47493345382087226,
+              "projected": 9.139364419141447,
+              "line": 10.5,
+              "gap": 1.3606355808585526,
+              "gapPct": 0.12958434103414787,
+              "modelProb": 0.6508668493910434,
+              "bookProb": 0.5535714285714286,
+              "finalProb": 0.5388314569486098,
+              "edge": -0.014739971622818815,
               "for": [
-                "The projection (14.2) sits 2.3 below the line, a 14% gap.",
-                "Projected minutes (26) are 5 below his normal (31)."
+                "The projection (9.1) sits 1.4 below the line, a 13% gap.",
+                "Projected minutes (19) are 5 below his normal (24).",
+                "Back-to-back: legs and minutes tend to drop."
               ],
               "against": [
-                "He went under 16.5 in 0 of his last 5 (average 22.2). Recent form disagrees with the pick.",
-                "His season average is 20.7 over 3 games, 4.2 above the line.",
-                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "Matchup: Allows the 10th-most points to guards (+4%), out of 30 teams.",
-                "The model alone says 68% but the odds only imply 55%. That is a big disagreement with the market, so the final 54% leans mostly on the book's price.",
+                "He went under 10.5 in 2 of his last 5 (average 9.8). Recent form disagrees with the pick.",
+                "Only 2 games this season, so averages and the defense ranking still lean on last year.",
+                "Matchup: Allows the 8th-most points to big forwards (+16%), out of 30 teams.",
                 "points has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -4452,59 +4582,73 @@
             "label": "Lean",
             "badges": [
               {
-                "key": "trend-against",
-                "label": "The under hit in only 0 of his last 5",
+                "key": "weak-defense",
+                "label": "Allows the 8th-most points to big forwards (+16%)",
                 "tone": "bad"
               },
               {
                 "key": "minutes-down",
-                "label": "Minutes down: projected 26 vs his normal 31",
+                "label": "Minutes down: projected 19 vs his normal 24",
                 "tone": "good"
+              },
+              {
+                "key": "back-to-back",
+                "label": "Second game in two nights",
+                "tone": "good"
+              },
+              {
+                "key": "status",
+                "label": "Injury status to check before tip-off",
+                "tone": "note"
               }
             ],
             "last5": [
               {
-                "date": "2026-04-10",
-                "opp": "WAS",
+                "date": "2026-04-09",
+                "opp": "BKN",
                 "home": false,
-                "value": 23,
-                "minutes": 36
+                "value": 14,
+                "minutes": 25,
+                "prior": true
+              },
+              {
+                "date": "2026-04-10",
+                "opp": "PHI",
+                "home": true,
+                "value": 8,
+                "minutes": 24,
+                "prior": true
               },
               {
                 "date": "2026-04-12",
-                "opp": "ATL",
+                "opp": "DET",
                 "home": true,
-                "value": 26,
-                "minutes": 26
-              },
-              {
-                "date": "2026-10-21",
-                "opp": "WAS",
-                "home": false,
-                "value": 22,
-                "minutes": 31.383333333333333
+                "value": 13,
+                "minutes": 24,
+                "prior": true
               },
               {
                 "date": "2026-10-23",
-                "opp": "CHI",
+                "opp": "DAL",
                 "home": true,
-                "value": 19,
-                "minutes": 35.36666666666667
+                "value": 0,
+                "minutes": 5.416666666666667,
+                "short": true
               },
               {
-                "date": "2026-10-24",
-                "opp": "PHI",
+                "date": "2026-10-25",
+                "opp": "BKN",
                 "home": false,
-                "value": 21,
-                "minutes": 27.483333333333334
+                "value": 14,
+                "minutes": 20.683333333333334
               }
             ],
-            "l5Avg": 22.2,
-            "l5Hits": 0,
-            "seasonAvg": 20.666666666666668,
-            "seasonGames": 3,
-            "minAvg5": 31.24666666666667,
-            "minTypical": 31.383333333333333
+            "l5Avg": 9.8,
+            "l5Hits": 2,
+            "seasonAvg": 7,
+            "seasonGames": 2,
+            "minAvg5": 19.82,
+            "minTypical": 24
           }
         ]
       },
@@ -4513,175 +4657,60 @@
         "matchup": "PHX @ OKC",
         "plays": [
           {
-            "player": "Jalen Green",
-            "team": "PHX",
-            "stat": "threes",
-            "side": "UNDER",
-            "line": 2.5,
-            "prob": 0.6783209136747952,
-            "probRaw": 0.7474822694787048,
-            "edge": 0.01615875151263302,
-            "grade": "B+",
-            "tier": "PAPER",
-            "odds": -196,
-            "book": "draftkings",
-            "projStat": 1.7201295507955972,
-            "projMin": 28.788067132127697,
-            "units": 0,
-            "why": "out: Oso Ighodaro; opponent out: Chet Holmgren (starter), Jalen Williams, Cason Wallace; minutes -4 vs his normal; line 2.5 is 1.0 above the market median 1.5 across 12 books: off the market, in your favor; market line moved against the pick 1.5 to 2.5 since 9:06 am (3 of 6 books changed, 3 up 0 down; up)",
-            "runs": 1,
-            "seenIn": [
-              "3 PM"
-            ],
-            "case": {
-              "minutes": 28.788067132127697,
-              "perMin": 0.05975147768347114,
-              "projected": 1.7201295507955972,
-              "line": 2.5,
-              "gap": 0.7798704492044028,
-              "gapPct": 0.31194817968176114,
-              "modelProb": 0.7474822694787048,
-              "bookProb": 0.6621621621621622,
-              "finalProb": 0.6783209136747952,
-              "edge": 0.01615875151263302,
-              "for": [
-                "The projection (1.7) sits 0.8 below the line, a 31% gap.",
-                "He went under 2.5 in 4 of his last 5 (average 1.6).",
-                "Projected minutes (29) are 10 below his normal (39).",
-                "The line is off the market in your favor: line 2.5 is 1.0 above the market median 1.5 across 12 books: off the market, in your favor."
-              ],
-              "against": [
-                "Only 2 games this season, so averages and the defense ranking still lean on last year.",
-                "Out: Oso Ighodaro (teammates out usually push shots and touches toward the rest of the rotation).",
-                "Opponent out: Chet Holmgren (starter), Jalen Williams, Cason Wallace (their defense is weaker without them).",
-                "Market line moved against the pick 1.5 to 2.5 since 9:06 am (3 of 6 books changed, 3 up 0 down.",
-                "threes has not been proven profitable in backtests, so this play is tracked rather than staked."
-              ],
-              "track": [
-                "All threes plays: 5-5 (50%) over 10 graded plays.",
-                "Unders on threes: 5-5 (50%) over 10 graded plays."
-              ],
-              "trust": "Too few graded plays on threes unders (10) to say whether the model is good at them yet; treat the percentage as the model's opinion, not a proven hit rate. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
-            },
-            "label": "Great play",
-            "badges": [
-              {
-                "key": "trend-for",
-                "label": "The under hit in 4 of his last 5",
-                "tone": "good"
-              },
-              {
-                "key": "minutes-down",
-                "label": "Minutes down: projected 29 vs his normal 39",
-                "tone": "good"
-              },
-              {
-                "key": "teammates-out",
-                "label": "Teammates out: roles and usage shift",
-                "tone": "note"
-              },
-              {
-                "key": "opponent-out",
-                "label": "Opponent missing rotation players: their defense and rebounding change",
-                "tone": "note"
-              },
-              {
-                "key": "line-move",
-                "label": "The market line has moved away from this pick since the first snapshot",
-                "tone": "bad"
-              },
-              {
-                "key": "odd-line",
-                "label": "Soft line: this book is off the market in your favor",
-                "tone": "good"
-              }
-            ],
-            "last5": [
-              {
-                "date": "2026-04-22",
-                "opp": "OKC",
-                "home": false,
-                "value": 1,
-                "minutes": 41
-              },
-              {
-                "date": "2026-04-25",
-                "opp": "OKC",
-                "home": true,
-                "value": 3,
-                "minutes": 39
-              },
-              {
-                "date": "2026-04-27",
-                "opp": "OKC",
-                "home": true,
-                "value": 1,
-                "minutes": 39
-              },
-              {
-                "date": "2026-10-21",
-                "opp": "POR",
-                "home": false,
-                "value": 2,
-                "minutes": 24.866666666666667
-              },
-              {
-                "date": "2026-10-24",
-                "opp": "GSW",
-                "home": true,
-                "value": 1,
-                "minutes": 26.433333333333334
-              }
-            ],
-            "l5Avg": 1.6,
-            "l5Hits": 4,
-            "seasonAvg": 1.5,
-            "seasonGames": 2,
-            "minAvg5": 34.06,
-            "minTypical": 39
-          },
-          {
-            "player": "Shai Gilgeous-Alexander",
+            "player": "Jared McCain",
             "team": "OKC",
             "stat": "rebounds",
             "side": "UNDER",
-            "line": 4.5,
-            "prob": 0.6242259388123989,
-            "probRaw": 0.7512141994656298,
-            "edge": 0.02105133563779571,
+            "line": 3.5,
+            "prob": 0.6531301961158249,
+            "probRaw": 0.7801560072395742,
+            "edge": 0.016766559752188548,
             "grade": "B+",
             "tier": "PAPER",
-            "odds": -152,
-            "book": "fanduel",
-            "projStat": 3.329020546206975,
-            "projMin": 33.32251680677781,
+            "odds": -175,
+            "book": "betmgm",
+            "projStat": 2.2923237777418985,
+            "projMin": 21.491445969604168,
             "units": 0,
-            "why": "out: Jalen Williams; back-to-back; minutes -4 vs his normal; teammates uncertain: Jaylin Williams (day-to-day), Cason Wallace (day-to-day)",
+            "why": "out: Chet Holmgren, Jalen Williams, Cason Wallace; opponent out: Oso Ighodaro; back-to-back; defense vs guards: 5th-most rebounds allowed (+7%, of 30 teams, early season); line 3.5 is 1.0 above the market median 2.5 across 11 books: off the market, in your favor; teammates uncertain: Jaylin Williams (day-to-day)",
             "runs": 1,
             "seenIn": [
-              "3 PM"
+              "6 PM"
             ],
+            "defense": {
+              "text": "Allows the 5th-most rebounds to guards (+7%)",
+              "rank": 5,
+              "of": 30,
+              "kind": "most",
+              "pos": "guards",
+              "pct": 7,
+              "early": true,
+              "helps": false
+            },
             "case": {
-              "minutes": 33.32251680677781,
-              "perMin": 0.09990303450097895,
-              "projected": 3.329020546206975,
-              "line": 4.5,
-              "gap": 1.170979453793025,
-              "gapPct": 0.26021765639844996,
-              "modelProb": 0.7512141994656298,
-              "bookProb": 0.6031746031746031,
-              "finalProb": 0.6242259388123989,
-              "edge": 0.02105133563779571,
+              "minutes": 21.491445969604168,
+              "perMin": 0.10666214739501396,
+              "projected": 2.2923237777418985,
+              "line": 3.5,
+              "gap": 1.2076762222581015,
+              "gapPct": 0.34505034921660044,
+              "modelProb": 0.7801560072395742,
+              "bookProb": 0.6363636363636364,
+              "finalProb": 0.6531301961158249,
+              "edge": 0.016766559752188548,
               "for": [
-                "The projection (3.3) sits 1.2 below the line, a 26% gap.",
-                "He went under 4.5 in 3 of his last 5 (average 3.8).",
-                "Projected minutes (33) are 3 below his normal (36).",
-                "Back-to-back: legs and minutes tend to drop."
+                "The projection (2.3) sits 1.2 below the line, a 35% gap.",
+                "He went under 3.5 in 5 of his last 5 (average 1.2).",
+                "His season average is 1.0 over 3 games, 2.5 below the line.",
+                "Back-to-back: legs and minutes tend to drop.",
+                "The line is off the market in your favor: line 3.5 is 1.0 above the market median 2.5 across 11 books: off the market, in your favor."
               ],
               "against": [
                 "Only 3 games this season, so averages and the defense ranking still lean on last year.",
-                "Out: Jalen Williams (teammates out usually push shots and touches toward the rest of the rotation).",
-                "The model alone says 75% but the odds only imply 60%. That is a big disagreement with the market, so the final 62% leans mostly on the book's price.",
+                "Matchup: Allows the 5th-most rebounds to guards (+7%), out of 30 teams.",
+                "Out: Chet Holmgren, Jalen Williams, Cason Wallace (teammates out usually push shots and touches toward the rest of the rotation).",
+                "Opponent out: Oso Ighodaro (their defense is weaker without them).",
+                "The model alone says 78% but the odds only imply 64%. That is a big disagreement with the market, so the final 65% leans mostly on the book's price.",
                 "rebounds has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -4693,6 +4722,145 @@
             "label": "Great play",
             "badges": [
               {
+                "key": "weak-defense",
+                "label": "Allows the 5th-most rebounds to guards (+7%)",
+                "tone": "bad"
+              },
+              {
+                "key": "trend-for",
+                "label": "The under hit in 5 of his last 5",
+                "tone": "good"
+              },
+              {
+                "key": "back-to-back",
+                "label": "Second game in two nights",
+                "tone": "good"
+              },
+              {
+                "key": "teammates-out",
+                "label": "Teammates out: roles and usage shift",
+                "tone": "note"
+              },
+              {
+                "key": "opponent-out",
+                "label": "Opponent missing rotation players: their defense and rebounding change",
+                "tone": "note"
+              },
+              {
+                "key": "status",
+                "label": "Injury status to check before tip-off",
+                "tone": "note"
+              },
+              {
+                "key": "odd-line",
+                "label": "Soft line: this book is off the market in your favor",
+                "tone": "good"
+              }
+            ],
+            "last5": [
+              {
+                "date": "2026-05-28",
+                "opp": "SAS",
+                "home": false,
+                "value": 2,
+                "minutes": 27,
+                "prior": true
+              },
+              {
+                "date": "2026-05-30",
+                "opp": "SAS",
+                "home": true,
+                "value": 1,
+                "minutes": 23,
+                "prior": true
+              },
+              {
+                "date": "2026-10-20",
+                "opp": "SAS",
+                "home": false,
+                "value": 2,
+                "minutes": 22
+              },
+              {
+                "date": "2026-10-22",
+                "opp": "DEN",
+                "home": true,
+                "value": 0,
+                "minutes": 18.066666666666666
+              },
+              {
+                "date": "2026-10-25",
+                "opp": "LAC",
+                "home": true,
+                "value": 1,
+                "minutes": 20.55
+              }
+            ],
+            "l5Avg": 1.2,
+            "l5Hits": 5,
+            "seasonAvg": 1,
+            "seasonGames": 3,
+            "minAvg5": 22.12333333333333,
+            "minTypical": 22
+          },
+          {
+            "player": "Isaiah Hartenstein",
+            "team": "OKC",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 8.5,
+            "prob": 0.5714886695449486,
+            "probRaw": 0.7018727103929198,
+            "edge": 0.0323181626325062,
+            "grade": "B",
+            "tier": "PAPER",
+            "odds": -117,
+            "book": "betparx",
+            "projStat": 6.923585744419457,
+            "projMin": 20.686296375649967,
+            "units": 0,
+            "why": "out: Jalen Williams; back-to-back; teammates uncertain: Jaylin Williams (day-to-day), Cason Wallace (day-to-day)",
+            "runs": 1,
+            "seenIn": [
+              "6 PM"
+            ],
+            "case": {
+              "minutes": 20.686296375649967,
+              "perMin": 0.3346943125386753,
+              "projected": 6.923585744419457,
+              "line": 8.5,
+              "gap": 1.5764142555805432,
+              "gapPct": 0.1854605006565345,
+              "modelProb": 0.7018727103929198,
+              "bookProb": 0.5391705069124424,
+              "finalProb": 0.5714886695449486,
+              "edge": 0.0323181626325062,
+              "for": [
+                "The projection (6.9) sits 1.6 below the line, a 19% gap.",
+                "He went under 8.5 in 4 of his last 5 (average 6.2).",
+                "His season average is 7.0 over 3 games, 1.5 below the line.",
+                "Back-to-back: legs and minutes tend to drop."
+              ],
+              "against": [
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "Out: Jalen Williams (teammates out usually push shots and touches toward the rest of the rotation).",
+                "The model alone says 70% but the odds only imply 54%. That is a big disagreement with the market, so the final 57% leans mostly on the book's price.",
+                "rebounds has not been proven profitable in backtests, so this play is tracked rather than staked."
+              ],
+              "track": [
+                "All rebounds plays: 63-50 (56%) over 113 graded plays.",
+                "Unders on rebounds: 53-43 (55%) over 96 graded plays."
+              ],
+              "trust": "Live record on rebounds unders is 55% over 96 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
+            },
+            "label": "Lean",
+            "badges": [
+              {
+                "key": "trend-for",
+                "label": "The under hit in 4 of his last 5",
+                "tone": "good"
+              },
+              {
                 "key": "back-to-back",
                 "label": "Second game in two nights",
                 "tone": "good"
@@ -4713,44 +4881,46 @@
                 "date": "2026-05-28",
                 "opp": "SAS",
                 "home": false,
-                "value": 1,
-                "minutes": 28
+                "value": 5,
+                "minutes": 16,
+                "prior": true
               },
               {
                 "date": "2026-05-30",
                 "opp": "SAS",
                 "home": true,
-                "value": 4,
-                "minutes": 43
+                "value": 5,
+                "minutes": 21,
+                "prior": true
               },
               {
                 "date": "2026-10-20",
                 "opp": "SAS",
                 "home": false,
-                "value": 6,
-                "minutes": 36
+                "value": 3,
+                "minutes": 17
               },
               {
                 "date": "2026-10-22",
                 "opp": "DEN",
                 "home": true,
-                "value": 2,
-                "minutes": 34.61666666666667
+                "value": 6,
+                "minutes": 22.766666666666666
               },
               {
                 "date": "2026-10-25",
                 "opp": "LAC",
                 "home": true,
-                "value": 6,
-                "minutes": 36.11666666666667
+                "value": 12,
+                "minutes": 27.116666666666667
               }
             ],
-            "l5Avg": 3.8,
-            "l5Hits": 3,
-            "seasonAvg": 4.666666666666667,
+            "l5Avg": 6.2,
+            "l5Hits": 4,
+            "seasonAvg": 7,
             "seasonGames": 3,
-            "minAvg5": 35.54666666666667,
-            "minTypical": 36
+            "minAvg5": 20.776666666666664,
+            "minTypical": 21
           },
           {
             "player": "Jared McCain",
@@ -4758,42 +4928,44 @@
             "stat": "threes",
             "side": "UNDER",
             "line": 2.5,
-            "prob": 0.6240736028197944,
-            "probRaw": 0.7222469092881727,
-            "edge": 0.03901136215589396,
-            "grade": "B+",
+            "prob": 0.5665114604729837,
+            "probRaw": 0.6636696640779722,
+            "edge": 0.040445109762083264,
+            "grade": "B",
             "tier": "PAPER",
-            "odds": -141,
-            "book": "betparx",
-            "projStat": 1.8019867051287484,
+            "odds": -111,
+            "book": "draftkings",
+            "projStat": 2.0461256694634944,
             "projMin": 21.491445969604168,
             "units": 0,
             "why": "out: Chet Holmgren, Jalen Williams, Cason Wallace; opponent out: Oso Ighodaro; back-to-back; teammates uncertain: Jaylin Williams (day-to-day)",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 21.491445969604168,
-              "perMin": 0.0838466945256889,
-              "projected": 1.8019867051287484,
+              "perMin": 0.09520651483187198,
+              "projected": 2.0461256694634944,
               "line": 2.5,
-              "gap": 0.6980132948712516,
-              "gapPct": 0.2792053179485007,
-              "modelProb": 0.7222469092881727,
-              "bookProb": 0.5850622406639004,
-              "finalProb": 0.6240736028197944,
-              "edge": 0.03901136215589396,
+              "gap": 0.4538743305365056,
+              "gapPct": 0.18154973221460224,
+              "modelProb": 0.6636696640779722,
+              "bookProb": 0.5260663507109005,
+              "finalProb": 0.5665114604729837,
+              "edge": 0.040445109762083264,
               "for": [
-                "The projection (1.8) sits 0.7 below the line, a 28% gap.",
                 "He went under 2.5 in 4 of his last 5 (average 2.2).",
                 "Back-to-back: legs and minutes tend to drop."
               ],
               "against": [
+                "The projection (2.0) is almost exactly the line, so there is little cushion.",
                 "Only 3 games this season, so averages and the defense ranking still lean on last year.",
                 "Out: Chet Holmgren, Jalen Williams, Cason Wallace (teammates out usually push shots and touches toward the rest of the rotation).",
                 "Opponent out: Oso Ighodaro (their defense is weaker without them).",
-                "The model alone says 72% but the odds only imply 59%. That is a big disagreement with the market, so the final 62% leans mostly on the book's price.",
+                "The model alone says 66% but the odds only imply 53%. That is a big disagreement with the market, so the final 57% leans mostly on the book's price.",
                 "threes has not been proven profitable in backtests, so this play is tracked rather than staked."
               ],
               "track": [
@@ -4802,7 +4974,7 @@
               ],
               "trust": "Too few graded plays on threes unders (10) to say whether the model is good at them yet; treat the percentage as the model's opinion, not a proven hit rate. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
             },
-            "label": "Great play",
+            "label": "Lean",
             "badges": [
               {
                 "key": "trend-for",
@@ -4836,14 +5008,16 @@
                 "opp": "SAS",
                 "home": false,
                 "value": 2,
-                "minutes": 27
+                "minutes": 27,
+                "prior": true
               },
               {
                 "date": "2026-05-30",
                 "opp": "SAS",
                 "home": true,
                 "value": 2,
-                "minutes": 23
+                "minutes": 23,
+                "prior": true
               },
               {
                 "date": "2026-10-20",
@@ -4891,10 +5065,12 @@
             "projMin": 26.470833451399578,
             "units": 0,
             "why": "out: Oso Ighodaro; opponent out: Chet Holmgren (starter), Jalen Williams, Cason Wallace; minutes -4 vs his normal",
-            "runs": 1,
+            "runs": 2,
             "seenIn": [
-              "3 PM"
+              "3 PM",
+              "6 PM"
             ],
+            "multi": true,
             "case": {
               "minutes": 26.470833451399578,
               "perMin": 0.0429890740077268,
@@ -4947,21 +5123,24 @@
                 "opp": "BOS",
                 "home": false,
                 "value": 1,
-                "minutes": 32
+                "minutes": 32,
+                "prior": true
               },
               {
                 "date": "2026-04-10",
                 "opp": "DET",
                 "home": true,
                 "value": 1,
-                "minutes": 23
+                "minutes": 23,
+                "prior": true
               },
               {
                 "date": "2026-04-12",
                 "opp": "NYK",
                 "home": false,
                 "value": 0,
-                "minutes": 24
+                "minutes": 24,
+                "prior": true
               },
               {
                 "date": "2026-10-21",
@@ -4984,6 +5163,154 @@
             "seasonGames": 2,
             "minAvg5": 28.18,
             "minTypical": 28.65
+          },
+          {
+            "player": "Ajay Mitchell",
+            "team": "OKC",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 16.5,
+            "prob": 0.5391722449799152,
+            "probRaw": 0.7369184429836376,
+            "edge": -0.002112158689809518,
+            "grade": "C+",
+            "tier": "PAPER",
+            "odds": -118,
+            "book": "fanduel",
+            "projStat": 13.246591324767792,
+            "projMin": 26.504484788775848,
+            "units": 0,
+            "why": "out: Chet Holmgren, Jalen Williams, Cason Wallace; opponent out: Oso Ighodaro; back-to-back; defense vs guards: 14th-most points allowed (+2%, of 30 teams, early season); market line moved against the pick 15.5 to 16.5 since 9:06 am (6 of 6 books changed, 6 up 0 down; up); teammates uncertain: Jaylin Williams (day-to-day)",
+            "runs": 1,
+            "seenIn": [
+              "6 PM"
+            ],
+            "defense": {
+              "text": "Allows the 14th-most points to guards (+2%)",
+              "rank": 14,
+              "of": 30,
+              "kind": "most",
+              "pos": "guards",
+              "pct": 2,
+              "early": true,
+              "helps": false
+            },
+            "case": {
+              "minutes": 26.504484788775848,
+              "perMin": 0.4997867881732028,
+              "projected": 13.246591324767792,
+              "line": 16.5,
+              "gap": 3.2534086752322082,
+              "gapPct": 0.19717628334740656,
+              "modelProb": 0.7369184429836376,
+              "bookProb": 0.5412844036697247,
+              "finalProb": 0.5391722449799152,
+              "edge": -0.002112158689809518,
+              "for": [
+                "The projection (13.2) sits 3.3 below the line, a 20% gap.",
+                "He went under 16.5 in 4 of his last 5 (average 9.2).",
+                "His season average is 11.3 over 3 games, 5.2 below the line.",
+                "Back-to-back: legs and minutes tend to drop."
+              ],
+              "against": [
+                "Only 3 games this season, so averages and the defense ranking still lean on last year.",
+                "Projected minutes (27) are 4 above his normal (23). If minutes land near normal, this pick loses its edge.",
+                "Matchup: Allows the 14th-most points to guards (+2%), out of 30 teams.",
+                "Out: Chet Holmgren, Jalen Williams, Cason Wallace (teammates out usually push shots and touches toward the rest of the rotation).",
+                "Opponent out: Oso Ighodaro (their defense is weaker without them).",
+                "Market line moved against the pick 15.5 to 16.5 since 9:06 am (6 of 6 books changed, 6 up 0 down.",
+                "The model alone says 74% but the odds only imply 54%. That is a big disagreement with the market, so the final 54% leans mostly on the book's price.",
+                "points has not been proven profitable in backtests, so this play is tracked rather than staked."
+              ],
+              "track": [
+                "All points plays: 42-27 (61%) over 69 graded plays.",
+                "Unders on points: 36-22 (62%) over 58 graded plays."
+              ],
+              "trust": "Live record on points unders is 62% over 58 plays, but a record this size still has a lot of luck in it. In backtests a higher percentage did not mean a higher hit rate, so use it to rank plays, not as a promise."
+            },
+            "label": "Lean",
+            "badges": [
+              {
+                "key": "trend-for",
+                "label": "The under hit in 4 of his last 5",
+                "tone": "good"
+              },
+              {
+                "key": "minutes-up",
+                "label": "Minutes up: projected 27 vs his normal 23",
+                "tone": "bad"
+              },
+              {
+                "key": "back-to-back",
+                "label": "Second game in two nights",
+                "tone": "good"
+              },
+              {
+                "key": "teammates-out",
+                "label": "Teammates out: roles and usage shift",
+                "tone": "note"
+              },
+              {
+                "key": "opponent-out",
+                "label": "Opponent missing rotation players: their defense and rebounding change",
+                "tone": "note"
+              },
+              {
+                "key": "status",
+                "label": "Injury status to check before tip-off",
+                "tone": "note"
+              },
+              {
+                "key": "line-move",
+                "label": "The market line has moved away from this pick since the first snapshot",
+                "tone": "bad"
+              }
+            ],
+            "last5": [
+              {
+                "date": "2026-05-20",
+                "opp": "SAS",
+                "home": true,
+                "value": 10,
+                "minutes": 28,
+                "prior": true
+              },
+              {
+                "date": "2026-05-22",
+                "opp": "SAS",
+                "home": false,
+                "value": 2,
+                "minutes": 17,
+                "prior": true
+              },
+              {
+                "date": "2026-10-20",
+                "opp": "SAS",
+                "home": false,
+                "value": 4,
+                "minutes": 22
+              },
+              {
+                "date": "2026-10-22",
+                "opp": "DEN",
+                "home": true,
+                "value": 12,
+                "minutes": 23
+              },
+              {
+                "date": "2026-10-25",
+                "opp": "LAC",
+                "home": true,
+                "value": 18,
+                "minutes": 27.833333333333332
+              }
+            ],
+            "l5Avg": 9.2,
+            "l5Hits": 4,
+            "seasonAvg": 11.333333333333334,
+            "seasonGames": 3,
+            "minAvg5": 23.566666666666666,
+            "minTypical": 23
           }
         ]
       }
@@ -5321,10 +5648,151 @@
       },
       {
         "label": "3 PM",
-        "clock": "2:46 PM",
+        "clock": "2:41 PM",
         "prev": "3 PM",
         "plays": 44,
         "new": 12,
+        "dropped": [
+          {
+            "player": "Trae Young",
+            "team": "WAS",
+            "matchup": "WAS @ CHA",
+            "stat": "assists",
+            "side": "UNDER",
+            "line": 10.5,
+            "tier": "PAPER",
+            "prob": 0.6225743374482021,
+            "reason": "line moved 10.5 to 9.5; probability fell to 53% (bar is 55%)"
+          },
+          {
+            "player": "Alexandre Sarr",
+            "team": "WAS",
+            "matchup": "WAS @ CHA",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 11.5,
+            "tier": "PAPER",
+            "prob": 0.5541024595858735,
+            "reason": "line moved 11.5 to 10.5; probability fell to 51% (bar is 55%)"
+          },
+          {
+            "player": "KyShawn George",
+            "team": "WAS",
+            "matchup": "WAS @ CHA",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 14.5,
+            "tier": "PAPER",
+            "prob": 0.5437598726476445,
+            "reason": "line moved 14.5 to 13.5; probability fell to 51% (bar is 55%)"
+          },
+          {
+            "player": "Brandon Miller",
+            "team": "CHA",
+            "matchup": "WAS @ CHA",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 24.5,
+            "tier": "PAPER",
+            "prob": 0.5435745699305128,
+            "reason": "line moved 24.5 to 23.5; probability fell to 50% (bar is 55%)"
+          },
+          {
+            "player": "Jonathan Kuminga",
+            "team": "MIN",
+            "matchup": "MIN @ CLE",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 1.5,
+            "tier": "PAPER",
+            "prob": 0.6505522164503468,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Norman Powell",
+            "team": "CHI",
+            "matchup": "CHI @ BOS",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 19.5,
+            "tier": "PAPER",
+            "prob": 0.561424244729383,
+            "reason": "line moved 19.5 to 18.5; probability fell to 52% (bar is 55%)"
+          },
+          {
+            "player": "Max Christie",
+            "team": "DAL",
+            "matchup": "DAL @ MIA",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 2.5,
+            "tier": "PAPER",
+            "prob": 0.6559535849001683,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Tyler Herro",
+            "team": "MIL",
+            "matchup": "IND @ MIL",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 23.5,
+            "tier": "PAPER",
+            "prob": 0.5499307497815153,
+            "reason": "line moved 23.5 to 22.5; probability fell to 53% (bar is 55%)"
+          },
+          {
+            "player": "Ajay Mitchell",
+            "team": "OKC",
+            "matchup": "PHX @ OKC",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 1.5,
+            "tier": "PAPER",
+            "prob": 0.6928146516738487,
+            "reason": "minutes 24 to 27; it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Isaiah Hartenstein",
+            "team": "OKC",
+            "matchup": "PHX @ OKC",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 8.5,
+            "tier": "PAPER",
+            "prob": 0.5714886695449486,
+            "reason": "projection 6.9 to 8.1; minutes 21 to 23; probability fell to 50% (bar is 55%)"
+          },
+          {
+            "player": "Cason Wallace",
+            "team": "OKC",
+            "matchup": "PHX @ OKC",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 1.5,
+            "tier": "PAPER",
+            "prob": 0.554434340969946,
+            "reason": "he is now ruled out (out)"
+          },
+          {
+            "player": "Jordan Goodwin",
+            "team": "PHX",
+            "matchup": "PHX @ OKC",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 6.5,
+            "tier": "PAPER",
+            "prob": 0.5447991059953656,
+            "reason": "probability fell to 52% (bar is 55%)"
+          }
+        ]
+      },
+      {
+        "label": "3 PM",
+        "clock": "2:46 PM",
+        "prev": "3 PM",
+        "plays": 44,
+        "new": 4,
         "dropped": [
           {
             "player": "Trae Young",
@@ -5457,6 +5925,376 @@
             "tier": "PAPER",
             "prob": 0.5447991059953656,
             "reason": "probability fell to 52% (bar is 55%)"
+          }
+        ]
+      },
+      {
+        "label": "6 PM",
+        "clock": "5:32 PM",
+        "prev": "3 PM",
+        "plays": 43,
+        "new": 21,
+        "dropped": [
+          {
+            "player": "Dennis Schroder",
+            "team": "CHA",
+            "matchup": "WAS @ CHA",
+            "stat": "assists",
+            "side": "UNDER",
+            "line": 6.5,
+            "tier": "PAPER",
+            "prob": 0.6249303596347084,
+            "reason": "projection 4.4 to 4.9; it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Ryan Kalkbrenner",
+            "team": "CHA",
+            "matchup": "WAS @ CHA",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 6.5,
+            "tier": "PAPER",
+            "prob": 0.5468521619459263,
+            "reason": "the model now leans OVER (53%); line moved 6.5 to 5.5; projection 6.7 to 7.3"
+          },
+          {
+            "player": "LaMelo Ball",
+            "team": "MIN",
+            "matchup": "MIN @ CLE",
+            "stat": "assists",
+            "side": "UNDER",
+            "line": 7.5,
+            "tier": "PAPER",
+            "prob": 0.609233372010645,
+            "reason": "projection 5.2 to 5.8; it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Jarrett Allen",
+            "team": "CLE",
+            "matchup": "MIN @ CLE",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 14.5,
+            "tier": "PAPER",
+            "prob": 0.5576147569377361,
+            "reason": "line moved 14.5 to 13.5; projection 11.4 to 12.4; probability fell to 52% (bar is 55%)"
+          },
+          {
+            "player": "James Harden",
+            "team": "CLE",
+            "matchup": "MIN @ CLE",
+            "stat": "assists",
+            "side": "UNDER",
+            "line": 6.5,
+            "tier": "PAPER",
+            "prob": 0.557508316169974,
+            "reason": "projection 4.9 to 5.4; probability fell to 55% (bar is 55%)"
+          },
+          {
+            "player": "Terrence Shannon Jr.",
+            "team": "MIN",
+            "matchup": "MIN @ CLE",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 9.5,
+            "tier": "PAPER",
+            "prob": 0.5358491656095312,
+            "reason": "projection 9.2 to 10.0; probability fell to 53% (bar is 55%)"
+          },
+          {
+            "player": "Sam Merrill",
+            "team": "CLE",
+            "matchup": "MIN @ CLE",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 8.5,
+            "tier": "PAPER",
+            "prob": 0.5357675855656758,
+            "reason": "projection 6.8 to 7.4; probability fell to 53% (bar is 55%)"
+          },
+          {
+            "player": "Jayson Tatum",
+            "team": "BOS",
+            "matchup": "CHI @ BOS",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 3.5,
+            "tier": "PAPER",
+            "prob": 0.6304432650469243,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Derrick White",
+            "team": "BOS",
+            "matchup": "CHI @ BOS",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 2.5,
+            "tier": "PAPER",
+            "prob": 0.5508433238911041,
+            "reason": "probability fell to 54% (bar is 55%)"
+          },
+          {
+            "player": "Payton Pritchard",
+            "team": "BOS",
+            "matchup": "CHI @ BOS",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 16.5,
+            "tier": "PAPER",
+            "prob": 0.5381873696813179,
+            "reason": "projection 13.0 to 14.2; probability fell to 52% (bar is 55%)"
+          },
+          {
+            "player": "Max Christie",
+            "team": "DAL",
+            "matchup": "DAL @ MIA",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 2.5,
+            "tier": "PAPER",
+            "prob": 0.6559535849001683,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Max Christie",
+            "team": "DAL",
+            "matchup": "DAL @ MIA",
+            "stat": "assists",
+            "side": "UNDER",
+            "line": 2.5,
+            "tier": "PAPER",
+            "prob": 0.5764176874262008,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Tyrese Haliburton",
+            "team": "IND",
+            "matchup": "IND @ MIL",
+            "stat": "assists",
+            "side": "UNDER",
+            "line": 9.5,
+            "tier": "PAPER",
+            "prob": 0.559011926858843,
+            "reason": "projection 7.2 to 8.0; probability fell to 52% (bar is 55%)"
+          },
+          {
+            "player": "Tyrese Haliburton",
+            "team": "IND",
+            "matchup": "IND @ MIL",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 2.5,
+            "tier": "PAPER",
+            "prob": 0.5543076169334679,
+            "reason": "probability fell to 53% (bar is 55%)"
+          },
+          {
+            "player": "Jaime Jaquez Jr.",
+            "team": "MIL",
+            "matchup": "IND @ MIL",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 16.5,
+            "tier": "PAPER",
+            "prob": 0.5375124406651114,
+            "reason": "projection 14.2 to 15.5; probability fell to 53% (bar is 55%)"
+          },
+          {
+            "player": "Jalen Green",
+            "team": "PHX",
+            "matchup": "PHX @ OKC",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 2.5,
+            "tier": "PAPER",
+            "prob": 0.6783209136747952,
+            "reason": "edge fell to -0.4% (needs +1.0%)"
+          },
+          {
+            "player": "Shai Gilgeous-Alexander",
+            "team": "OKC",
+            "matchup": "PHX @ OKC",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 4.5,
+            "tier": "PAPER",
+            "prob": 0.576159256251334,
+            "reason": "edge fell to +1.0% (needs +1.0%)"
+          },
+          {
+            "player": "Fred VanVleet",
+            "team": "HOU",
+            "matchup": "ATL @ HOU",
+            "stat": "assists",
+            "side": "UNDER",
+            "line": 6.5,
+            "tier": "PAPER",
+            "prob": 0.6364114273967394,
+            "reason": "line moved 6.5 to 5.5; projection 4.3 to 4.8; probability fell to 50% (bar is 55%)"
+          },
+          {
+            "player": "Luguentz Dort",
+            "team": "ATL",
+            "matchup": "ATL @ HOU",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 6.5,
+            "tier": "PAPER",
+            "prob": 0.5421723479402416,
+            "reason": "projection 4.6 to 5.0; probability fell to 54% (bar is 55%)"
+          },
+          {
+            "player": "Cedric Coward",
+            "team": "MEM",
+            "matchup": "MEM @ UTA",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 1.5,
+            "tier": "PAPER",
+            "prob": 0.5810580415017562,
+            "reason": "edge fell to -0.1% (needs +1.0%)"
+          },
+          {
+            "player": "Brandin Podziemski",
+            "team": "GSW",
+            "matchup": "GSW @ DEN",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 2.5,
+            "tier": "PAPER",
+            "prob": 0.6700380936580028,
+            "reason": "the model now leans OVER (55%); line moved 2.5 to 1.5"
+          },
+          {
+            "player": "Jamal Murray",
+            "team": "DEN",
+            "matchup": "GSW @ DEN",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 24.5,
+            "tier": "PAPER",
+            "prob": 0.546733427734733,
+            "reason": "line moved 24.5 to 23.5; projection 21.4 to 23.4; probability fell to 51% (bar is 55%)"
+          }
+        ]
+      },
+      {
+        "label": "6 PM",
+        "clock": "5:39 PM",
+        "prev": "6 PM",
+        "plays": 44,
+        "new": 11,
+        "dropped": [
+          {
+            "player": "Alexandre Sarr",
+            "team": "WAS",
+            "matchup": "WAS @ CHA",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 6.5,
+            "tier": "PAPER",
+            "prob": 0.6085171468729956,
+            "reason": "line moved 6.5 to 5.5; probability fell to 53% (bar is 55%)"
+          },
+          {
+            "player": "Jaden McDaniels",
+            "team": "MIN",
+            "matchup": "MIN @ CLE",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 1.5,
+            "tier": "PAPER",
+            "prob": 0.6480840891066108,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "LaMelo Ball",
+            "team": "MIN",
+            "matchup": "MIN @ CLE",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 4.5,
+            "tier": "PAPER",
+            "prob": 0.5536796505934624,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Tre Jones",
+            "team": "CHI",
+            "matchup": "CHI @ BOS",
+            "stat": "assists",
+            "side": "UNDER",
+            "line": 4.5,
+            "tier": "PAPER",
+            "prob": 0.5929572761086358,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Klay Thompson",
+            "team": "MIA",
+            "matchup": "DAL @ MIA",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 2.5,
+            "tier": "PAPER",
+            "prob": 0.6100211885119424,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Andrew Wiggins",
+            "team": "MIA",
+            "matchup": "DAL @ MIA",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 4.5,
+            "tier": "PAPER",
+            "prob": 0.6001308185779705,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Myles Turner",
+            "team": "MIL",
+            "matchup": "IND @ MIL",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 5.5,
+            "tier": "PAPER",
+            "prob": 0.5925913288675126,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Kyle Kuzma",
+            "team": "MIL",
+            "matchup": "IND @ MIL",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 5.5,
+            "tier": "PAPER",
+            "prob": 0.554023597188122,
+            "reason": "it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Amen Thompson",
+            "team": "HOU",
+            "matchup": "ATL @ HOU",
+            "stat": "rebounds",
+            "side": "UNDER",
+            "line": 8.5,
+            "tier": "PAPER",
+            "prob": 0.5514654681712696,
+            "reason": "projection 7.5 to 7.1; it still clears the bar but lost its place to stronger plays in the same game or on the same player"
+          },
+          {
+            "player": "Isaiah Collier",
+            "team": "UTA",
+            "matchup": "MEM @ UTA",
+            "stat": "assists",
+            "side": "OVER",
+            "line": 4.5,
+            "tier": "PAPER",
+            "prob": 0.5507613958019799,
+            "reason": "projection 6.7 to 6.0; probability fell to 51% (bar is 55%)"
           }
         ]
       }

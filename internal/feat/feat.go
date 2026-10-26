@@ -1394,5 +1394,11 @@ func (b *Builder) DefenseRank(playerID, opp int, stat data.Stat, date string) (D
 			rank++
 		}
 	}
+	// Real defenses differ by a few tens of percent, not by more than that. A bigger gap means a thin
+	// or mislabelled sample (+124% was seen early in a season), so show nothing rather than a number
+	// that looks like information.
+	if pct := mine/base - 1; pct > 0.5 || pct < -0.5 {
+		return DefRank{}, false
+	}
 	return DefRank{Rank: rank, Of: len(teams), Pct: mine/base - 1, Games: games, Pos: pg, Early: early}, true
 }

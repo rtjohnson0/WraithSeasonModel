@@ -121,6 +121,9 @@ type Game5 struct {
 	// Short marks a night well under his normal minutes (an injury exit, foul trouble, a blowout).
 	// It is left out of the typical-minutes figure so one cut-short game does not look like a role change.
 	Short bool `json:"short,omitempty"`
+	// Prior marks a game from last season (for example a playoff game in May): shown, but it is not
+	// part of this season's form.
+	Prior bool `json:"prior,omitempty"`
 }
 
 // Form looks up a player's recent games for a stat before a date, newest last. Nil is allowed.

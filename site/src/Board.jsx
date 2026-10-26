@@ -183,6 +183,7 @@ function PlayRow({ p }) {
                 <figcaption>
                   Minutes played
                   {p.last5.some((g) => g.short) && <span> (faded night was cut short and is not counted)</span>}
+                  {p.last5.some((g) => g.prior) && <span> (faded dashed bars are from last season)</span>}
                 </figcaption>
                 <FormBars
                   games={p.last5.map((g) => ({ ...g, value: g.minutes }))}
