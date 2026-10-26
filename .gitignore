@@ -6,6 +6,7 @@ data/*
 !data/settled.jsonl
 !data/calibration.json
 !data/model.json
+!data/gamecal.json
 demo_data/
 bin/
 *.exe
