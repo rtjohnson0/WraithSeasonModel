@@ -1,17 +1,9 @@
 import { useMemo, useState } from 'react'
-import { FormBars } from './Charts.jsx'
+import { FormBars, LineStrip } from './Charts.jsx'
 import Icon from './Icons.jsx'
 import { LABELS, gradeTone, labelInfo, oddsText, pct, prettyDate, statLabel } from './format.js'
 
 const STATS = ['points', 'rebounds', 'assists', 'threes']
-
-function Chip({ on, onClick, children }) {
-  return (
-    <button type="button" className={`chip${on ? ' on' : ''}`} aria-pressed={on} onClick={onClick}>
-      {children}
-    </button>
-  )
-}
 
 // Plain-language reasons: the model's own notes plus what the recent games show.
 function reasons(p) {
@@ -19,9 +11,13 @@ function reasons(p) {
   if (p.last5?.length) {
     const beat = p.side === 'UNDER' ? 'stayed under' : 'cleared'
     out.push(`He ${beat} ${p.line} in ${p.l5Hits} of his last ${p.last5.length} games and averaged ${p.l5Avg.toFixed(1)}.`)
-    const diff = p.projMin - p.minAvg5
+    const normal = p.minTypical || p.minAvg5
+    const diff = p.projMin - normal
     if (Math.abs(diff) >= 2.5) {
-      out.push(`Projected minutes (${Math.round(p.projMin)}) are ${Math.abs(diff).toFixed(0)} ${diff < 0 ? 'below' : 'above'} his last-${p.last5.length} average (${Math.round(p.minAvg5)}).`)
+      out.push(`Projected minutes (${Math.round(p.projMin)}) are ${Math.abs(diff).toFixed(0)} ${diff < 0 ? 'below' : 'above'} his normal (${Math.round(normal)}, the middle of his last ${p.last5.length} games).`)
+    }
+    if (p.last5.some((g) => g.short)) {
+      out.push('One recent night was cut short (injury, foul trouble or a blowout), so it is left out of his normal minutes.')
     }
   }
   out.push(`Projection ${p.projStat.toFixed(1)} against a line of ${p.line}.`)
@@ -36,8 +32,9 @@ function reasons(p) {
 function PlayRow({ p }) {
   const [open, setOpen] = useState(false)
   const info = labelInfo[p.label] || labelInfo.Lean
+  const conf = Math.max(0, Math.min(1, (p.prob - 0.5) / 0.2))
   return (
-    <li className={`play${p.multi ? ' multi' : ''}`}>
+    <li className={`play ${p.side === 'OVER' ? 'over' : 'under'} ${info.key}${p.multi ? ' multi' : ''}`}>
       <button type="button" className="playbtn" aria-expanded={open} onClick={() => setOpen(!open)}>
         <span className={`grade ${gradeTone(p.grade)}`} aria-label={`Grade ${p.grade}`}>
           {p.grade}
@@ -48,11 +45,12 @@ function PlayRow({ p }) {
             {p.team && <span className="team">{p.team}</span>}
           </span>
           <span className="pick">
-            <b className={p.side === 'OVER' ? 'over' : 'under'}>{p.side}</b> {p.line} {statLabel[p.stat] || p.stat}
+            <b className={p.side === 'OVER' ? 'over' : 'under'}>{p.side === 'OVER' ? 'Over' : 'Under'}</b> {p.line}{' '}
+            {statLabel[p.stat] || p.stat}
           </span>
           {p.multi && (
             <span className="seen" title={`On the board in: ${p.seenIn.join(', ')}`}>
-              Back again: in {p.runs} runs ({p.seenIn.join(', ')})
+              In {p.runs} runs: {p.seenIn.join(', ')}
             </span>
           )}
           {p.badges?.length > 0 && (
@@ -65,15 +63,21 @@ function PlayRow({ p }) {
             </span>
           )}
         </span>
-        <span className="spark">
-          {p.last5?.length ? <FormBars games={p.last5} line={p.line} side={p.side} compact /> : null}
-          {p.last5?.length ? <small>{p.l5Hits} of {p.last5.length} last games</small> : null}
+        <span className="strip-wrap">
+          <LineStrip line={p.line} proj={p.projStat} games={p.last5} side={p.side} />
+          <small>
+            proj <b>{p.projStat.toFixed(1)}</b>
+            {p.last5?.length ? <> · {p.l5Hits} of {p.last5.length} hit</> : null}
+          </small>
         </span>
         <span className="meta">
+          <span className="prob">{pct(p.prob, 1)}</span>
+          <span className="conf" aria-hidden="true">
+            <i style={{ width: `${conf * 100}%` }} />
+          </span>
           <span className={`tier ${info.key}`} title={info.note}>
             {p.label}
           </span>
-          <span className="prob">{pct(p.prob, 1)}</span>
           <span className="price">
             {oddsText(p.odds)} {p.book && <em>{p.book.replace('sgo/', '')}</em>}
           </span>
@@ -93,7 +97,7 @@ function PlayRow({ p }) {
             </p>
             <dl>
               <div><dt>Projected</dt><dd>{p.projStat.toFixed(1)} in {Math.round(p.projMin)} min</dd></div>
-              {p.last5?.length > 0 && <div><dt>Last {p.last5.length} average</dt><dd>{p.l5Avg.toFixed(1)} in {Math.round(p.minAvg5)} min</dd></div>}
+              {p.last5?.length > 0 && <div><dt>Last {p.last5.length} average</dt><dd>{p.l5Avg.toFixed(1)} in {Math.round(p.minTypical || p.minAvg5)} normal min</dd></div>}
               {p.seasonGames > 0 && <div><dt>This season</dt><dd>{p.seasonAvg.toFixed(1)} over {p.seasonGames} games</dd></div>}
               <div><dt>Edge over the price</dt><dd>{(p.edge * 100).toFixed(1)}%</dd></div>
             </dl>
@@ -106,7 +110,10 @@ function PlayRow({ p }) {
                 <FormBars games={p.last5} line={p.line} lineLabel={`line ${p.line}`} side={p.side} />
               </figure>
               <figure>
-                <figcaption>Minutes played</figcaption>
+                <figcaption>
+                  Minutes played
+                  {p.last5.some((g) => g.short) && <span> (faded night was cut short and is not counted)</span>}
+                </figcaption>
                 <FormBars
                   games={p.last5.map((g) => ({ ...g, value: g.minutes }))}
                   line={p.projMin}
@@ -198,19 +205,36 @@ function RunChanges({ runs }) {
   )
 }
 
+function updatedText(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' }) + ' ET'
+}
+
+function Seg({ label, value, onChange, options }) {
+  return (
+    <div className="seg" role="group" aria-label={label}>
+      {options.map(([v, text, n]) => (
+        <button key={v} type="button" className={value === v ? 'on' : ''} aria-pressed={value === v} onClick={() => onChange(v)}>
+          {text}
+          {n !== undefined && <i>{n}</i>}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export default function Board({ site }) {
   const { board } = site
-  const [stats, setStats] = useState(new Set(STATS))
-  const [labels, setLabels] = useState(new Set(LABELS))
+  const [stat, setStat] = useState('all')
+  const [label, setLabel] = useState('all')
   const [side, setSide] = useState('ALL')
   const [q, setQ] = useState('')
   const [repeatsOnly, setRepeatsOnly] = useState(false)
 
-  const toggle = (set, setter, v) => {
-    const n = new Set(set)
-    n.has(v) ? n.delete(v) : n.add(v)
-    setter(n)
-  }
+  const all = useMemo(() => board.games.flatMap((g) => g.plays), [board])
+  const count = (f) => all.filter(f).length
 
   const games = useMemo(
     () =>
@@ -219,16 +243,19 @@ export default function Board({ site }) {
           ...g,
           plays: g.plays.filter(
             (p) =>
-              stats.has(p.stat) &&
-              labels.has(p.label) &&
+              (stat === 'all' || p.stat === stat) &&
+              (label === 'all' || p.label === label) &&
               (side === 'ALL' || p.side === side) &&
               (!repeatsOnly || p.multi) &&
               (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
           ),
         }))
-        .filter((g) => g.plays.length),
-    [board, stats, labels, side, q, repeatsOnly],
+        .filter((g) => g.plays.length)
+        // Games with a Max play come first: that is what most people scroll for.
+        .sort((a, b) => Number(b.plays.some((p) => p.label === 'Max play')) - Number(a.plays.some((p) => p.label === 'Max play'))),
+    [board, stat, label, side, q, repeatsOnly],
   )
+  const shown = games.reduce((n, g) => n + g.plays.length, 0)
 
   return (
     <>
@@ -237,75 +264,107 @@ export default function Board({ site }) {
       </div>
 
       <section className="day">
-        <h1>{prettyDate(board.date)}</h1>
-        <p className="counts">
-          {board.games.length} games, {board.plays} plays, <b>{board.staked} Max {board.staked === 1 ? 'play' : 'plays'}</b>
-        </p>
+        <div className="dayhead">
+          <h1>{prettyDate(board.date)}</h1>
+          <dl className="tally">
+            <div className={board.staked ? 'hot' : ''}>
+              <dt>Max plays</dt>
+              <dd>{board.staked}</dd>
+            </div>
+            <div>
+              <dt>Plays</dt>
+              <dd>{board.plays}</dd>
+            </div>
+            <div>
+              <dt>Games</dt>
+              <dd>{board.games.length}</dd>
+            </div>
+            {site.generatedAt && (
+              <div>
+                <dt>Updated</dt>
+                <dd className="time">{updatedText(site.generatedAt)}</dd>
+              </div>
+            )}
+          </dl>
+        </div>
         <p className="honest">
-          Max plays are the only ones the model stakes. Great, risky and lean plays are tracked so the record shows
-          whether they work, but they are not recommendations.
+          Only Max plays carry a stake. Great, risky and lean plays are tracked so the record shows whether they work.
+          None of it is a promise.
         </p>
       </section>
 
       <RunChanges runs={board.runsToday} />
 
       <section className="filters" aria-label="Filters">
-        <div className="group" role="group" aria-label="Stat">
-          {STATS.map((s) => (
-            <Chip key={s} on={stats.has(s)} onClick={() => toggle(stats, setStats, s)}>
-              {statLabel[s]}
-            </Chip>
-          ))}
-        </div>
-        <div className="group" role="group" aria-label="Side">
-          {['ALL', 'OVER', 'UNDER'].map((s) => (
-            <Chip key={s} on={side === s} onClick={() => setSide(s)}>
-              {s === 'ALL' ? 'Both sides' : s === 'OVER' ? 'Over' : 'Under'}
-            </Chip>
-          ))}
-        </div>
-        <div className="group" role="group" aria-label="Play type">
-          {LABELS.map((t) => (
-            <Chip key={t} on={labels.has(t)} onClick={() => toggle(labels, setLabels, t)}>
-              {t}
-            </Chip>
-          ))}
-        </div>
+        <Seg
+          label="Stat"
+          value={stat}
+          onChange={setStat}
+          options={[['all', 'All', all.length], ...STATS.map((s) => [s, statLabel[s], count((p) => p.stat === s)])]}
+        />
+        <Seg
+          label="Side"
+          value={side}
+          onChange={setSide}
+          options={[['ALL', 'Both'], ['OVER', 'Over', count((p) => p.side === 'OVER')], ['UNDER', 'Under', count((p) => p.side === 'UNDER')]]}
+        />
+        <Seg
+          label="Play type"
+          value={label}
+          onChange={setLabel}
+          options={[['all', 'Any type'], ...LABELS.map((t) => [t, t, count((p) => p.label === t)])]}
+        />
         {board.runsToday?.length > 1 && (
-          <div className="group" role="group" aria-label="Runs">
-            <Chip on={repeatsOnly} onClick={() => setRepeatsOnly(!repeatsOnly)}>
-              Back again in several runs
-            </Chip>
-          </div>
+          <Seg
+            label="Runs"
+            value={repeatsOnly ? 'rep' : 'all'}
+            onChange={(v) => setRepeatsOnly(v === 'rep')}
+            options={[['all', 'All plays'], ['rep', 'In several runs', count((p) => p.multi)]]}
+          />
         )}
         <label className="search">
           <span className="sr">Search player or team</span>
-          <input type="search" placeholder="Player or team" value={q} onChange={(e) => setQ(e.target.value)} />
+          <input type="search" placeholder="Search player or team" value={q} onChange={(e) => setQ(e.target.value)} />
         </label>
       </section>
 
-      {games.length === 0 && (
+      {shown === 0 && (
         <p className="notice">
           {board.games.length === 0
             ? 'No plays are posted for this day yet. The board updates after the daily run.'
-            : 'No plays match these filters. Turn a filter back on to see more.'}
+            : 'No plays match these filters. Pick "All" to see more.'}
         </p>
       )}
 
       <div className="games">
-        {games.map((g, i) => (
-          <article className="game" key={g.id} style={{ '--i': Math.min(i, 5) }}>
-            <header>
-              <h2>{g.matchup.split(" @ ").length === 2 ? <>{g.matchup.split(" @ ")[0]}<i>@</i>{g.matchup.split(" @ ")[1]}</> : g.matchup}</h2>
-              <span>{g.plays.length} plays</span>
-            </header>
-            <ul>
-              {g.plays.map((p) => (
-                <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} />
-              ))}
-            </ul>
-          </article>
-        ))}
+        {games.map((g) => {
+          const [away, home] = g.matchup.split(' @ ')
+          return (
+            <article className="game" key={g.id}>
+              <header>
+                <h2>
+                  {home ? (
+                    <>
+                      {away}
+                      <i>at</i>
+                      {home}
+                    </>
+                  ) : (
+                    g.matchup
+                  )}
+                </h2>
+                <span>
+                  {g.plays.length} {g.plays.length === 1 ? 'play' : 'plays'}
+                </span>
+              </header>
+              <ul>
+                {g.plays.map((p) => (
+                  <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} />
+                ))}
+              </ul>
+            </article>
+          )
+        })}
       </div>
     </>
   )

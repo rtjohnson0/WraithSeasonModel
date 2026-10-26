@@ -228,3 +228,23 @@ func TestBoardUsesLatestRunAndMarksRepeats(t *testing.T) {
 		t.Errorf("runs = %+v", board.RunsToday)
 	}
 }
+
+func TestMarkShortIgnoresOneCutShortNight(t *testing.T) {
+	gs := []Game5{{Minutes: 33}, {Minutes: 31}, {Minutes: 8}, {Minutes: 34}, {Minutes: 32}}
+	if got := markShort(gs); got != 32.5 {
+		t.Errorf("typical minutes = %v, want 32.5", got)
+	}
+	if !gs[2].Short || gs[0].Short {
+		t.Errorf("only the 8-minute night should be flagged: %+v", gs)
+	}
+	// A new starter: minutes jumped and stayed up. Nothing is cut short; the median follows him.
+	role := []Game5{{Minutes: 14}, {Minutes: 16}, {Minutes: 30}, {Minutes: 31}, {Minutes: 32}}
+	if got := markShort(role); got != 30 {
+		t.Errorf("role change typical = %v, want 30", got)
+	}
+	for _, g := range role {
+		if g.Short {
+			t.Error("a lasting role change must not be flagged as cut short")
+		}
+	}
+}

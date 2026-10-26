@@ -152,7 +152,11 @@ type Row struct {
 	X        []float64              // common features, in CommonSpecs order
 	S        [data.NStats][]float64 // per-stat features, in StatSpecs order
 	AvgMin15 float64                // average minutes over the last 15 games, for the eligibility rule
-	Games    int                    // games of history behind the row
+	// MinTypical is his normal minutes: the median of his last ten games after blowout and injury-exit
+	// nights are filled in. The posting guard and the notes compare the projection with this, not with
+	// a raw average that one cut-short night can drag down.
+	MinTypical float64
+	Games      int // games of history behind the row
 }
 
 // Vec picks the named features out of a row, in order.
@@ -470,6 +474,58 @@ func adjustBlowouts(h []data.PlayerGame, margin func(data.PlayerGame) (float64, 
 	return out, added / float64(n)
 }
 
+// ShortExitAdjust fills in an isolated, unexplained short night (an injury exit, a foul-out, a
+// one-off) before the minutes averages are taken. Switch it off to measure what it does.
+var ShortExitAdjust = true
+
+const (
+	shortExitFrac    = 0.55 // a night under this share of his normal minutes counts as cut short
+	shortExitMinNorm = 15.0 // only rotation players: a 9-minute night for a 12-minute bench player is normal
+)
+
+// adjustShortExits raises an isolated short night to the player's normal minutes (the median of the
+// window). One bad night, a starter who rolled an ankle in the first quarter, says nothing about
+// next game's minutes. Two or more short nights in his last five are left alone, because that is
+// a lasting change (a benching, a minutes limit, a role) and the model should see it. Blowouts
+// are skipped here: adjustBlowouts handles those.
+func adjustShortExits(h []data.PlayerGame, margin func(data.PlayerGame) (float64, bool)) []data.PlayerGame {
+	out := make([]data.PlayerGame, len(h))
+	copy(out, h)
+	if len(h) < 6 {
+		return out
+	}
+	normal := medianMinutes(h)
+	if math.IsNaN(normal) || normal < shortExitMinNorm {
+		return out
+	}
+	var short []int
+	for i, g := range h {
+		if g.Minutes >= shortExitFrac*normal {
+			continue
+		}
+		if m, ok := margin(g); ok && math.Abs(m) >= blowoutMargin {
+			continue
+		}
+		short = append(short, i)
+	}
+	recent := func(from int) int {
+		n := 0
+		for _, i := range short {
+			if i >= from {
+				n++
+			}
+		}
+		return n
+	}
+	if recent(len(h)-5) > 1 || recent(len(h)-10) > 2 {
+		return out
+	}
+	for _, i := range short {
+		out[i].Minutes = normal
+	}
+	return out
+}
+
 func (b *Builder) gameMargin(g data.PlayerGame) (float64, bool) {
 	tg := b.tgByKey[teamKey{g.TeamID, g.GameID}]
 	if tg == nil || !tg.HasOpp {
@@ -784,6 +840,10 @@ func (b *Builder) build(hist []data.PlayerGame, team, opp int, home float64, day
 	if BlowoutAdjust {
 		adj, cut = adjustBlowouts(adj, b.gameMargin)
 	}
+	if ShortExitAdjust {
+		adj = adjustShortExits(adj, b.gameMargin)
+	}
+	r.MinTypical = medianMinutes(tailGames(adj, 10))
 	setC("m_ewma", ewma(tailGames(adj, 10), 4))
 	setC("m_last", adj[len(adj)-1].Minutes)
 	setC("m_avg5", meanMinutes(tailGames(adj, 5)))
@@ -1215,4 +1275,12 @@ func FeatureIndex(name string, stat data.Stat) (common, perStat int) {
 		perStat = i
 	}
 	return
+}
+
+// TypicalMinutes returns MinTypical, or the 15-game average if it is not available.
+func (r *Row) TypicalMinutes() float64 {
+	if r.MinTypical > 0 && !math.IsNaN(r.MinTypical) {
+		return r.MinTypical
+	}
+	return r.AvgMin15
 }

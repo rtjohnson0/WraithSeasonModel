@@ -27,7 +27,7 @@ export function FormBars({ games, line, lineLabel, side, tone = 'stat', height =
       {games.map((g, i) => {
         const x = i * slot + (slot - bw) / 2
         const hit = tone === 'stat' ? (side === 'OVER' ? g.value > line : g.value < line) : null
-        const cls = hit === null ? 'neutral' : hit ? 'hit' : 'miss'
+        const cls = `${hit === null ? 'neutral' : hit ? 'hit' : 'miss'}${g.short ? ' short' : ''}`
         return (
           <g key={`${g.date}-${i}`}>
             <rect className={`bar ${cls}`} x={x} y={y(g.value)} width={bw} height={Math.max(1, h - padB - y(g.value))} />
@@ -116,5 +116,34 @@ export function UnitsChart({ daily }) {
         ))}
       </figcaption>
     </figure>
+  )
+}
+
+// A one-line picture of the play: where the line sits, where his last games landed, and where the
+// model projects him. Dots are his recent games (bright when the pick would have hit), the tall tick
+// is the line and the triangle is the projection.
+export function LineStrip({ line, proj, games, side, width = 190, height = 36 }) {
+  const vals = [...(games || []).map((g) => g.value), line, proj].filter((v) => Number.isFinite(v))
+  if (vals.length < 2) return null
+  const lo = Math.min(...vals)
+  const hi = Math.max(...vals)
+  const pad = Math.max((hi - lo) * 0.12, 0.6)
+  const x = (v) => 8 + ((v - (lo - pad)) / (hi - lo + 2 * pad)) * (width - 16)
+  const mid = 15
+  const hit = (v) => (side === 'OVER' ? v > line : v < line)
+  return (
+    <svg
+      className="strip"
+      viewBox={`0 0 ${width} ${height}`}
+      role="img"
+      aria-label={`Line ${line}, projection ${proj.toFixed(1)}, recent games ${(games || []).map((g) => nice(g.value)).join(', ')}`}
+    >
+      <line className="axis" x1="4" x2={width - 4} y1={mid} y2={mid} />
+      <rect className="mark" x={x(line) - 1} y={3} width="2" height={mid * 2 - 6} />
+      {(games || []).map((g, i) => (
+        <circle key={`${g.date}-${i}`} className={`dot ${hit(g.value) ? 'hit' : 'miss'}`} cx={x(g.value)} cy={mid} r="4" />
+      ))}
+      <path className="proj" d={`M${x(proj)} ${mid + 7} l5 8 h-10 z`} />
+    </svg>
   )
 }

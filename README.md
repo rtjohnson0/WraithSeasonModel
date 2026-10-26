@@ -364,3 +364,11 @@ Game lines needed both teams at 8 games of history, so they were skipped early i
 ## Run-to-run changes
 
 Every `predict` run (9 AM, 3 PM, 6 PM, 8 PM) saves its board to `data/runs.jsonl` and compares it with the run before it that day. The terminal prints CHANGES SINCE THE 9 AM RUN: each dropped play with the reason (he is ruled out, the line moved, the model now leans the other way, probability or edge fell below the bar, minutes or projection changed, or it lost its place to stronger plays), the new plays, and tier changes. `-game` and `-nolog` runs are not recorded. The site shows the latest run's board, a "What changed between runs today" panel with the same reasons, and an amber "Back again" mark (plus a filter) on plays that were on the board in more than one run. If the model keeps choosing a play as lines and lineups change, that is worth more than a play that appeared once.
+
+## Minutes: cut-short nights
+
+A night cut short by an injury exit or foul trouble no longer drags a player's minutes down. Before the minutes averages are taken, an isolated night under 55% of his normal (the median of his last 30 games, rotation players only) is raised to normal. Two or more short nights in his last five are left alone, since that is a real change (a benching, a minutes limit, a new role). Blowouts are handled separately, as before. `-noexitfix` on `backtest` and `bias` turns it off so you can measure what it does; compare the MINUTES CHECK table with and without it before trusting it. The posting guard and the "minutes vs his normal" note now compare the projection with his typical minutes (median of his last ten after both corrections), not a raw 15-game average. On the site, "normal minutes" is the median of his last five with a cut-short night left out, and that night is faded in the minutes chart.
+
+## Site look
+
+The board is flat and quiet: one purple accent, a cropped banner, a one-line strip on each play (the line, his last five games as dots, the projection as a triangle), a bar for confidence, and filters that show one choice at a time. Games with a Max play come first.

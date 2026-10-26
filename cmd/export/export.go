@@ -46,6 +46,7 @@ type Play struct {
 	SeasonAvg float64 `json:"seasonAvg"`
 	SeasonGP  int     `json:"seasonGames"`
 	MinAvg5   float64 `json:"minAvg5"`
+	MinTyp    float64 `json:"minTypical"` // median minutes of the last five, cut-short nights left out
 }
 
 // Badge is one quick-read signal about a play. Tone is from the point of view of the pick.
@@ -62,6 +63,9 @@ type Game5 struct {
 	Home    bool    `json:"home"`
 	Value   float64 `json:"value"`
 	Minutes float64 `json:"minutes"`
+	// Short marks a night well under his normal minutes (an injury exit, foul trouble, a blowout).
+	// It is left out of the typical-minutes figure so one cut-short game does not look like a role change.
+	Short bool `json:"short,omitempty"`
 }
 
 // Form looks up a player's recent games for a stat before a date, newest last. Nil is allowed.
@@ -280,12 +284,13 @@ func badgesFor(p Play) []Badge {
 			add("trend-against", fmt.Sprintf("The %s hit in only %d of his last %d", strings.ToLower(p.Side), p.L5Hits, n), false)
 		}
 	}
-	if len(p.Last5) >= 4 && p.MinAvg5 > 0 {
-		d := p.ProjMin - p.MinAvg5
+	if len(p.Last5) >= 4 && minutesRef(p) > 0 {
+		ref := minutesRef(p)
+		d := p.ProjMin - ref
 		if d >= 3 {
-			add("minutes-up", fmt.Sprintf("Minutes up: projected %.0f vs %.0f lately", p.ProjMin, p.MinAvg5), over)
+			add("minutes-up", fmt.Sprintf("Minutes up: projected %.0f vs his normal %.0f", p.ProjMin, ref), over)
 		} else if d <= -3 {
-			add("minutes-down", fmt.Sprintf("Minutes down: projected %.0f vs %.0f lately", p.ProjMin, p.MinAvg5), !over)
+			add("minutes-down", fmt.Sprintf("Minutes down: projected %.0f vs his normal %.0f", p.ProjMin, ref), !over)
 		}
 	}
 	if strings.Contains(why, "back-to-back") {
@@ -415,6 +420,7 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 			if n := float64(len(games)); n > 0 {
 				p.L5Avg, p.MinAvg5 = sum/n, mins/n
 			}
+			p.MinTyp = markShort(p.Last5)
 		}
 		if n := count[k]; n > 0 {
 			p.Runs, p.SeenIn, p.Multi = n, seenIn[k], n >= 2
@@ -646,4 +652,53 @@ func latestDate(entries []picklog.Entry) string {
 		}
 	}
 	return d
+}
+
+// minutesRef is the minutes figure a projection is compared with: his typical minutes when known.
+func minutesRef(p Play) float64 {
+	if p.MinTyp > 0 {
+		return p.MinTyp
+	}
+	return p.MinAvg5
+}
+
+// markShort flags games well under his normal minutes and returns the typical minutes of the rest.
+// Normal is the median of the five games. With two or more short nights it is a lasting change
+// (a benching, a new role), so nothing is flagged and the median speaks for itself.
+func markShort(gs []Game5) float64 {
+	if len(gs) == 0 {
+		return 0
+	}
+	med := func(xs []float64) float64 {
+		c := append([]float64(nil), xs...)
+		sort.Float64s(c)
+		n := len(c)
+		if n%2 == 0 {
+			return (c[n/2-1] + c[n/2]) / 2
+		}
+		return c[n/2]
+	}
+	all := make([]float64, len(gs))
+	for i, g := range gs {
+		all[i] = g.Minutes
+	}
+	normal := med(all)
+	if len(gs) >= 4 && normal >= 15 {
+		var idx []int
+		for i, g := range gs {
+			if g.Minutes < 0.55*normal {
+				idx = append(idx, i)
+			}
+		}
+		if len(idx) == 1 {
+			gs[idx[0]].Short = true
+		}
+	}
+	var keep []float64
+	for _, g := range gs {
+		if !g.Short {
+			keep = append(keep, g.Minutes)
+		}
+	}
+	return med(keep)
 }

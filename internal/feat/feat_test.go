@@ -449,3 +449,33 @@ func TestOpponentAbsenceFeatures(t *testing.T) {
 		}
 	}
 }
+
+func TestAdjustShortExits(t *testing.T) {
+	mk := func(id int, min float64) data.PlayerGame { return data.PlayerGame{GameID: id, Minutes: min} }
+	close := func(data.PlayerGame) (float64, bool) { return 4, true }
+	// An isolated 9-minute night (an injury exit) among 32-minute games is filled in.
+	h := []data.PlayerGame{mk(1, 32), mk(2, 33), mk(3, 31), mk(4, 32), mk(5, 9), mk(6, 32), mk(7, 33)}
+	got := adjustShortExits(h, close)
+	if got[4].Minutes != 32 {
+		t.Errorf("an isolated short night should be raised to the median 32, got %v", got[4].Minutes)
+	}
+	if h[4].Minutes != 9 {
+		t.Error("the input must not be modified")
+	}
+	// Two short nights in the last five is a lasting change and is left alone.
+	h2 := []data.PlayerGame{mk(1, 32), mk(2, 33), mk(3, 31), mk(4, 32), mk(5, 12), mk(6, 11), mk(7, 33)}
+	got2 := adjustShortExits(h2, close)
+	if got2[4].Minutes != 12 || got2[5].Minutes != 11 {
+		t.Errorf("repeated short nights must be kept, got %v %v", got2[4].Minutes, got2[5].Minutes)
+	}
+	// A short night in a blowout is not an exit (adjustBlowouts handles it).
+	rout := func(g data.PlayerGame) (float64, bool) { return -25, g.GameID == 5 }
+	if got3 := adjustShortExits(h, rout); got3[4].Minutes != 9 {
+		t.Errorf("blowouts are left to adjustBlowouts, got %v", got3[4].Minutes)
+	}
+	// Bench players are not touched: low minutes are normal for them.
+	bench := []data.PlayerGame{mk(1, 12), mk(2, 11), mk(3, 13), mk(4, 12), mk(5, 3), mk(6, 12), mk(7, 11)}
+	if got4 := adjustShortExits(bench, close); got4[4].Minutes != 3 {
+		t.Errorf("a bench player's short night should stay, got %v", got4[4].Minutes)
+	}
+}

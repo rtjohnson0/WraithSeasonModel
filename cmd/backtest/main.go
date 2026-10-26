@@ -34,6 +34,7 @@ func main() {
 	season := flag.Int("season", 2025, "season whose opening lines to test against")
 	dir := flag.String("data", "data", "data directory")
 	noVol := flag.Bool("novol", false, "leave out the per-player minutes-volatility scaling (to measure what it adds)")
+	noExitFix := flag.Bool("noexitfix", false, "leave out the injury-exit correction to the minutes averages (to measure what it adds)")
 	noBlowout := flag.Bool("noblowout", false, "leave out the blowout correction to the minutes averages (to measure what it adds)")
 	lineup := flag.Bool("lineup", false, "include teammates-out features (flattered by opening lines; see README)")
 	minEdge := flag.Float64("minedge", 0.01, "also require the probability to beat the offered odds break-even by this much")
@@ -42,6 +43,7 @@ func main() {
 	flag.Parse()
 	predictor.UseVolatility = !*noVol
 	feat.BlowoutAdjust = !*noBlowout
+	feat.ShortExitAdjust = !*noExitFix
 
 	d, err := pipeline.Load(*dir, true)
 	if err != nil {
@@ -173,8 +175,8 @@ func main() {
 	}
 
 	// Final calibration for live use is fitted on every scored line.
-	if *noBlowout || *noVol {
-		fmt.Println("\nExperiment run (-noblowout or -novol): calibration.json was NOT saved, so the live calibration still matches the real model.")
+	if *noBlowout || *noVol || *noExitFix {
+		fmt.Println("\nExperiment run (-noblowout, -noexitfix or -novol): calibration.json was NOT saved, so the live calibration still matches the real model.")
 		return
 	}
 	final := eval.FitCalibration(v2)

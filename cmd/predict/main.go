@@ -325,7 +325,7 @@ func main() {
 			Prob: prob, ProbRaw: raw, Edge: bets.Edge(prob, odds), Units: bets.Units(prob, odds, *maxUnits),
 			Vendor: l.Vendor, Odds: odds, ProjMean: pred.Mean(l.Stat), ProjMin: pred.Minutes,
 			Why:   why(b, ix, row, l.Stat, pred, team, map[bool]int{true: g.Home, false: g.Visitor}[team == g.Visitor], out, *date),
-			Shift: pred.Minutes - row.AvgMin15,
+			Shift: pred.Minutes - row.TypicalMinutes(),
 		}
 		if st, ok := statuses[l.PlayerID]; ok && props.IsUncertain(st) {
 			s.Maybe = st
@@ -741,8 +741,8 @@ func why(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, stat 
 	if ci >= 0 && row.X[ci] == 1 {
 		parts = append(parts, "back-to-back")
 	}
-	if d := pred.Minutes - row.AvgMin15; math.Abs(d) >= 3 {
-		parts = append(parts, fmt.Sprintf("minutes %+.0f vs recent", d))
+	if d := pred.Minutes - row.TypicalMinutes(); math.Abs(d) >= 3 {
+		parts = append(parts, fmt.Sprintf("minutes %+.0f vs his normal", d))
 	}
 	if _, pi := feat.FeatureIndex("opp_allow", stat); pi >= 0 {
 		if v := row.S[data.StatIndex(stat)][pi]; !math.IsNaN(v) {
