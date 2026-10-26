@@ -393,3 +393,59 @@ func TestMinutesShapeHelpers(t *testing.T) {
 		t.Error("empty history should give NaN")
 	}
 }
+
+// The other team's missing players show up as features, from box scores and from the live out list.
+func TestOpponentAbsenceFeatures(t *testing.T) {
+	games := miniLeague()
+	for i := range games {
+		if games[i].PlayerID == 11 { // the star is a center with 2 blocks a game
+			games[i].Pos = "C"
+			games[i].Blk = 2
+		}
+	}
+	b := NewBuilder(games, nil)
+	var present, absent *Row
+	rows := b.Rows(0)
+	for i := range rows {
+		r := &rows[i]
+		if r.G.PlayerID == 22 && r.G.GameID == 110 {
+			present = r // the star played for the other team
+		}
+		if r.G.PlayerID == 22 && r.G.GameID == 111 {
+			absent = r // the star is out
+		}
+	}
+	if present == nil || absent == nil {
+		t.Fatal("expected rows for player 22 in games 110 and 111")
+	}
+	for _, name := range []string{"oppabs_min", "oppabs_big", "oppabs_blk", "oppabs_reb"} {
+		if v := present.X[commonIdx[name]]; v != 0 {
+			t.Errorf("%s should be 0 when the opposing star played, got %v", name, v)
+		}
+	}
+	for name, want := range map[string]float64{"oppabs_min": 36, "oppabs_big": 36, "oppabs_blk": 2, "oppabs_reb": 6, "oppabs_starters": 1} {
+		if got := absent.X[commonIdx[name]]; got != want {
+			t.Errorf("%s with the opposing star out = %v, want %v", name, got, want)
+		}
+	}
+	if absent.X[commonIdx["oppabs_pts"]] <= 0 {
+		t.Error("oppabs_pts should count the missing star's scoring")
+	}
+	if !b.IsStarter(1, absent.G.Day, 11) {
+		t.Error("the 36-minute star should count as a starter")
+	}
+	// The live path agrees: ruling him out for tomorrow's game gives the same numbers.
+	live := b.Live(22, 2, 1, false, "2025-11-23", map[int]bool{11: true})
+	if live == nil {
+		t.Fatal("live row is nil")
+	}
+	if got := live.X[commonIdx["oppabs_big"]]; got != 36 {
+		t.Errorf("live oppabs_big = %v, want 36", got)
+	}
+	// The minutes model must not see these features.
+	for _, n := range MinutesNames(nil) {
+		if n == "oppabs_min" || n == "oppabs_big" || n == "oppabs_blk" || n == "oppabs_reb" {
+			t.Errorf("minutes model should not use %s", n)
+		}
+	}
+}

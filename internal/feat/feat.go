@@ -41,11 +41,12 @@ const (
 	GroupMatchup   = "matchup"   // opponent defense against this player's position
 	GroupMarket    = "market"    // the game's betting spread and total, known before tip-off (blowout risk, pace)
 	GroupSeason    = "season"    // how far into the season: lets early-season games trust history differently
+	GroupOppOut    = "oppout"    // opposing rotation players who are out (a missing rim protector, rebounder or starter)
 	GroupChances   = "chances"   // tracking opportunities: rebound chances, passes, touches, and how well they convert
 )
 
 // OptionalGroups are the groups that can be switched off for ablation.
-var OptionalGroups = []string{GroupForm, GroupSlump, GroupOpp, GroupGame, GroupRest, GroupHome, GroupTeammates, GroupUsage, GroupH2H, GroupSplit, GroupLayoff, GroupMatchup, GroupSeason, GroupMarket, GroupChances}
+var OptionalGroups = []string{GroupForm, GroupSlump, GroupOpp, GroupGame, GroupRest, GroupHome, GroupTeammates, GroupUsage, GroupH2H, GroupSplit, GroupLayoff, GroupMatchup, GroupSeason, GroupMarket, GroupChances, GroupOppOut}
 
 // CommonSpecs are features shared by every model. The minutes model uses all of them; the stat
 // models skip the ones in the "minutes" group because they already condition on minutes played.
@@ -62,6 +63,8 @@ var CommonSpecs = []Spec{
 	{"net_diff", GroupGame},
 	{"pace", GroupOpp},
 	{"miss_min", GroupTeammates}, {"miss_starters", GroupTeammates},
+	{"oppabs_min", GroupOppOut}, {"oppabs_big", GroupOppOut}, {"oppabs_blk", GroupOppOut}, {"oppabs_reb", GroupOppOut},
+	{"oppabs_starters", GroupOppOut}, {"oppabs_pts", GroupOppOut}, {"oppabs_ast", GroupOppOut},
 }
 
 // StatSpecs are the extra features for each stat, indexed by data.StatIndex.
@@ -117,8 +120,8 @@ func on(group string, disabled map[string]bool) bool { return !disabled[group] }
 func MinutesNames(disabled map[string]bool) []string {
 	var out []string
 	for _, s := range CommonSpecs {
-		if s.Name == "pace" {
-			continue
+		if s.Name == "pace" || strings.HasPrefix(s.Name, "oppabs_") {
+			continue // the minutes model does not use the pace or the opposing-absence features
 		}
 		if on(s.Group, disabled) {
 			out = append(out, s.Name)
@@ -235,6 +238,8 @@ func (b *Builder) AddGameLine(day, team int, l GameLine) {
 type rotMember struct {
 	pid  int
 	min  float64
+	pos  int     // position group (see PosGroup): 3 and 4 are bigs
+	blk  float64 // blocks per game over his last 10
 	prod [data.NStats]float64
 }
 
@@ -555,13 +560,16 @@ func (b *Builder) rotation(team, day int) []rotMember {
 				continue // no longer on this team (or not active)
 			}
 		}
-		rm := rotMember{pid: pid, min: avg}
+		rm := rotMember{pid: pid, min: avg, pos: PosGroup(hist[len(hist)-1].Pos)}
 		recent := tailGames(hist, 10)
 		for _, g := range recent {
+			rm.blk += g.Blk
+			rm.prod[3] += g.Fg3m
 			rm.prod[0] += g.Pts
 			rm.prod[1] += g.Reb
 			rm.prod[2] += g.Ast
 		}
+		rm.blk /= float64(len(recent))
 		for k := range rm.prod {
 			rm.prod[k] /= float64(len(recent))
 		}
@@ -586,6 +594,16 @@ func (b *Builder) RotationOf(team, day int) []int {
 		out = append(out, r.pid)
 	}
 	return out
+}
+
+// IsStarter reports whether a rotation player averages starter minutes for their team.
+func (b *Builder) IsStarter(team, day, pid int) bool {
+	for _, r := range b.rotation(team, day) {
+		if r.pid == pid {
+			return r.min >= starterMins
+		}
+	}
+	return false
 }
 
 // absentees returns rotation players who are not playing. played reports who played (history)
@@ -613,12 +631,18 @@ func (b *Builder) Rows(minAvg float64) []Row {
 			continue
 		}
 		tg := b.tgByKey[teamKey{g.TeamID, g.GameID}]
-		var abs []rotMember
+		var abs, oppAbs []rotMember
 		if tg != nil {
 			abs = b.absentees(g.TeamID, g.Day, g.PlayerID, func(pid int) bool {
 				_, played := tg.Players[pid]
 				return !played
 			})
+			if otg := b.tgByKey[teamKey{tg.Opp, g.GameID}]; otg != nil && tg.HasOpp {
+				oppAbs = b.absentees(tg.Opp, g.Day, 0, func(pid int) bool {
+					_, played := otg.Players[pid]
+					return !played
+				})
+			}
 		}
 		home := math.NaN()
 		if g.HomeTeamID != 0 {
@@ -631,7 +655,7 @@ func (b *Builder) Rows(minAvg float64) []Row {
 		if tg != nil && tg.HasOpp {
 			opp = tg.Opp
 		}
-		r := b.build(hist, g.TeamID, opp, home, g.Day, g.Date, abs)
+		r := b.build(hist, g.TeamID, opp, home, g.Day, g.Date, abs, oppAbs)
 		if r == nil {
 			continue
 		}
@@ -653,7 +677,11 @@ func (b *Builder) Live(playerID, teamID, oppID int, home bool, date string, out 
 	if home {
 		h = 1
 	}
-	r := b.build(hist, teamID, oppID, h, day, date, abs)
+	var oppAbs []rotMember
+	if oppID != 0 {
+		oppAbs = b.absentees(oppID, day, 0, func(pid int) bool { return out[pid] })
+	}
+	r := b.build(hist, teamID, oppID, h, day, date, abs, oppAbs)
 	if r == nil {
 		return nil
 	}
@@ -727,7 +755,7 @@ func shrunkMean(games []*teamGame, prior float64, x func(*teamGame) float64) flo
 	return sum / n
 }
 
-func (b *Builder) build(hist []data.PlayerGame, team, opp int, home float64, day int, date string, abs []rotMember) *Row {
+func (b *Builder) build(hist []data.PlayerGame, team, opp int, home float64, day int, date string, abs, oppAbs []rotMember) *Row {
 	pj, ok := b.ix.Project(hist[len(hist)-1].PlayerID, date)
 	if !ok {
 		return nil
@@ -872,6 +900,33 @@ func (b *Builder) build(hist []data.PlayerGame, team, opp int, home float64, day
 	}
 	setC("miss_min", missMin)
 	setC("miss_starters", missStarters)
+
+	// The other team's missing rotation players: a missing rim protector or rebounder changes
+	// what the opposing players can do. Minutes of everyone out, minutes of bigs out, and the
+	// blocks and rebounds per game that are not on the floor.
+	// Any missing starter counts, not only bigs: a missing perimeter defender or the opponent's
+	// main scorer and playmaker also changes the game.
+	var oMin, oBig, oBlk, oReb, oStart, oPts, oAst float64
+	for _, a := range oppAbs {
+		oMin += a.min
+		if a.min >= starterMins {
+			oStart++
+		}
+		oPts += a.prod[0]
+		oAst += a.prod[2]
+		if a.pos >= 3 {
+			oBig += a.min
+		}
+		oBlk += a.blk
+		oReb += a.prod[1]
+	}
+	setC("oppabs_min", oMin)
+	setC("oppabs_big", oBig)
+	setC("oppabs_blk", oBlk)
+	setC("oppabs_reb", oReb)
+	setC("oppabs_starters", oStart)
+	setC("oppabs_pts", oPts)
+	setC("oppabs_ast", oAst)
 
 	// Baseline rates, form, and usage trends per stat.
 	for _, s := range data.Stats {

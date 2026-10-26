@@ -11,7 +11,8 @@ name: WraithPicksSZN daily
 # Scheduled runs can also start a few minutes late when GitHub is busy.
 #
 # Run it by hand from the Actions tab (Run workflow) with a mode:
-#   bootstrap  first time only: download all box scores and train (takes a while)
+#   bootstrap  first time only: download the last two seasons of box scores (the model itself is
+#              trained on your PC and committed as data/model.json; see the README)
 #   daily      the morning run
 #   pretip     the lines-and-picks refresh (the 3 pm, 6 pm and 8 pm runs)
 #   site       rebuild and publish the site from the data already saved (after a code change)
@@ -49,7 +50,7 @@ env:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
@@ -79,25 +80,40 @@ jobs:
       - name: Keep the committed state files
         run: git checkout -- data/ 2>/dev/null || true
 
-      - name: Check the keys are set
+      - name: Check the keys and the model are set
         if: steps.mode.outputs.mode != 'site'
         run: |
           [ -n "$BALLDONTLIE_API_KEY" ] || { echo "Add the BALLDONTLIE_API_KEY secret: repo Settings > Secrets and variables > Actions"; exit 1; }
+          if [ "${{ steps.mode.outputs.mode }}" != "bootstrap" ]; then
+            [ -f data/model.json ] || { echo "data/model.json is missing. Train locally (go run ./cmd/train) and commit data/model.json and data/calibration.json."; exit 1; }
+            [ -f data/calibration.json ] || { echo "data/calibration.json is missing. Run the backtest locally and commit it."; exit 1; }
+          fi
 
-      - name: Bootstrap (download history and train)
+      # Only the last two seasons are downloaded: that is all the features need to score today's
+      # players. The model was trained on the full history on your PC and is committed to the repo,
+      # so this step does not train. Each step has its own time limit, and the downloaded data is
+      # saved to the cache even if one stops, so running bootstrap again picks up where it left off.
+      - name: Bootstrap, box scores
         if: steps.mode.outputs.mode == 'bootstrap'
+        timeout-minutes: 40
         run: |
           YEAR=$(date +%Y); MONTH=$((10#$(date +%m)))
           if [ "$MONTH" -ge 8 ]; then CUR=$YEAR; else CUR=$((YEAR-1)); fi
-          SEASONS=$(seq -s, 2022 "$CUR")
-          go run ./cmd/pull stats -seasons "$SEASONS"
-          go run ./cmd/pull advanced -seasons "$SEASONS" || echo "advanced pull skipped"
+          go run ./cmd/pull stats -seasons "$((CUR-1)),$CUR"
           go run ./cmd/pull players
-          go run ./cmd/train
+
+      - name: Bootstrap, advanced stats
+        if: steps.mode.outputs.mode == 'bootstrap'
+        timeout-minutes: 60
+        continue-on-error: true
+        run: |
+          YEAR=$(date +%Y); MONTH=$((10#$(date +%m)))
+          if [ "$MONTH" -ge 8 ]; then CUR=$YEAR; else CUR=$((YEAR-1)); fi
+          go run ./cmd/pull advanced -seasons "$((CUR-1)),$CUR"
 
       - name: Morning run
         if: steps.mode.outputs.mode == 'daily'
-        run: bash scripts/daily.sh
+        run: bash scripts/daily.sh -s
 
       - name: Pre-tip run
         if: steps.mode.outputs.mode == 'pretip'
@@ -124,7 +140,7 @@ jobs:
         run: |
           git config user.name "wraithpicks-bot"
           git config user.email "wraithpicks-bot@users.noreply.github.com"
-          git add -f data/picklog.jsonl data/settled.jsonl data/calibration.json 2>/dev/null || true
+          git add -f data/picklog.jsonl data/settled.jsonl data/calibration.json data/model.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "nothing new to commit"
           else

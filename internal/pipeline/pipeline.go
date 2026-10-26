@@ -93,13 +93,13 @@ func Load(dir string, withRows bool) (*Data, error) {
 	return d, nil
 }
 
-// DisabledFor returns the feature groups to leave out. Without -lineup the teammates-out group
-// is off: it is the one group a backtest against opening lines cannot honestly validate.
+// DisabledFor returns the feature groups to leave out. Without -lineup the teammates-out and
+// opponent-out groups are off: it is the one group a backtest against opening lines cannot honestly validate.
 func DisabledFor(lineup bool) []string {
 	if lineup {
 		return nil
 	}
-	return []string{feat.GroupTeammates}
+	return []string{feat.GroupTeammates, feat.GroupOppOut}
 }
 
 // fingerprint is a short hash of the feature list, so a calibration fitted for an older feature

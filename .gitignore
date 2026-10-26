@@ -5,6 +5,7 @@ data/*
 !data/picklog.jsonl
 !data/settled.jsonl
 !data/calibration.json
+!data/model.json
 demo_data/
 bin/
 *.exe

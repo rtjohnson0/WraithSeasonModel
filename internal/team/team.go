@@ -80,9 +80,17 @@ type State struct {
 	t      map[int]*tstate
 	league float64 // running mean points per team per game
 	nLg    int
+	// MinGames is how many games (after an offseason reset, last year counts as 4) both teams
+	// need before a game is projected. Training always uses DefaultMinGames; prediction may lower it.
+	MinGames int
 }
 
-func NewState() *State { return &State{t: map[int]*tstate{}, league: 113} }
+// DefaultMinGames is the readiness bar used when fitting the model.
+const DefaultMinGames = 8
+
+func NewState() *State {
+	return &State{t: map[int]*tstate{}, league: 113, MinGames: DefaultMinGames}
+}
 
 const (
 	a10 = 2.0 / 11
@@ -100,8 +108,11 @@ func (s *State) get(id int) *tstate {
 
 // Ready reports whether both teams have enough games for a trustworthy projection.
 func (s *State) Ready(home, away int) bool {
-	return s.get(home).n >= 8 && s.get(away).n >= 8
+	return s.get(home).n >= s.MinGames && s.get(away).n >= s.MinGames
 }
+
+// Games returns how many games (counting carried-over history) a team has behind its ratings.
+func (s *State) Games(id int) int { return s.get(id).n }
 
 // Vec returns the feature vector for a game between home and away on day.
 func (s *State) Vec(home, away, day int) []float64 {

@@ -37,6 +37,7 @@ func main() {
 	maxUnits := flag.Float64("maxunits", 0.5, "largest stake in units (1 unit = 1% of bankroll)")
 	skipBooks := flag.String("skipbooks", "kalshi,polymarket", "comma-separated books to ignore (prediction markets are not sportsbooks: different fees, limits and prices)")
 	allowUnproven := flag.Bool("allowunproven", false, "stake markets whose backtest showed no edge over the book (not recommended)")
+	minGames := flag.Int("mingames", 6, "predict: games each team needs before its game is projected (an offseason counts as 4, so 6 is two games into the season; the model was fitted at 8)")
 	minPrior := flag.Int("minprior", 150, "backtest: games needed before the second stage is fitted")
 	flag.Parse()
 
@@ -58,6 +59,12 @@ func main() {
 			loc = time.Local
 		}
 		*date = time.Now().In(loc).Format("2006-01-02")
+	}
+	if *minGames > 0 {
+		state.MinGames = *minGames
+	}
+	if state.MinGames < team.DefaultMinGames {
+		fmt.Printf("note: early season, ratings lean on last year's teams (min %d games, model fitted at %d); treat as paper\n", state.MinGames, team.DefaultMinGames)
 	}
 	runPredict(*dir, *date, samples, state, *hi, *minEdge, *maxUnits, *skipBooks, *allowUnproven)
 }
@@ -378,7 +385,9 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 			continue
 		}
 		if !state.Ready(g.Home, g.Visitor) {
-			fmt.Printf("note: not enough history for game %d, skipped\n", id)
+			fmt.Printf("note: %s @ %s skipped: only %d and %d games of history (need %d each; lower with -mingames)\n",
+				abbr(g.VisitorAbbr, g.Visitor), abbr(g.HomeAbbr, g.Home),
+				state.Games(g.Visitor), state.Games(g.Home), state.MinGames)
 			continue
 		}
 		pm, pt := mdl.Project(state.Vec(g.Home, g.Visitor, day))

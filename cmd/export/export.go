@@ -251,10 +251,31 @@ func badgesFor(p Play) []Badge {
 	if strings.Contains(why, "out:") {
 		note("teammates-out", "Teammates out: roles and usage shift")
 	}
+	if strings.Contains(why, "opponent out:") {
+		note("opponent-out", "Opponent missing rotation players: their defense and rebounding change")
+	}
 	if strings.Contains(why, "uncertain") || strings.Contains(why, "his status") {
 		note("status", "Injury status to check before tip-off")
 	}
-	if strings.Contains(why, "far from projection") {
+	if strings.Contains(why, "market line moved with the pick") {
+		add("line-move", "The market line has moved toward this pick since the first snapshot", true)
+	} else if strings.Contains(why, "market line moved against the pick") {
+		add("line-move", "The market line has moved away from this pick since the first snapshot", false)
+	} else if strings.Contains(why, "market line moved") {
+		note("line-move", "The market line has moved since the first snapshot")
+	}
+	if strings.Contains(why, "off the market, in your favor") {
+		add("odd-line", "Soft line: this book is off the market in your favor", true)
+	} else if strings.Contains(why, "off the market") {
+		note("odd-line", "Off the market: this book's line differs from the rest")
+	}
+	hasOdd := false
+	for _, x := range out {
+		if x.Key == "odd-line" {
+			hasOdd = true
+		}
+	}
+	if !hasOdd && strings.Contains(why, "far from projection") {
 		note("odd-line", "Odd line: confirm it in your book")
 	}
 	return out

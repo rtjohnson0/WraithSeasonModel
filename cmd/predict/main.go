@@ -77,6 +77,8 @@ func main() {
 	maxGap := flag.Float64("maxgap", 1.0, "a line this far from the projection (as a share of max(projection, 2)) is marked CHECK, since it is more often a bad or alternate line than an edge; 0 turns the guard off")
 	maxCut := flag.Float64("maxshift", 8, "a play whose projected minutes differ from his recent average by this many or more is marked CHECK (0 units) until you confirm the minutes; 0 turns the guard off")
 	stakeStats := flag.String("stakestats", "rebounds", "stats that get a real stake; plays on other stats are tiered PAPER (0 units, still logged). Default follows the 2025 backtest: rebounds were profitable, assists lost money, points posted nothing")
+	boardStats := flag.String("stats", "points,rebounds,assists,threes", "stats scored for the posted board and the log. Threes are included but never staked until a backtest supports them; -game always shows every stat")
+	skewMax := flag.Float64("skew", 0.70, "if more than this share of the day's scored lines lean the same way (all unders, say), the model is probably biased that day, so plays on that side are marked CHECK, not staked (0 turns this off)")
 	warmup := flag.Int("warmup", 8, "a team's first this-many games of a season are tiered PAPER (0 units): early-season inputs (last season's averages, empty rolling windows) are off the distribution the backtest was fitted on; 0 turns it off")
 	also := flag.String("also", "points", "stats to always show the strongest lines for, even when none clear the edge rule (shown as PAPER, 0 units); empty to turn off")
 	alsoTop := flag.Int("alsotop", 8, "how many lines to show per -also stat")
@@ -127,6 +129,7 @@ func main() {
 	if err != nil {
 		fatal(fmt.Errorf("%w (run: go run ./cmd/pull snapshot)", err))
 	}
+	moves, _ := props.LineMoves(propsPath)
 	games, err := props.LoadGames(propsPath)
 	if err != nil {
 		fatal(err)
@@ -214,12 +217,29 @@ func main() {
 	for _, st := range strings.Split(*stakeStats, ",") {
 		staked[data.Stat(strings.TrimSpace(st))] = true
 	}
+	// Where the books agree on a line, a book that is off it is either stale or shading: a
+	// chance to take the better number that has nothing to do with the model.
+	type marketKey struct {
+		player, stat, game int
+	}
+	byMarket := map[marketKey][]float64{}
+	for _, l := range lines {
+		k := marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}
+		byMarket[k] = append(byMarket[k], l.Line)
+	}
+	boardSet := map[data.Stat]bool{}
+	for _, st := range strings.Split(*boardStats, ",") {
+		boardSet[data.Stat(strings.TrimSpace(st))] = true
+	}
 	rowCache := map[int]*feat.Row{}
 	var all, picks []scored
 	skip := struct{ noGame, noTeam, noHistory, minutes, out, noPrice int }{}
 	for _, l := range lines {
 		if gid != 0 && l.GameID != gid {
 			continue
+		}
+		if gid == 0 && !boardSet[l.Stat] {
+			continue // not on the posted board (see -stats)
 		}
 		g, ok := games[l.GameID]
 		if !ok {
@@ -291,7 +311,7 @@ func main() {
 			PlayerID: l.PlayerID, GameID: l.GameID, Player: name, Team: teamAbbr, Matchup: matchup, Stat: l.Stat, Side: side, Line: l.Line,
 			Prob: prob, ProbRaw: raw, Edge: bets.Edge(prob, odds), Units: bets.Units(prob, odds, *maxUnits),
 			Vendor: l.Vendor, Odds: odds, ProjMean: pred.Mean(l.Stat), ProjMin: pred.Minutes,
-			Why:   why(b, ix, row, l.Stat, pred, team, out, *date),
+			Why:   why(b, ix, row, l.Stat, pred, team, map[bool]int{true: g.Home, false: g.Visitor}[team == g.Visitor], out, *date),
 			Shift: pred.Minutes - row.AvgMin15,
 		}
 		if st, ok := statuses[l.PlayerID]; ok && props.IsUncertain(st) {
@@ -301,6 +321,21 @@ func main() {
 		if *maxGap > 0 && math.Abs(s.Line-s.ProjMean)/math.Max(s.ProjMean, 2) > *maxGap {
 			s.Far = true
 			s.Why = addWhy(s.Why, fmt.Sprintf("line %.1f is far from projection %.1f: confirm the line", s.Line, s.ProjMean))
+		}
+		if ls := byMarket[marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}]; len(ls) >= 4 {
+			sorted := append([]float64(nil), ls...)
+			sort.Float64s(sorted)
+			med := sorted[len(sorted)/2]
+			if d := s.Line - med; math.Abs(d) >= 1.0 {
+				kind := "against"
+				if (s.Side == "UNDER" && d > 0) || (s.Side == "OVER" && d < 0) {
+					kind = "in your favor"
+				}
+				s.Why = addWhy(s.Why, fmt.Sprintf("line %.1f is %.1f %s the market median %.1f across %d books: off the market, %s", s.Line, math.Abs(d), map[bool]string{true: "above", false: "below"}[d > 0], med, len(ls), kind))
+			}
+		}
+		if mv, ok := moves[props.MoveKey{Game: l.GameID, Player: l.PlayerID, Stat: l.Stat}]; ok && mv.Moved() {
+			s.Why = addWhy(s.Why, moveNote(mv, s.Side))
 		}
 		var shaky []string
 		for _, pid := range b.RotationOf(team, row.G.Day) {
@@ -330,6 +365,41 @@ func main() {
 				s.Tier, s.Units = "CHECK", 0
 			}
 			picks = append(picks, s)
+		}
+	}
+
+	// A board that leans the same way almost everywhere is a sign the model is off that day, not
+	// that every game has the same edge. Plays on the crowded side are not staked until checked.
+	if *skewMax > 0 && gid == 0 && len(all) >= 100 {
+		unders := 0
+		for _, s := range all {
+			if s.Side == "UNDER" {
+				unders++
+			}
+		}
+		share := float64(unders) / float64(len(all))
+		crowded := ""
+		switch {
+		case share >= *skewMax:
+			crowded = "UNDER"
+		case 1-share >= *skewMax:
+			crowded = "OVER"
+		}
+		if crowded != "" {
+			side := share
+			if crowded == "OVER" {
+				side = 1 - share
+			}
+			fmt.Printf("\nWARNING: %.0f%% of the %d scored lines lean %s. Books do not price a whole slate that one-sided, so the\n", 100*side, len(all), crowded)
+			fmt.Println("model is probably biased that day (minutes or early-season inputs). Plays on that side are marked CHECK, not staked.")
+			fmt.Println("Run `go run ./cmd/bias` to measure the bias.")
+			fmt.Println()
+			for i := range picks {
+				if picks[i].Side == crowded && picks[i].Tier == "PICK" {
+					picks[i].Tier, picks[i].Units = "CHECK", 0
+					picks[i].Why = addWhy(picks[i].Why, fmt.Sprintf("%.0f%% of today's lines lean %s: model may be biased", 100*side, crowded))
+				}
+			}
 		}
 	}
 
@@ -506,6 +576,34 @@ func addWatchlist(picks, all []scored, stats string, top, perPlayer int) []score
 	return picks
 }
 
+// moveNote describes how the market line has moved since the first snapshot of the day, and whether
+// that is toward or away from the pick. The feed has no bet counts, so the reason is not known:
+// several books moving together is usually news, one book alone is usually stale or shaded.
+func moveNote(mv props.Move, side string) string {
+	t := "the first snapshot"
+	if at, err := time.Parse(time.RFC3339, mv.FirstAt); err == nil {
+		loc, lerr := time.LoadLocation("America/New_York")
+		if lerr != nil {
+			loc = time.Local
+		}
+		t = at.In(loc).Format("3:04 pm")
+	}
+	dir := "no net change"
+	switch {
+	case mv.To > mv.From:
+		dir = "up"
+	case mv.To < mv.From:
+		dir = "down"
+	}
+	rel := "market line moved"
+	if (side == "OVER" && mv.To > mv.From) || (side == "UNDER" && mv.To < mv.From) {
+		rel = "market line moved with the pick"
+	} else if mv.To != mv.From {
+		rel = "market line moved against the pick"
+	}
+	return fmt.Sprintf("%s %.1f to %.1f since %s (%d of %d books changed, %d up %d down; %s)", rel, mv.From, mv.To, t, mv.Up+mv.Down, mv.Books, mv.Up, mv.Down, dir)
+}
+
 func addWhy(why, more string) string {
 	if why == "" {
 		return more
@@ -600,7 +698,7 @@ func sgoLines(dir, date string, b *feat.Builder, gameOf map[int]props.GameInfo) 
 }
 
 // why gives a short human reason for the projection.
-func why(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, stat data.Stat, pred predictor.Pred, team int, out map[int]string, date string) string {
+func why(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, stat data.Stat, pred predictor.Pred, team, oppTeam int, out map[int]string, date string) string {
 	var parts []string
 	var names []string
 	for _, pid := range b.RotationOf(team, row.G.Day) {
@@ -610,6 +708,19 @@ func why(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, stat 
 	}
 	if len(names) > 0 {
 		parts = append(parts, "out: "+strings.Join(names, ", "))
+	}
+	var oppNames []string
+	for _, pid := range b.RotationOf(oppTeam, row.G.Day) {
+		if _, isOut := out[pid]; isOut {
+			n := ix.Name(pid)
+			if b.IsStarter(oppTeam, row.G.Day, pid) {
+				n += " (starter)"
+			}
+			oppNames = append(oppNames, n)
+		}
+	}
+	if len(oppNames) > 0 {
+		parts = append(parts, "opponent out: "+strings.Join(oppNames, ", "))
 	}
 	ci, si := feat.FeatureIndex("b2b", stat)
 	_ = si

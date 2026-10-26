@@ -46,6 +46,7 @@ type PlayerGame struct {
 	Fgm      float64
 	Fg3a     float64 // three-point attempts (0 if the API row did not say)
 	Fg3m     float64 // three-pointers made
+	Blk      float64 // blocks (0 if the API row did not say)
 	Pos      string  // G, F, C or a mix such as G-F (empty if the API row did not say)
 
 	Day           int // days since 1970-01-01, for date arithmetic
@@ -149,6 +150,7 @@ type rawStat struct {
 	Fgm    *float64        `json:"fgm"`
 	Fg3a   *float64        `json:"fg3a"`
 	Fg3m   *float64        `json:"fg3m"`
+	Blk    *float64        `json:"blk"`
 	Player struct {
 		ID        int    `json:"id"`
 		FirstName string `json:"first_name"`
@@ -221,6 +223,7 @@ func LoadStatsFile(path string) ([]PlayerGame, error) {
 			Fgm:      val(r.Fgm),
 			Fg3a:     val(r.Fg3a),
 			Fg3m:     val(r.Fg3m),
+			Blk:      val(r.Blk),
 			Pos:      strings.TrimSpace(r.Player.Position),
 
 			Day:           DayNumber(date),

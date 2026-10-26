@@ -25,3 +25,13 @@ func TestFindGame(t *testing.T) {
 		t.Error("two teams from different games should not match")
 	}
 }
+
+func TestMoveNoteSaysWhetherTheMoveIsWithThePick(t *testing.T) {
+	mv := props.Move{From: 24.5, To: 25.5, Books: 8, Up: 6, FirstAt: "2026-10-26T13:17:00Z"}
+	if got := moveNote(mv, "OVER"); !strings.Contains(got, "with the pick") {
+		t.Errorf("an up move with an OVER should be with the pick: %s", got)
+	}
+	if got := moveNote(mv, "UNDER"); !strings.Contains(got, "against the pick") {
+		t.Errorf("an up move with an UNDER should be against the pick: %s", got)
+	}
+}

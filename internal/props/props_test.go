@@ -119,3 +119,47 @@ func TestThreesLinesAreParsed(t *testing.T) {
 		t.Fatalf("want one threes line at 2.5, got %+v", lines)
 	}
 }
+
+func TestLineMoves(t *testing.T) {
+	dir := t.TempDir()
+	path := dir + "/props.jsonl"
+	row := func(at string, lines ...string) string {
+		s := `{"captured_at":"` + at + `","game_id":50,"response":{"data":[`
+		for i, l := range lines {
+			if i > 0 {
+				s += ","
+			}
+			s += l
+		}
+		return s + `]}}` + "\n"
+	}
+	prop := func(vendor, line string) string {
+		return `{"game_id":50,"player_id":7,"vendor":"` + vendor + `","prop_type":"points","line_value":"` + line + `","market":{"type":"over_under","over_odds":-110,"under_odds":-110}}`
+	}
+	body := row("2026-10-26T13:17:00Z", prop("a", "24.5"), prop("b", "24.5"), prop("c", "24.5")) +
+		row("2026-10-26T22:17:00Z", prop("a", "25.5"), prop("b", "25.5"), prop("c", "24.5"))
+	if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	moves, err := LineMoves(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	m, ok := moves[MoveKey{50, 7, data.Points}]
+	if !ok {
+		t.Fatal("expected a move for the player")
+	}
+	if m.From != 24.5 || m.To != 25.5 || m.Books != 3 || m.Up != 2 || m.Down != 0 {
+		t.Errorf("unexpected move %+v", m)
+	}
+	if !m.Moved() {
+		t.Error("two of three books moved a full point: that is a move")
+	}
+	// A single capture has nothing to compare.
+	if err := os.WriteFile(path, []byte(row("2026-10-26T13:17:00Z", prop("a", "24.5"), prop("b", "24.5"), prop("c", "24.5"))), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if moves, _ := LineMoves(path); len(moves) != 0 {
+		t.Errorf("one capture should give no moves, got %v", moves)
+	}
+}

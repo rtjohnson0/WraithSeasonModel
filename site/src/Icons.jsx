@@ -11,6 +11,8 @@ const PATHS = {
   'back-to-back': <path d="M5 8h6v10H5zM13 6h6v10h-6z" />,
   'teammates-out': <path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-3.5 2.5-6 6-6s6 2.5 6 6M17 7l4 4M21 7l-4 4" />,
   status: <path d="M12 3l10 18H2L12 3zM12 10v5M12 18v.5" />,
+  'opponent-out': <path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-3.5 2.5-6 6-6s6 2.5 6 6M16 5l5 5M21 5l-5 5" />,
+  'line-move': <path d="M4 8h12l-3-3M20 16H8l3 3" />,
   'odd-line': <path d="M4 12h4l2-6 4 12 2-6h4" />,
 }
 

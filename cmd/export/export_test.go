@@ -177,3 +177,19 @@ func TestBadgesAreFromThePicksPointOfView(t *testing.T) {
 		t.Fatal("a play with no signals should have no badges")
 	}
 }
+
+func TestOffMarketLineBadge(t *testing.T) {
+	good := badgesFor(Play{Side: "UNDER", Why: "line 3.5 is 1.0 above the market median 2.5 across 8 books: off the market, in your favor; line 3.5 is far from projection 1.0: confirm the line"})
+	n := 0
+	for _, b := range good {
+		if b.Key == "odd-line" {
+			n++
+			if b.Tone != "good" {
+				t.Errorf("a soft line in the pick's favor should be good, got %q", b.Tone)
+			}
+		}
+	}
+	if n != 1 {
+		t.Errorf("want exactly one odd-line badge, got %d", n)
+	}
+}

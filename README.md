@@ -287,15 +287,18 @@ hours in `daily.yml` if you want the Eastern times to stay put.
 
 One-time setup
 1. `cd site; npm install` (creates `package-lock.json`: commit it).
-2. Make a **private** repo and push (commands below). `data/` is not pushed except three files:
-   `picklog.jsonl` (every posted pick), `settled.jsonl` (graded results) and `calibration.json`
-   (from your local `go run ./cmd/backtest -season 2025 -ablate`).
+2. Make a **private** repo and push (commands below). `data/` is not pushed except four files:
+   `picklog.jsonl` (every posted pick), `settled.jsonl` (graded results), `calibration.json`
+   (from `go run ./cmd/backtest -season 2025 -ablate`) and `model.json` (from `go run ./cmd/train`),
+   the last two made on your PC where the full history is. The scheduled runs do not retrain: they
+   use the committed model. Retrain locally from time to time, then `git add -f data/model.json
+   data/calibration.json`, commit and push.
 3. Repo Settings > Secrets and variables > Actions > New repository secret:
    `BALLDONTLIE_API_KEY` and `SPORTSGAMEODDS_API_KEY` (the same values as your `.env`).
 4. Settings > Pages > Source: **GitHub Actions**. Pages from a private repo needs a paid GitHub plan
    (Pro, Team or Enterprise); on the Free plan the repo must be public to use Pages.
-5. Actions tab > "WraithPicksSZN daily" > Run workflow > mode **bootstrap**. It downloads all the box
-   scores and trains the model (a while). After that the two daily runs go on their own.
+5. Actions tab > "WraithPicksSZN daily" > Run workflow > mode **bootstrap**. It downloads the last two
+   seasons of box scores (expect up to an hour or so). After that the two daily runs go on their own.
 
 Run by hand any time with mode `daily`, `pretip`, or `site` (rebuild the site after a code change).
 Each run saves the downloaded data to the Actions cache and commits the three state files. The CSVs
@@ -323,3 +326,31 @@ The model now also predicts three-pointers made (threes), using the `threes` pro
 New minutes features: `m_med10` (median of his last 10 games, so one injury exit does not drag it), `m_low10` (share of the last 10 games well below his normal), and `star_spread` (the game's spread scaled by how big a part of the game he plays, since a lopsided spread costs starters minutes). Together with the blowout correction these are the only changes.
 
 `go run ./cmd/backtest -season 2025 -ablate` now starts with a **MINUTES CHECK** table: out-of-sample minutes error and bias for the model against the plain recent average, split by projected minutes and for the first three weeks of a season. Bias is actual minus projected, so a positive number means the projection was too low (what the Oct 24 review showed). To measure what the blowout correction adds, run the backtest once with `-noblowout` and compare the two tables. If the new features or the correction do not lower the minutes error, remove them.
+
+### One-sided boards (all unders) and threes
+
+- `go run ./cmd/bias` projects every eligible player-game of the season with a model trained on earlier months only and compares with what happened, for minutes and every stat, for the first three weeks and after. Nothing is selected, so it shows whether the model is biased low (a positive bias, and 60%+ of games above projection). The next-day review cannot show this: it only sees the plays the model chose, which are the ones where it happened to project low.
+- `predict` now warns when more than 70% of the day's scored lines lean the same way (`-skew 0.70`, 0 turns it off) and marks plays on that crowded side CHECK, not staked.
+- Threes are on the board again (`-stats points,rebounds,assists,threes`) but are never staked until a backtest supports them. Check the threes row in the backtest's BY STAT table. `-game` always shows every stat.
+- **Off-market lines.** When 4+ books list the same player and stat, a book whose line is 1.0 or more away from the median is flagged in the why text and with an icon on the site. If the off-market line favors the pick (a higher line for an under, a lower one for an over) it is a green "soft line" badge. This does not depend on the model: it is a stale or shaded number you can simply take.
+
+### Line movement
+
+`predict` adds a note to a play's why text when the market line has moved since the first snapshot of the day (for example "market line moved with the pick 24.5 to 25.5 since 9:17 am (6 of 8 books changed...)"), and the site shows an arrow icon: green if the market moved toward the pick, red if away. `go run ./cmd/moves` lists the day's biggest movers. It needs at least two snapshots in a day, so the four scheduled runs (or running `go run ./cmd/pull snapshot` again later) are what feed it. The feed has no bet counts, so it shows that a line moved, not why: several books moving together is usually news, one book alone is usually stale or shaded, and public money versus a sharp bettor cannot be told apart. `go run ./cmd/pull props -season 2026` would add true opening lines but is not wired in yet.
+
+### Opponent absences
+
+A missing rim protector or rebounder changes what the other team's players can do. For every player the model now looks at the opposing team's rotation players who are out: `oppabs_min` (their minutes), `oppabs_big` (minutes of bigs), `oppabs_blk` (blocks per game they are not on the floor to make) and `oppabs_reb` (rebounds per game). Historically "out" means he did not play in that game's box score; live it means ruled out on the injury report. They feed the points, rebounds, assists and threes models, not the minutes model. `predict` also shows "opponent out: ..." in the why text, and the site shows an icon, whether or not the model has the features on.
+
+These features are in the same group of switches as teammates-out: **they are off unless you run with `-lineup`**, for the same reason. A backtest against opening lines knows who sat out from the box score, which the opening lines did not, so it flatters these features and its verdict on them cannot be trusted. To use them live:
+
+    go run ./cmd/backtest -season 2025 -ablate -lineup
+    go run ./cmd/train -lineup
+
+and commit the new `data/model.json` and `data/calibration.json` for the scheduled runs. Judge them by the live record and closing line value (`go run ./cmd/settle`), not by that backtest. Do not run the model both ways and mix the files: `predict` refuses a calibration that does not match the model's feature set.
+
+## Any missing starter, and early-season game lines
+
+Opponent-out features now count every missing opposing rotation player, not just bigs: how many starters (28+ min) are out, plus the points and assists that are not on the floor. The "opponent out" note marks starters. Like the teammates-out group, it is off unless you pass `-lineup` to backtest/train/predict, and it is unvalidated.
+
+Game lines needed both teams at 8 games of history, so they were skipped early in the season. `go run ./cmd/games` now defaults to `-mingames 6` (an offseason counts as 4 games, so two games in). Early ratings lean on last year's teams, and the game-line backtest has never beaten the book, so everything stays PAPER. Skipped games now name the teams and say how many games each has.
