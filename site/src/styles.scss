@@ -141,6 +141,7 @@ nav { display: flex; gap: 2px;
   &.risky { color: var(--amber); }
   &.lean { color: var(--muted); } }
 
+.warn { margin: 0 0 1rem; padding: 10px 14px; border: 1px solid var(--amber); border-left-width: 4px; background: #1d1507; color: var(--silver); max-width: 80ch; font-size: 0.93rem; }
 .changes { margin: 0 0 1.2rem; border: 1px solid var(--edge); background: var(--panel); padding: 0 16px;
   summary { cursor: pointer; padding: 12px 0; font-weight: 600; }
   .runchange { padding: 4px 0 14px; border-top: 1px solid var(--edge);

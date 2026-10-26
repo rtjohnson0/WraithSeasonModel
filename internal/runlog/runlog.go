@@ -152,19 +152,28 @@ func Diff(prev, cur []Play) (kept, added, dropped []Play) {
 	return kept, added, dropped
 }
 
-// Appearances counts, for every play key, how many of the day's runs had it on the board and which
-// runs (by label) they were.
+// Appearances counts, for every play key, how many of the day's scheduled runs (by label: 9 AM,
+// 3 PM, 6 PM, 8 PM) had it on the board, and which. A manual re-run in the same time slot is the
+// same run to the reader, so a play is counted once per label, and a label's latest run speaks for it.
 func Appearances(runs []Run) (count map[string]int, seenIn map[string][]string) {
 	count, seenIn = map[string]int{}, map[string][]string{}
+	var order []string
+	latest := map[string]Run{}
 	for _, r := range runs {
+		if _, ok := latest[r.Label]; !ok {
+			order = append(order, r.Label)
+		}
+		latest[r.Label] = r
+	}
+	for _, label := range order {
 		seen := map[string]bool{}
-		for _, p := range r.Plays {
+		for _, p := range latest[label].Plays {
 			if seen[p.Key()] {
 				continue
 			}
 			seen[p.Key()] = true
 			count[p.Key()]++
-			seenIn[p.Key()] = append(seenIn[p.Key()], r.Label)
+			seenIn[p.Key()] = append(seenIn[p.Key()], label)
 		}
 	}
 	return count, seenIn

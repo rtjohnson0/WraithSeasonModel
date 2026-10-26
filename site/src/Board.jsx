@@ -235,6 +235,12 @@ export default function Board({ site }) {
 
   const all = useMemo(() => board.games.flatMap((g) => g.plays), [board])
   const count = (f) => all.filter(f).length
+  const lopsided = useMemo(() => {
+    if (all.length < 10) return null
+    const unders = all.filter((p) => p.side === 'UNDER').length
+    const n = Math.max(unders, all.length - unders)
+    return n / all.length >= 0.85 ? { n, side: unders * 2 >= all.length ? 'UNDER' : 'OVER' } : null
+  }, [all])
 
   const games = useMemo(
     () =>
@@ -292,6 +298,14 @@ export default function Board({ site }) {
           None of it is a promise.
         </p>
       </section>
+
+      {lopsided && (
+        <p className="warn" role="note">
+          Lopsided board: {lopsided.n} of {all.length} plays are {lopsided.side === 'UNDER' ? 'Unders' : 'Overs'}. Books do not
+          price a whole slate one way, so this usually means the model is running {lopsided.side === 'UNDER' ? 'high' : 'low'} today.
+          Treat these as tracking plays, not recommendations.
+        </p>
+      )}
 
       <RunChanges runs={board.runsToday} />
 

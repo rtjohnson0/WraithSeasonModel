@@ -372,3 +372,7 @@ A night cut short by an injury exit or foul trouble no longer drags a player's m
 ## Site look
 
 The board is flat and quiet: one purple accent, a cropped banner, a one-line strip on each play (the line, his last five games as dots, the projection as a triangle), a bar for confidence, and filters that show one choice at a time. Games with a Max play come first.
+
+## Are the books high too? (linecheck)
+
+`go run ./cmd/linecheck` takes every saved prop line (the median across books) for games that have finished, and compares it with what the player did: average line, average actual, and the share that went over and under, by stat and by day. Nothing is selected, so it shows whether the market itself is running high early in the season. Read it next to `go run ./cmd/bias`, which measures the model against results.

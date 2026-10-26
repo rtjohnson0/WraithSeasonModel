@@ -64,3 +64,19 @@ func TestLabelFor(t *testing.T) {
 		}
 	}
 }
+
+func TestAppearancesCountsEachScheduledRunOnce(t *testing.T) {
+	// The 3 PM slot ran twice (a manual re-run); the play is on both but counts once for 3 PM.
+	runs := []Run{
+		{Label: "3 PM", Plays: []Play{pl(1, "OVER", "PICK"), pl(2, "OVER", "PICK")}},
+		{Label: "3 PM", Plays: []Play{pl(1, "OVER", "PICK")}},
+	}
+	count, seen := Appearances(runs)
+	k1, k2 := pl(1, "OVER", "").Key(), pl(2, "OVER", "").Key()
+	if count[k1] != 1 || len(seen[k1]) != 1 {
+		t.Errorf("play 1: count %d seenIn %v, want one 3 PM appearance", count[k1], seen[k1])
+	}
+	if count[k2] != 0 {
+		t.Errorf("play 2 was dropped by the later 3 PM run, got count %d", count[k2])
+	}
+}

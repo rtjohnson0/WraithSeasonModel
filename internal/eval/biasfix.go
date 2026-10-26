@@ -27,7 +27,7 @@ type BiasFix struct {
 const (
 	biasMinSamples = 300  // below this many player-games nothing is applied
 	biasMinZ       = 2.0  // a bias this small relative to its noise could be luck
-	biasShrinkN    = 400  // shrinkage: n/(n+400) of the raw gap is applied
+	biasShrinkN    = 200  // shrinkage: n/(n+400) of the raw gap is applied
 	biasMin        = 0.85 // never move a projection more than this far
 	biasMax        = 1.10
 )
