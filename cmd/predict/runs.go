@@ -20,14 +20,8 @@ func toRunPlay(s scored) runlog.Play {
 
 // explainDrop says why a play from the previous run is no longer on the board. It uses this run's
 // scoring of every line, so the reason is what the model now sees, not a guess.
-func explainDrop(p runlog.Play, all, board []scored, out map[int]string, hi, minEdge float64) string {
-	if st, isOut := out[p.PlayerID]; isOut {
-		if st == "" {
-			st = "out"
-		}
-		return "he is now ruled out (" + strings.ToLower(st) + ")"
-	}
-	// Every scored line for the same player and stat; the best-edge one is what the model would post.
+// currentBest is the best-edge scored line for a play's player and stat: what the model would post now.
+func currentBest(p runlog.Play, all []scored) *scored {
 	var cur *scored
 	for i := range all {
 		s := &all[i]
@@ -38,6 +32,17 @@ func explainDrop(p runlog.Play, all, board []scored, out map[int]string, hi, min
 			cur = s
 		}
 	}
+	return cur
+}
+
+func explainDrop(p runlog.Play, all, board []scored, out map[int]string, hi, minEdge float64) string {
+	if st, isOut := out[p.PlayerID]; isOut {
+		if st == "" {
+			st = "out"
+		}
+		return "he is now ruled out (" + strings.ToLower(st) + ")"
+	}
+	cur := currentBest(p, all)
 	if cur == nil {
 		return "the line is no longer offered (or he no longer qualifies on minutes)"
 	}
@@ -100,7 +105,13 @@ func recordRun(dir, date string, picks, all []scored, out map[int]string, hi, mi
 		run.Prev = prev.Label
 		kept, added, dropped := runlog.Diff(prev.Plays, run.Plays)
 		for _, p := range dropped {
-			run.Dropped = append(run.Dropped, runlog.Dropped{Play: p, Reason: explainDrop(p, all, picks, out, hi, minEdge)})
+			d := runlog.Dropped{Play: p, Reason: explainDrop(p, all, picks, out, hi, minEdge)}
+			if _, isOut := out[p.PlayerID]; !isOut {
+				if cur := currentBest(p, all); cur != nil {
+					d.Now = &runlog.Now{Side: cur.Side, Line: cur.Line, Prob: cur.Prob, Edge: cur.Edge, Odds: cur.Odds, Book: cur.Vendor}
+				}
+			}
+			run.Dropped = append(run.Dropped, d)
 		}
 		was := map[string]runlog.Play{}
 		for _, p := range prev.Plays {

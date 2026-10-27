@@ -52,3 +52,21 @@ func TestDefenseNote(t *testing.T) {
 		t.Error("ordinals")
 	}
 }
+
+func TestMoreCandidates(t *testing.T) {
+	mk := func(pid, gid int, stat data.Stat, side string, edge float64) scored {
+		return scored{PlayerID: pid, GameID: gid, Stat: stat, Side: side, Edge: edge, Prob: 0.56}
+	}
+	posted := []scored{mk(1, 10, data.Points, "UNDER", 0.05)}
+	all := []scored{
+		mk(1, 10, data.Points, "UNDER", 0.05), // already on the board
+		mk(1, 10, data.Rebounds, "OVER", 0.04),
+		mk(2, 10, data.Points, "OVER", 0.03),
+		mk(3, 10, data.Assists, "UNDER", -0.01), // no edge
+		mk(4, 10, data.Threes, "UNDER", 0.02),
+	}
+	got := moreCandidates(posted, all, 2, 2)
+	if len(got) != 2 || got[0].PlayerID != 1 || got[0].Stat != data.Rebounds || got[1].PlayerID != 2 {
+		t.Fatalf("want the two best new lines in edge order, got %+v", got)
+	}
+}

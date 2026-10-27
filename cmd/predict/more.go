@@ -17,6 +17,18 @@ type MoreFile struct {
 	Date  string          `json:"date"`
 	At    string          `json:"at"`
 	Plays []picklog.Entry `json:"plays"`
+	// Games is each game's betting context (consensus spread and total), for the board header.
+	Games []GameCtx `json:"games,omitempty"`
+}
+
+// GameCtx is one game's market from the consensus of the books: the home spread (negative when the
+// home team is favoured) and the total.
+type GameCtx struct {
+	GameID     int     `json:"game_id"`
+	Home       string  `json:"home"`
+	Visitor    string  `json:"visitor"`
+	SpreadHome float64 `json:"spread_home"`
+	Total      float64 `json:"total"`
 }
 
 // moreCandidates returns up to perGame extra plays per game: lines with a positive edge that are not
@@ -48,8 +60,8 @@ func moreCandidates(picks, all []scored, perGame, perPlayer int) []scored {
 }
 
 // writeMore saves the extra plays to data/more.json.
-func writeMore(dir, date string, extra []scored) error {
-	f := MoreFile{Date: date, At: time.Now().UTC().Format(time.RFC3339)}
+func writeMore(dir, date string, extra []scored, ctx []GameCtx) error {
+	f := MoreFile{Date: date, At: time.Now().UTC().Format(time.RFC3339), Games: ctx}
 	for _, s := range extra {
 		f.Plays = append(f.Plays, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),

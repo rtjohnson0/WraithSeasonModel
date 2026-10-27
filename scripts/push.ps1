@@ -16,7 +16,7 @@ if (Test-Path ".git\rebase-merge" -PathType Container) {
 Run-Git add -A
 # State files the workflow and site rely on. They are gitignored, so they need -f.
 foreach ($f in @("data/model.json", "data/calibration.json", "data/gamecal.json", "data/biasfix.json",
-                 "data/picklog.jsonl", "data/settled.jsonl", "data/runs.jsonl")) {
+                 "data/picklog.jsonl", "data/settled.jsonl", "data/runs.jsonl", "data/more.json", "data/projlog.jsonl")) {
     if (Test-Path $f) { Run-Git add -f $f }
 }
 
@@ -33,7 +33,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host ""
     Write-Host "The pull hit a conflict. Run 'git status' to see the files. For a file where your copy is the right one:" -ForegroundColor Yellow
     Write-Host "  git checkout --theirs <file>; git add <file>; `$env:GIT_EDITOR='true'; git rebase --continue" -ForegroundColor Yellow
-    Write-Host "(In a rebase, --theirs is YOUR version.) For data\picklog.jsonl, settled.jsonl or runs.jsonl keep BOTH sides instead:" -ForegroundColor Yellow
+    Write-Host "(In a rebase, --theirs is YOUR version.) For data\picklog.jsonl, settled.jsonl or runs.jsonl keep BOTH sides instead (data\more.json and projlog.jsonl are rewritten each run: take your version with --theirs):" -ForegroundColor Yellow
     Write-Host "open the file, delete only the <<<<<<<, ======= and >>>>>>> lines, then git add it and continue." -ForegroundColor Yellow
     exit 1
 }

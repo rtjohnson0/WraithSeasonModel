@@ -201,7 +201,7 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
 .bucket { display: grid; grid-template-columns: 90px 1fr; gap: 4px 12px; align-items: center;
   .pair { display: grid; gap: 3px; i { display: block; height: 8px; } .pred { background: var(--edge); } .act { background: var(--purple-hi); box-shadow: 0 0 10px -2px var(--glow); } }
   .nums { grid-column: 2; font-size: 0.82rem; color: var(--muted); } }
-.resultday { margin-top: 1.4rem; h3 { font-size: 1.3rem; color: var(--muted); margin-bottom: 6px; }
+.resultday, .lastres { margin-top: 1.4rem; h3 { font-size: 1.3rem; color: var(--muted); margin-bottom: 6px; }
   ul { list-style: none; margin: 0; padding: 0; border-top: 3px solid var(--purple); background: var(--panel); border-left: 1px solid var(--edge); border-right: 1px solid var(--edge); }
   li { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--edge);
     .res { font-family: var(--display); font-weight: 800; font-size: 1.3rem; }
@@ -263,3 +263,26 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
   .reasons.for li::marker { color: var(--win); }
   .reasons.against li::marker { color: var(--loss); }
 }
+
+.earlier { margin: 0 0 1.2rem; border: 1px solid var(--edge); background: var(--panel); padding: 0 16px;
+  summary { cursor: pointer; padding: 12px 0; font-weight: 600; }
+  ul { margin: 6px 0 14px; padding-left: 1.1rem; } li { margin: 6px 0; max-width: 90ch; }
+  .reason { color: var(--muted); } }
+
+.game .more { border-top: 1px solid var(--edge); padding: 10px 14px 12px;
+  .morebtn { background: none; border: 1px solid var(--edge); color: var(--silver); padding: 8px 14px; font: 600 0.9rem var(--body); cursor: pointer;
+    &:hover, &:focus-visible { border-color: var(--purple-hi); color: var(--purple-hi); } }
+  ul { list-style: none; margin: 8px 0 0; padding: 0; } }
+
+.daysum { font: 600 0.95rem var(--body); color: var(--purple-hi); margin-left: 8px; }
+.lastres { margin: 0 0 1.2rem; border: 1px solid var(--edge); background: var(--panel); padding: 0 16px 6px;
+  summary { cursor: pointer; padding: 12px 0; font-weight: 600; }
+  ul { list-style: none; margin: 8px 0 0; padding: 0; } }
+
+.gamectx { padding: 10px 14px 6px; border-bottom: 1px solid var(--edge);
+  .chips { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 6px;
+    span { display: grid; }
+    small { color: var(--muted); font-size: 0.78rem; }
+    b { font: 700 1.05rem var(--display); letter-spacing: 0.02em; }
+    i { font: 500 0.78rem var(--body); font-style: normal; color: var(--muted); &.up { color: var(--win); } &.down { color: var(--loss); } } }
+  ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.88rem; max-width: 90ch; li { margin: 2px 0; } } }

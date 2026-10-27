@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { FormBars, LineStrip } from './Charts.jsx'
 import Icon from './Icons.jsx'
+import { DaySummary, ResultList } from './Record.jsx'
 import { LABELS, gradeTone, labelInfo, oddsText, pct, prettyDate, statLabel } from './format.js'
 
 const STATS = ['points', 'rebounds', 'assists', 'threes']
@@ -89,6 +90,67 @@ function CaseView({ p }) {
         </ul>
       )}
       <p className="tiernote">{c.trust}</p>
+    </div>
+  )
+}
+
+// The game's betting market in plain terms: the spread says how close it should be (and so how
+// many minutes starters keep), the total says how many chances there will be to score.
+function GameContext({ c }) {
+  const diff = c.total - c.slateAvg
+  return (
+    <div className="gamectx">
+      <p className="chips">
+        <span>
+          <small>Spread</small>
+          <b>{c.favorite ? `${c.favorite} -${c.spread}` : "Pick'em"}</b>
+        </span>
+        <span>
+          <small>Total</small>
+          <b>
+            {c.total}
+            <i className={diff >= 4 ? 'up' : diff <= -4 ? 'down' : ''}>
+              {' '}
+              {diff >= 0 ? '+' : ''}
+              {diff.toFixed(1)} vs slate
+            </i>
+          </b>
+        </span>
+        <span>
+          <small>Expected score</small>
+          <b>
+            {c.visitor} {Math.round(c.visitorPts * 10) / 10}, {c.home} {Math.round(c.homePts * 10) / 10}
+          </b>
+        </span>
+      </p>
+      <ul>
+        {c.reads.map((r) => (
+          <li key={r}>{r}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+// The next-best lines in a game, behind a button. They did not clear the board's bar, so they are
+// weaker than the plays above them.
+function MorePlays({ plays }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="more">
+      <button type="button" className="morebtn" aria-expanded={open} onClick={() => setOpen(!open)}>
+        {open ? 'Hide extra plays' : `More plays (${plays.length})`}
+      </button>
+      {open && (
+        <>
+          <p className="small">The next best lines in this game. They did not clear the board's bar, so treat them as leans.</p>
+          <ul>
+            {plays.map((p) => (
+              <PlayRow key={`more-${p.player}-${p.stat}-${p.side}`} p={p} />
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   )
 }
@@ -233,6 +295,62 @@ function PlayRow({ p }) {
   )
 }
 
+// The last day with graded results before the board's day: the record line and every graded play.
+// The board only lists the final run's plays; this shows what happened to everything that was posted.
+function LastResults({ record, date }) {
+  const rows = (record?.recent || []).filter((r) => r.date < date)
+  if (rows.length === 0) return null
+  const day = rows.reduce((d, r) => (r.date > d ? r.date : d), '')
+  const dayRows = rows.filter((r) => r.date === day)
+  return (
+    <details className="lastres">
+      <summary>
+        Results from {prettyDate(day)}: <DaySummary rows={dayRows} />
+      </summary>
+      <p className="small">
+        Every play graded that day, not only the final board: plays earlier runs posted and later dropped count too.
+      </p>
+      <ResultList rows={dayRows} />
+    </details>
+  )
+}
+
+const ODDS = (o) => (o > 0 ? `+${o}` : `${o}`)
+
+// Plays an earlier run posted that a later run dropped but that the model still rates at 58% or more
+// on the same side. They are not on the board any more, usually because stronger plays took their
+// place in the game, so they are worth a look rather than a pick.
+function EarlierPicks({ runs }) {
+  const seen = new Map()
+  ;(runs || []).forEach((r) =>
+    (r.dropped || []).forEach((d) => {
+      if (d.now && d.now.side === d.side && d.now.prob >= 0.58) {
+        seen.set(`${d.player}|${d.stat}|${d.side}`, { ...d, was: r.prev })
+      }
+    }),
+  )
+  const list = [...seen.values()].sort((a, b) => b.now.prob - a.now.prob)
+  if (list.length === 0) return null
+  return (
+    <details className="earlier">
+      <summary>
+        Earlier picks still at 58% or better: {list.length}
+      </summary>
+      <p className="small">Posted on an earlier run, off the board now, and the model still rates the same side at 58% or more.</p>
+      <ul>
+        {list.map((d) => (
+          <li key={`${d.player}-${d.stat}-${d.side}`}>
+            <b>{d.player}</b> {d.side.toLowerCase()} {d.now.line} {statLabel[d.stat] || d.stat}
+            {d.matchup ? ` (${d.matchup})` : ''}: {pc(d.prob)} on the {d.was} run, {pc(d.now.prob)} now
+            {d.now.line !== d.line ? ` (line moved from ${d.line})` : ''}
+            {d.now.odds ? ` at ${ODDS(d.now.odds)}${d.now.book ? ' ' + d.now.book : ''}` : ''}. <span className="reason">Dropped because {d.reason}.</span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  )
+}
+
 const tierName = { PICK: 'Max play', CHECK: 'Risky play', PAPER: 'Great play', LEAN: 'Lean' }
 
 // What each later run dropped from the run before it, and why.
@@ -331,8 +449,15 @@ export default function Board({ site }) {
               (!repeatsOnly || p.multi) &&
               (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
           ),
+          // The extras ignore the play-type and repeat filters (they are all lean plays) but follow stat, side and search.
+          more: (g.more || []).filter(
+            (p) =>
+              (stat === 'all' || p.stat === stat) &&
+              (side === 'ALL' || p.side === side) &&
+              (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
+          ),
         }))
-        .filter((g) => g.plays.length),
+        .filter((g) => g.plays.length || (label === 'all' && !repeatsOnly && g.more.length)),
     [board, stat, label, side, q, repeatsOnly],
   )
   const shown = games.reduce((n, g) => n + g.plays.length, 0)
@@ -369,7 +494,9 @@ export default function Board({ site }) {
         </div>
       </section>
 
+      <LastResults record={site.record} date={board.date} />
       <RunChanges runs={board.runsToday} />
+      <EarlierPicks runs={board.runsToday} />
 
       <section className="filters" aria-label="Filters">
         <Seg
@@ -434,11 +561,13 @@ export default function Board({ site }) {
                   {g.plays.length} {g.plays.length === 1 ? 'play' : 'plays'}
                 </span>
               </header>
+              {g.ctx && <GameContext c={g.ctx} />}
               <ul>
                 {g.plays.map((p) => (
                   <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} />
                 ))}
               </ul>
+              {g.more.length > 0 && <MorePlays plays={g.more} />}
             </article>
           )
         })}

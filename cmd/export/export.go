@@ -135,6 +135,10 @@ type Game struct {
 	Matchup string `json:"matchup"`
 	Tip     string `json:"tip,omitempty"` // scheduled tip-off, RFC3339 UTC
 	Plays   []Play `json:"plays"`
+	// More is the next-best lines in the game that did not make the board, behind the "More plays" button.
+	More []Play `json:"more,omitempty"`
+	// Ctx is the game's betting market read: spread, total, expected scores and what they mean for minutes.
+	Ctx *GameContext `json:"ctx,omitempty"`
 }
 
 // Board is one day's plays.
@@ -170,6 +174,8 @@ type DroppedPlay struct {
 	Tier    string  `json:"tier"`
 	Prob    float64 `json:"prob"`
 	Reason  string  `json:"reason"`
+	// Now is where the player and stat stand on the run that dropped the play.
+	Now *runlog.Now `json:"now,omitempty"`
 }
 
 // TierMove is a play that stayed on the board but changed tier between runs.
@@ -218,6 +224,8 @@ type Result struct {
 	Prob    float64 `json:"prob"`
 	Grade   string  `json:"grade"`
 	Label   string  `json:"label"`
+	// Proj is what the model projected for the stat, shown next to what he finished with.
+	Proj float64 `json:"proj,omitempty"`
 }
 
 // Day is one day of results with running totals, for the charts.
@@ -420,6 +428,40 @@ func matchupOf(e picklog.Entry) string {
 	return fmt.Sprintf("Game %d", e.GameID)
 }
 
+// makePlay turns a logged entry into a board play: grade, recent games, defense, label and badges.
+// runs and seenIn say how many of today's runs had it (0 for none).
+func makePlay(e picklog.Entry, date string, form Form, runs int, seenIn []string) Play {
+	t := normTier(e.Tier)
+	p := Play{
+		Player: e.Player, Team: e.Team, Stat: e.Stat, Side: e.Side, Line: e.Line, Prob: e.Prob,
+		ProbRaw: e.ProbRaw, Edge: edgeOf(e), Grade: grade(e.Prob, t), Tier: t, Odds: e.Odds, Book: e.Book,
+		ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why,
+	}
+	if form != nil {
+		games, sAvg, sGP := form(e.PlayerID, e.Stat, date)
+		p.Last5, p.SeasonAvg, p.SeasonGP = games, sAvg, sGP
+		var sum, mins float64
+		for _, x := range games {
+			sum += x.Value
+			mins += x.Minutes
+			if (e.Side == "OVER" && x.Value > e.Line) || (e.Side == "UNDER" && x.Value < e.Line) {
+				p.L5Hits++
+			}
+		}
+		if n := float64(len(games)); n > 0 {
+			p.L5Avg, p.MinAvg5 = sum/n, mins/n
+		}
+		p.MinTyp = markShort(p.Last5)
+	}
+	if runs > 0 {
+		p.Runs, p.SeenIn, p.Multi = runs, seenIn, runs >= 2
+	}
+	p.Defense = parseDefense(e.Why, e.Side)
+	p.Label = label(t, e.Prob)
+	p.Badges = badgesFor(p)
+	return p
+}
+
 // buildBoard collapses repeats of the same player, stat and side (keeping the most trusted tier,
 // then the best edge) and groups the plays by game.
 func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Run) Board {
@@ -471,33 +513,7 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 			g.Tip = e.Tip
 		}
 		t := normTier(e.Tier)
-		p := Play{
-			Player: e.Player, Team: e.Team, Stat: e.Stat, Side: e.Side, Line: e.Line, Prob: e.Prob,
-			ProbRaw: e.ProbRaw, Edge: edgeOf(e), Grade: grade(e.Prob, t), Tier: t, Odds: e.Odds, Book: e.Book,
-			ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why,
-		}
-		if form != nil {
-			games, sAvg, sGP := form(e.PlayerID, e.Stat, date)
-			p.Last5, p.SeasonAvg, p.SeasonGP = games, sAvg, sGP
-			var sum, mins float64
-			for _, x := range games {
-				sum += x.Value
-				mins += x.Minutes
-				if (e.Side == "OVER" && x.Value > e.Line) || (e.Side == "UNDER" && x.Value < e.Line) {
-					p.L5Hits++
-				}
-			}
-			if n := float64(len(games)); n > 0 {
-				p.L5Avg, p.MinAvg5 = sum/n, mins/n
-			}
-			p.MinTyp = markShort(p.Last5)
-		}
-		if n := count[k]; n > 0 {
-			p.Runs, p.SeenIn, p.Multi = n, seenIn[k], n >= 2
-		}
-		p.Defense = parseDefense(e.Why, e.Side)
-		p.Label = label(t, e.Prob)
-		p.Badges = badgesFor(p)
+		p := makePlay(e, date, form, count[k], seenIn[k])
 		g.Plays = append(g.Plays, p)
 		b.Plays++
 		if t == "PICK" && e.Units > 0 {
@@ -508,7 +524,7 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 		rs := RunSummary{Label: r.Label, Clock: r.Clock, Prev: r.Prev, Plays: len(r.Plays)}
 		for _, d := range r.Dropped {
 			rs.Dropped = append(rs.Dropped, DroppedPlay{Player: d.Player, Team: d.Team, Matchup: d.Matchup, Stat: d.Stat,
-				Side: d.Side, Line: d.Line, Tier: normTier(d.Tier), Prob: d.Prob, Reason: d.Reason})
+				Side: d.Side, Line: d.Line, Tier: normTier(d.Tier), Prob: d.Prob, Reason: d.Reason, Now: d.Now})
 		}
 		for _, c := range r.Changed {
 			rs.Changed = append(rs.Changed, TierMove{Player: c.Player, Stat: c.Stat, Side: c.Side, From: normTier(c.From), To: normTier(c.Tier)})
@@ -714,7 +730,7 @@ func buildRecord(settled []picklog.Settled, recentN int) Record {
 			actual = math.NaN()
 		}
 		res := Result{Date: r.Date, Player: r.Player, Team: r.Team, Matchup: matchupOf(r.Entry), Stat: r.Stat, Side: r.Side,
-			Line: r.Line, Result: r.Result, Tier: t, Prob: r.Prob, Grade: grade(r.Prob, t), Label: label(t, r.Prob)}
+			Line: r.Line, Result: r.Result, Tier: t, Prob: r.Prob, Grade: grade(r.Prob, t), Label: label(t, r.Prob), Proj: r.ProjMean}
 		if !math.IsNaN(actual) {
 			res.Actual = actual
 		}

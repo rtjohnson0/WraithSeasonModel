@@ -37,6 +37,19 @@ func (p Play) Key() string { return fmt.Sprintf("%d|%s|%s", p.PlayerID, p.Stat, 
 type Dropped struct {
 	Play
 	Reason string `json:"reason"`
+	// Now is where the same player and stat stands on the run that dropped it: the model's best
+	// current side and line. It lets the site show an earlier play that is still strong.
+	Now *Now `json:"now,omitempty"`
+}
+
+// Now is the current best line for a dropped play's player and stat.
+type Now struct {
+	Side string  `json:"side"`
+	Line float64 `json:"line"`
+	Prob float64 `json:"prob"`
+	Edge float64 `json:"edge"`
+	Odds int     `json:"odds,omitempty"`
+	Book string  `json:"book,omitempty"`
 }
 
 // TierChange is a play that stayed on the board but moved between tiers.

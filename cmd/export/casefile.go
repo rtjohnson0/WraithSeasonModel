@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"sort"
 	"strings"
 
 	"propsmodel/internal/picklog"
@@ -64,14 +65,18 @@ func attachCases(b *Board, track map[string]Row) {
 	for gi := range b.Games {
 		for pi := range b.Games[gi].Plays {
 			p := &b.Games[gi].Plays[pi]
-			p.Case = buildCase(*p, track)
+			p.Case = buildCase(*p, track, b.Games[gi].Ctx)
+		}
+		for pi := range b.Games[gi].More {
+			p := &b.Games[gi].More[pi]
+			p.Case = buildCase(*p, track, b.Games[gi].Ctx)
 		}
 	}
 }
 
 func pct(x float64) string { return fmt.Sprintf("%.0f%%", 100*x) }
 
-func buildCase(p Play, track map[string]Row) *Case {
+func buildCase(p Play, track map[string]Row, ctx *GameContext) *Case {
 	over := p.Side == "OVER"
 	dir := 1.0
 	if !over {
@@ -145,6 +150,9 @@ func buildCase(p Play, track map[string]Row) *Case {
 			c.Against = append(c.Against, "Matchup: "+txt)
 		}
 	}
+	cf, ca := contextNotes(p, ctx)
+	c.For = append(c.For, cf...)
+	c.Against = append(c.Against, ca...)
 	for _, note := range strings.Split(p.Why, ";") {
 		n := strings.TrimSpace(note)
 		l := strings.ToLower(n)
@@ -224,3 +232,43 @@ func relWord(over, good bool) string {
 }
 
 func statWord(s string) string { return s }
+
+// moreFile mirrors data/more.json, written by predict.
+type moreFile struct {
+	Date  string          `json:"date"`
+	Plays []picklog.Entry `json:"plays"`
+	Games []ctxIn         `json:"games"`
+}
+
+// attachMore puts each game's extra plays behind its "More" button. A game with no board plays gets
+// created from the extras, so it still shows up.
+func attachMore(b *Board, mf moreFile, form Form) {
+	if mf.Date != b.Date || len(mf.Plays) == 0 {
+		return
+	}
+	idx := map[int]int{}
+	for i, g := range b.Games {
+		idx[g.ID] = i
+	}
+	for _, e := range mf.Plays {
+		i, ok := idx[e.GameID]
+		if !ok {
+			b.Games = append(b.Games, Game{ID: e.GameID, Matchup: matchupOf(e), Tip: e.Tip})
+			i = len(b.Games) - 1
+			idx[e.GameID] = i
+		}
+		g := &b.Games[i]
+		if g.Tip == "" {
+			g.Tip = e.Tip
+		}
+		g.More = append(g.More, makePlay(e, mf.Date, form, 0, nil))
+	}
+	// Earliest tip-off first, as in buildBoard.
+	sort.SliceStable(b.Games, func(i, j int) bool {
+		a, c := b.Games[i].Tip, b.Games[j].Tip
+		if (a == "") != (c == "") {
+			return a != ""
+		}
+		return a < c
+	})
+}

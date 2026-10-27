@@ -25,7 +25,7 @@ func main() {
 	dir := flag.String("data", "data", "data directory")
 	out := flag.String("out", filepath.Join("site", "public", "data", "picks.json"), "file to write")
 	date := flag.String("date", "", "board day YYYY-MM-DD (default: the latest day in the pick log)")
-	recent := flag.Int("recent", 250, "how many recent settled plays to include")
+	recent := flag.Int("recent", 600, "how many recent settled plays to include")
 	flag.Parse()
 
 	entries, err := picklog.Load(filepath.Join(*dir, "picklog.jsonl"))
@@ -59,6 +59,12 @@ func main() {
 		Board:       buildBoard(entries, *date, form, runlog.ForDate(runs, *date)),
 		Record:      buildRecord(settled, *recent),
 	}
+	var mf moreFile
+	if raw, err := os.ReadFile(filepath.Join(*dir, "more.json")); err == nil {
+		_ = json.Unmarshal(raw, &mf)
+	}
+	attachMore(&site.Board, mf, form)
+	attachContext(&site.Board, mf)
 	attachCases(&site.Board, trackRecords(settled))
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		fatal(err)

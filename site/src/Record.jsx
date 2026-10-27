@@ -38,6 +38,41 @@ function Table({ rows, unitsNote }) {
   )
 }
 
+export function DaySummary({ rows }) {
+  const w = rows.filter((r) => r.result === 'WIN').length
+  const l = rows.filter((r) => r.result === 'LOSS').length
+  const v = rows.length - w - l
+  return (
+    <span className="daysum">
+      {w}-{l}
+      {w + l ? `, ${pct(w / (w + l), 1)}` : ''}
+      {v ? `, ${v} void or push` : ''}
+    </span>
+  )
+}
+
+export function ResultList({ rows }) {
+  return (
+    <ul>
+      {rows.map((r, i) => (
+        <li key={`${r.player}-${r.stat}-${r.side}-${i}`} className={r.result.toLowerCase()}>
+          <span className="res">{r.result === 'WIN' ? 'Hit' : r.result === 'LOSS' ? 'Miss' : r.result === 'PUSH' ? 'Push' : 'Void'}</span>
+          <span className="what">
+            {r.player} {r.team && <em>{r.team}</em>}
+            <br />
+            <small>
+              {r.side} {r.line} {statLabel[r.stat] || r.stat}
+              {r.result !== 'VOID' && <>, finished with {r.actual}</>}
+              {r.proj > 0 && <>, model projected {r.proj.toFixed(1)}</>}
+            </small>
+          </span>
+          <span className="tag">{r.label}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export default function Record({ site }) {
   const { record } = site
   if (!record.tiers?.length) {
@@ -104,29 +139,17 @@ export default function Record({ site }) {
         </>
       )}
 
-      <h2>Recent results</h2>
+      <h2>Results by day</h2>
+      <p className="small">Every graded play from each day: the ones on the final board, plays that earlier runs posted and later runs dropped, and the lean fill-ins.</p>
       {Object.keys(byDate)
         .sort()
         .reverse()
         .map((d) => (
           <section key={d} className="resultday">
-            <h3>{prettyDate(d)}</h3>
-            <ul>
-              {byDate[d].map((r, i) => (
-                <li key={`${r.player}-${r.stat}-${r.side}-${i}`} className={r.result.toLowerCase()}>
-                  <span className="res">{r.result === 'WIN' ? 'Hit' : r.result === 'LOSS' ? 'Miss' : r.result === 'PUSH' ? 'Push' : 'Void'}</span>
-                  <span className="what">
-                    {r.player} {r.team && <em>{r.team}</em>}
-                    <br />
-                    <small>
-                      {r.side} {r.line} {statLabel[r.stat] || r.stat}
-                      {r.result !== 'VOID' && <>, finished with {r.actual}</>}
-                    </small>
-                  </span>
-                  <span className="tag">{r.label}</span>
-                </li>
-              ))}
-            </ul>
+            <h3>
+              {prettyDate(d)} <DaySummary rows={byDate[d]} />
+            </h3>
+            <ResultList rows={byDate[d]} />
           </section>
         ))}
     </div>

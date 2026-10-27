@@ -9,6 +9,8 @@ data/*
 !data/gamecal.json
 !data/biasfix.json
 !data/runs.jsonl
+!data/more.json
+!data/projlog.jsonl
 demo_data/
 bin/
 *.exe

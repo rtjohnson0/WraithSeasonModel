@@ -6,6 +6,7 @@
 //	go run ./cmd/pull injuries
 //	go run ./cmd/pull players            (current team of every active player; run before predicting)
 //	go run ./cmd/pull snapshot            (once)    or    go run ./cmd/pull snapshot -every 30m
+//	go run ./cmd/pull compact             (drop duplicate rows from the stats and advanced files; pulls do this themselves)
 //	go run ./cmd/pull raw -path /nba/v1/team_season_averages/general \
 //	    -param season=2025 -param season_type=regular -param type=<value> -name team_general_2025
 //
@@ -32,6 +33,7 @@ import (
 	_ "time/tzdata" // embed timezone data so America/New_York works on any machine
 
 	"propsmodel/internal/bdl"
+	"propsmodel/internal/data"
 	"propsmodel/internal/envfile"
 )
 
@@ -68,6 +70,8 @@ func main() {
 		err = runSnapshot(c, args)
 	case "raw":
 		err = runRaw(c, args)
+	case "compact":
+		err = data.CompactDir(dataDir)
 	default:
 		usage()
 		os.Exit(2)
@@ -216,6 +220,11 @@ func runStats(c *bdl.Client, args []string) error {
 			fmt.Printf("wrote %d rows to %s\n", n, path)
 		}
 	}
+	for _, s := range seasons {
+		if b, a, err := data.CompactStats(filepath.Join(dataDir, fmt.Sprintf("stats_%d.jsonl", s))); err == nil && b != a {
+			fmt.Printf("compacted stats_%d.jsonl: %d rows to %d\n", s, b, a)
+		}
+	}
 	return nil
 }
 
@@ -344,6 +353,12 @@ func runAdvanced(c *bdl.Client, args []string) error {
 			return err
 		}
 		fmt.Printf("wrote %d rows to %s\n", n, dataPath)
+	}
+	// Drop the rows the refresh downloaded twice so the files stay small.
+	for _, s := range seasons {
+		if b, a, err := data.CompactAdvanced(filepath.Join(dataDir, fmt.Sprintf("advanced_%d.jsonl", s))); err == nil && b != a {
+			fmt.Printf("compacted advanced_%d.jsonl: %d rows to %d\n", s, b, a)
+		}
 	}
 	return nil
 }

@@ -357,7 +357,7 @@ Game lines needed both teams at 8 games of history, so they were skipped early i
 
 ## Bias correction, and what the live record can tell you
 
-**Bias correction.** `go run ./cmd/bias -write -lineup` projects every eligible player-game of the current season with a model trained on earlier months only, compares with what happened, and writes `data/biasfix.json`: one multiplier per stat on the projected mean. It applies a stat's multiplier only when the bias is both clear (z of 2 or more, at least 300 player-games) and is shrunk toward 1 on small samples and clamped to 0.85-1.10, so a few noisy games cannot move projections. `predict` loads the file automatically and says so on the first line. Refit it weekly (and after training). If nothing is clear enough yet, it changes nothing. The calibration was fitted without this correction, so treat it as a stopgap for a drifting season, not a validated improvement.
+**Bias correction.** `go run ./cmd/bias -write -lineup` projects every eligible player-game of the current season with a model trained on earlier months only, compares with what happened, and writes `data/biasfix.json`: one multiplier per stat on the projected mean. It applies a stat's multiplier only when the bias is both clear (z of 2 or more, at least 300 player-games) and is shrunk toward 1 on small samples and clamped to 0.85-1.10, so a few noisy games cannot move projections. **It is off by default (2026-10-26):** `predict -bias` applies it. On the live board it pushed projections to 14% under the lines (points x0.915 on top of a model already ~5% low against lines that `cmd/linecheck` showed were accurate), which is what made the board all Unders. The file was fitted on the backtest path, not the live path, and on only 655 games. The calibration was fitted without this correction, so treat it as a stopgap for a drifting season, not a validated improvement.
 
 **Situations report.** `go run ./cmd/settle` now ends its record with a SITUATIONS table across every tier: plays with teammates out, opponent out, an opponent starter out, back-to-back, and OVER vs UNDER, each next to its "no ..." counterpart, with hit rate and closing line value in stat points and as a share of the line (comparable across stats). It reads the reasoning note already stored with every logged pick, so it works on past picks too. A situation only matters if it beats its "no ..." row across a few hundred plays.
 
@@ -396,3 +396,29 @@ early in the season and an all-Unders board is the market's doing. Pair it with 
 Expanding a play shows the arithmetic (minutes x per-minute rate = projection vs line), three probabilities
 (model alone, what the odds imply, the blended percentage shown), evidence for and against, and the live record on
 that stat and side with a plain note on how much a record of that size can be trusted. Built in `cmd/export/casefile.go`.
+
+## Level check: `predict -anchor`
+
+Books' lines are accurate on average (`cmd/linecheck`), so if the model's average projection sits well off the average line across the whole slate, the level is off. `-anchor` rescales each stat so the slate's average projection equals its average line (only the level moves; which players the model likes more or less than the book still picks the plays). It prints the scale it used (on 2026-10-26: points x1.05, rebounds x1.04, assists x1.06, threes x1.01, so the raw model is about 5% low). Not backtested. The centre check at the end of `predict` shows why Overs are rarer than Unders even with a balanced model: counting stats are right-skewed, so a line set at the mean goes under more often (54% of lines this season), and an Over needs a bigger move to reach the 55% bar.
+
+## More plays and earlier picks
+
+- **More plays:** each game has a "More plays" button showing up to 5 more lines (at most 2 per player, positive edge, best price per line) that did not make the board. `predict` writes them to `data/more.json` on every real run (not with `-nolog` or `-game`), and `export` attaches them to the game. They are leans: they did not clear the posting bar and are not part of the pick log or the record.
+- **Earlier picks still at 58% or better:** a run that drops a play now also records where that player and stat stand (`now` in `data/runs.jsonl`). The site lists dropped plays whose same side is still rated 58% or more, with the reason they left the board. Plays for players who are now ruled out are left out.
+- `data/more.json` is committed like the other state files and is rewritten each run, so on a git conflict take your version.
+
+## Results on the site
+
+`export` now includes up to 600 graded plays (`-recent`). The Record page lists them by day with each day's W-L, what he finished with and what the model projected. The Board page has a "Results from <last graded day>" card listing every play graded that day: not only the final board, but plays earlier runs posted and later dropped, and the lean fill-ins. That is why a day can show 127 graded plays against 44 on the board.
+
+## Live check on every player (`cmd/livecheck`)
+
+The posted picks are the plays where the model disagrees with the book, so grading only them hides the model's real bias (a 2026-10-26 review showed minutes 3 above projection, but only for the plays the model chose). `predict` now saves what it projected for every player it scored to `data/projlog.jsonl` (minutes, each stat's raw and used projection, the books' median line, back-to-back, teammates and opponents out, his own status). After the games are in your box scores, `go run ./cmd/livecheck` compares those with what happened for everyone, split by back-to-back, teammates out, projected minutes and how far the model cut his minutes below normal. Run `predict` without `-nolog` before the games so the day is logged. The file keeps one row per player per day (the latest run).
+
+## Game context on the board
+
+Each game on the board now shows its spread, total and the score those imply (for example LAL -2.5, total 234.5, POR 116 to LAL 118.5), with how far the total sits above or below the day's average, and two plain reads: how close the game should be (tight, competitive, lopsided, blowout risk) and how fast (more or fewer possessions). A tight game means starters keep their minutes; a big spread means they may sit the fourth quarter. The same market feeds each play's "What supports it" and "What could go wrong". `predict` writes the consensus spread and total to `data/more.json`, and also logs them in `data/projlog.jsonl`, so `go run ./cmd/livecheck` can show whether minutes really run long in close games and short in lopsided ones.
+
+## Keeping the data files small
+
+`pull advanced -new` re-downloads the last 7 days on every run and appended them, so `data/advanced_2026.jsonl` collected duplicates until it passed GitHub's 100 MB limit and pushes were rejected. Pulls now compact their files afterwards: one whole-game row per player and game, only the columns the model reads, and `stats_*.jsonl` loses repeated rows. `go run ./cmd/pull compact` does it for every stats and advanced file on demand. Nothing the loaders read changes.

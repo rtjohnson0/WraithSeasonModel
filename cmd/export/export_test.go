@@ -283,7 +283,7 @@ func TestBuildCase(t *testing.T) {
 		Last5: make([]Game5, 5), Defense: &DefenseInfo{Text: "3rd-fewest rebounds allowed to centers, -9%", Of: 30, Helps: true},
 		Why: "back-to-back; minutes -6 vs his normal"}
 	track := map[string]Row{"rebounds|UNDER": {Picks: 12, Wins: 5, Losses: 7, HitRate: 5.0 / 12}}
-	c := buildCase(p, track)
+	c := buildCase(p, track, nil)
 	if c.Gap < 1.8 || c.Gap > 2.0 {
 		t.Errorf("gap in the pick's direction should be 1.9, got %v", c.Gap)
 	}
@@ -304,5 +304,52 @@ func TestBuildCase(t *testing.T) {
 	}
 	if be := breakEven(-110); be < 0.523 || be > 0.524 {
 		t.Errorf("break-even at -110 is 52.4%%, got %v", be)
+	}
+}
+
+func TestAttachMore(t *testing.T) {
+	b := Board{Date: "2026-10-26", Games: []Game{{ID: 1, Matchup: "A @ B", Tip: "2026-10-26T23:00:00Z", Plays: []Play{{Player: "x"}}}}}
+	mf := moreFile{Date: "2026-10-26", Plays: []picklog.Entry{
+		{GameID: 1, Player: "P", Stat: "points", Side: "OVER", Line: 10.5, Prob: 0.57, Odds: -110, Matchup: "A @ B", Tip: "2026-10-26T23:00:00Z"},
+		{GameID: 2, Player: "Q", Stat: "assists", Side: "UNDER", Line: 5.5, Prob: 0.56, Odds: -110, Matchup: "C @ D", Tip: "2026-10-26T22:00:00Z"},
+	}}
+	attachMore(&b, mf, nil)
+	if len(b.Games) != 2 || b.Games[0].ID != 2 || len(b.Games[1].More) != 1 || len(b.Games[0].More) != 1 {
+		t.Fatalf("extras should attach to their game, create a missing game and keep tip order: %+v", b.Games)
+	}
+	stale := Board{Date: "2026-10-27"}
+	attachMore(&stale, mf, nil)
+	if len(stale.Games) != 0 {
+		t.Error("extras from another day must not be attached")
+	}
+}
+
+func TestGameContext(t *testing.T) {
+	g := buildContext(ctxIn{GameID: 1, Home: "LAL", Visitor: "POR", SpreadHome: -2.5, Total: 234.5}, 228)
+	if g.Favorite != "LAL" || g.Spread != 2.5 || g.Closeness != "tight" || g.Pace != "fast" {
+		t.Fatalf("unexpected context: %+v", g)
+	}
+	if g.HomePts != 118.5 || g.VisitorPts != 116 {
+		t.Errorf("expected scores should be 118.5-116, got %v-%v", g.HomePts, g.VisitorPts)
+	}
+	over := Play{Side: "OVER", Stat: "points", Team: "POR", ProjMin: 32}
+	f, a := contextNotes(over, g)
+	if len(f) != 2 || len(a) != 0 {
+		t.Errorf("a points over in a close, high-total game has two supports, got for=%v against=%v", f, a)
+	}
+	under := Play{Side: "UNDER", Stat: "points", Team: "POR", ProjMin: 32}
+	f, a = contextNotes(under, g)
+	if len(f) != 0 || len(a) != 2 {
+		t.Errorf("the same game works against an under, got for=%v against=%v", f, a)
+	}
+	blow := buildContext(ctxIn{Home: "BOS", Visitor: "CHI", SpreadHome: -12, Total: 220}, 228)
+	if blow.Closeness != "blowout" || blow.Pace != "slow" {
+		t.Errorf("12-point spread, low total: %+v", blow)
+	}
+	if f, _ := contextNotes(Play{Side: "UNDER", Stat: "points", Team: "BOS", ProjMin: 34}, blow); len(f) != 2 {
+		t.Errorf("blowout and slow game support a starter's under, got %v", f)
+	}
+	if g := buildContext(ctxIn{Home: "A", Visitor: "B", Total: 225}, 225); g.Favorite != "" {
+		t.Errorf("a pick'em has no favorite: %+v", g)
 	}
 }

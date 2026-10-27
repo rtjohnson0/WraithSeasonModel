@@ -34,6 +34,7 @@ import (
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/pipeline"
 	"propsmodel/internal/predictor"
+	"propsmodel/internal/projlog"
 	"propsmodel/internal/props"
 	"propsmodel/internal/sgo"
 	"propsmodel/internal/team"
@@ -87,7 +88,7 @@ func main() {
 	gameQ := flag.String("game", "", "look at one game only: team abbreviations such as \"ORL CHA\" or \"ORL@CHA\", or a game id. Prints that game's best lines (any tier), writes data/game_<teams>_<date>.csv, and logs nothing")
 	topN := flag.Int("top", 20, "with -game: how many lines to show")
 	anchor := flag.Bool("anchor", false, "rescale each stat's projections so the slate's average projection equals its average line (the books are unbiased on average); replaces the bias file")
-	noBias := flag.Bool("nobias", false, "ignore data/biasfix.json (diagnosis: shows whether the bias correction is what pushes every line under)")
+	useBias := flag.Bool("bias", false, "apply data/biasfix.json. Off by default: on 2026-10-26 it pulled live projections to 14% under the lines while the lines themselves were accurate (cmd/linecheck)")
 	noLog := flag.Bool("nolog", false, "do not append picks to data/picklog.jsonl")
 	flag.Parse()
 
@@ -127,9 +128,8 @@ func main() {
 	}
 
 	biasFix, _ := eval.LoadBiasFix(filepath.Join(*dir, "biasfix.json"))
-	if *noBias {
+	if !*useBias {
 		biasFix = eval.BiasFix{}
-		fmt.Println("Bias correction OFF (-nobias): projections are the raw model's.")
 	}
 	if biasFix.Active() {
 		fmt.Printf("Bias correction on (fitted %s from %d player-games):", biasFix.Updated, biasFix.Samples)
@@ -317,6 +317,7 @@ func main() {
 		fmt.Println("  (model average projection x this = average line)")
 	}
 	var all, picks []scored
+	projLog := map[int]*projlog.Entry{}
 	skip := struct{ noGame, noTeam, noHistory, minutes, out, noPrice int }{}
 	for _, l := range lines {
 		if gid != 0 && l.GameID != gid {
@@ -363,6 +364,7 @@ func main() {
 			skip.minutes++
 			continue
 		}
+		rawMean := pred.Mean(l.Stat)
 		if f, ok := anchorScale[l.Stat]; ok {
 			pred = pred.Scaled(l.Stat, f)
 		} else {
@@ -371,6 +373,43 @@ func main() {
 		pr, err := pred.ProbOver(l.Stat, l.Line)
 		if err != nil {
 			continue
+		}
+		{
+			e := projLog[l.PlayerID]
+			if e == nil {
+				oppTeam := map[bool]int{true: g.Home, false: g.Visitor}[team == g.Visitor]
+				e = &projlog.Entry{Date: *date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID,
+					Player: ix.Name(l.PlayerID), Team: teamAbbr, ProjMin: pred.Minutes, AvgMin15: row.AvgMin15, TypMin: row.TypicalMinutes(),
+					Stats: map[string]projlog.StatProj{}}
+				if ci, _ := feat.FeatureIndex("b2b", l.Stat); ci >= 0 && row.X[ci] == 1 {
+					e.B2B = true
+				}
+				for _, pid := range b.RotationOf(team, row.G.Day) {
+					if _, isOut := out[pid]; isOut {
+						e.TeamOut++
+					}
+				}
+				for _, pid := range b.RotationOf(oppTeam, row.G.Day) {
+					if _, isOut := out[pid]; isOut {
+						e.OppOut++
+					}
+				}
+				if st, ok := statuses[l.PlayerID]; ok && props.IsUncertain(st) {
+					e.Maybe = st
+				}
+				if c, ok := consensus[l.GameID]; ok && c.HasSpread && c.HasTotal {
+					e.Spread, e.Total = math.Abs(c.SpreadHome), c.Total
+				}
+				projLog[l.PlayerID] = e
+			}
+			sp := e.Stats[string(l.Stat)]
+			sp.Raw, sp.Proj = rawMean, pred.Mean(l.Stat)
+			if ls := byMarket[marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}]; len(ls) > 0 {
+				sorted := append([]float64(nil), ls...)
+				sort.Float64s(sorted)
+				sp.Line = sorted[len(sorted)/2]
+			}
+			e.Stats[string(l.Stat)] = sp
 		}
 		pOver := pr.Over
 		if calOK {
@@ -548,6 +587,35 @@ func main() {
 		fatal(err)
 	}
 	fmt.Printf("\nSaved %d picks to %s.\n", len(picks), csvPath)
+
+	if !*noLog && gid == 0 && len(projLog) > 0 {
+		var entries []projlog.Entry
+		for _, e := range projLog {
+			entries = append(entries, *e)
+		}
+		sort.Slice(entries, func(i, j int) bool { return entries[i].PlayerID < entries[j].PlayerID })
+		if err := projlog.Save(filepath.Join(*dir, "projlog.jsonl"), entries); err != nil {
+			fmt.Println("note: could not save data/projlog.jsonl:", err)
+		} else {
+			fmt.Printf("Saved the projections for all %d players scored to data/projlog.jsonl (go run ./cmd/livecheck compares them with what happened).\n", len(entries))
+		}
+	}
+
+	if !*noLog && gid == 0 {
+		extra := moreCandidates(picks, all, 5, 2)
+		var ctx []GameCtx
+		for id, c := range consensus {
+			if g, ok := games[id]; ok && c.HasSpread && c.HasTotal && g.HomeAbbr != "" {
+				ctx = append(ctx, GameCtx{GameID: id, Home: g.HomeAbbr, Visitor: g.VisitorAbbr, SpreadHome: c.SpreadHome, Total: c.Total})
+			}
+		}
+		sort.Slice(ctx, func(i, j int) bool { return ctx[i].GameID < ctx[j].GameID })
+		if err := writeMore(*dir, *date, extra, ctx); err != nil {
+			fmt.Println("note: could not save data/more.json:", err)
+		} else {
+			fmt.Printf("Saved %d more plays for the site's \"More plays\" button to %s.\n", len(extra), filepath.Join(*dir, "more.json"))
+		}
+	}
 
 	if !*noLog && len(picks) > 0 {
 		recordRun(*dir, *date, picks, all, out, *hi, *minEdge)
