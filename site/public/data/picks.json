@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-27T22:42:07Z",
+  "generatedAt": "2026-10-27T22:43:53Z",
   "board": {
     "date": "2026-10-27",
     "staked": 0,
@@ -7841,10 +7841,95 @@
       },
       {
         "label": "6 PM",
+        "clock": "5:58 PM",
+        "prev": "6 PM",
+        "plays": 16,
+        "new": 2,
+        "dropped": [
+          {
+            "player": "Noah Clowney",
+            "team": "BKN",
+            "matchup": "BKN @ BOS",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 7.5,
+            "tier": "PAPER",
+            "prob": 0.5305409546231494,
+            "reason": "probability fell to 53% (bar is 55%)",
+            "now": {
+              "side": "UNDER",
+              "line": 7.5,
+              "prob": 0.5277235410960734,
+              "edge": -0.027832014459482135,
+              "odds": -125,
+              "book": "fanduel"
+            }
+          },
+          {
+            "player": "Julian Champagnie",
+            "team": "SAS",
+            "matchup": "SAC @ SAS",
+            "stat": "points",
+            "side": "UNDER",
+            "line": 9.5,
+            "tier": "PAPER",
+            "prob": 0.5406090948677885,
+            "reason": "probability fell to 52% (bar is 55%)",
+            "now": {
+              "side": "UNDER",
+              "line": 9.5,
+              "prob": 0.524366842346196,
+              "edge": -0.025182707203353583,
+              "odds": -122,
+              "book": "fanduel"
+            }
+          },
+          {
+            "player": "Damian Lillard",
+            "team": "POR",
+            "matchup": "POR @ LAL",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 3.5,
+            "tier": "PAPER",
+            "prob": 0.6465165668694495,
+            "reason": "edge fell to +0.2% (needs +1.0%)",
+            "now": {
+              "side": "UNDER",
+              "line": 3.5,
+              "prob": 0.6246754277943494,
+              "edge": 0.0020339183603871325,
+              "odds": -165,
+              "book": "draftkings"
+            }
+          },
+          {
+            "player": "Ja Morant",
+            "team": "POR",
+            "matchup": "POR @ LAL",
+            "stat": "threes",
+            "side": "UNDER",
+            "line": 1.5,
+            "tier": "PAPER",
+            "prob": 0.619116732341418,
+            "reason": "edge fell to +0.6% (needs +1.0%)",
+            "now": {
+              "side": "UNDER",
+              "line": 1.5,
+              "prob": 0.6188574444557706,
+              "edge": 0.006454343680576846,
+              "odds": -158,
+              "book": "fanduel"
+            }
+          }
+        ]
+      },
+      {
+        "label": "6 PM",
         "clock": "6:42 PM",
         "prev": "6 PM",
         "plays": 18,
-        "new": 0
+        "new": 4
       }
     ]
   },
