@@ -158,7 +158,8 @@ type Board struct {
 	// Overs is the day's Overs closest to qualifying, and Overs at off-market lines. Not picks.
 	Overs []OverWatch `json:"overs,omitempty"`
 	// Combos is the day's combined-market plays (PRA, PR, PA, RA). Tracked, not staked, not picks.
-	Combos []ComboPlay `json:"combos,omitempty"`
+	Combos    []ComboPlay `json:"combos,omitempty"`
+	ComboInfo *ComboInfo  `json:"comboInfo,omitempty"`
 
 	// RunsToday lists the day's runs in order, each with what it dropped from the run before it.
 	RunsToday []RunSummary `json:"runsToday,omitempty"`
@@ -267,9 +268,10 @@ type Record struct {
 
 // Site is everything the website reads.
 type Site struct {
-	GeneratedAt string `json:"generatedAt"`
-	Board       Board  `json:"board"`
-	Record      Record `json:"record"`
+	GeneratedAt string      `json:"generatedAt"`
+	Board       Board       `json:"board"`
+	Record      Record      `json:"record"`
+	Combos      ComboRecord `json:"combos"`
 }
 
 // grade turns the model's calibrated probability into a letter. Only staked picks can earn an A:

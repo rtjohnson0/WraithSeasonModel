@@ -691,7 +691,7 @@ func main() {
 		moves := buildMoves(series, picks, extra)
 		news := buildNews(b, ix.Name, games, out, statuses, *date)
 		overs := overWatchRows(all, picks, offMarket, *hi, *minEdge, 12)
-		if err := writeMore(*dir, *date, extra, ctx, moves, news, overs, comboEntries(*date, comboPlays)); err != nil {
+		if err := writeMore(*dir, *date, extra, ctx, moves, news, overs, comboEntries(*date, comboPlays), comboInfo(comboSummary, len(comboPlays), *comboBar)); err != nil {
 			fmt.Println("note: could not save data/more.json:", err)
 		} else {
 			fmt.Printf("Saved %d more plays for the site's \"More plays\" button to %s.\n", len(extra), filepath.Join(*dir, "more.json"))

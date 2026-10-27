@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 	"text/tabwriter"
+	"time"
 
 	"propsmodel/internal/bets"
 	"propsmodel/internal/combo"
@@ -278,4 +279,13 @@ func printCombos(plays []scored, cs comboStats, bar float64) {
 		}
 	}
 	fmt.Printf("%d combo plays: %d Over, %d Under\n\n", len(plays), overs, len(plays)-overs)
+}
+
+// comboInfo summarises the day's combo pricing for data/more.json (nil when combos were off).
+func comboInfo(cs comboStats, tracked int, bar float64) *ComboInfo {
+	if cs.Scored == 0 {
+		return nil
+	}
+	return &ComboInfo{Priced: cs.Scored, Over: cs.Over, Under: cs.Under, Cleared: cs.Cleared, Tracked: tracked, Bar: bar, Basis: cs.Basis,
+		At: time.Now().UTC().Format(time.RFC3339)}
 }

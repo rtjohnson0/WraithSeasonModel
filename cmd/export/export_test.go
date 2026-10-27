@@ -384,3 +384,30 @@ func TestAttachCombosKeepsThemOutOfThePicks(t *testing.T) {
 		t.Error("another day's combos must not show")
 	}
 }
+
+func TestComboRecordIsSeparateAndCountsOnce(t *testing.T) {
+	mk := func(day, stat, side, result string, prob float64) picklog.Settled {
+		return picklog.Settled{Entry: picklog.Entry{Date: day, PlayerID: 1, Player: "A B", Stat: stat, Side: side, Line: 30.5, Prob: prob, Tier: "COMBO", Odds: -110, Book: "x"},
+			Result: result, Flat: map[string]float64{"WIN": 0.91, "LOSS": -1}[result]}
+	}
+	rec := buildComboRecord([]picklog.Settled{
+		mk("2026-10-27", "pra", "UNDER", "WIN", 0.56),
+		mk("2026-10-27", "pra", "UNDER", "WIN", 0.56), // same play at another logging: counts once
+		mk("2026-10-27", "pr", "OVER", "LOSS", 0.54),
+	}, 50)
+	if rec.Days != 1 || len(rec.Recent) != 2 {
+		t.Fatalf("duplicates must collapse: %+v", rec)
+	}
+	var all Row
+	for _, r := range rec.Rows {
+		if r.Name == "All combos" {
+			all = r
+		}
+	}
+	if all.Wins != 1 || all.Losses != 1 {
+		t.Errorf("want 1-1, got %+v", all)
+	}
+	if len(buildComboRecord(nil, 10).Rows) != 0 {
+		t.Error("an empty log gives an empty record")
+	}
+}

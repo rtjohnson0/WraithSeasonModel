@@ -346,6 +346,7 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
 
 // ---- Overs watch
 .overs { margin: 0 0 1.2rem;
+  li.started { opacity: 0.6; }
   .combo-filters { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 0 0 10px; }
   h2 { font-size: 1.1rem; margin: 0 0 4px; }
   > .small { color: var(--muted); font-size: 0.86rem; max-width: 70ch; margin: 0 0 10px; }
@@ -360,3 +361,5 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
   .ov-why { margin: 6px 0 0; font-size: 0.86rem; max-width: 70ch; em { font-style: normal; color: var(--win); font-weight: 600; } }
 }
 @media (max-width: 600px) { .overs ul { grid-template-columns: 1fr; } }
+
+.combopage { h3 { margin: 18px 0 6px; font-size: 1rem; } .record { margin-top: 26px; } .record h2 { margin: 0 0 6px; } }

@@ -35,6 +35,20 @@ type MoreFile struct {
 	// Combos is the day's combined-market plays (points+rebounds+assists and so on), tier COMBO:
 	// tracked, never staked, and kept out of the pick record.
 	Combos []picklog.Entry `json:"combos,omitempty"`
+	// ComboInfo says how the day's combo scoring went, so the site can explain an empty list.
+	ComboInfo *ComboInfo `json:"combo_info,omitempty"`
+}
+
+// ComboInfo is a summary of one day's combo pricing.
+type ComboInfo struct {
+	Priced  int     `json:"priced"`  // combo lines priced
+	Over    int     `json:"over"`    // lean Over after calibration
+	Under   int     `json:"under"`   // lean Under after calibration
+	Cleared int     `json:"cleared"` // reach the 55%/45% bar with the edge rule
+	Tracked int     `json:"tracked"` // plays tracked at the combo bar
+	Bar     float64 `json:"bar"`     // the tracking bar (0.53 = 53% Over or 47% Under)
+	Basis   string  `json:"basis"`   // how the probabilities were calibrated
+	At      string  `json:"at"`
 }
 
 // OverWatch is one Over the site lists even though it is not on the board.
@@ -112,8 +126,8 @@ func moreCandidates(picks, all []scored, perGame, perPlayer int) []scored {
 }
 
 // writeMore saves the extra plays to data/more.json.
-func writeMore(dir, date string, extra []scored, ctx []GameCtx, moves map[string][]MovePoint, news []GameNews, overs []OverWatch, combos []picklog.Entry) error {
-	f := MoreFile{Date: date, At: time.Now().UTC().Format(time.RFC3339), Games: ctx, Moves: moves, News: news, Overs: overs, Combos: combos}
+func writeMore(dir, date string, extra []scored, ctx []GameCtx, moves map[string][]MovePoint, news []GameNews, overs []OverWatch, combos []picklog.Entry, info *ComboInfo) error {
+	f := MoreFile{Date: date, At: time.Now().UTC().Format(time.RFC3339), Games: ctx, Moves: moves, News: news, Overs: overs, Combos: combos, ComboInfo: info}
 	for _, s := range extra {
 		f.Plays = append(f.Plays, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),

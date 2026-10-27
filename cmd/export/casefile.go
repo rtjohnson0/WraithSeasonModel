@@ -242,7 +242,20 @@ type moreFile struct {
 	News  []newsIn            `json:"news"`
 	Overs []OverWatch         `json:"overs"`
 	// Combos mirrors the combined-market plays predict tracks (tier COMBO).
-	Combos []picklog.Entry `json:"combos"`
+	Combos    []picklog.Entry `json:"combos"`
+	ComboInfo *ComboInfo      `json:"combo_info"`
+}
+
+// ComboInfo mirrors the summary predict writes about the day's combo pricing.
+type ComboInfo struct {
+	Priced  int     `json:"priced"`
+	Over    int     `json:"over"`
+	Under   int     `json:"under"`
+	Cleared int     `json:"cleared"`
+	Tracked int     `json:"tracked"`
+	Bar     float64 `json:"bar"`
+	Basis   string  `json:"basis"`
+	At      string  `json:"at"`
 }
 
 // ComboPlay is a combined-market play (points + rebounds + assists and so on) shown in its own site
@@ -258,6 +271,7 @@ func attachCombos(b *Board, mf moreFile, form Form) {
 	if mf.Date != b.Date {
 		return
 	}
+	b.ComboInfo = mf.ComboInfo
 	for _, e := range mf.Combos {
 		b.Combos = append(b.Combos, ComboPlay{Play: makePlay(e, mf.Date, form, 0, nil), Matchup: matchupOf(e), Tip: e.Tip})
 	}

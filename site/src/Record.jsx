@@ -1,7 +1,7 @@
 import { DayGrid, HitRateBars, UnitsChart } from './Charts.jsx'
 import { pct, prettyDate, shortDate, statLabel } from './format.js'
 
-function Table({ rows, unitsNote }) {
+export function Table({ rows, unitsNote }) {
   if (!rows?.length) return null
   return (
     <div className="scroll">

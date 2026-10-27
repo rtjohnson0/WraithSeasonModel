@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import Board from './Board.jsx'
 import Record from './Record.jsx'
+import Combos from './Combos.jsx'
 import About from './About.jsx'
 
 const PAGES = [
   ['board', 'Board'],
+  ['combos', 'Combos'],
   ['record', 'Record'],
   ['about', 'How it works'],
 ]
@@ -95,6 +97,7 @@ export default function App() {
         {error && <p className="notice">{error} Try again in a minute.</p>}
         {!site && !error && <p className="notice">Loading the board</p>}
         {site && page === 'board' && <Board site={site} />}
+        {site && page === 'combos' && <Combos site={site} />}
         {site && page === 'record' && <Record site={site} />}
         {site && page === 'about' && <About />}
       </main>

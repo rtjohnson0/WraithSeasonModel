@@ -54,10 +54,15 @@ func main() {
 	if fixed > 0 {
 		fmt.Printf("Filled in team names for %d plays that were logged with only a game number.\n", fixed)
 	}
+	comboSettled, err := picklog.LoadSettled(filepath.Join(*dir, "combosettled.jsonl"))
+	if err != nil {
+		fatal(err)
+	}
 	site := Site{
 		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
 		Board:       buildBoard(entries, *date, form, runlog.ForDate(runs, *date)),
 		Record:      buildRecord(settled, *recent),
+		Combos:      buildComboRecord(comboSettled, 120),
 	}
 	var mf moreFile
 	if raw, err := os.ReadFile(filepath.Join(*dir, "more.json")); err == nil {
