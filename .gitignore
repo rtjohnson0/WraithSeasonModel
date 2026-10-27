@@ -8,6 +8,8 @@ data/*
 !data/model.json
 !data/gamecal.json
 !data/biasfix.json
+!data/minfix.json
+!data/wofix.json
 !data/runs.jsonl
 !data/more.json
 !data/projlog.jsonl

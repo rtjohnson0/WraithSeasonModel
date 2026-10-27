@@ -70,3 +70,29 @@ func TestMoreCandidates(t *testing.T) {
 		t.Fatalf("want the two best new lines in edge order, got %+v", got)
 	}
 }
+
+func TestOverWatchRows(t *testing.T) {
+	all := []scored{
+		{PlayerID: 1, GameID: 9, Player: "A", Stat: "threes", Side: "OVER", Line: 1.5, Odds: -157, Prob: 0.587, Edge: -0.024},
+		{PlayerID: 2, GameID: 9, Player: "B", Stat: "assists", Side: "OVER", Line: 3.5, Odds: 101, Prob: 0.502, Edge: 0.004},
+		{PlayerID: 3, GameID: 9, Player: "C", Stat: "points", Side: "UNDER", Line: 10.5, Odds: -120, Prob: 0.6, Edge: 0.03},
+		{PlayerID: 4, GameID: 9, Player: "D", Stat: "points", Side: "OVER", Line: 12.5, Odds: -110, Prob: 0.56, Edge: 0.03},
+	}
+	picks := []scored{{PlayerID: 4, Stat: "points", Side: "OVER"}}
+	off := []offRow{{PlayerID: 2, Player: "B", Stat: "assists", Side: "OVER", Line: 2.5, Median: 3.5, Books: 8, Odds: -105, Prob: 0.53, Edge: 0.01}}
+	got := overWatchRows(all, picks, off, 0.55, 0.01, 10)
+	if len(got) != 2 {
+		t.Fatalf("want 2 rows (B off-market, A by edge), got %d: %+v", len(got), got)
+	}
+	if got[0].Player != "B" || !got[0].LowLine || got[0].Line != 2.5 {
+		t.Fatalf("off-market Over should come first with the low line: %+v", got[0])
+	}
+	if got[1].Player != "A" || got[1].Status == "" {
+		t.Fatalf("second row should be A with a status: %+v", got[1])
+	}
+	for _, r := range got {
+		if r.Player == "C" || r.Player == "D" {
+			t.Fatalf("Unders and plays already on the board must not be listed: %+v", r)
+		}
+	}
+}

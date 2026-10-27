@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
@@ -28,6 +29,31 @@ type MoreFile struct {
 	Moves map[string][]MovePoint `json:"moves,omitempty"`
 	// News is each team's rotation players who are out or uncertain, by game.
 	News []GameNews `json:"news,omitempty"`
+	// Overs is the day's Overs closest to qualifying, and Overs at books priced off the market,
+	// for the site's "Overs watch" section. Not picks.
+	Overs []OverWatch `json:"overs,omitempty"`
+}
+
+// OverWatch is one Over the site lists even though it is not on the board.
+type OverWatch struct {
+	GameID   int     `json:"game_id"`
+	PlayerID int     `json:"player_id"`
+	Player   string  `json:"player"`
+	Team     string  `json:"team"`
+	Matchup  string  `json:"matchup"`
+	Stat     string  `json:"stat"`
+	Line     float64 `json:"line"`
+	Odds     int     `json:"odds"`
+	Book     string  `json:"book"`
+	Prob     float64 `json:"prob"`
+	Edge     float64 `json:"edge"`
+	Proj     float64 `json:"proj"`
+	ProjMin  float64 `json:"proj_min"`
+	Tip      string  `json:"tip,omitempty"`
+	LowLine  bool    `json:"low_line,omitempty"` // this book's line is a point or more below the market median
+	Median   float64 `json:"median,omitempty"`
+	Books    int     `json:"books,omitempty"`
+	Status   string  `json:"status"` // why it is not a pick yet
 }
 
 // MovePoint is the median line across books at one capture.
@@ -83,8 +109,8 @@ func moreCandidates(picks, all []scored, perGame, perPlayer int) []scored {
 }
 
 // writeMore saves the extra plays to data/more.json.
-func writeMore(dir, date string, extra []scored, ctx []GameCtx, moves map[string][]MovePoint, news []GameNews) error {
-	f := MoreFile{Date: date, At: time.Now().UTC().Format(time.RFC3339), Games: ctx, Moves: moves, News: news}
+func writeMore(dir, date string, extra []scored, ctx []GameCtx, moves map[string][]MovePoint, news []GameNews, overs []OverWatch) error {
+	f := MoreFile{Date: date, At: time.Now().UTC().Format(time.RFC3339), Games: ctx, Moves: moves, News: news, Overs: overs}
 	for _, s := range extra {
 		f.Plays = append(f.Plays, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
@@ -149,4 +175,103 @@ func buildNews(b *feat.Builder, name func(int) string, games map[int]props.GameI
 		}
 	}
 	return news
+}
+
+// overWatchRows picks the Overs to list on the site: the strongest Overs by edge that are not on the
+// board, plus Overs at books whose line sits a point or more below the market median. At most one
+// row per player and stat; best edge first.
+func overWatchRows(all, picks []scored, off []offRow, hi, minEdge float64, limit int) []OverWatch {
+	on := map[[2]string]bool{}
+	for _, s := range picks {
+		if s.Side == "OVER" {
+			on[[2]string{strconv.Itoa(s.PlayerID), string(s.Stat)}] = true
+		}
+	}
+	lowLine := map[[2]string]offRow{}
+	for _, r := range off {
+		if r.Side != "OVER" {
+			continue
+		}
+		k := [2]string{strconv.Itoa(r.PlayerID), string(r.Stat)}
+		if cur, ok := lowLine[k]; !ok || r.Edge > cur.Edge {
+			lowLine[k] = r
+		}
+	}
+	var cands []scored
+	for _, s := range bestLinePerPick(all) {
+		if s.Side == "OVER" && !s.Far {
+			cands = append(cands, s)
+		}
+	}
+	sort.SliceStable(cands, func(i, j int) bool { return cands[i].Edge > cands[j].Edge })
+	var out []OverWatch
+	seen := map[[2]string]bool{}
+	add := func(s scored, low *offRow) {
+		k := [2]string{strconv.Itoa(s.PlayerID), string(s.Stat)}
+		if seen[k] || on[k] {
+			return
+		}
+		seen[k] = true
+		w := OverWatch{GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Team: s.Team, Matchup: s.Matchup, Stat: string(s.Stat),
+			Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, Edge: s.Edge, Proj: s.ProjMean, ProjMin: s.ProjMin, Tip: s.Tip}
+		if low != nil {
+			w.Line, w.Odds, w.Book, w.Prob, w.Edge = low.Line, low.Odds, low.Vendor, low.Prob, low.Edge
+			w.LowLine, w.Median, w.Books = true, low.Median, low.Books
+		}
+		switch {
+		case w.Prob < hi && w.Edge >= minEdge:
+			w.Status = fmt.Sprintf("price is fine, but the model gives it %.0f%% and a pick needs %.0f%%", 100*w.Prob, 100*hi)
+		case w.Prob < hi:
+			w.Status = fmt.Sprintf("model gives it %.0f%%; a pick needs %.0f%%", 100*w.Prob, 100*hi)
+		case w.Edge < minEdge:
+			w.Status = fmt.Sprintf("model likes it (%.0f%%) but the price of %s leaves no edge", 100*w.Prob, oddsStr(w.Odds))
+		default:
+			w.Status = "cleared the bar; lost its place to stronger plays"
+		}
+		if w.LowLine {
+			w.Status = fmt.Sprintf("this book's line is %.1f below the %d-book median of %.1f. %s", w.Median-w.Line, w.Books, w.Median, capFirst(w.Status))
+		}
+		out = append(out, w)
+	}
+	// off-market Overs first (the mirror of the Under edge), then the strongest by edge
+	var lows []offRow
+	for _, r := range lowLine {
+		lows = append(lows, r)
+	}
+	sort.Slice(lows, func(i, j int) bool { return lows[i].Edge > lows[j].Edge })
+	byKey := map[[2]string]scored{}
+	for _, c := range cands {
+		byKey[[2]string{strconv.Itoa(c.PlayerID), string(c.Stat)}] = c
+	}
+	for i := range lows {
+		r := lows[i]
+		base, ok := byKey[[2]string{strconv.Itoa(r.PlayerID), string(r.Stat)}]
+		if !ok {
+			base = scored{PlayerID: r.PlayerID, Player: r.Player, Team: r.Team, Matchup: r.Matchup, Stat: r.Stat, ProjMean: r.Proj}
+		}
+		add(base, &r)
+	}
+	for _, c := range cands {
+		if len(out) >= limit {
+			break
+		}
+		add(c, nil)
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		if out[i].LowLine != out[j].LowLine {
+			return out[i].LowLine
+		}
+		return out[i].Edge > out[j].Edge
+	})
+	if len(out) > limit {
+		out = out[:limit]
+	}
+	return out
+}
+
+func capFirst(s string) string {
+	if s == "" {
+		return s
+	}
+	return strings.ToUpper(s[:1]) + s[1:]
 }

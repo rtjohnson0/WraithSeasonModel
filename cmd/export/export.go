@@ -155,6 +155,8 @@ type Board struct {
 	Staked int    `json:"staked"`
 	Plays  int    `json:"plays"`
 	Games  []Game `json:"games"`
+	// Overs is the day's Overs closest to qualifying, and Overs at off-market lines. Not picks.
+	Overs []OverWatch `json:"overs,omitempty"`
 
 	// RunsToday lists the day's runs in order, each with what it dropped from the run before it.
 	RunsToday []RunSummary `json:"runsToday,omitempty"`

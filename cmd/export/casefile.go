@@ -240,6 +240,28 @@ type moreFile struct {
 	Games []ctxIn             `json:"games"`
 	Moves map[string][]MovePt `json:"moves"`
 	News  []newsIn            `json:"news"`
+	Overs []OverWatch         `json:"overs"`
+}
+
+// OverWatch is an Over listed on the site's "Overs watch" section: not a pick.
+type OverWatch struct {
+	GameID  int     `json:"game_id"`
+	Player  string  `json:"player"`
+	Team    string  `json:"team"`
+	Matchup string  `json:"matchup"`
+	Stat    string  `json:"stat"`
+	Line    float64 `json:"line"`
+	Odds    int     `json:"odds"`
+	Book    string  `json:"book"`
+	Prob    float64 `json:"prob"`
+	Edge    float64 `json:"edge"`
+	Proj    float64 `json:"proj"`
+	ProjMin float64 `json:"proj_min"`
+	Tip     string  `json:"tip,omitempty"`
+	LowLine bool    `json:"low_line,omitempty"`
+	Median  float64 `json:"median,omitempty"`
+	Books   int     `json:"books,omitempty"`
+	Status  string  `json:"status"`
 }
 
 // MovePt is the market's median line at one capture.

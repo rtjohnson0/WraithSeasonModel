@@ -2,7 +2,7 @@
 
 Predicts the probability that a player goes OVER or UNDER a sportsbook line for **points, rebounds
 or assists**, for players averaging 20+ minutes (or projected for 18+). It posts a pick only when
-the calibrated probability is **>= 55% (OVER) or <= 45% (UNDER)**, sizes a small stake, logs
+the calibrated probability is **>= 60% (OVER) or <= 40% (UNDER) (raised from 55/45 on 2026-10-27 after live results: 55-60% plays hit ~52%, 60%+ hit ~64%)**, sizes a small stake, logs
 every pick permanently, then grades it and measures closing line value (CLV).
 
 **Read this first.** Sportsbook lines already contain most of what box scores say. This project
@@ -72,7 +72,7 @@ a property of that toy book, not a forecast.
 4. **Calibration.** A logistic correction (per stat when there is enough data) fitted on
    out-of-sample backtest results, which shrinks overconfident probabilities toward 50%.
    This is also the "blend with the market" step: the line sits near 50/50.
-5. **Posting and staking.** 55% / 45% rule, best price across BALLDONTLIE and SportsGameOdds
+5. **Posting and staking.** 60% / 40% rule, best price across BALLDONTLIE and SportsGameOdds
    books, at most 4 picks per game and 2 per player (they are correlated), stake = quarter
    Kelly in units of 1% of bankroll, capped (default 2u). Start at 0.5u flat while paper trading.
 
@@ -149,7 +149,7 @@ Game picks are not yet in picklog/settle; they are saved to data/gamepicks_DATE.
 
 ## Pick tiers and guards (predict)
 
-- PICK: cleared 55%/45% and the edge rule. Staked (capped at 0.5u).
+- PICK: cleared 60%/40% and the edge rule. Staked (capped at 0.5u).
 - CHECK: cleared the bar, but projected minutes are 8+ away from his recent average (-maxshift). Staked 0
   until you confirm the minutes (minutes limit, role change, stale average).
 - LEAN: fill-in so every game has plays (-pergame). Staked 0.
@@ -399,7 +399,7 @@ that stat and side with a plain note on how much a record of that size can be tr
 
 ## Level check: `predict -anchor`
 
-Books' lines are accurate on average (`cmd/linecheck`), so if the model's average projection sits well off the average line across the whole slate, the level is off. `-anchor` rescales each stat so the slate's average projection equals its average line (only the level moves; which players the model likes more or less than the book still picks the plays). It prints the scale it used (on 2026-10-26: points x1.05, rebounds x1.04, assists x1.06, threes x1.01, so the raw model is about 5% low). Not backtested. The centre check at the end of `predict` shows why Overs are rarer than Unders even with a balanced model: counting stats are right-skewed, so a line set at the mean goes under more often (54% of lines this season), and an Over needs a bigger move to reach the 55% bar.
+Books' lines are accurate on average (`cmd/linecheck`), so if the model's average projection sits well off the average line across the whole slate, the level is off. `-anchor` rescales each stat so the slate's average projection equals its average line (only the level moves; which players the model likes more or less than the book still picks the plays). It prints the scale it used (on 2026-10-26: points x1.05, rebounds x1.04, assists x1.06, threes x1.01, so the raw model is about 5% low). Not backtested. The centre check at the end of `predict` shows why Overs are rarer than Unders even with a balanced model: counting stats are right-skewed, so a line set at the mean goes under more often (54% of lines this season), and an Over needs a bigger move to reach the posting bar.
 
 ## More plays and earlier picks
 
@@ -433,3 +433,55 @@ Each game on the board now shows its spread, total and the score those imply (fo
 - **Record charts**: hit rate against what the model said, and a day-by-day grid.
 - **Add to home screen**: the site ships a manifest and a small service worker (network first for `data/picks.json`). On iPhone use Share, Add to Home Screen.
 - **New picks banner**: an open tab checks for a newer `picks.json` every 5 minutes and on return; tap Reload.
+
+## Choosing the cutoff
+
+`go run ./cmd/sweep` (optionally `-stat rebounds`) reads `data/settled.jsonl` and, per side, shows plays per day, hit rate, break-even and flat units at each edge cutoff. Pick the lowest cutoff where the hit rate clears break-even with a real sample. A side with no graded plays cannot be tuned yet.
+
+## Who is out, not just how many (2026-10-27)
+
+The model already used the total minutes and starters missing from a team. It now also knows which teammates are out:
+
+- `miss_pos`: absent minutes at his own position group (the next group over counts half), so a guard out helps the guards.
+- `wo_min`: from his own box scores, how his minutes changed in past games when each absent teammate was out, against games when that teammate played. Only games after the teammate joined the team, only games before the one being projected, and each difference is shrunk toward zero (one game without him says little).
+- `wo_rate` (per stat): the same comparison for his per-minute output, capped at +/-0.3 in log terms per teammate.
+
+These are new inputs, so the existing `model.json` does not use them. Retrain (`go run ./cmd/train`), then compare `go run ./cmd/backtest` before and after, and watch the "teammates out" rows in `go run ./cmd/livecheck`. External sites such as StatMuse have no API and are not needed: the with/without splits come from the box scores already in `data/`.
+
+## Minutes blend (2026-10-27)
+
+`go run ./cmd/bias` now also prints how the model's minutes cuts below a player's normal fared on every game this season (nothing selected), and a table that moves the projection 0, 25, 50, 75 or 100% of the way to his normal minutes and scores each. The share with the lowest minutes error is the recommendation; apply it with `go run ./cmd/predict -minblend <share>`. Default 0 (off). It changes only minutes; per-minute rates are untouched. It is fitted on this season's games so far, so re-run `bias` as games accumulate.
+
+## What three days of graded plays showed (2026-10-27)
+
+218 graded plays from 10-24 to 10-26 (`review_*.csv`):
+
+- **Overs were being posted and doing fine** (15 graded, 10-5, +3.0u) at the 55% bar. Raising the bar to 60% on 10-27 removed nearly all of them, so it was put back: **posting is 55%/45% again; staking needs 60%/40%** (`predict -stakebar`, default 0.60). Plays between the two bars are tiered PAPER with 0 units and a note, and are graded like everything else.
+- **Game closeness drives minutes.** Plays in games that finished within 5 points ran +5.5 minutes over projection (53% had a +5 surge); blowouts ran -1.7. Unders hit 51% in close games and 64% in blowouts. The model has the spread as an input but under-reacts, so `go run ./cmd/bias` now prints the minutes miss by pre-game spread and fits a correction.
+- **Teammates out was a good sign for the Unders** (65% on 66 plays; starters 74%), because books already raise the lines. The misses were stars absorbing a missing co-star (Wagner with Banchero out, Murray with three out).
+
+`go run ./cmd/bias -write` saves `data/minfix.json` (minutes per point of spread, centred so average minutes do not move). `predict` applies it only when the slope is clear (z of 2.5+, the right sign) and prints a line saying so; `-nominfix` turns it off.
+
+**Correction to the spread note above (2026-10-27, later).** On all 775 eligible player-games the pre-game spread did not predict the minutes miss clearly (slope -0.09 per point, z -1.7), so `minfix.json` stays inactive and `predict` ignores it. The "close games ran over" result came from the final margin of the plays that were picked, which is only known after the game and is partly selection. The same unselected table showed the model's biggest minutes cuts (6+ below normal) recover about a quarter of the way (+2.2 on 97 games), so `predict -bigcut` (default 0.25) moves only those back toward normal. `predict` also prints an `OVERS:` table of the day's strongest Overs with the reason each is not on the board (probability, price, or a cap).
+
+## Who gains when a teammate is out (`cmd/onoff`)
+
+`go run ./cmd/onoff` reads today's injuries snapshot and, for each rotation player ruled out (and each questionable one, labelled "if he sits"), lists the teammates whose minutes, points, rebounds, assists and threes were higher in games without him, with the number of games behind each figure. `-player "Duren"` asks about any player. It is built from the box scores only, over the last two seasons and since the player joined his team; samples are small, so read the game counts (`thin` means under 3 games without him). It informs the model's `wo_min`/`wo_rate` features but does not change any projection by itself.
+
+`go run ./cmd/bias` also prints a minutes range check: how often actual minutes land inside the model's 10th-90th percentile band, for bench, rotation and starters.
+
+## With-and-without correction (tested before it is used)
+
+`feat` computes, for each player, how his minutes and per-minute output changed in past games when today's absent teammates were out (`wo_min`, `wo_rate`; shrunk, capped). These were only reachable through `train -lineup`, which made unselected minutes worse. Instead of retraining, `go run ./cmd/bias` now tests them directly: every 2026 game is projected without the history, then grouped by what the history says, and the miss is regressed on it. The table prints the miss by group and a slope (1 would mean the history is right as it stands, 0 noise). `bias -write` saves `data/wofix.json`; `predict` applies the minutes shift and per-stat factor only for slopes clearly above zero (z of 2.5+), shrunk by sample size, and prints a line when it does. `-nowofix` turns it off. Backtest absences come from box scores (which include rest days), live ones from the injury report, so expect the live effect to be a little smaller.
+
+`go run ./cmd/onoff` now lists only teams playing that date (`-all` for every team) and treats a player as a rotation player from his last ten games, however long ago, so long-term injured starters (Duren, Sharpe) appear.
+
+## Off-market lines (2026-10-27)
+
+On 10-26 the 35 graded plays priced at a book whose line sat a point or more from the 4+-book median went 26-9 (74%, +10.8u); the other 89 plays went 55% (+0.2u). One day, so a lead, not a result. The same gap works in both directions: a high line makes the Under cheap and a low line makes the Over cheap. `predict` now prints an `OFF-MARKET LINES` table (Overs and Unders together, biggest gap first, best price per player/stat/side) with the model's probability and whether it agrees. Overs on this table are the mirror of the Under edge, so they do not depend on the model's Over probability reaching 55%.
+
+The with-and-without fit on 775 games (`bias`) found the minutes history is real (slope +0.43, z +8.6), so `wofix.json` now applies a minutes shift of 0.31 times the history. The per-stat factors were not clear enough (points z +2.5, just under the cutoff) and are not applied.
+
+## Overs watch on the site
+
+`predict` (without `-nolog`) saves the day's Overs closest to qualifying, plus Overs at books priced a point or more below the market median, into `data/more.json`. `export` puts them in `picks.json` and the Board page shows them as "Overs watch" above the results: player, the bet, price and book, the model's probability, edge, projection, time to tip, and a plain reason it is not a pick (probability under the bar, price leaves no edge, or the low-line note). Off-market Overs come first. They are not picks, are not logged to the pick record, and are hidden once the game starts.

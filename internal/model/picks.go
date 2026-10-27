@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	PostOver        = 0.55 // post an OVER at or above this P(over)
+	PostOver        = 0.55 // post an OVER at or above this P(over). Staking needs more: see predict -stakebar
 	PostUnder       = 0.45 // post an UNDER at or below this P(over)
 	MinMinutesFloor = 18.0 // eligible if projected for at least this many minutes
 	MinMinutesAvg   = 20.0 // ...or averaging at least this many

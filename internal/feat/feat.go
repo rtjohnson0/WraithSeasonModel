@@ -63,6 +63,7 @@ var CommonSpecs = []Spec{
 	{"net_diff", GroupGame},
 	{"pace", GroupOpp},
 	{"miss_min", GroupTeammates}, {"miss_starters", GroupTeammates},
+	{"miss_pos", GroupTeammates}, {"wo_min", GroupTeammates},
 	{"oppabs_min", GroupOppOut}, {"oppabs_big", GroupOppOut}, {"oppabs_blk", GroupOppOut}, {"oppabs_reb", GroupOppOut},
 	{"oppabs_starters", GroupOppOut}, {"oppabs_pts", GroupOppOut}, {"oppabs_ast", GroupOppOut},
 }
@@ -71,28 +72,28 @@ var CommonSpecs = []Spec{
 var StatSpecs = [data.NStats][]Spec{
 	{ // points
 		{"base_rate", GroupBase}, {"form_tr", GroupForm}, {"fga_tr", GroupForm}, {"fg_dev", GroupSlump},
-		{"opp_allow", GroupOpp}, {"miss_s", GroupTeammates},
+		{"opp_allow", GroupOpp}, {"miss_s", GroupTeammates}, {"wo_rate", GroupTeammates},
 		{"usage_tr", GroupUsage}, {"usage_lvl", GroupUsage},
 		{"touch_tr", GroupChances},
 		{"h2h", GroupH2H}, {"venue_split", GroupSplit}, {"pos5_allow", GroupMatchup},
 	},
 	{ // rebounds
 		{"base_rate", GroupBase}, {"form_tr", GroupForm},
-		{"opp_allow", GroupOpp}, {"miss_s", GroupTeammates},
+		{"opp_allow", GroupOpp}, {"miss_s", GroupTeammates}, {"wo_rate", GroupTeammates},
 		{"reb_tr", GroupUsage},
 		{"rch_tr", GroupChances}, {"rch_conv", GroupChances}, {"rch_off", GroupChances},
 		{"h2h", GroupH2H}, {"venue_split", GroupSplit}, {"pos5_allow", GroupMatchup},
 	},
 	{ // assists
 		{"base_rate", GroupBase}, {"form_tr", GroupForm},
-		{"opp_allow", GroupOpp}, {"miss_s", GroupTeammates},
+		{"opp_allow", GroupOpp}, {"miss_s", GroupTeammates}, {"wo_rate", GroupTeammates},
 		{"ast_tr", GroupUsage}, {"pass_tr", GroupUsage}, {"usage_tr", GroupUsage},
 		{"pass_conv", GroupChances}, {"touch_tr", GroupChances}, {"sec_tr", GroupChances},
 		{"h2h", GroupH2H}, {"venue_split", GroupSplit}, {"pos5_allow", GroupMatchup},
 	},
 	{ // threes made
 		{"base_rate", GroupBase}, {"form_tr", GroupForm}, {"tpa_tr", GroupForm}, {"tp_dev", GroupSlump},
-		{"opp_allow", GroupOpp}, {"miss_s", GroupTeammates},
+		{"opp_allow", GroupOpp}, {"miss_s", GroupTeammates}, {"wo_rate", GroupTeammates},
 		{"h2h", GroupH2H}, {"venue_split", GroupSplit}, {"pos5_allow", GroupMatchup},
 	},
 }
@@ -960,6 +961,22 @@ func (b *Builder) build(hist []data.PlayerGame, team, opp int, home float64, day
 	}
 	setC("miss_min", missMin)
 	setC("miss_starters", missStarters)
+	// Who is out matters, not only how many minutes: a guard out helps the guards. miss_pos counts
+	// absent minutes at his own position group in full and at the next group over by half.
+	var missPos float64
+	for _, a := range abs {
+		switch d := a.pos - pg; {
+		case d == 0:
+			missPos += a.min
+		case d == 1 || d == -1:
+			missPos += a.min / 2
+		}
+	}
+	setC("miss_pos", missPos)
+	// With-and-without: his own minutes and per-minute output in past games when each of these
+	// teammates was out, against games when he played.
+	woMin, woRate := b.withWithout(hist, team, abs)
+	setC("wo_min", woMin)
 
 	// The other team's missing rotation players: a missing rim protector or rebounder changes
 	// what the opposing players can do. Minutes of everyone out, minutes of bigs out, and the
@@ -995,6 +1012,7 @@ func (b *Builder) build(hist []data.PlayerGame, team, opp int, home float64, day
 			r.S[k][statIdx[k]["base_rate"]] = math.Log(pj.Mean[s] / pj.ProjMinutes)
 		}
 		r.S[k][statIdx[k]["miss_s"]] = missS[k]
+		r.S[k][statIdx[k]["wo_rate"]] = woRate[k]
 
 		// Form: last 10 games per-minute rate vs the long run, shrunk by 40 pseudo-minutes.
 		var s10, m10, sl, ml float64
@@ -1285,6 +1303,27 @@ func (r *Row) TypicalMinutes() float64 {
 	return r.AvgMin15
 }
 
+// AbsSpread is the game's betting spread in points, ignoring who is favoured (NaN when unknown).
+func (r *Row) AbsSpread() float64 { return r.X[commonIdx["abs_spread"]] }
+
+// WoMin is the summed change in his minutes in past games when the teammates who are out now were
+// also out (shrunk toward zero); 0 when nobody relevant is out.
+func (r *Row) WoMin() float64 {
+	if v := r.X[commonIdx["wo_min"]]; !math.IsNaN(v) {
+		return v
+	}
+	return 0
+}
+
+// WoRate is the summed log change in his per-minute output of a stat in those games.
+func (r *Row) WoRate(stat data.Stat) float64 {
+	k := data.StatIndex(stat)
+	if v := r.S[k][statIdx[k]["wo_rate"]]; !math.IsNaN(v) {
+		return v
+	}
+	return 0
+}
+
 // DefRank says how a team's defense ranks against one position group in one stat.
 type DefRank struct {
 	Rank  int     // 1 = allows the most of that stat to the position, Of = allows the fewest
@@ -1401,4 +1440,81 @@ func (b *Builder) DefenseRank(playerID, opp int, stat data.Stat, date string) (D
 		return DefRank{}, false
 	}
 	return DefRank{Rank: rank, Of: len(teams), Pct: mine/base - 1, Games: games, Pos: pg, Early: early}, true
+}
+
+const (
+	woWindow  = 120 // his most recent games considered
+	woMinIn   = 3   // games with the teammate playing needed for a comparison
+	woShrink  = 5.0 // pseudo-games: one game without the teammate says little
+	woMaxRate = 0.3 // cap on the per-teammate log change in per-minute output
+)
+
+// withWithout measures how this player's minutes and per-minute output changed in past games
+// when each currently absent teammate was out, against games when that teammate played. Only
+// games before the one being projected are used (hist ends the day before), and only games from
+// the day the teammate first appeared for this team, so a teammate who had not joined yet does
+// not count as "out". Each difference is shrunk toward zero by how many games without him there
+// are. The result is the summed change in minutes and, per stat, the summed log change in rate.
+func (b *Builder) withWithout(hist []data.PlayerGame, team int, abs []rotMember) (float64, [data.NStats]float64) {
+	var dMin float64
+	var dRate [data.NStats]float64
+	if len(abs) == 0 {
+		return dMin, dRate
+	}
+	games := tailGames(hist, woWindow)
+	for _, a := range abs {
+		joined := 0
+		for _, g := range b.byPlayer[a.pid] {
+			if g.TeamID == team {
+				joined = g.Day
+				break
+			}
+		}
+		if joined == 0 {
+			continue
+		}
+		var nIn, nOut int
+		var minIn, minOut float64
+		var statIn, statOut [data.NStats]float64
+		for _, g := range games {
+			if g.TeamID != team || g.Day < joined || g.Minutes <= 0 {
+				continue
+			}
+			tg := b.tgByKey[teamKey{team, g.GameID}]
+			if tg == nil {
+				continue
+			}
+			_, played := tg.Players[a.pid]
+			for k, st := range data.Stats {
+				v := g.Value(st)
+				if played {
+					statIn[k] += v
+				} else {
+					statOut[k] += v
+				}
+			}
+			if played {
+				nIn++
+				minIn += g.Minutes
+			} else {
+				nOut++
+				minOut += g.Minutes
+			}
+		}
+		if nOut == 0 || nIn < woMinIn {
+			continue
+		}
+		w := float64(nOut) / (float64(nOut) + woShrink)
+		dMin += w * (minOut/float64(nOut) - minIn/float64(nIn))
+		if minIn > 0 && minOut > 0 {
+			for k := range dRate {
+				// per-minute rates with a small floor so a zero count does not blow up the log
+				ri, ro := (statIn[k]+0.5)/minIn, (statOut[k]+0.5)/minOut
+				d := math.Log(ro / ri)
+				d = math.Max(-woMaxRate, math.Min(woMaxRate, d))
+				dRate[k] += w * d
+			}
+		}
+	}
+	return dMin, dRate
 }

@@ -32,7 +32,7 @@ func main() {
 	backtest := flag.Bool("backtest", false, "test against last season's opening lines instead of picking today's games")
 	season := flag.Int("season", 2025, "season (start year) to backtest")
 	date := flag.String("date", "", "game date YYYY-MM-DD (default: today, US Eastern)")
-	hi := flag.Float64("hi", 0.55, "post a play at or above this win probability")
+	hi := flag.Float64("hi", 0.55, "post a play at or above this win probability (game lines have their own graded history, so this stays 0.55 until swept)")
 	minEdge := flag.Float64("minedge", 0.01, "and at least this far above the break-even probability of the price")
 	maxUnits := flag.Float64("maxunits", 0.5, "largest stake in units (1 unit = 1% of bankroll)")
 	skipBooks := flag.String("skipbooks", "kalshi,polymarket", "comma-separated books to ignore (prediction markets are not sportsbooks: different fees, limits and prices)")

@@ -16,6 +16,11 @@ type BiasSample struct {
 	EarlySeason bool
 	PredMin     float64
 	ActualMin   float64
+	WoMin       float64 // history of his minutes when today's absent teammates were out
+	WoRate      [data.NStats]float64
+	AbsSpread   float64 // pre-game point spread, NaN when the game had no line
+	Typical     float64 // his normal minutes (median of his last ten, injury and blowout nights filled in)
+	Pred0       predictor.Pred
 	Pred        [data.NStats]float64
 	Actual      [data.NStats]float64
 }
@@ -64,9 +69,10 @@ func BiasCheck(rows []feat.Row, season int, disabled []string) ([]BiasSample, er
 			if !model.Eligible(r.AvgMin15, pred.Minutes) || math.IsNaN(pred.Minutes) {
 				continue
 			}
-			s := BiasSample{Date: r.G.Date, EarlySeason: r.G.Day-start < 21, PredMin: pred.Minutes, ActualMin: r.G.Minutes}
+			s := BiasSample{Date: r.G.Date, EarlySeason: r.G.Day-start < 21, PredMin: pred.Minutes, ActualMin: r.G.Minutes, Typical: r.MinTypical, AbsSpread: r.AbsSpread(), WoMin: r.WoMin(), Pred0: pred}
 			for _, st := range data.Stats {
 				k := data.StatIndex(st)
+				s.WoRate[k] = r.WoRate(st)
 				s.Pred[k], s.Actual[k] = pred.Mean(st), r.G.Value(st)
 			}
 			out = append(out, s)

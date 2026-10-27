@@ -134,6 +134,62 @@ function TopPlays({ games, now, onPick }) {
   )
 }
 
+// Overs that are not picks: the closest to qualifying, and Overs at books priced a point or more
+// below the market. A board with no Overs still shows where they are and why they did not make it.
+function OversWatch({ overs, now }) {
+  const [all, setAll] = useState(false)
+  const open = (overs || []).filter((o) => {
+    const s = tipState(o.tip, now).state
+    return s !== 'live' && s !== 'done'
+  })
+  if (open.length === 0) return null
+  const shown = all ? open : open.slice(0, 6)
+  return (
+    <section className="overs" aria-label="Overs watch">
+      <h2>Overs watch</h2>
+      <p className="small">
+        None of these are picks. They are the Overs closest to qualifying today, and Overs at books priced a point or more below the market, which is the same
+        edge the Unders get from a high line.
+      </p>
+      <ul>
+        {shown.map((o) => {
+          const ts = tipState(o.tip, now)
+          return (
+            <li key={`${o.player}|${o.stat}`} className={o.low_line ? 'lowline' : ''}>
+              <div className="ov-head">
+                <b>{o.player}</b>
+                <span className="ov-bet">
+                  Over {o.line} {statLabel[o.stat] || o.stat}
+                </span>
+                <span className="ov-price">
+                  {oddsText(o.odds)} <small>{o.book}</small>
+                </span>
+              </div>
+              <div className="ov-nums">
+                <span>Model {pct(o.prob)}</span>
+                <span className={o.edge >= 0 ? 'pos' : 'neg'}>Edge {o.edge >= 0 ? '+' : ''}{(100 * o.edge).toFixed(1)}%</span>
+                <span>
+                  Projected {o.proj.toFixed(1)} in {Math.round(o.proj_min)} min
+                </span>
+                <span>{ts.label || o.matchup}</span>
+              </div>
+              <p className="ov-why">
+                {o.low_line && <em>Low line. </em>}
+                {o.status}
+              </p>
+            </li>
+          )
+        })}
+      </ul>
+      {open.length > 6 && (
+        <button type="button" className="morebtn" onClick={() => setAll((v) => !v)}>
+          {all ? 'Show fewer' : `Show all ${open.length}`}
+        </button>
+      )}
+    </section>
+  )
+}
+
 // Who is out and who is uncertain on each side, from the injury report.
 function LineupNews({ news }) {
   return (
@@ -569,6 +625,7 @@ export default function Board({ site }) {
       </section>
 
       <TopPlays games={board.games} now={now} onPick={(p) => { setStat('all'); setLabel('all'); setSide('ALL'); setQ(''); setRepeatsOnly(false); setFocus({ id: playId(p), n: Date.now() }) }} />
+      <OversWatch overs={board.overs} now={now} />
       <LastResults record={site.record} date={board.date} />
       <RunChanges runs={board.runsToday} />
       <EarlierPicks runs={board.runsToday} />

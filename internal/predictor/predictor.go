@@ -233,6 +233,27 @@ func (p Pred) Scaled(s data.Stat, f float64) Pred {
 	return p
 }
 
+// WithMinutes shifts the whole minutes distribution so its average is target, keeping the
+// per-minute rates. Used to pull a projection toward the player's normal minutes.
+func (p Pred) WithMinutes(target float64) Pred {
+	d := target - p.Minutes
+	p.Minutes = 0
+	for k := range p.MinNodes {
+		p.MinNodes[k] = math.Min(math.Max(p.MinNodes[k]+d, 1), 48)
+		p.Minutes += p.MinNodes[k] / Nodes
+	}
+	return p
+}
+
+// BlendMinutes moves the projected minutes the share w of the way to typical (his normal minutes).
+// w = 0 changes nothing. A typical of zero or NaN is ignored.
+func (p Pred) BlendMinutes(typical, w float64) Pred {
+	if w <= 0 || typical <= 0 || math.IsNaN(typical) {
+		return p
+	}
+	return p.WithMinutes(p.Minutes + w*(typical-p.Minutes))
+}
+
 func (p Pred) Mean(s data.Stat) float64 { return p.Minutes * p.Rate[data.StatIndex(s)] }
 
 // Dist is the probability of finishing with 0..maxK of a stat, mixing over the minutes distribution

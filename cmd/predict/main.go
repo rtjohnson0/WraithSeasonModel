@@ -76,7 +76,7 @@ func main() {
 	maxUnits := flag.Float64("maxunits", 0.5, "largest stake in units (1 unit = 1% of bankroll); the backtest edge is small, so the default is small")
 	maxGame := flag.Int("maxgame", 4, "most picks to post from any one game (picks in one game are correlated)")
 	maxPlayer := flag.Int("maxplayer", 2, "most picks to post on any one player")
-	perGame := flag.Int("pergame", 3, "make sure every game has at least this many plays; extras below the 55% bar are marked LEAN, staked 0 units and not logged (0 turns this off)")
+	perGame := flag.Int("pergame", 3, "make sure every game has at least this many plays; extras below the posting bar are marked LEAN, staked 0 units and not logged (0 turns this off)")
 	maxGap := flag.Float64("maxgap", 1.0, "a line this far from the projection (as a share of max(projection, 2)) is marked CHECK, since it is more often a bad or alternate line than an edge; 0 turns the guard off")
 	maxCut := flag.Float64("maxshift", 8, "a play whose projected minutes differ from his recent average by this many or more is marked CHECK (0 units) until you confirm the minutes; 0 turns the guard off")
 	stakeStats := flag.String("stakestats", "rebounds", "stats that get a real stake; plays on other stats are tiered PAPER (0 units, still logged). Default follows the 2025 backtest: rebounds were profitable, assists lost money, points posted nothing")
@@ -89,6 +89,11 @@ func main() {
 	gameQ := flag.String("game", "", "look at one game only: team abbreviations such as \"ORL CHA\" or \"ORL@CHA\", or a game id. Prints that game's best lines (any tier), writes data/game_<teams>_<date>.csv, and logs nothing")
 	topN := flag.Int("top", 20, "with -game: how many lines to show")
 	anchor := flag.Bool("anchor", false, "rescale each stat's projections so the slate's average projection equals its average line (the books are unbiased on average); replaces the bias file")
+	stakeBar := flag.Float64("stakebar", 0.60, "a play is posted at the -hi bar (55% by default) but only staked when its probability is at least this far from 50% (60% Over or 40% Under). Plays between the two bars are tiered PAPER with 0 units and graded separately, so the sweep can show whether that band earns its keep")
+	bigCut := flag.Float64("bigcut", 0.25, "when projected minutes are 6 or more below a player's normal, move this share of the cut back toward normal. On this season's games the biggest cuts recovered about a quarter of the way (cmd/bias prints the table); 0 turns it off")
+	noWo := flag.Bool("nowofix", false, "do not apply data/wofix.json (the with-and-without-teammate correction written by `go run ./cmd/bias -write`)")
+	noMinFix := flag.Bool("nominfix", false, "do not apply data/minfix.json (the spread-based minutes correction written by `go run ./cmd/bias -write`)")
+	minBlend := flag.Float64("minblend", 0, "pull projected minutes this share of the way to each player's normal minutes (0 to 1). `go run ./cmd/bias` recommends a value from all of this season's games")
 	useBias := flag.Bool("bias", false, "apply data/biasfix.json. Off by default: on 2026-10-26 it pulled live projections to 14% under the lines while the lines themselves were accurate (cmd/linecheck)")
 	noLog := flag.Bool("nolog", false, "do not append picks to data/picklog.jsonl")
 	flag.Parse()
@@ -128,6 +133,29 @@ func main() {
 			"(usually overconfident). Run: go run ./cmd/backtest -season 2025   then   go run ./cmd/train   (same -lineup setting for both)", cal.Config, config))
 	}
 
+	minFix, _ := eval.LoadMinFix(filepath.Join(*dir, "minfix.json"))
+	if *noMinFix {
+		minFix = eval.MinFix{}
+	}
+	if minFix.Active() {
+		fmt.Printf("Spread-based minutes correction on (%.2f min per spread point at 30 min, centred on a %.1f-point spread; fitted on %d player-games, z %.1f).\n", minFix.Slope, minFix.Centre, minFix.Samples, minFix.Z)
+	}
+	woFix, _ := eval.LoadWoFix(filepath.Join(*dir, "wofix.json"))
+	if *noWo {
+		woFix = eval.WoFix{}
+	}
+	if woFix.Active() {
+		fmt.Printf("With-and-without-teammate correction on (minutes x%.2f; points x%.2f, rebounds x%.2f, assists x%.2f, threes x%.2f; fitted on %d player-games).\n",
+			woFix.Minutes, woFix.Rate["points"], woFix.Rate["rebounds"], woFix.Rate["assists"], woFix.Rate["threes"], woFix.Samples)
+	}
+	adjustMinutes := func(p predictor.Pred, row *feat.Row) predictor.Pred {
+		p = p.WithMinutes(p.Minutes + woFix.MinutesShift(row.WoMin()))
+		p = p.WithMinutes(p.Minutes + minFix.Shift(row.AbsSpread(), p.Minutes))
+		if t := row.MinTypical; *bigCut > 0 && t > 0 && !math.IsNaN(t) && p.Minutes-t <= -6 {
+			p = p.WithMinutes(p.Minutes + *bigCut*(t-p.Minutes))
+		}
+		return p.BlendMinutes(row.MinTypical, *minBlend)
+	}
 	biasFix, _ := eval.LoadBiasFix(filepath.Join(*dir, "biasfix.json"))
 	if !*useBias {
 		biasFix = eval.BiasFix{}
@@ -296,7 +324,7 @@ func main() {
 			if row == nil {
 				continue
 			}
-			pred := m.Predict(row)
+			pred := adjustMinutes(m.Predict(row), row)
 			if !model.Eligible(row.AvgMin15, pred.Minutes) {
 				continue
 			}
@@ -319,6 +347,7 @@ func main() {
 	}
 	var all, picks []scored
 	projLog := map[int]*projlog.Entry{}
+	var offMarket []offRow
 	skip := struct{ noGame, noTeam, noHistory, minutes, out, noPrice int }{}
 	for _, l := range lines {
 		if gid != 0 && l.GameID != gid {
@@ -360,7 +389,7 @@ func main() {
 			teamAbbr, matchup = fmt.Sprintf("team %d", team), fmt.Sprintf("game %d", g.ID)
 		}
 		early := *warmup > 0 && b.SeasonGames(team, *date) < *warmup
-		pred := m.Predict(row)
+		pred := adjustMinutes(m.Predict(row), row)
 		if !model.Eligible(row.AvgMin15, pred.Minutes) {
 			skip.minutes++
 			continue
@@ -371,6 +400,7 @@ func main() {
 		} else {
 			pred = pred.Scaled(l.Stat, biasFix.For(l.Stat))
 		}
+		pred = pred.Scaled(l.Stat, woFix.RateFactor(l.Stat, row.WoRate(l.Stat)))
 		pr, err := pred.ProbOver(l.Stat, l.Line)
 		if err != nil {
 			continue
@@ -450,6 +480,16 @@ func main() {
 					kind = "in your favor"
 				}
 				s.Why = addWhy(s.Why, fmt.Sprintf("line %.1f is %.1f %s the market median %.1f across %d books: off the market, %s", s.Line, math.Abs(d), map[bool]string{true: "above", false: "below"}[d > 0], med, len(ls), kind))
+				// The side that benefits from an off-market line: Under at a high line, Over at a low one.
+				side, odds, prob := "OVER", l.OverOdds, s.Prob
+				if d > 0 {
+					side, odds = "UNDER", l.UnderOdds
+				}
+				if s.Side != side {
+					prob = 1 - s.Prob
+				}
+				offMarket = append(offMarket, offRow{Player: s.Player, Team: s.Team, Matchup: s.Matchup, Stat: s.Stat, Side: side, Line: s.Line,
+					Median: med, Books: len(ls), Gap: math.Abs(d), Vendor: l.Vendor, Odds: odds, Prob: prob, Edge: bets.Edge(prob, odds), Proj: s.ProjMean, PlayerID: s.PlayerID})
 			}
 		}
 		if mv, ok := moves[props.MoveKey{Game: l.GameID, Player: l.PlayerID, Stat: l.Stat}]; ok && mv.Moved() {
@@ -481,6 +521,10 @@ func main() {
 				// A big minutes change is where a wrong projection (a minutes limit, a role change,
 				// a stale average) turns into a confident wrong pick. Verify before staking.
 				s.Tier, s.Units = "CHECK", 0
+			}
+			if s.Tier == "PICK" && *stakeBar > 0 && s.Prob < *stakeBar {
+				s.Tier, s.Units = "PAPER", 0
+				s.Why = addWhy(s.Why, fmt.Sprintf("posted, not staked: under the %.0f%% staking bar", 100**stakeBar))
 			}
 			picks = append(picks, s)
 		}
@@ -562,6 +606,8 @@ func main() {
 	statBreakdown(all, picks, *hi)
 	centerCheck(all, *hi, cal, calOK)
 	boardChecks(picks, all)
+	overWatch(all, picks, *hi, *minEdge)
+	printOffMarket(offMarket)
 	fmt.Printf("skipped: %d no game info, %d player not on a team playing today, %d too little history, %d not enough minutes, %d ruled out, %d with no price on one side\n\n",
 		skip.noGame, skip.noTeam, skip.noHistory, skip.minutes, skip.out, skip.noPrice)
 
@@ -615,7 +661,8 @@ func main() {
 		series, _ := props.LineSeries(propsPath)
 		moves := buildMoves(series, picks, extra)
 		news := buildNews(b, ix.Name, games, out, statuses, *date)
-		if err := writeMore(*dir, *date, extra, ctx, moves, news); err != nil {
+		overs := overWatchRows(all, picks, offMarket, *hi, *minEdge, 12)
+		if err := writeMore(*dir, *date, extra, ctx, moves, news, overs); err != nil {
 			fmt.Println("note: could not save data/more.json:", err)
 		} else {
 			fmt.Printf("Saved %d more plays for the site's \"More plays\" button to %s.\n", len(extra), filepath.Join(*dir, "more.json"))
@@ -1291,4 +1338,133 @@ func distMax(st data.Stat, line, mean float64) int {
 		hi = math.Max(hi, 8)
 	}
 	return int(math.Ceil(hi))
+}
+
+// overWatch lists the strongest Overs of the day and says why each is or is not on the board, so a
+// board with no Overs shows its reason: the probability, the price, or a cap.
+func overWatch(all, picks []scored, hi, minEdge float64) {
+	type key struct {
+		pid  int
+		stat data.Stat
+	}
+	on := map[key]bool{}
+	for _, s := range picks {
+		if s.Side == "OVER" {
+			on[key{s.PlayerID, s.Stat}] = true
+		}
+	}
+	var overs []scored
+	for _, s := range bestLinePerPick(all) {
+		if s.Side == "OVER" {
+			overs = append(overs, s)
+		}
+	}
+	if len(overs) == 0 {
+		fmt.Println("OVERS: no line leans Over at all today.")
+		fmt.Println()
+		return
+	}
+	sort.Slice(overs, func(i, j int) bool { return overs[i].Edge > overs[j].Edge })
+	reach, edgeOK := 0, 0
+	for _, s := range overs {
+		if s.Prob >= hi {
+			reach++
+			if s.Edge >= minEdge {
+				edgeOK++
+			}
+		}
+	}
+	fmt.Printf("OVERS: %d lines lean Over; %d reach %.0f%%; %d of those also clear the %.1f%% edge rule. Strongest by edge:\n", len(overs), reach, 100*hi, edgeOK, 100*minEdge)
+	tw := tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)
+	fmt.Fprintln(tw, "player\tteam\tstat\tline\tprob\tedge\todds\tproj\tmin\tstatus")
+	n := 0
+	for _, s := range overs {
+		if n == 10 {
+			break
+		}
+		status := "on the board"
+		switch {
+		case on[key{s.PlayerID, s.Stat}]:
+		case s.Prob < hi:
+			status = fmt.Sprintf("probability %.0f%% is under the %.0f%% bar", 100*s.Prob, 100*hi)
+		case s.Edge < minEdge:
+			status = fmt.Sprintf("price: edge %+.1f%% at %s is under the %.1f%% rule", 100*s.Edge, oddsStr(s.Odds), 100*minEdge)
+		default:
+			status = "cleared everything; lost its place to stronger plays or a per-game cap"
+		}
+		fmt.Fprintf(tw, "%s\t%s\t%s\t%.1f\t%.1f%%\t%+.1f%%\t%s\t%.1f\t%.0f\t%s\n", s.Player, s.Team, s.Stat, s.Line, 100*s.Prob, 100*s.Edge, oddsStr(s.Odds), s.ProjMean, s.ProjMin, status)
+		n++
+	}
+	tw.Flush()
+	fmt.Println()
+}
+
+// offRow is a book whose line sits a point or more away from the market median. Under at a high line
+// and Over at a low line are the same kind of opportunity: the book is off the market, and the side
+// the gap favours is cheaper than everywhere else.
+type offRow struct {
+	PlayerID              int
+	Player, Team, Matchup string
+	Stat                  data.Stat
+	Side                  string
+	Line, Median, Gap     float64
+	Books                 int
+	Vendor                string
+	Odds                  int
+	Prob, Edge, Proj      float64
+}
+
+func printOffMarket(rows []offRow) {
+	// keep the best-priced row per player, stat and side
+	type key struct {
+		pid  int
+		stat data.Stat
+		side string
+	}
+	best := map[key]offRow{}
+	for _, r := range rows {
+		k := key{r.PlayerID, r.Stat, r.Side}
+		if cur, ok := best[k]; !ok || r.Edge > cur.Edge {
+			best[k] = r
+		}
+	}
+	var out []offRow
+	var nOver, nUnder int
+	for _, r := range best {
+		out = append(out, r)
+		if r.Side == "OVER" {
+			nOver++
+		} else {
+			nUnder++
+		}
+	}
+	if len(out) == 0 {
+		fmt.Println("OFF-MARKET LINES: no book is a point or more away from its market median today.")
+		fmt.Println()
+		return
+	}
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].Gap != out[j].Gap {
+			return out[i].Gap > out[j].Gap
+		}
+		return out[i].Edge > out[j].Edge
+	})
+	fmt.Printf("OFF-MARKET LINES: %d Over (a book's line is low) and %d Under (a book's line is high), a point or more from the market median across 4+ books.\n", nOver, nUnder)
+	fmt.Println("On 10-26 plays priced off an outlier line hit 74% (26 of 35) against 55% for everything else, so they are the strongest signal on the board. One day is a small sample.")
+	tw := tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)
+	fmt.Fprintln(tw, "side\tplayer\tteam\tstat\tbook line\tmedian\tbooks\tbook\todds\tmodel\tedge\tproj\tmodel agrees")
+	n := 0
+	for _, r := range out {
+		if n == 25 {
+			break
+		}
+		agree := "yes"
+		if r.Prob < 0.5 {
+			agree = "no"
+		}
+		fmt.Fprintf(tw, "%s\t%s\t%s\t%s\t%.1f\t%.1f\t%d\t%s\t%s\t%.0f%%\t%+.1f%%\t%.1f\t%s\n", r.Side, r.Player, r.Team, r.Stat, r.Line, r.Median, r.Books, r.Vendor, oddsStr(r.Odds), 100*r.Prob, 100*r.Edge, r.Proj, agree)
+		n++
+	}
+	tw.Flush()
+	fmt.Println()
 }
