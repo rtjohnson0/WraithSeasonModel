@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react'
-import { FormBars, LineStrip } from './Charts.jsx'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { FormBars, LineStrip, MoveSpark, OutcomeCurve } from './Charts.jsx'
 import Icon from './Icons.jsx'
 import { DaySummary, ResultList } from './Record.jsx'
+import { tipState, useNow } from './time.js'
 import { LABELS, gradeTone, labelInfo, oddsText, pct, prettyDate, statLabel } from './format.js'
 
 const STATS = ['points', 'rebounds', 'assists', 'threes']
@@ -94,6 +95,60 @@ function CaseView({ p }) {
   )
 }
 
+// The best plays still open: not started, strongest first. Tap one to jump to it.
+function TopPlays({ games, now, onPick }) {
+  const open = []
+  games.forEach((g) => {
+    const ts = tipState(g.tip, now)
+    if (ts.state === 'live' || ts.state === 'done') return
+    g.plays.forEach((p) => {
+      if (p.label !== 'Lean') open.push({ p, g, ts })
+    })
+  })
+  open.sort((a, b) => b.p.prob - a.p.prob)
+  const top = open.slice(0, 5)
+  if (top.length === 0) return null
+  return (
+    <section className="topplays" aria-label="Top plays still open">
+      <h2>Best plays still open</h2>
+      <ol>
+        {top.map(({ p, g, ts }) => (
+          <li key={playId(p)}>
+            <button type="button" onClick={() => onPick(p)}>
+              <span className={`grade ${gradeTone(p.grade)}`}>{p.grade}</span>
+              <span className="tp-main">
+                <b>{p.player}</b>
+                <span>
+                  <i className={p.side === 'OVER' ? 'over' : 'under'}>{p.side === 'OVER' ? 'Over' : 'Under'}</i> {p.line} {statLabel[p.stat] || p.stat}
+                </span>
+              </span>
+              <span className="tp-side">
+                <b>{pct(p.prob, 1)}</b>
+                <small>{ts.label || g.matchup}</small>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
+// Who is out and who is uncertain on each side, from the injury report.
+function LineupNews({ news }) {
+  return (
+    <ul className="lineupnews">
+      {news.map((n) => (
+        <li key={n.team}>
+          <b>{n.team}</b>
+          {n.out?.length > 0 && <span> out: {n.out.join(', ')}.</span>}
+          {n.maybe?.length > 0 && <span className="maybe"> Uncertain: {n.maybe.join(', ')}.</span>}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 // The game's betting market in plain terms: the spread says how close it should be (and so how
 // many minutes starters keep), the total says how many chances there will be to score.
 function GameContext({ c }) {
@@ -134,7 +189,7 @@ function GameContext({ c }) {
 
 // The next-best lines in a game, behind a button. They did not clear the board's bar, so they are
 // weaker than the plays above them.
-function MorePlays({ plays }) {
+function MorePlays({ plays, started }) {
   const [open, setOpen] = useState(false)
   return (
     <div className="more">
@@ -146,7 +201,7 @@ function MorePlays({ plays }) {
           <p className="small">The next best lines in this game. They did not clear the board's bar, so treat them as leans.</p>
           <ul>
             {plays.map((p) => (
-              <PlayRow key={`more-${p.player}-${p.stat}-${p.side}`} p={p} />
+              <PlayRow key={`more-${p.player}-${p.stat}-${p.side}`} p={p} started={started} />
             ))}
           </ul>
         </>
@@ -155,12 +210,22 @@ function MorePlays({ plays }) {
   )
 }
 
-function PlayRow({ p }) {
+const playId = (p) => `play-${p.player}-${p.stat}-${p.side}`.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+
+function PlayRow({ p, focus, started }) {
   const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+  // A tap on the top-plays strip opens this play and scrolls to it.
+  useEffect(() => {
+    if (focus && focus.id === playId(p)) {
+      setOpen(true)
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [focus]) // eslint-disable-line react-hooks/exhaustive-deps
   const info = labelInfo[p.label] || labelInfo.Lean
   const conf = Math.max(0, Math.min(1, (p.prob - 0.5) / 0.2))
   return (
-    <li className={`play ${p.side === 'OVER' ? 'over' : 'under'} ${info.key}${p.multi ? ' multi' : ''}`}>
+    <li ref={ref} id={playId(p)} className={`play ${p.side === 'OVER' ? 'over' : 'under'} ${info.key}${p.multi ? ' multi' : ''}${started ? ' started' : ''}`}>
       <button type="button" className="playbtn" aria-expanded={open} onClick={() => setOpen(!open)}>
         <span className={`grade ${gradeTone(p.grade)}`} aria-label={`Grade ${p.grade}`}>
           {p.grade}
@@ -255,6 +320,13 @@ function PlayRow({ p }) {
                   tone="minutes"
                 />
               </figure>
+            </div>
+          )}
+
+          {(p.dist?.length > 2 || p.moves?.length > 1) && (
+            <div className="charts">
+              {p.dist?.length > 2 && <OutcomeCurve dist={p.dist} line={p.line} side={p.side} />}
+              {p.moves?.length > 1 && <MoveSpark moves={p.moves} side={p.side} />}
             </div>
           )}
 
@@ -432,6 +504,8 @@ export default function Board({ site }) {
   const [side, setSide] = useState('ALL')
   const [q, setQ] = useState('')
   const [repeatsOnly, setRepeatsOnly] = useState(false)
+  const [focus, setFocus] = useState(null)
+  const now = useNow()
 
   const all = useMemo(() => board.games.flatMap((g) => g.plays), [board])
   const count = (f) => all.filter(f).length
@@ -494,6 +568,7 @@ export default function Board({ site }) {
         </div>
       </section>
 
+      <TopPlays games={board.games} now={now} onPick={(p) => { setStat('all'); setLabel('all'); setSide('ALL'); setQ(''); setRepeatsOnly(false); setFocus({ id: playId(p), n: Date.now() }) }} />
       <LastResults record={site.record} date={board.date} />
       <RunChanges runs={board.runsToday} />
       <EarlierPicks runs={board.runsToday} />
@@ -542,8 +617,10 @@ export default function Board({ site }) {
       <div className="games">
         {games.map((g) => {
           const [away, home] = g.matchup.split(' @ ')
+          const ts = tipState(g.tip, now)
+          const started = ts.state === 'live' || ts.state === 'done'
           return (
-            <article className="game" key={g.id}>
+            <article className={`game${started ? ' started' : ''}`} key={g.id}>
               <header>
                 <h2>
                   {home ? (
@@ -558,16 +635,19 @@ export default function Board({ site }) {
                 </h2>
                 <span>
                   {g.tip && <b className="tip">{tipText(g.tip)}</b>}
+                  {ts.label && <em className={`countdown ${ts.state}`}>{ts.label}</em>}
                   {g.plays.length} {g.plays.length === 1 ? 'play' : 'plays'}
                 </span>
               </header>
               {g.ctx && <GameContext c={g.ctx} />}
+              {g.news?.length > 0 && <LineupNews news={g.news} />}
+              {started && <p className="startednote">This game has started or is over, so these lines are closed. The plays are kept for the record.</p>}
               <ul>
                 {g.plays.map((p) => (
-                  <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} />
+                  <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} focus={focus} started={started} />
                 ))}
               </ul>
-              {g.more.length > 0 && <MorePlays plays={g.more} />}
+              {g.more.length > 0 && <MorePlays plays={g.more} started={started} />}
             </article>
           )
         })}

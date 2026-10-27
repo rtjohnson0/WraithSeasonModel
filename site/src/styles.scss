@@ -286,3 +286,60 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
     b { font: 700 1.05rem var(--display); letter-spacing: 0.02em; }
     i { font: 500 0.78rem var(--body); font-style: normal; color: var(--muted); &.up { color: var(--win); } &.down { color: var(--loss); } } }
   ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.88rem; max-width: 90ch; li { margin: 2px 0; } } }
+
+// ---- curves, movement, countdowns, news, top plays
+.curve, .spark { margin: 0; svg { width: 100%; height: auto; display: block; }
+  figcaption { color: var(--muted); font-size: 0.82rem; margin-top: 4px; max-width: 70ch; } }
+.curve .cbar { fill: #3a2d5e; &.win { fill: var(--purple-hi); } &.push { fill: var(--muted); } }
+.curve .cline { stroke: var(--silver); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.curve .clabel, .curve .caxis, .spark .caxis { fill: var(--muted); font: 600 10px var(--body); }
+.spark { polyline { fill: none; stroke: var(--muted); stroke-width: 2; stroke-linejoin: round; }
+  circle { fill: var(--muted); }
+  &.with { polyline { stroke: var(--win); } circle { fill: var(--win); } }
+  &.against { polyline { stroke: var(--amber); } circle { fill: var(--amber); } } }
+
+.countdown { font-style: normal; font-weight: 600; font-size: 0.82rem; margin-right: 12px; color: var(--purple-hi);
+  &.soon { color: var(--amber); } &.live { color: var(--win); } &.done { color: var(--muted); } }
+.game.started { opacity: 0.72; }
+.startednote { margin: 0; padding: 8px 14px; color: var(--muted); font-size: 0.85rem; border-bottom: 1px solid var(--edge); }
+
+.lineupnews { list-style: none; margin: 0; padding: 6px 14px 8px; border-bottom: 1px solid var(--edge); font-size: 0.86rem; color: var(--muted);
+  li { margin: 2px 0; max-width: 100ch; } b { color: var(--silver); margin-right: 4px; } .maybe { color: var(--amber); } }
+
+.topplays { margin: 0 0 1.2rem;
+  h2 { font-size: 1.1rem; margin: 0 0 8px; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  button { width: 100%; display: grid; grid-template-columns: 36px 1fr auto; gap: 10px; align-items: center; text-align: left; min-height: 56px;
+    background: var(--panel); border: 1px solid var(--edge); border-left: 3px solid var(--purple); color: var(--silver); padding: 8px 12px; cursor: pointer; font: inherit;
+    &:hover, &:focus-visible { border-color: var(--purple-hi); } }
+  .tp-main { display: grid; min-width: 0; b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } span { color: var(--muted); font-size: 0.86rem; } i { font-style: normal; font-weight: 700; &.over { color: var(--win); } &.under { color: var(--amber); } } }
+  .tp-side { text-align: right; display: grid; b { font: 800 1.25rem var(--display); } small { color: var(--muted); font-size: 0.75rem; } } }
+
+// ---- record charts
+.hitbars { display: grid; gap: 10px; max-width: 760px;
+  .hrow { display: grid; gap: 4px; }
+  .lbl { font-weight: 600; }
+  .pair { position: relative; display: grid; gap: 3px; i { display: block; height: 9px; &.pred { background: #5b4a96; } &.act { background: var(--purple-hi); } }
+    .fifty { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--muted); opacity: 0.7; } }
+  .nums { color: var(--muted); font-size: 0.86rem; small { margin-left: 4px; } } }
+.daygrid { display: flex; flex-wrap: wrap; gap: 8px;
+  .day-tile { min-width: 74px; padding: 8px 10px; border: 1px solid var(--edge); background: var(--panel); display: grid; text-align: center;
+    .dd { color: var(--muted); font-size: 0.78rem; } b { font: 800 1.2rem var(--display); } small { color: var(--muted); font-size: 0.78rem; }
+    &.good { border-color: var(--win); b { color: var(--win); } } &.bad { border-color: var(--loss); b { color: var(--loss); } } } }
+
+// ---- phone pass
+.filters { position: sticky; top: 0; z-index: 4; background: var(--ink); }
+.new-banner { position: sticky; top: 0; z-index: 10; display: flex; gap: 12px; align-items: center; justify-content: center; padding: 10px 14px; background: var(--purple); color: #fff; font-weight: 600;
+  button { background: #fff; color: var(--purple); border: 0; padding: 6px 14px; font: 700 0.9rem var(--body); cursor: pointer; } }
+@media (max-width: 600px) {
+  .filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+    .seg { flex: 0 0 auto; flex-wrap: nowrap; } .search { flex: 0 0 200px; } }
+  .seg button, .morebtn, .topplays button, nav a { min-height: 44px; }
+  .playbtn { min-height: 64px; }
+  .topplays ol { grid-template-columns: 1fr; }
+  .hitbars .nums { font-size: 0.8rem; }
+  .daygrid .day-tile { min-width: 66px; flex: 1 1 66px; }
+  .lineupnews, .gamectx { padding-left: 12px; padding-right: 12px; }
+  body { -webkit-text-size-adjust: 100%; }
+}

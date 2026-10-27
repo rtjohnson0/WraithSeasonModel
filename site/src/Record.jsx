@@ -1,4 +1,4 @@
-import { UnitsChart } from './Charts.jsx'
+import { DayGrid, HitRateBars, UnitsChart } from './Charts.jsx'
 import { pct, prettyDate, shortDate, statLabel } from './format.js'
 
 function Table({ rows, unitsNote }) {
@@ -105,6 +105,19 @@ export default function Record({ site }) {
         )}
       </section>
 
+      <h2>Day by day</h2>
+      <DayGrid
+        days={Object.keys(byDate)
+          .sort()
+          .map((d) => ({
+            date: d,
+            label: shortDate(d),
+            w: byDate[d].filter((r) => r.result === 'WIN').length,
+            l: byDate[d].filter((r) => r.result === 'LOSS').length,
+          }))}
+      />
+      <p className="small">Every graded play that day, board or not. Green is a day over 55%, red under 45%.</p>
+
       <h2>Units over time</h2>
       <UnitsChart daily={record.daily} />
       <p className="small">Max plays use the real stake. The other line puts 1 unit on every tracked play, staked or not, so it shows whether the unstaked plays are worth anything.</p>
@@ -114,6 +127,10 @@ export default function Record({ site }) {
         rows={record.tiers}
         unitsNote="Max plays show real units at the stake used. Every other row is a flat 1 unit per play, for comparison only."
       />
+
+      <h2>Hit rate against what the model said</h2>
+      <p className="small">The bar on top is what the model said, the bar under it is what happened. The thin line marks 50%.</p>
+      <HitRateBars rows={[...(record.stats || []), ...(record.sides || [])].map((r) => ({ ...r, name: statLabel[r.name] || r.name }))} />
 
       <h2>By stat and side</h2>
       <Table rows={[...(record.stats || []), ...(record.sides || [])].map((r) => ({ ...r, name: statLabel[r.name] || r.name }))} />

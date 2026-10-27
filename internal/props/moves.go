@@ -107,3 +107,60 @@ func LineMoves(path string) (map[MoveKey]Move, error) {
 	}
 	return out, nil
 }
+
+// SeriesPoint is the market's median line for one player stat at one capture.
+type SeriesPoint struct {
+	At    string  `json:"at"` // capture time (RFC 3339)
+	Line  float64 `json:"line"`
+	Books int     `json:"books"`
+}
+
+// LineSeries reads a day's snapshot file and returns, for every player stat, the median line across
+// books at each capture, oldest first. Each book's main line is used when it lists alternates.
+func LineSeries(path string) (map[MoveKey][]SeriesPoint, error) {
+	type capKey struct {
+		at string
+		MoveKey
+	}
+	byCapture := map[capKey]map[string][]Line{} // capture and market -> vendor -> that vendor's lines in the capture
+	err := readLines(path, func(b []byte) {
+		var row struct {
+			At       string          `json:"captured_at"`
+			GameID   int             `json:"game_id"`
+			Response json.RawMessage `json:"response"`
+		}
+		if json.Unmarshal(b, &row) != nil || row.At == "" {
+			return
+		}
+		for _, l := range ParseResponse(row.Response, row.GameID) {
+			k := capKey{row.At, MoveKey{l.GameID, l.PlayerID, l.Stat}}
+			if byCapture[k] == nil {
+				byCapture[k] = map[string][]Line{}
+			}
+			byCapture[k][l.Vendor] = append(byCapture[k][l.Vendor], l)
+		}
+	})
+	if err != nil {
+		return nil, err
+	}
+	out := map[MoveKey][]SeriesPoint{}
+	for k, vendors := range byCapture {
+		var lines []float64
+		for _, ls := range vendors {
+			lines = append(lines, mainLine(ls).Line)
+		}
+		sort.Float64s(lines)
+		n := len(lines)
+		med := lines[n/2]
+		if n%2 == 0 {
+			med = (lines[n/2-1] + lines[n/2]) / 2
+		}
+		out[k.MoveKey] = append(out[k.MoveKey], SeriesPoint{At: k.at, Line: med, Books: n})
+	}
+	for k := range out {
+		pts := out[k]
+		sort.Slice(pts, func(i, j int) bool { return pts[i].At < pts[j].At })
+		out[k] = pts
+	}
+	return out, nil
+}

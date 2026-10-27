@@ -203,3 +203,26 @@ func TestLoadSnapshotPicksMainLineAmongAlternates(t *testing.T) {
 }
 
 func itoa(n int) string { return strconv.Itoa(n) }
+
+func TestLineSeries(t *testing.T) {
+	mk := func(at, vendor, line string) string {
+		return `{"captured_at":"` + at + `","game_id":50,"response":{"data":[{"game_id":50,"player_id":7,"vendor":"` + vendor + `","prop_type":"points","line_value":"` + line + `","market":{"type":"over_under","over_odds":-110,"under_odds":-110}}]}}`
+	}
+	body := mk("2026-10-26T13:00:00Z", "a", "24.5") + "\n" + mk("2026-10-26T13:00:00Z", "b", "25.5") + "\n" + mk("2026-10-26T19:00:00Z", "a", "26.5") + "\n"
+	p := filepath.Join(t.TempDir(), "props.jsonl")
+	if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	// Each capture here is a separate response row, so books in one row only. Two rows share a time.
+	s, err := LineSeries(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pts := s[MoveKey{50, 7, data.Points}]
+	if len(pts) != 2 || pts[0].At > pts[1].At || pts[1].Line != 26.5 {
+		t.Fatalf("want two ordered capture points ending at 26.5, got %+v", pts)
+	}
+	if pts[0].Books != 2 || pts[0].Line != 25 {
+		t.Errorf("first capture has books a and b, median 25.0: %+v", pts[0])
+	}
+}

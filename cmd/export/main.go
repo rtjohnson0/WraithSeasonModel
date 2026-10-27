@@ -65,6 +65,7 @@ func main() {
 	}
 	attachMore(&site.Board, mf, form)
 	attachContext(&site.Board, mf)
+	attachNews(&site.Board, mf)
 	attachCases(&site.Board, trackRecords(settled))
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		fatal(err)

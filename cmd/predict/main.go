@@ -58,11 +58,12 @@ type scored struct {
 	ProjMean float64
 	ProjMin  float64
 	Why      string
-	Tier     string  // "PICK" cleared the thresholds; "CHECK" cleared them but the minutes need a look; "LEAN" fills a game
-	Shift    float64 // projected minutes minus his recent (15-game) average
-	Far      bool    // the line sits far from the projection: often a bad or alternate line, not an edge
-	Tip      string  // the game's scheduled tip-off, RFC3339 UTC
-	Maybe    string  // his own injury status when it is uncertain (questionable, doubtful, day-to-day)
+	Tier     string    // "PICK" cleared the thresholds; "CHECK" cleared them but the minutes need a look; "LEAN" fills a game
+	Shift    float64   // projected minutes minus his recent (15-game) average
+	Far      bool      // the line sits far from the projection: often a bad or alternate line, not an edge
+	Tip      string    // the game's scheduled tip-off, RFC3339 UTC
+	Maybe    string    // his own injury status when it is uncertain (questionable, doubtful, day-to-day)
+	Dist     []float64 // the model's probability of 0, 1, 2... of the stat
 }
 
 func main() {
@@ -429,6 +430,7 @@ func main() {
 			Vendor: l.Vendor, Odds: odds, ProjMean: pred.Mean(l.Stat), ProjMin: pred.Minutes,
 			Why:   why(b, ix, row, l.PlayerID, l.Stat, pred, team, map[bool]int{true: g.Home, false: g.Visitor}[team == g.Visitor], out, *date),
 			Shift: pred.Minutes - row.TypicalMinutes(), Tip: g.Start,
+			Dist: pred.Dist(l.Stat, distMax(l.Stat, l.Line, pred.Mean(l.Stat))),
 		}
 		if st, ok := statuses[l.PlayerID]; ok && props.IsUncertain(st) {
 			s.Maybe = st
@@ -610,7 +612,10 @@ func main() {
 			}
 		}
 		sort.Slice(ctx, func(i, j int) bool { return ctx[i].GameID < ctx[j].GameID })
-		if err := writeMore(*dir, *date, extra, ctx); err != nil {
+		series, _ := props.LineSeries(propsPath)
+		moves := buildMoves(series, picks, extra)
+		news := buildNews(b, ix.Name, games, out, statuses, *date)
+		if err := writeMore(*dir, *date, extra, ctx, moves, news); err != nil {
 			fmt.Println("note: could not save data/more.json:", err)
 		} else {
 			fmt.Printf("Saved %d more plays for the site's \"More plays\" button to %s.\n", len(extra), filepath.Join(*dir, "more.json"))
@@ -624,7 +629,7 @@ func main() {
 			entries = append(entries, picklog.Entry{
 				Date: *date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 				Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-				ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip,
+				ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist,
 			})
 		}
 		n, err := picklog.Append(filepath.Join(*dir, "picklog.jsonl"), entries)
@@ -1277,4 +1282,13 @@ func centerCheck(all []scored, hi float64, cal eval.Calibration, calOK bool) {
 		fmt.Printf("  the centre is %.1f points below 50%%: an Under needs a %.1f point move to post, an Over needs %.1f. That asymmetry, not a data fault, is what thins out the Overs.\n",
 			100*(0.5-mean), 100*(mean-(1-hi)), 100*(hi-mean))
 	}
+}
+
+// distMax is how far up the outcome curve goes: past the line and the usual range of the stat.
+func distMax(st data.Stat, line, mean float64) int {
+	hi := math.Max(line*2, mean*2.4) + 4
+	if st == data.Threes {
+		hi = math.Max(hi, 8)
+	}
+	return int(math.Ceil(hi))
 }

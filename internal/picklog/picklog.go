@@ -39,6 +39,8 @@ type Entry struct {
 	// Tip is the game's scheduled tip-off (RFC3339 UTC), for showing the start time on the site.
 	Tip  string  `json:"tip,omitempty"`
 	Edge float64 `json:"edge,omitempty"`
+	// Dist is the model's probability of finishing with 0, 1, 2... of the stat, for the site's outcome curve.
+	Dist []float64 `json:"dist,omitempty"`
 }
 
 func (e Entry) key() string {

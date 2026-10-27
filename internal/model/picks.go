@@ -54,6 +54,19 @@ func nbCDF(k int, n, p float64) float64 {
 	return math.Min(sum, 1)
 }
 
+// PMF returns the probabilities of 0..maxK for a negative binomial with the given mean and variance.
+func PMF(mean, variance float64, maxK int) []float64 {
+	if mean <= 0 || variance <= 0 || maxK < 0 {
+		return nil
+	}
+	n, p := nbParams(mean, variance)
+	out := make([]float64, maxK+1)
+	for k := range out {
+		out[k] = nbPMF(k, n, p)
+	}
+	return out
+}
+
 // ProbOver returns P(over), P(under) and P(push) for a stat with the given predicted mean
 // and variance against a line. Half-point lines (24.5) cannot push.
 func ProbOver(mean, variance, line float64) (Probs, error) {

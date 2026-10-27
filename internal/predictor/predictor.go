@@ -235,6 +235,29 @@ func (p Pred) Scaled(s data.Stat, f float64) Pred {
 
 func (p Pred) Mean(s data.Stat) float64 { return p.Minutes * p.Rate[data.StatIndex(s)] }
 
+// Dist is the probability of finishing with 0..maxK of a stat, mixing over the minutes distribution
+// the same way ProbOver does. Values are rounded to three decimals and the empty tail is trimmed.
+func (p Pred) Dist(s data.Stat, maxK int) []float64 {
+	k := data.StatIndex(s)
+	out := make([]float64, maxK+1)
+	for _, mins := range p.MinNodes {
+		mean := mins * p.Rate[k]
+		pm := model.PMF(mean, mean*(1+p.Alpha[k]*mean), maxK)
+		for i, v := range pm {
+			out[i] += v / Nodes
+		}
+	}
+	end := len(out)
+	for end > 1 && out[end-1] < 0.0005 {
+		end--
+	}
+	out = out[:end]
+	for i := range out {
+		out[i] = math.Round(out[i]*1000) / 1000
+	}
+	return out
+}
+
 // ProbOver is P(stat > line) with pushes removed, mixing over the minutes distribution.
 func (p Pred) ProbOver(s data.Stat, line float64) (model.Probs, error) {
 	k := data.StatIndex(s)

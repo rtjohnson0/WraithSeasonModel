@@ -18,6 +18,7 @@ export default function App() {
   const [page, setPage] = useState(pageFromHash())
   const [site, setSite] = useState(null)
   const [error, setError] = useState('')
+  const [fresh, setFresh] = useState(false)
 
   useEffect(() => {
     const onHash = () => setPage(pageFromHash())
@@ -38,8 +39,38 @@ export default function App() {
       .catch((e) => setError(e.message))
   }, [])
 
+  // Check for a newer board every few minutes and whenever the tab comes back into view.
+  useEffect(() => {
+    if (!site) return undefined
+    const check = () => {
+      const url = new URL('data/picks.json', document.baseURI)
+      url.searchParams.set('t', Date.now())
+      fetch(url, { cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          if (d && d.generatedAt && d.generatedAt !== site.generatedAt) setFresh(true)
+        })
+        .catch(() => {})
+    }
+    const id = setInterval(check, 5 * 60 * 1000)
+    const onVis = () => document.visibilityState === 'visible' && check()
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', onVis)
+    }
+  }, [site])
+
   return (
     <>
+      {fresh && (
+        <div className="new-banner" role="status">
+          New picks are posted.
+          <button type="button" onClick={() => window.location.reload()}>
+            Reload
+          </button>
+        </div>
+      )}
       <header className="top">
         <a className="brand" href="#/board" aria-label="WraithPicksSZN home">
           <img src="./brand/logo.jpg" alt="" width="44" height="44" />

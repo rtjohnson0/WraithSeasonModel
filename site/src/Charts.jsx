@@ -147,3 +147,139 @@ export function LineStrip({ line, proj, games, side, width = 190, height = 36 })
     </svg>
   )
 }
+
+// The model's range of outcomes for the stat: one bar per final number, bars that win this play are
+// bright, the dashed line is the number to beat. The bar heights are the model's own probabilities.
+export function OutcomeCurve({ dist, line, side, width = 560, height = 130 }) {
+  if (!dist || dist.length < 3) return null
+  const n = dist.length
+  const maxP = Math.max(...dist)
+  const left = 6
+  const bottom = 22
+  const top = 8
+  const bw = (width - left * 2) / n
+  const wins = (k) => (side === 'OVER' ? k > line : k < line)
+  const push = (k) => k === line
+  const winP = dist.reduce((s, v, k) => (wins(k) ? s + v : s), 0)
+  const total = dist.reduce((s, v) => s + v, 0) || 1
+  const step = n > 30 ? 5 : n > 14 ? 2 : 1
+  const lineX = left + (line + 0.5) * bw
+  return (
+    <figure className="curve">
+      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`Range of outcomes against a line of ${line}. The model puts ${Math.round((winP / total) * 100)} percent on the winning side.`}>
+        {dist.map((v, k) => {
+          const h = (v / maxP) * (height - bottom - top)
+          return (
+            <rect
+              key={k}
+              x={left + k * bw + 1}
+              y={height - bottom - h}
+              width={Math.max(bw - 2, 1)}
+              height={Math.max(h, 0.5)}
+              className={`cbar ${push(k) ? 'push' : wins(k) ? 'win' : 'lose'}`}
+            />
+          )
+        })}
+        <line x1={lineX} x2={lineX} y1={top - 2} y2={height - bottom} className="cline" />
+        <text x={lineX} y={top + 4} className="clabel" textAnchor={lineX > width - 70 ? 'end' : 'start'} dx={lineX > width - 70 ? -4 : 4}>
+          line {line}
+        </text>
+        {dist.map((_, k) =>
+          k % step === 0 ? (
+            <text key={k} x={left + k * bw + bw / 2} y={height - 6} className="caxis" textAnchor="middle">
+              {k}
+            </text>
+          ) : null,
+        )}
+      </svg>
+      <figcaption>
+        Bright bars are the outcomes that win this play. The model puts {Math.round((winP / total) * 100)}% of its range there before the books' prices are blended in.
+      </figcaption>
+    </figure>
+  )
+}
+
+// How the market's median line moved through the day. Against the pick is amber, with it is green.
+export function MoveSpark({ moves, side, width = 300, height = 54 }) {
+  if (!moves || moves.length < 2) return null
+  const lines = moves.map((m) => m.line)
+  const lo = Math.min(...lines)
+  const hi = Math.max(...lines)
+  const span = hi - lo || 1
+  const x = (i) => 8 + (i / (moves.length - 1)) * (width - 16)
+  const y = (v) => 8 + (1 - (v - lo) / span) * (height - 24)
+  const first = moves[0]
+  const last = moves[moves.length - 1]
+  const delta = last.line - first.line
+  // A higher line is worse for an Over and better for an Under.
+  const against = (side === 'OVER' && delta > 0) || (side === 'UNDER' && delta < 0)
+  const tone = delta === 0 ? 'flat' : against ? 'against' : 'with'
+  const t = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' })
+  return (
+    <figure className={`spark ${tone}`}>
+      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`Line moved from ${first.line} to ${last.line}`}>
+        <polyline points={moves.map((m, i) => `${x(i)},${y(m.line)}`).join(' ')} />
+        {moves.map((m, i) => (
+          <circle key={m.at} cx={x(i)} cy={y(m.line)} r={i === moves.length - 1 ? 3.4 : 2.2} />
+        ))}
+        <text x={8} y={height - 3} className="caxis">{t(first.at)} ET</text>
+        <text x={width - 8} y={height - 3} className="caxis" textAnchor="end">{t(last.at)} ET</text>
+      </svg>
+      <figcaption>
+        {delta === 0
+          ? `The line has held at ${last.line} all day.`
+          : `The line went from ${first.line} to ${last.line}, ${against ? 'against' : 'in favor of'} this pick.`}
+      </figcaption>
+    </figure>
+  )
+}
+
+// Hit rate against what the model said, one pair of bars per group. Each row says how many plays are behind it.
+export function HitRateBars({ rows }) {
+  const list = (rows || []).filter((r) => r.wins + r.losses > 0)
+  if (list.length === 0) return null
+  return (
+    <div className="hitbars">
+      {list.map((r) => {
+        const n = r.wins + r.losses
+        return (
+          <div key={r.name} className="hrow">
+            <span className="lbl">{r.name}</span>
+            <span className="pair" aria-hidden="true">
+              <i className="pred" style={{ width: `${r.predicted * 100}%` }} />
+              <i className="act" style={{ width: `${r.hitRate * 100}%` }} />
+              <b className="fifty" />
+            </span>
+            <span className="nums">
+              {r.wins}-{r.losses}, hit {Math.round(r.hitRate * 100)}% (model said {Math.round(r.predicted * 100)}%)
+              <small> over {n}{n < 30 ? ', too few to judge' : ''}</small>
+            </span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// One tile per day: wins and losses, green when the day went over 50% and red under.
+export function DayGrid({ days }) {
+  if (!days || days.length === 0) return null
+  return (
+    <div className="daygrid">
+      {days.map((d) => {
+        const n = d.w + d.l
+        const rate = n ? d.w / n : 0.5
+        const tone = n === 0 ? 'none' : rate >= 0.55 ? 'good' : rate <= 0.45 ? 'bad' : 'even'
+        return (
+          <div key={d.date} className={`day-tile ${tone}`} title={`${d.date}: ${d.w}-${d.l}`}>
+            <span className="dd">{d.label}</span>
+            <b>
+              {d.w}-{d.l}
+            </b>
+            <small>{n ? `${Math.round(rate * 100)}%` : '-'}</small>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

@@ -353,3 +353,15 @@ func TestGameContext(t *testing.T) {
 		t.Errorf("a pick'em has no favorite: %+v", g)
 	}
 }
+
+func TestAttachNewsAndMoves(t *testing.T) {
+	b := Board{Date: "2026-10-26", Games: []Game{{ID: 1, Plays: []Play{{PlayerID: 7, Stat: "points"}}}}}
+	mf := moreFile{Date: "2026-10-26",
+		Moves: map[string][]MovePt{"7|points": {{At: "t1", Line: 24.5}, {At: "t2", Line: 25.5}}},
+		News:  []newsIn{{GameID: 1, Team: "CHA", Out: []string{"Coby White"}, Maybe: []string{"LaMelo Ball (questionable)"}}, {GameID: 2, Team: "X", Out: []string{"Nobody"}}}}
+	attachNews(&b, mf)
+	g := b.Games[0]
+	if len(g.Plays[0].Moves) != 2 || len(g.News) != 1 || g.News[0].Team != "CHA" || g.News[0].Out[0] != "Coby White" {
+		t.Fatalf("line history and news should attach to the right play and game: %+v", g)
+	}
+}

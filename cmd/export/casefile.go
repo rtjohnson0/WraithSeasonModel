@@ -235,9 +235,51 @@ func statWord(s string) string { return s }
 
 // moreFile mirrors data/more.json, written by predict.
 type moreFile struct {
-	Date  string          `json:"date"`
-	Plays []picklog.Entry `json:"plays"`
-	Games []ctxIn         `json:"games"`
+	Date  string              `json:"date"`
+	Plays []picklog.Entry     `json:"plays"`
+	Games []ctxIn             `json:"games"`
+	Moves map[string][]MovePt `json:"moves"`
+	News  []newsIn            `json:"news"`
+}
+
+// MovePt is the market's median line at one capture.
+type MovePt struct {
+	At   string  `json:"at"`
+	Line float64 `json:"line"`
+}
+
+type newsIn struct {
+	GameID int      `json:"game_id"`
+	Team   string   `json:"team"`
+	Out    []string `json:"out"`
+	Maybe  []string `json:"maybe"`
+}
+
+// NewsItem is one team's injury news for a game.
+type NewsItem struct {
+	Team  string   `json:"team"`
+	Out   []string `json:"out,omitempty"`
+	Maybe []string `json:"maybe,omitempty"`
+}
+
+// attachNews adds line history to the plays and injury news to the games.
+func attachNews(b *Board, mf moreFile) {
+	if mf.Date != b.Date {
+		return
+	}
+	for gi := range b.Games {
+		g := &b.Games[gi]
+		for _, list := range [][]Play{g.Plays, g.More} {
+			for i := range list {
+				list[i].Moves = mf.Moves[fmt.Sprintf("%d|%s", list[i].PlayerID, list[i].Stat)]
+			}
+		}
+		for _, n := range mf.News {
+			if n.GameID == g.ID {
+				g.News = append(g.News, NewsItem{Team: n.Team, Out: n.Out, Maybe: n.Maybe})
+			}
+		}
+	}
 }
 
 // attachMore puts each game's extra plays behind its "More" button. A game with no board plays gets

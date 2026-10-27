@@ -422,3 +422,14 @@ Each game on the board now shows its spread, total and the score those imply (fo
 ## Keeping the data files small
 
 `pull advanced -new` re-downloads the last 7 days on every run and appended them, so `data/advanced_2026.jsonl` collected duplicates until it passed GitHub's 100 MB limit and pushes were rejected. Pulls now compact their files afterwards: one whole-game row per player and game, only the columns the model reads, and `stats_*.jsonl` loses repeated rows. `go run ./cmd/pull compact` does it for every stats and advanced file on demand. Nothing the loaders read changes.
+
+## Site extras
+
+- **Top plays strip**: the five strongest plays on the board; tap one to jump to it.
+- **Outcome curve**: expanded plays show the model's full distribution with the line marked.
+- **Line movement**: a small sparkline of the line since open, coloured by whether it moved with or against the pick.
+- **Lineup news**: per game, who is out or uncertain, taken from the injury feed.
+- **Countdowns**: each game shows time to tip; started games dim and stop taking new reads.
+- **Record charts**: hit rate against what the model said, and a day-by-day grid.
+- **Add to home screen**: the site ships a manifest and a small service worker (network first for `data/picks.json`). On iPhone use Share, Add to Home Screen.
+- **New picks banner**: an open tab checks for a newer `picks.json` every 5 minutes and on return; tap Reload.

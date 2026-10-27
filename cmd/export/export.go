@@ -47,6 +47,12 @@ type Play struct {
 	// and how much the model's record on this kind of play deserves trust.
 	Case *Case `json:"case,omitempty"`
 
+	PlayerID int `json:"-"`
+	// Dist is the model's probability of finishing with 0, 1, 2... of the stat (the outcome curve).
+	Dist []float64 `json:"dist,omitempty"`
+	// Moves is how the market's median line moved through the day.
+	Moves []MovePt `json:"moves,omitempty"`
+
 	Label  string  `json:"label"`  // Max play, Great play, Risky play or Lean
 	Badges []Badge `json:"badges"` // quick-read signals: weak defense, hot streak, back-to-back and so on
 
@@ -139,6 +145,8 @@ type Game struct {
 	More []Play `json:"more,omitempty"`
 	// Ctx is the game's betting market read: spread, total, expected scores and what they mean for minutes.
 	Ctx *GameContext `json:"ctx,omitempty"`
+	// News is who is out or uncertain on each side.
+	News []NewsItem `json:"news,omitempty"`
 }
 
 // Board is one day's plays.
@@ -435,7 +443,7 @@ func makePlay(e picklog.Entry, date string, form Form, runs int, seenIn []string
 	p := Play{
 		Player: e.Player, Team: e.Team, Stat: e.Stat, Side: e.Side, Line: e.Line, Prob: e.Prob,
 		ProbRaw: e.ProbRaw, Edge: edgeOf(e), Grade: grade(e.Prob, t), Tier: t, Odds: e.Odds, Book: e.Book,
-		ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why,
+		ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why, PlayerID: e.PlayerID, Dist: e.Dist,
 	}
 	if form != nil {
 		games, sAvg, sGP := form(e.PlayerID, e.Stat, date)
