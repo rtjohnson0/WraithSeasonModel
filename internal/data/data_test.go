@@ -69,3 +69,16 @@ func TestLoadStatsDir(t *testing.T) {
 		t.Error("expected an error when no stats files exist")
 	}
 }
+
+func TestComboValuesAddUp(t *testing.T) {
+	g := PlayerGame{Pts: 24, Reb: 9, Ast: 7, Fg3m: 4}
+	want := map[Stat]float64{PRA: 40, PR: 33, PA: 31, RA: 16, Points: 24, Threes: 4}
+	for s, w := range want {
+		if got := g.Value(s); got != w {
+			t.Errorf("%s = %v, want %v", s, got, w)
+		}
+	}
+	if Points.IsCombo() || !PRA.IsCombo() || len(PRA.Parts()) != 3 || len(RA.Parts()) != 2 {
+		t.Error("IsCombo/Parts wrong")
+	}
+}

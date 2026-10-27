@@ -177,12 +177,33 @@ func statFor(id string) (data.Stat, bool) {
 		return data.Assists, true
 	case "threePointersMade":
 		return data.Threes, true
+	case "points+rebounds+assists":
+		return data.PRA, true
+	case "points+rebounds":
+		return data.PR, true
+	case "points+assists":
+		return data.PA, true
+	case "rebounds+assists":
+		return data.RA, true
 	}
 	return "", false
 }
 
-// ParseEvent extracts full-game points, rebounds and assists over/under lines from one event.
+// ParseEvent extracts the full-game single-stat over/under lines (points, rebounds, assists, threes)
+// from one event. Combined stats are left out so the existing single-stat code never sees one.
 func ParseEvent(raw json.RawMessage) []PlayerLine {
+	var out []PlayerLine
+	for _, l := range ParseEventAll(raw) {
+		if !l.Stat.IsCombo() {
+			out = append(out, l)
+		}
+	}
+	return out
+}
+
+// ParseEventAll is ParseEvent plus the combined stats (PRA, PR, PA, RA). The snapshot writer uses
+// it; LoadSnapshot and LoadSnapshotCombos split the two apart again on the way back in.
+func ParseEventAll(raw json.RawMessage) []PlayerLine {
 	var ev event
 	if json.Unmarshal(raw, &ev) != nil {
 		return nil

@@ -23,6 +23,37 @@ const (
 	Threes   Stat = "threes" // three-pointers made
 )
 
+// Combined stats: sums of the single stats above, which books list as their own markets.
+// They are not modelled stats (they have no StatIndex); internal/combo prices them from the
+// single-stat model.
+const (
+	PRA Stat = "pra" // points + rebounds + assists
+	PR  Stat = "pr"  // points + rebounds
+	PA  Stat = "pa"  // points + assists
+	RA  Stat = "ra"  // rebounds + assists
+)
+
+// Combos lists every combined stat.
+var Combos = []Stat{PRA, PR, PA, RA}
+
+// Parts returns the single stats a combined stat adds up (nil for a single stat).
+func (s Stat) Parts() []Stat {
+	switch s {
+	case PRA:
+		return []Stat{Points, Rebounds, Assists}
+	case PR:
+		return []Stat{Points, Rebounds}
+	case PA:
+		return []Stat{Points, Assists}
+	case RA:
+		return []Stat{Rebounds, Assists}
+	}
+	return nil
+}
+
+// IsCombo reports whether s is a combined stat.
+func (s Stat) IsCombo() bool { return s.Parts() != nil }
+
 // NStats is how many stats the model handles (the length of Stats).
 const NStats = 4
 
@@ -87,6 +118,13 @@ func (g PlayerGame) Value(s Stat) float64 {
 		return g.Ast
 	case Threes:
 		return g.Fg3m
+	}
+	if parts := s.Parts(); parts != nil {
+		var sum float64
+		for _, p := range parts {
+			sum += g.Value(p)
+		}
+		return sum
 	}
 	return 0
 }

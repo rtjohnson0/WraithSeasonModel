@@ -32,6 +32,9 @@ type MoreFile struct {
 	// Overs is the day's Overs closest to qualifying, and Overs at books priced off the market,
 	// for the site's "Overs watch" section. Not picks.
 	Overs []OverWatch `json:"overs,omitempty"`
+	// Combos is the day's combined-market plays (points+rebounds+assists and so on), tier COMBO:
+	// tracked, never staked, and kept out of the pick record.
+	Combos []picklog.Entry `json:"combos,omitempty"`
 }
 
 // OverWatch is one Over the site lists even though it is not on the board.
@@ -109,8 +112,8 @@ func moreCandidates(picks, all []scored, perGame, perPlayer int) []scored {
 }
 
 // writeMore saves the extra plays to data/more.json.
-func writeMore(dir, date string, extra []scored, ctx []GameCtx, moves map[string][]MovePoint, news []GameNews, overs []OverWatch) error {
-	f := MoreFile{Date: date, At: time.Now().UTC().Format(time.RFC3339), Games: ctx, Moves: moves, News: news, Overs: overs}
+func writeMore(dir, date string, extra []scored, ctx []GameCtx, moves map[string][]MovePoint, news []GameNews, overs []OverWatch, combos []picklog.Entry) error {
+	f := MoreFile{Date: date, At: time.Now().UTC().Format(time.RFC3339), Games: ctx, Moves: moves, News: news, Overs: overs, Combos: combos}
 	for _, s := range extra {
 		f.Plays = append(f.Plays, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),

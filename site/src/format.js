@@ -18,7 +18,10 @@ export function shortDate(iso) {
   })
 }
 
-export const statLabel = { points: 'Points', rebounds: 'Rebounds', assists: 'Assists', threes: '3-pointers' }
+export const statLabel = {
+  points: 'Points', rebounds: 'Rebounds', assists: 'Assists', threes: '3-pointers',
+  pra: 'Pts + Reb + Ast', pr: 'Pts + Reb', pa: 'Pts + Ast', ra: 'Reb + Ast',
+}
 
 // The four play names. They describe the evidence, not only the number: only Max plays are staked.
 export const labelInfo = {

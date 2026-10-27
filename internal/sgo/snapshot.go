@@ -14,7 +14,12 @@ type SnapshotRow struct {
 
 // LoadSnapshot reads an sgo snapshot file. Where it was captured several times, the latest
 // capture of each (player, stat, book) wins.
-func LoadSnapshot(path string) ([]PlayerLine, error) {
+func LoadSnapshot(path string) ([]PlayerLine, error) { return loadSnapshot(path, false) }
+
+// LoadSnapshotCombos is LoadSnapshot for the combined stats only (PRA, PR, PA, RA).
+func LoadSnapshotCombos(path string) ([]PlayerLine, error) { return loadSnapshot(path, true) }
+
+func loadSnapshot(path string, combos bool) ([]PlayerLine, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -30,6 +35,9 @@ func LoadSnapshot(path string) ([]PlayerLine, error) {
 	for sc.Scan() {
 		var r SnapshotRow
 		if json.Unmarshal(sc.Bytes(), &r) != nil {
+			continue
+		}
+		if r.Stat.IsCombo() != combos {
 			continue
 		}
 		k := key{r.PlayerKey, string(r.Stat), r.Book}

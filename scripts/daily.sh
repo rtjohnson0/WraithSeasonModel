@@ -19,6 +19,7 @@ echo "== current rosters =="
 go run ./cmd/pull players
 echo "== grade past picks =="
 go run ./cmd/settle || echo "settle skipped"
+go run ./cmd/combos settle || echo "combo settle skipped"
 echo "== review yesterday (csv) =="
 go run ./cmd/review || echo "review skipped"
 if [ "$SKIP" = 0 ]; then

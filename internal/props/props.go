@@ -58,13 +58,32 @@ func statFor(propType string) (data.Stat, bool) {
 		return data.Assists, true
 	case "threes":
 		return data.Threes, true
+	case "points_rebounds_assists":
+		return data.PRA, true
+	case "points_rebounds":
+		return data.PR, true
+	case "points_assists":
+		return data.PA, true
+	case "rebounds_assists":
+		return data.RA, true
 	}
 	return "", false
 }
 
-// ParseResponse extracts the over/under points, rebounds and assists lines from one API
-// response body ({"data": [...]}). fallbackGame is used if a row has no game_id.
+// ParseResponse extracts the single-stat over/under lines (points, rebounds, assists, threes) from
+// one API response body ({"data": [...]}). fallbackGame is used if a row has no game_id. Combined
+// stats (points + rebounds + assists and so on) are left out here so nothing that indexes by single
+// stat ever sees one; ParseCombos returns those.
 func ParseResponse(body json.RawMessage, fallbackGame int) []Line {
+	return parseResponse(body, fallbackGame, false)
+}
+
+// ParseCombos is ParseResponse for the combined stats only (PRA, PR, PA, RA).
+func ParseCombos(body json.RawMessage, fallbackGame int) []Line {
+	return parseResponse(body, fallbackGame, true)
+}
+
+func parseResponse(body json.RawMessage, fallbackGame int, combos bool) []Line {
 	var resp struct {
 		Data []apiProp `json:"data"`
 	}
@@ -74,7 +93,7 @@ func ParseResponse(body json.RawMessage, fallbackGame int) []Line {
 	var out []Line
 	for _, p := range resp.Data {
 		stat, ok := statFor(p.PropType)
-		if !ok {
+		if !ok || stat.IsCombo() != combos {
 			continue
 		}
 		isOU := p.Market.Type == "over_under" || (p.Market.Type == "" && p.Market.OverOdds != 0)
@@ -154,7 +173,12 @@ func mainLine(c []Line) Line {
 // LoadSnapshot reads a data/snapshots/props_DATE.jsonl file. Where a snapshot ran several
 // times, the latest capture of each (game, player, stat, vendor) line wins. If a book listed several
 // lines for the same market in one capture (alternate lines), the main line wins, not whichever came last.
-func LoadSnapshot(path string) ([]Line, error) {
+func LoadSnapshot(path string) ([]Line, error) { return loadSnapshot(path, false) }
+
+// LoadSnapshotCombos is LoadSnapshot for the combined stats only (PRA, PR, PA, RA).
+func LoadSnapshotCombos(path string) ([]Line, error) { return loadSnapshot(path, true) }
+
+func loadSnapshot(path string, combos bool) ([]Line, error) {
 	latest := map[lineKey]Line{}
 	var order []lineKey
 	err := readLines(path, func(b []byte) {
@@ -167,7 +191,7 @@ func LoadSnapshot(path string) ([]Line, error) {
 		}
 		inRow := map[lineKey][]Line{}
 		var rowOrder []lineKey
-		for _, l := range ParseResponse(row.Response, row.GameID) {
+		for _, l := range parseResponse(row.Response, row.GameID, combos) {
 			k := lineKey{l.GameID, l.PlayerID, l.Vendor, l.Stat}
 			if _, seen := inRow[k]; !seen {
 				rowOrder = append(rowOrder, k)

@@ -157,6 +157,8 @@ type Board struct {
 	Games  []Game `json:"games"`
 	// Overs is the day's Overs closest to qualifying, and Overs at off-market lines. Not picks.
 	Overs []OverWatch `json:"overs,omitempty"`
+	// Combos is the day's combined-market plays (PRA, PR, PA, RA). Tracked, not staked, not picks.
+	Combos []ComboPlay `json:"combos,omitempty"`
 
 	// RunsToday lists the day's runs in order, each with what it dropped from the run before it.
 	RunsToday []RunSummary `json:"runsToday,omitempty"`
@@ -319,6 +321,8 @@ func label(tier string, prob float64) string {
 		if prob >= 0.58 {
 			return "Great play"
 		}
+	case "COMBO":
+		return "Tracking"
 	}
 	return "Lean"
 }

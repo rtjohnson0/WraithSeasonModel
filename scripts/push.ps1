@@ -16,7 +16,8 @@ if (Test-Path ".git\rebase-merge" -PathType Container) {
 Run-Git add -A
 # State files the workflow and site rely on. They are gitignored, so they need -f.
 foreach ($f in @("data/model.json", "data/calibration.json", "data/gamecal.json", "data/biasfix.json", "data/minfix.json", "data/wofix.json",
-                 "data/picklog.jsonl", "data/settled.jsonl", "data/runs.jsonl", "data/more.json", "data/projlog.jsonl")) {
+                 "data/picklog.jsonl", "data/settled.jsonl", "data/runs.jsonl", "data/more.json", "data/projlog.jsonl",
+                 "data/combolog.jsonl", "data/combosettled.jsonl", "data/combocorr.json")) {
     if (Test-Path $f) { Run-Git add -f $f }
 }
 

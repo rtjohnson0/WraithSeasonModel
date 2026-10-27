@@ -36,6 +36,7 @@ Run "refresh box scores ($Season)" { go run ./cmd/pull stats -seasons $Season @n
 Run "refresh advanced stats"       { go run ./cmd/pull advanced -seasons $Season @newFlag } -Optional
 Run "current rosters"              { go run ./cmd/pull players }
 Run "grade past picks"             { go run ./cmd/settle } -Optional
+Run "grade combo plays"            { go run ./cmd/combos settle } -Optional
 Run "review yesterday (csv)"        { go run ./cmd/review } -Optional
 
 if (-not $SkipTrain) {

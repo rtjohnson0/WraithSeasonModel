@@ -69,6 +69,7 @@ func main() {
 	if mf.Date == site.Board.Date {
 		site.Board.Overs = mf.Overs
 	}
+	attachCombos(&site.Board, mf, form)
 	attachCases(&site.Board, trackRecords(settled))
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		fatal(err)

@@ -52,10 +52,13 @@ func main() {
 	}
 }
 
-// oddIDs asks only for full-game over/under points, rebounds and assists for any player.
+// oddIDs asks only for full-game over/under lines for any player: points, rebounds, assists and
+// threes, plus the four combined markets (points+rebounds+assists, points+rebounds, points+assists,
+// rebounds+assists).
 func oddIDs() string {
 	var ids []string
-	for _, s := range []string{"points", "rebounds", "assists", "threePointersMade"} {
+	for _, s := range []string{"points", "rebounds", "assists", "threePointersMade",
+		"points+rebounds+assists", "points+rebounds", "points+assists", "rebounds+assists"} {
 		ids = append(ids, s+"-PLAYER_ID-game-ou-over", s+"-PLAYER_ID-game-ou-under")
 	}
 	return strings.Join(ids, ",")
@@ -156,7 +159,7 @@ func snapshotOnce(c *sgo.Client, date string) error {
 	events := 0
 	err = c.Events(q, func(raw json.RawMessage) error {
 		events++
-		for _, l := range sgo.ParseEvent(raw) {
+		for _, l := range sgo.ParseEventAll(raw) {
 			rows = append(rows, sgo.SnapshotRow{CapturedAt: captured, PlayerLine: l})
 		}
 		return nil

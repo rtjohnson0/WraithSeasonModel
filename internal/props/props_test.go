@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 
 	"propsmodel/internal/data"
@@ -224,5 +225,38 @@ func TestLineSeries(t *testing.T) {
 	}
 	if pts[0].Books != 2 || pts[0].Line != 25 {
 		t.Errorf("first capture has books a and b, median 25.0: %+v", pts[0])
+	}
+}
+
+func TestComboLinesStayApartFromSingles(t *testing.T) {
+	body := []byte(`{"data":[
+{"game_id":50,"player_id":7,"vendor":"fanduel","prop_type":"points","line_value":"24.5","market":{"type":"over_under","over_odds":-110,"under_odds":-110}},
+{"game_id":50,"player_id":7,"vendor":"fanduel","prop_type":"points_rebounds_assists","line_value":"38.5","market":{"type":"over_under","over_odds":-115,"under_odds":-105}},
+{"game_id":50,"player_id":7,"vendor":"fanduel","prop_type":"rebounds_assists","line_value":"13.5","market":{"type":"over_under","over_odds":-110,"under_odds":-110}},
+{"game_id":50,"player_id":7,"vendor":"fanduel","prop_type":"points_assists","line_value":"30","market":{"type":"milestone","odds":150}}]}`)
+	single := ParseResponse(body, 0)
+	if len(single) != 1 || single[0].Stat != data.Points {
+		t.Fatalf("single-stat parsing must not see combos, got %+v", single)
+	}
+	combos := ParseCombos(body, 0)
+	if len(combos) != 2 || combos[0].Stat != data.PRA || combos[0].Line != 38.5 || combos[1].Stat != data.RA {
+		t.Fatalf("want PRA 38.5 and RA 13.5 (the milestone is skipped), got %+v", combos)
+	}
+}
+
+func TestLoadSnapshotCombos(t *testing.T) {
+	p := filepath.Join(t.TempDir(), "props.jsonl")
+	row := `{"game_id":50,"response":{"data":[
+{"game_id":50,"player_id":7,"vendor":"fanduel","prop_type":"points","line_value":"24.5","market":{"type":"over_under","over_odds":-110,"under_odds":-110}},
+{"game_id":50,"player_id":7,"vendor":"fanduel","prop_type":"points_rebounds","line_value":"32.5","market":{"type":"over_under","over_odds":-110,"under_odds":-110}}]}}` + "\n"
+	row = strings.ReplaceAll(row, "\n{", "{")
+	os.WriteFile(p, []byte(row), 0o644)
+	s, err := LoadSnapshot(p)
+	if err != nil || len(s) != 1 || s[0].Stat != data.Points {
+		t.Fatalf("singles: %+v %v", s, err)
+	}
+	c, err := LoadSnapshotCombos(p)
+	if err != nil || len(c) != 1 || c[0].Stat != data.PR || c[0].Line != 32.5 {
+		t.Fatalf("combos: %+v %v", c, err)
 	}
 }

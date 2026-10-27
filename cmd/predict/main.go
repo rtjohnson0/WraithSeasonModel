@@ -27,6 +27,7 @@ import (
 	_ "time/tzdata"
 
 	"propsmodel/internal/bets"
+	"propsmodel/internal/combo"
 	"propsmodel/internal/data"
 	"propsmodel/internal/eval"
 	"propsmodel/internal/feat"
@@ -95,6 +96,11 @@ func main() {
 	noMinFix := flag.Bool("nominfix", false, "do not apply data/minfix.json (the spread-based minutes correction written by `go run ./cmd/bias -write`)")
 	minBlend := flag.Float64("minblend", 0, "pull projected minutes this share of the way to each player's normal minutes (0 to 1). `go run ./cmd/bias` recommends a value from all of this season's games")
 	useBias := flag.Bool("bias", false, "apply data/biasfix.json. Off by default: on 2026-10-26 it pulled live projections to 14% under the lines while the lines themselves were accurate (cmd/linecheck)")
+	useCombos := flag.Bool("combos", true, "also score the combined markets (points+rebounds+assists, points+rebounds, points+assists, rebounds+assists). They are tracked in data/combolog.jsonl and shown on the site apart from the picks, never staked, until `go run ./cmd/combos settle` shows they earn it")
+	comboWeight := flag.Float64("comboweight", -1, "-1 (default): a combo's probability uses the calibration its parts (points, rebounds, assists) earned, weighted by their share of the total, so it is only as confident as the singles have earned. 0 to 1: a plain blend with this share from the model, the rest the book's devigged price")
+	comboBar := flag.Float64("combobar", 0.53, "a combo is tracked at this probability (53% Over or 47% Under by default), looser than the 55% posting bar because combos are never staked and need a graded sample; the printout says how many reach 55%")
+	comboPer := flag.Int("comboperplayer", 1, "most combo plays to track per player (PRA and PR on the same player are one idea, not two)")
+	comboMax := flag.Int("combomax", 30, "most combo plays to track per run")
 	noLog := flag.Bool("nolog", false, "do not append picks to data/picklog.jsonl")
 	flag.Parse()
 
@@ -565,6 +571,28 @@ func main() {
 		}
 	}
 
+	var comboPlays []scored
+	var comboSummary comboStats
+	if *useCombos && gid == 0 {
+		lookup := teamOf
+		comboLines, _ := props.LoadSnapshotCombos(propsPath)
+		comboLines = append(comboLines, sgoLinesFor(*dir, *date, b, gameOf, true)...)
+		var cs comboStats
+		comboPlays, cs = scoreCombos(comboDeps{
+			b: b, ix: ix, m: m, games: games, out: out, statuses: statuses, teamOf: lookup, rowFor: rowFor, adjust: adjustMinutes,
+			scale: func(st data.Stat, row *feat.Row) float64 {
+				f := biasFix.For(st)
+				if a, ok := anchorScale[st]; ok {
+					f = a
+				}
+				return f * woFix.RateFactor(st, row.WoRate(st))
+			},
+			corr: combo.Load(filepath.Join(*dir, "combocorr.json")), cal: cal, calOK: calOK, weight: *comboWeight, hi: *comboBar, minEdge: *minEdge, maxGap: *maxGap,
+			maxTotal: *comboMax, perPlayer: *comboPer, date: *date,
+		}, comboLines)
+		comboSummary = cs
+	}
+
 	picks = bestLinePerPick(picks)
 	// CHECK and PAPER plays are capped separately so they cannot crowd real picks out of a game.
 	var firm, check []scored
@@ -608,6 +636,7 @@ func main() {
 	boardChecks(picks, all)
 	overWatch(all, picks, *hi, *minEdge)
 	printOffMarket(offMarket)
+	printCombos(comboPlays, comboSummary, *comboBar)
 	fmt.Printf("skipped: %d no game info, %d player not on a team playing today, %d too little history, %d not enough minutes, %d ruled out, %d with no price on one side\n\n",
 		skip.noGame, skip.noTeam, skip.noHistory, skip.minutes, skip.out, skip.noPrice)
 
@@ -662,11 +691,19 @@ func main() {
 		moves := buildMoves(series, picks, extra)
 		news := buildNews(b, ix.Name, games, out, statuses, *date)
 		overs := overWatchRows(all, picks, offMarket, *hi, *minEdge, 12)
-		if err := writeMore(*dir, *date, extra, ctx, moves, news, overs); err != nil {
+		if err := writeMore(*dir, *date, extra, ctx, moves, news, overs, comboEntries(*date, comboPlays)); err != nil {
 			fmt.Println("note: could not save data/more.json:", err)
 		} else {
 			fmt.Printf("Saved %d more plays for the site's \"More plays\" button to %s.\n", len(extra), filepath.Join(*dir, "more.json"))
 		}
+	}
+
+	if !*noLog && gid == 0 && len(comboPlays) > 0 {
+		n, err := picklog.Append(filepath.Join(*dir, "combolog.jsonl"), comboEntries(*date, comboPlays))
+		if err != nil {
+			fatal(err)
+		}
+		fmt.Printf("Logged %d new combo plays to %s (graded by `go run ./cmd/combos settle`, kept apart from the pick record).\n", n, filepath.Join(*dir, "combolog.jsonl"))
 	}
 
 	if !*noLog && len(picks) > 0 {
@@ -866,8 +903,17 @@ func boardChecks(picks, all []scored) {
 // sgoLines converts the SportsGameOdds snapshot, if any, into props.Line values by matching
 // player names to players who have history and whose team plays today.
 func sgoLines(dir, date string, b *feat.Builder, gameOf map[int]props.GameInfo) []props.Line {
+	return sgoLinesFor(dir, date, b, gameOf, false)
+}
+
+// sgoLinesFor is sgoLines for the single stats (combos false) or for the combined stats (true).
+func sgoLinesFor(dir, date string, b *feat.Builder, gameOf map[int]props.GameInfo, combos bool) []props.Line {
 	path := filepath.Join(dir, "snapshots", fmt.Sprintf("sgo_%s.jsonl", date))
-	pl, err := sgo.LoadSnapshot(path)
+	load := sgo.LoadSnapshot
+	if combos {
+		load = sgo.LoadSnapshotCombos
+	}
+	pl, err := load(path)
 	if err != nil || len(pl) == 0 {
 		return nil
 	}
@@ -898,6 +944,17 @@ func sgoLines(dir, date string, b *feat.Builder, gameOf map[int]props.GameInfo) 
 
 // why gives a short human reason for the projection.
 func why(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, pid int, stat data.Stat, pred predictor.Pred, team, oppTeam int, out map[int]string, date string) string {
+	parts := whyContext(b, ix, row, stat, pred, team, oppTeam, out)
+	if dr, ok := b.DefenseRank(pid, oppTeam, stat, date); ok {
+		parts = append(parts, defenseNote(dr, stat))
+	}
+	return strings.Join(parts, "; ")
+}
+
+// whyContext is the part of the reason that does not depend on which single stat is meant: who is
+// out on either side, a back-to-back, a minutes change. A combined stat (PRA and so on) uses it
+// with a single stat for the back-to-back lookup, since it has no feature of its own.
+func whyContext(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, stat data.Stat, pred predictor.Pred, team, oppTeam int, out map[int]string) []string {
 	var parts []string
 	var names []string
 	for _, pid := range b.RotationOf(team, row.G.Day) {
@@ -929,10 +986,7 @@ func why(b *feat.Builder, ix interface{ Name(int) string }, row *feat.Row, pid i
 	if d := pred.Minutes - row.TypicalMinutes(); math.Abs(d) >= 3 {
 		parts = append(parts, fmt.Sprintf("minutes %+.0f vs his normal", d))
 	}
-	if dr, ok := b.DefenseRank(pid, oppTeam, stat, date); ok {
-		parts = append(parts, defenseNote(dr, stat))
-	}
-	return strings.Join(parts, "; ")
+	return parts
 }
 
 // bestLinePerPick keeps, for each player, stat and side, the book offering the best price.

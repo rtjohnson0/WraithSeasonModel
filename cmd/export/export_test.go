@@ -365,3 +365,22 @@ func TestAttachNewsAndMoves(t *testing.T) {
 		t.Fatalf("line history and news should attach to the right play and game: %+v", g)
 	}
 }
+
+func TestAttachCombosKeepsThemOutOfThePicks(t *testing.T) {
+	e := picklog.Entry{Date: "2026-10-27", GameID: 5, PlayerID: 9, Player: "A B", Team: "BOS", Matchup: "NYK @ BOS", Stat: "pra", Side: "UNDER", Line: 38.5,
+		Odds: -115, Book: "fanduel", Prob: 0.58, Edge: 0.05, ProjMean: 34.2, ProjMin: 31, Tier: "COMBO", Tip: "2026-10-27T23:30:00Z", Why: "projects 20.0 pts + 8.0 reb + 6.2 ast"}
+	board := buildBoard(nil, "2026-10-27", nil, nil)
+	attachCombos(&board, moreFile{Date: "2026-10-27", Combos: []picklog.Entry{e}}, nil)
+	if len(board.Combos) != 1 || board.Plays != 0 || board.Staked != 0 {
+		t.Fatalf("a combo must not count as a pick or a staked play: %+v", board)
+	}
+	c := board.Combos[0]
+	if c.Label != "Tracking" || c.Stat != "pra" || c.Matchup != "NYK @ BOS" || c.Tip == "" || c.Units != 0 {
+		t.Errorf("combo play wrong: %+v", c)
+	}
+	other := buildBoard(nil, "2026-10-28", nil, nil)
+	attachCombos(&other, moreFile{Date: "2026-10-27", Combos: []picklog.Entry{e}}, nil)
+	if len(other.Combos) != 0 {
+		t.Error("another day's combos must not show")
+	}
+}

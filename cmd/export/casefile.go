@@ -241,6 +241,26 @@ type moreFile struct {
 	Moves map[string][]MovePt `json:"moves"`
 	News  []newsIn            `json:"news"`
 	Overs []OverWatch         `json:"overs"`
+	// Combos mirrors the combined-market plays predict tracks (tier COMBO).
+	Combos []picklog.Entry `json:"combos"`
+}
+
+// ComboPlay is a combined-market play (points + rebounds + assists and so on) shown in its own site
+// section. It is tracked, not staked, and is not part of the pick record.
+type ComboPlay struct {
+	Play
+	Matchup string `json:"matchup"`
+	Tip     string `json:"tip,omitempty"`
+}
+
+// attachCombos adds the day's combined-market plays to the board.
+func attachCombos(b *Board, mf moreFile, form Form) {
+	if mf.Date != b.Date {
+		return
+	}
+	for _, e := range mf.Combos {
+		b.Combos = append(b.Combos, ComboPlay{Play: makePlay(e, mf.Date, form, 0, nil), Matchup: matchupOf(e), Tip: e.Tip})
+	}
 }
 
 // OverWatch is an Over listed on the site's "Overs watch" section: not a pick.

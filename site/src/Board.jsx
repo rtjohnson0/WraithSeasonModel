@@ -190,6 +190,83 @@ function OversWatch({ overs, now }) {
   )
 }
 
+// The combined markets (points + rebounds + assists and the other sums). They are tracked, not
+// staked, and kept out of the pick record until they have a graded history of their own.
+const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
+function ComboLines({ combos, now }) {
+  const [stat, setStat] = useState('all')
+  const [side, setSide] = useState('ALL')
+  const [all, setAll] = useState(false)
+  const open = (combos || []).filter((c) => {
+    const s = tipState(c.tip, now).state
+    return s !== 'live' && s !== 'done'
+  })
+  if (open.length === 0) return null
+  const list = open.filter((c) => (stat === 'all' || c.stat === stat) && (side === 'ALL' || c.side === side))
+  const shown = all ? list : list.slice(0, 8)
+  return (
+    <section className="overs combos" aria-label="Combo lines">
+      <h2>Combo lines</h2>
+      <p className="small">
+        Points + rebounds + assists and the other sums. These are tracked, not staked, and are not part of the pick record: the model has no graded results on
+        them yet. Each probability is calibrated the way the single stats are, so a combo is only as confident as its parts have earned. Every one is logged and graded so combos can earn their way onto the board.
+      </p>
+      <div className="combo-filters">
+        <Seg
+          label="Combo"
+          value={stat}
+          onChange={setStat}
+          options={[['all', 'All', open.length], ...COMBO_STATS.map((s) => [s, statLabel[s], open.filter((c) => c.stat === s).length])]}
+        />
+        <Seg
+          label="Side"
+          value={side}
+          onChange={setSide}
+          options={[['ALL', 'Both'], ['OVER', 'Over', open.filter((c) => c.side === 'OVER').length], ['UNDER', 'Under', open.filter((c) => c.side === 'UNDER').length]]}
+        />
+      </div>
+      {list.length === 0 && <p className="notice">No combo plays match these filters.</p>}
+      <ul>
+        {shown.map((c) => {
+          const ts = tipState(c.tip, now)
+          return (
+            <li key={`${c.player}|${c.stat}|${c.side}`}>
+              <div className="ov-head">
+                <b>{c.player}</b>
+                <span className="ov-bet">
+                  {c.side === 'OVER' ? 'Over' : 'Under'} {c.line} {statLabel[c.stat] || c.stat}
+                </span>
+                <span className="ov-price">
+                  {oddsText(c.odds)} <small>{c.book}</small>
+                </span>
+              </div>
+              <div className="ov-nums">
+                <span>Model {pct(c.prob)}</span>
+                <span className={c.edge >= 0 ? 'pos' : 'neg'}>Edge {c.edge >= 0 ? '+' : ''}{(100 * c.edge).toFixed(1)}%</span>
+                <span>
+                  Projected {c.projStat.toFixed(1)} in {Math.round(c.projMin)} min
+                </span>
+                {c.last5?.length > 0 && (
+                  <span>
+                    Last {c.last5.length}: {c.last5.map((g) => Math.round(g.value)).join(', ')} ({c.l5Hits}/{c.last5.length} on this side)
+                  </span>
+                )}
+                <span>{ts.label || c.matchup}</span>
+              </div>
+              <p className="ov-why">{c.why}</p>
+            </li>
+          )
+        })}
+      </ul>
+      {list.length > 8 && (
+        <button type="button" className="morebtn" onClick={() => setAll((v) => !v)}>
+          {all ? 'Show fewer' : `Show all ${list.length}`}
+        </button>
+      )}
+    </section>
+  )
+}
+
 // Who is out and who is uncertain on each side, from the injury report.
 function LineupNews({ news }) {
   return (
@@ -626,6 +703,7 @@ export default function Board({ site }) {
 
       <TopPlays games={board.games} now={now} onPick={(p) => { setStat('all'); setLabel('all'); setSide('ALL'); setQ(''); setRepeatsOnly(false); setFocus({ id: playId(p), n: Date.now() }) }} />
       <OversWatch overs={board.overs} now={now} />
+      <ComboLines combos={board.combos} now={now} />
       <LastResults record={site.record} date={board.date} />
       <RunChanges runs={board.runsToday} />
       <EarlierPicks runs={board.runsToday} />

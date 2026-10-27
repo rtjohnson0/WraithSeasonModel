@@ -13,6 +13,9 @@ data/*
 !data/runs.jsonl
 !data/more.json
 !data/projlog.jsonl
+!data/combolog.jsonl
+!data/combosettled.jsonl
+!data/combocorr.json
 demo_data/
 bin/
 *.exe
