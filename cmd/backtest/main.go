@@ -37,10 +37,12 @@ func main() {
 	noExitFix := flag.Bool("noexitfix", false, "leave out the injury-exit correction to the minutes averages (to measure what it adds)")
 	noBlowout := flag.Bool("noblowout", false, "leave out the blowout correction to the minutes averages (to measure what it adds)")
 	lineup := flag.Bool("lineup", false, "include teammates-out features (flattered by opening lines; see README)")
+	missed := flag.Bool("missed", false, "add the expected-missed-shots rebound feature (opt-in; use the same setting you trained with)")
 	minEdge := flag.Float64("minedge", 0.01, "also require the probability to beat the offered odds break-even by this much")
 	live := flag.Bool("live", false, "also score this season's saved daily snapshots (data/snapshots/props_*.jsonl) once their games are final, so the calibration keeps learning from current lines")
 	ablate := flag.Bool("ablate", false, "retrain once per feature group with it removed (slow)")
 	flag.Parse()
+	pipeline.Missed = *missed
 	predictor.UseVolatility = !*noVol
 	feat.BlowoutAdjust = !*noBlowout
 	feat.ShortExitAdjust = !*noExitFix
@@ -182,10 +184,18 @@ func main() {
 	final := eval.FitCalibration(v2)
 	final.Config = config
 	out := filepath.Join(*dir, "calibration.json")
+	if *missed {
+		// An opt-in feature set must not overwrite the calibration the live model uses.
+		out = filepath.Join(*dir, "calibration_misses.json")
+	}
 	if err := final.Save(out); err != nil {
 		fatal(err)
 	}
 	fmt.Printf("\nSaved the calibration fitted on all %d lines to %s (config %q).\n", len(v2), out, config)
+	if *missed {
+		fmt.Println("This was the -missed experiment, so the live calibration.json was left alone. To adopt the feature: compare this run's rebound log loss with a normal run,")
+		fmt.Println("then `go run ./cmd/train -missed` and copy data/calibration_misses.json over data/calibration.json (the feature set has to match, or predict refuses to run).")
+	}
 	fmt.Println("\nHow to read this: break-even at -110 is a 52.4% hit rate. If the calibrated 0.55 row beats that")
 	fmt.Println("over a few hundred picks, with the hit rate above the break-even column and 'gain vs coin flip' z above 2, the model has found an edge worth testing live.")
 	fmt.Println("If it posts almost nothing or sits below 52.4%, it has not, and you should not bet it.")

@@ -96,11 +96,20 @@ func Load(dir string, withRows bool) (*Data, error) {
 // DisabledFor returns the feature groups to leave out. Without -lineup the teammates-out and
 // opponent-out groups are off: it is the one group a backtest against opening lines cannot honestly validate.
 func DisabledFor(lineup bool) []string {
-	if lineup {
-		return nil
+	var off []string
+	if !lineup {
+		off = []string{feat.GroupTeammates, feat.GroupOppOut}
 	}
-	return []string{feat.GroupTeammates, feat.GroupOppOut}
+	if !Missed {
+		off = append(off, feat.GroupMisses)
+	}
+	return off
 }
+
+// Missed switches the expected-missed-shots rebound feature on (the -missed flag of train, backtest
+// and bias). It is off by default: the feature has to be backtested, and enabling it changes the
+// feature set, so the model and the calibration have to be refitted together.
+var Missed bool
 
 // fingerprint is a short hash of the feature list, so a calibration fitted for an older feature
 // set is detected instead of being silently applied to a newer model.
@@ -111,6 +120,9 @@ func fingerprint() string {
 	}
 	for _, specs := range feat.StatSpecs {
 		for _, s := range specs {
+			if s.Group == feat.GroupMisses {
+				continue // opt-in: the default feature set keeps the fingerprint it had before the group existed
+			}
 			h.Write([]byte(s.Name + "/" + s.Group + ";"))
 		}
 		h.Write([]byte("|"))
@@ -121,10 +133,18 @@ func fingerprint() string {
 // ConfigName names the feature configuration for calibration bookkeeping. It includes a
 // fingerprint of the feature list: if the features change, the calibration must be refitted.
 func ConfigName(disabled []string) string {
+	name := "lineup-" + fingerprint()
+	missed := true
 	for _, g := range disabled {
-		if g == feat.GroupTeammates {
-			return "pregame-" + fingerprint()
+		switch g {
+		case feat.GroupTeammates:
+			name = "pregame-" + fingerprint()
+		case feat.GroupMisses:
+			missed = false
 		}
 	}
-	return "lineup-" + fingerprint()
+	if missed {
+		name += "-misses"
+	}
+	return name
 }

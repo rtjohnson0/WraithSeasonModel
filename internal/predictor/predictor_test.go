@@ -104,3 +104,50 @@ func TestVolatilityIsShrunkAndBounded(t *testing.T) {
 	}
 	t.Logf("volatility ratios range %.2f to %.2f over %d players", lo, hi, len(m.Vol))
 }
+
+func TestMissesGroupOptInAndOldModels(t *testing.T) {
+	_, _, rows := world(t)
+	reb := data.StatIndex(data.Rebounds)
+	has := func(m *Model) bool {
+		for _, n := range m.Stat[reb].Names {
+			if n == "exp_miss" {
+				return true
+			}
+		}
+		return false
+	}
+	off, err := Train(rows[:6000], []string{feat.GroupMisses})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if has(off) {
+		t.Fatal("the misses feature must not be fitted when the group is disabled")
+	}
+	on, err := Train(rows[:6000], nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !has(on) {
+		t.Fatal("the misses feature should be fitted when the group is enabled")
+	}
+	if p := on.Predict(&rows[7000]).Mean(data.Rebounds); p <= 0 {
+		t.Errorf("model with the feature predicts %v", p)
+	}
+	// A model saved before the group existed lists no misses group; it must load as fitted, without it.
+	old := *off
+	old.Disabled = nil
+	path := t.TempDir() + "/old.json"
+	if err := old.Save(path); err != nil {
+		t.Fatal(err)
+	}
+	m, err := Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(m.Disabled) != 1 || m.Disabled[0] != feat.GroupMisses {
+		t.Fatalf("old model should load with the misses group disabled, got %v", m.Disabled)
+	}
+	if a, b := off.Predict(&rows[7000]).Mean(data.Rebounds), m.Predict(&rows[7000]).Mean(data.Rebounds); a != b {
+		t.Errorf("old model predicts differently after loading: %v vs %v", a, b)
+	}
+}

@@ -22,7 +22,9 @@ import (
 func main() {
 	dir := flag.String("data", "data", "data directory")
 	lineup := flag.Bool("lineup", false, "include teammates-out features")
+	missed := flag.Bool("missed", false, "add the expected-missed-shots rebound feature (backtest it first; the calibration must be refitted)")
 	flag.Parse()
+	pipeline.Missed = *missed
 
 	d, err := pipeline.Load(*dir, true)
 	if err != nil {

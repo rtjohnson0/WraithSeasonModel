@@ -1,4 +1,5 @@
 import { DayGrid, HitRateBars, UnitsChart } from './Charts.jsx'
+import Lines from './Lines.jsx'
 import { pct, prettyDate, shortDate, statLabel } from './format.js'
 
 export function Table({ rows, unitsNote }) {
@@ -155,6 +156,8 @@ export default function Record({ site }) {
           </div>
         </>
       )}
+
+      <Lines lines={site.lines} />
 
       <h2>Results by day</h2>
       <p className="small">Every graded play from each day: the ones on the final board, plays that earlier runs posted and later runs dropped, and the lean fill-ins.</p>

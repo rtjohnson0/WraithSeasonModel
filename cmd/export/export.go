@@ -272,6 +272,7 @@ type Site struct {
 	Board       Board       `json:"board"`
 	Record      Record      `json:"record"`
 	Combos      ComboRecord `json:"combos"`
+	Lines       LinesRecord `json:"lines"`
 }
 
 // grade turns the model's calibrated probability into a letter. Only staked picks can earn an A:

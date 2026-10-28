@@ -63,6 +63,7 @@ func main() {
 		Board:       buildBoard(entries, *date, form, runlog.ForDate(runs, *date)),
 		Record:      buildRecord(settled, *recent),
 		Combos:      buildComboRecord(comboSettled, 120),
+		Lines:       buildLinesRecord(*dir),
 	}
 	var mf moreFile
 	if raw, err := os.ReadFile(filepath.Join(*dir, "more.json")); err == nil {

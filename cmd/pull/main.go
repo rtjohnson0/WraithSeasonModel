@@ -26,6 +26,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"propsmodel/internal/espn"
 	"sort"
 	"strconv"
 	"strings"
@@ -698,6 +699,18 @@ func snapshotOnce(c *bdl.Client, date string) error {
 	injOut.Close()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "injuries:", err)
+	}
+
+	// 5. ESPN's injury list, a second opinion on the report above. Best effort: a failure here
+	// never stops the snapshot (see internal/espn).
+	if body, err := espn.Fetch(); err != nil {
+		fmt.Fprintln(os.Stderr, "espn injuries:", err)
+	} else if inj, err := espn.Parse(body); err != nil {
+		fmt.Fprintln(os.Stderr, "espn injuries:", err)
+	} else if err := os.WriteFile(filepath.Join(dataDir, "snapshots", fmt.Sprintf("espn_injuries_%s.json", date)), body, 0o644); err != nil {
+		fmt.Fprintln(os.Stderr, "espn injuries:", err)
+	} else {
+		fmt.Printf("  espn injuries saved: %d players\n", len(inj))
 	}
 	return nil
 }

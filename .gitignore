@@ -16,6 +16,7 @@ data/*
 !data/combolog.jsonl
 !data/combosettled.jsonl
 !data/combocorr.json
+!data/lines
 demo_data/
 bin/
 *.exe

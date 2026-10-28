@@ -37,6 +37,7 @@ Run "refresh advanced stats"       { go run ./cmd/pull advanced -seasons $Season
 Run "current rosters"              { go run ./cmd/pull players }
 Run "grade past picks"             { go run ./cmd/settle } -Optional
 Run "grade combo plays"            { go run ./cmd/combos settle } -Optional
+Run "grade every logged line"      { go run ./cmd/lines } -Optional
 Run "review yesterday (csv)"        { go run ./cmd/review } -Optional
 
 if (-not $SkipTrain) {

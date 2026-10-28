@@ -501,3 +501,42 @@ func TestDefenseRank(t *testing.T) {
 		t.Error("position names")
 	}
 }
+
+func TestExpectedMissesFeature(t *testing.T) {
+	w := synthworld.Generate(synthworld.Config{Seed: 9, Seasons: []int{2024}, Teams: 10, Days: 100})
+	rows := NewBuilder(w.Games, w.Adv).Rows(0)
+	reb := data.StatIndex(data.Rebounds)
+	idx := statIdx[reb]["exp_miss"]
+	filled := 0
+	for _, r := range rows {
+		v := r.S[reb][idx]
+		if math.IsInf(v, 0) {
+			t.Fatal("exp_miss is infinite")
+		}
+		if !math.IsNaN(v) {
+			filled++
+			if math.Abs(v) > 0.5 {
+				t.Fatalf("exp_miss = %v: a shrunk log ratio to a typical game should stay close to 0", v)
+			}
+		}
+	}
+	if filled == 0 {
+		t.Fatal("expected-misses was never filled")
+	}
+	// Off unless asked for: the default feature set must not include it.
+	if hasName(StatNames(data.Rebounds, map[string]bool{GroupMisses: true}), "exp_miss") {
+		t.Fatal("exp_miss selected with the misses group off")
+	}
+	if !hasName(StatNames(data.Rebounds, map[string]bool{}), "exp_miss") {
+		t.Fatal("exp_miss missing when the group is on")
+	}
+}
+
+func hasName(names []string, n string) bool {
+	for _, x := range names {
+		if x == n {
+			return true
+		}
+	}
+	return false
+}

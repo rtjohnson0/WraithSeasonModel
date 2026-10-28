@@ -503,3 +503,35 @@ Books list points + rebounds + assists (PRA), points + rebounds (PR), points + a
 `predict -combos=false` turns the section off; `-combomax` caps how many are tracked per run (30); at most two per player.
 
 **Reading the results.** Wait for about 100 graded combo plays. Until then, compare the hit rate with the predicted column. If combos hit more often than predicted, the model has earned more trust on them than the singles got; only then consider a higher `-comboweight` or staking. The combos inherit the single stats' biases (points, assists and threes are over-projected by 6 to 7% this season), so a combo Under can look better than it is until those are settled.
+
+## Grading every line, not just the picks (2026-10-28)
+
+The pick log grades about 50 plays a day, so a two or three point edge takes weeks to show. The model scores about 1,900 lines a day. `predict` (without `-nolog`) now logs one row per player and stat at the **median line across books** to `data/lines/market_DATE.jsonl`: the model's calibrated P(over) at that line, projection, projected minutes, minutes shift, teammates and opponents out, back-to-back, how many books, the lowest and highest line, and the day's opening median (from the snapshot history). A later run replaces the same player and stat and keeps rows from earlier runs it no longer lists. Games that have already tipped are left out, because the feed can carry live lines. Off-market lines (a book a point or more from the median of 4+ books) go to `data/lines/offmarket.jsonl`, append-only and deduplicated, at the price and side they were offered. Nothing here changes a pick.
+
+`go run ./cmd/lines` grades both files against final box scores and prints:
+
+- calibration at the median line by probability band, and the Brier score against always guessing the day's base rate (does the model carry any information at all?);
+- slices (a teammate out, back-to-back, minutes cut or raised 4+, the median line moved 0.5+ in either direction, books disagreeing, 12+ books, each stat) with the Over rate against what the model expected. A gap of 5 points on a few hundred lines is a real miss; one day is noise;
+- the off-market record at each book's own price: Under at a high line, Over at a low one, by gap size, number of books, whether the model agreed, and by stat, in flat units and ROI.
+
+The same tables are on the site's Record page ("Every line, not just the picks" and "Lines priced off the market"). With `-since 2026-10-27` it only counts days from that date. Expect the first useful read after about a week (2,500+ graded lines); the slices need more.
+
+## Expected missed shots (opt-in, 2026-10-28)
+
+Rebounds come from missed shots. A new rebound feature, `exp_miss`, is the log ratio of the expected misses in the game (each team's recent misses blended with what the other side forces, both teams summed) to a typical game (94). It is a feature group of its own (`misses`) and **off by default**: the live model, `calibration.json` and its fingerprint are unchanged, and an old `model.json` loads exactly as it was fitted. To test it:
+
+1. `go run ./cmd/backtest` (normal) and note the rebounds log loss, then `go run ./cmd/backtest -missed`. The second run saves `data/calibration_misses.json` and leaves the live calibration alone.
+2. If rebounds improve by a clear margin (a few thousandths of log loss on thousands of lines), `go run ./cmd/train -missed`, copy `calibration_misses.json` over `calibration.json`, and run `go run ./cmd/bias -missed -write`. The feature set name changes (`...-misses`), so predict refuses a calibration from the other set.
+3. If it does not help, leave it off. Nothing needs undoing.
+
+## ESPN injury cross-check (2026-10-28)
+
+`go run ./cmd/pull snapshot` also saves ESPN's injury list to `data/snapshots/espn_injuries_DATE.json`, and `predict` folds it into the BALLDONTLIE report: a player ESPN lists as Out whom BALLDONTLIE does not is treated as out (no pick on him, and his teammates' lineup features know), and a player ESPN lists as day-to-day with no status of his own becomes uncertain, so his plays are CHECK and not staked. The printout lists who changed (`ESPN INJURY CHECK`). The endpoint was checked against a live response, but not from the machine that runs the workflow: if it is blocked there the fetch fails quietly and predict uses BALLDONTLIE alone. Look for `espn injuries saved` in the snapshot step of a workflow run.
+
+## Not built
+
+Referee tendencies, travel and altitude, and the opponent's three-point attempts allowed are not in the model. None of them could be checked against real data from here, and the model's rebound, assist and points biases are still larger than what those usually move. The graded line log above is what will say where the model is off first. More history is a data pull, not code: `go run ./cmd/pull stats -seasons 2022,2023,2024,2025` and `go run ./cmd/pull advanced -seasons 2022,2023,2024,2025`, then retrain and rerun the backtest.
+
+## push.ps1 settles data conflicts
+
+When the scheduled runs and your machine both changed a data file, `scripts/push.ps1` now resolves it: append-only logs (`picklog`, `settled`, `runs`, `combolog`, `combosettled`, `data/lines/*.jsonl`) keep both sides, everything else under `data/` takes your copy, and a conflict in a code file stops with a message. Duplicate market rows from a merge are collapsed on read.

@@ -31,8 +31,10 @@ func main() {
 	noExitFix := flag.Bool("noexitfix", false, "leave out the injury-exit correction to the minutes averages (to measure what it adds)")
 	noBlowout := flag.Bool("noblowout", false, "leave out the blowout correction to the minutes averages (to see whether it is what moves the bias)")
 	lineup := flag.Bool("lineup", false, "check the model with the teammates-out and opponent-out features (use the same setting you trained with)")
+	missed := flag.Bool("missed", false, "add the expected-missed-shots rebound feature (opt-in; use the same setting you trained with)")
 	write := flag.Bool("write", false, "save a conservative per-stat correction to data/biasfix.json, which predict applies (only a large, statistically clear bias is used)")
 	flag.Parse()
+	pipeline.Missed = *missed
 	feat.BlowoutAdjust = !*noBlowout
 	feat.ShortExitAdjust = !*noExitFix
 	if *season == 0 {

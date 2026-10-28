@@ -31,6 +31,7 @@ import (
 	"propsmodel/internal/data"
 	"propsmodel/internal/eval"
 	"propsmodel/internal/feat"
+	"propsmodel/internal/lineslog"
 	"propsmodel/internal/model"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/pipeline"
@@ -40,6 +41,10 @@ import (
 	"propsmodel/internal/sgo"
 	"propsmodel/internal/team"
 )
+
+type marketKey struct {
+	player, stat, game int
+}
 
 type scored struct {
 	PlayerID int
@@ -208,6 +213,19 @@ func main() {
 	}
 
 	statuses, _ := props.LoadStatuses(injPath)
+	if statuses == nil {
+		statuses = map[int]string{}
+	}
+	if inj := loadESPN(snapDir, *date); len(inj) > 0 {
+		byName := map[string]int{}
+		for _, pid := range b.PlayerIDs() {
+			if n := ix.Name(pid); n != "" {
+				byName[sgo.NormName(n)] = pid
+			}
+		}
+		nowOut, nowMaybe := mergeESPN(inj, byName, out, statuses)
+		printESPN(nowOut, nowMaybe)
+	}
 
 	consensus := map[int]team.Consensus{}
 	// Today's spread and total are inputs to the model (blowout risk, pace). They have to be in
@@ -273,9 +291,6 @@ func main() {
 	}
 	// Where the books agree on a line, a book that is off it is either stale or shading: a
 	// chance to take the better number that has nothing to do with the model.
-	type marketKey struct {
-		player, stat, game int
-	}
 	byMarket := map[marketKey][]float64{}
 	for _, l := range lines {
 		k := marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}
@@ -354,6 +369,7 @@ func main() {
 	var all, picks []scored
 	projLog := map[int]*projlog.Entry{}
 	var offMarket []offRow
+	marketRows := map[marketKey]lineslog.Market{}
 	skip := struct{ noGame, noTeam, noHistory, minutes, out, noPrice int }{}
 	for _, l := range lines {
 		if gid != 0 && l.GameID != gid {
@@ -455,6 +471,26 @@ func main() {
 		name := ix.Name(l.PlayerID)
 		if name == "" {
 			name = fmt.Sprintf("player %d", l.PlayerID)
+		}
+		// The market log: one row per player and stat at the median line, scored at the book that
+		// lists that line (see internal/lineslog).
+		if mk := (marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}); gid == 0 {
+			if ls := byMarket[mk]; len(ls) > 0 {
+				sorted := append([]float64(nil), ls...)
+				sort.Float64s(sorted)
+				if _, done := marketRows[mk]; !done && l.Line == sorted[len(sorted)/2] {
+					e := projLog[l.PlayerID]
+					mr := lineslog.Market{
+						Date: *date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID, Player: name,
+						Team: teamAbbr, Stat: string(l.Stat), Tip: g.Start, Line: l.Line, Books: len(ls), Lo: sorted[0], Hi: sorted[len(sorted)-1],
+						POver: pOver, Proj: pred.Mean(l.Stat), ProjMin: pred.Minutes, Shift: pred.Minutes - row.TypicalMinutes(),
+					}
+					if e != nil {
+						mr.TeamOut, mr.OppOut, mr.B2B = e.TeamOut, e.OppOut, e.B2B
+					}
+					marketRows[mk] = mr
+				}
+			}
 		}
 		side, prob, raw, odds := "OVER", pOver, pr.Over, l.OverOdds
 		if pOver < 0.5 {
@@ -695,6 +731,18 @@ func main() {
 			fmt.Println("note: could not save data/more.json:", err)
 		} else {
 			fmt.Printf("Saved %d more plays for the site's \"More plays\" button to %s.\n", len(extra), filepath.Join(*dir, "more.json"))
+		}
+	}
+
+	if !*noLog && gid == 0 && len(marketRows) > 0 {
+		series, _ := props.LineSeries(propsPath)
+		mkt, off := linesLogRows(*date, marketRows, series, offMarket, time.Now().UTC().Format(time.RFC3339), games)
+		if err := lineslog.SaveMarket(*dir, *date, mkt); err != nil {
+			fmt.Println("note: could not save the all-lines log:", err)
+		} else if n, err := lineslog.AppendOff(*dir, off); err != nil {
+			fmt.Println("note: could not save the off-market log:", err)
+		} else {
+			fmt.Printf("Logged %d lines at the market median to data/lines/market_%s.jsonl and %d new off-market lines to data/lines/offmarket.jsonl (graded by `go run ./cmd/lines`).\n", len(mkt), *date, n)
 		}
 	}
 

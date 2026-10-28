@@ -43,6 +43,11 @@ const (
 	GroupSeason    = "season"    // how far into the season: lets early-season games trust history differently
 	GroupOppOut    = "oppout"    // opposing rotation players who are out (a missing rim protector, rebounder or starter)
 	GroupChances   = "chances"   // tracking opportunities: rebound chances, passes, touches, and how well they convert
+	// GroupMisses is the expected number of missed shots in the game, the supply of rebounds. It is
+	// OFF unless a command is run with -missed (see pipeline.Missed), and it is not in OptionalGroups:
+	// it has to be tested with `go run ./cmd/backtest -missed` and the calibration refitted before it
+	// is switched on.
+	GroupMisses = "misses"
 )
 
 // OptionalGroups are the groups that can be switched off for ablation.
@@ -82,6 +87,7 @@ var StatSpecs = [data.NStats][]Spec{
 		{"opp_allow", GroupOpp}, {"miss_s", GroupTeammates}, {"wo_rate", GroupTeammates},
 		{"reb_tr", GroupUsage},
 		{"rch_tr", GroupChances}, {"rch_conv", GroupChances}, {"rch_off", GroupChances},
+		{"exp_miss", GroupMisses},
 		{"h2h", GroupH2H}, {"venue_split", GroupSplit}, {"pos5_allow", GroupMatchup},
 	},
 	{ // assists
@@ -193,6 +199,8 @@ type teamGame struct {
 	For, Against     [data.NStats]float64
 	PosFor           [NPos][data.NStats]float64 // [position group][stat] produced by this team's players
 	PosAgainst       [NPos][data.NStats]float64 // what the opponent's players produced against this team
+	Fga, Miss        float64                    // this team's shot attempts and missed shots (0 when the feed has no shot data)
+	MissAgainst      float64                    // missed shots by the opponent in this game
 	Players          map[int]float64
 }
 
@@ -274,6 +282,8 @@ func NewBuilder(games []data.PlayerGame, adv map[data.AdvKey]data.AdvRow) *Build
 		tg.For[0] += g.Pts
 		tg.For[1] += g.Reb
 		tg.For[2] += g.Ast
+		tg.Fga += g.Fga
+		tg.Miss += g.Fga - g.Fgm
 		pg := PosGroup(g.Pos)
 		tg.PosFor[pg][0] += g.Pts
 		tg.PosFor[pg][1] += g.Reb
@@ -292,6 +302,7 @@ func NewBuilder(games []data.PlayerGame, adv map[data.AdvKey]data.AdvRow) *Build
 		a.Opp, c.Opp = teams[1], teams[0]
 		a.Against, c.Against = c.For, a.For
 		a.PosAgainst, c.PosAgainst = c.PosFor, a.PosFor
+		a.MissAgainst, c.MissAgainst = c.Miss, a.Miss
 		a.HasOpp, c.HasOpp = true, true
 	}
 	for _, list := range b.team {
@@ -922,6 +933,29 @@ func (b *Builder) build(hist []data.PlayerGame, team, opp int, home float64, day
 			posW := lastN(onlyWithOpp(oppG), 30)
 			posAllowed := shrunkMean(posW, lpos[pg][k], func(g *teamGame) float64 { return g.PosAgainst[pg][k] })
 			r.S[k][statIdx[k]["pos5_allow"]] = logRatio(posAllowed, lpos[pg][k])
+		}
+	}
+	// Expected missed shots in this game: each team's misses blended with what the other side forces,
+	// summed over both teams, as a log ratio to a typical NBA game (about 94 misses). Left empty
+	// when the feed has no shot data.
+	if opp != 0 {
+		hasShots := func(list []*teamGame) []*teamGame {
+			var out []*teamGame
+			for _, g := range list {
+				if g.HasOpp && g.Fga > 0 {
+					out = append(out, g)
+				}
+			}
+			return out
+		}
+		ownS, oppS := lastN(hasShots(own), teamWindow), lastN(hasShots(oppG), teamWindow)
+		if len(ownS) >= 3 && len(oppS) >= 3 {
+			const typical = 47.0 // misses per team per game
+			missFor := func(g *teamGame) float64 { return g.Miss }
+			missAg := func(g *teamGame) float64 { return g.MissAgainst }
+			ownExp := (shrunkMean(ownS, typical, missFor) + shrunkMean(oppS, typical, missAg)) / 2
+			oppExp := (shrunkMean(oppS, typical, missFor) + shrunkMean(ownS, typical, missAg)) / 2
+			r.S[data.StatIndex(data.Rebounds)][statIdx[data.StatIndex(data.Rebounds)]["exp_miss"]] = logRatio(ownExp+oppExp, 2*typical)
 		}
 	}
 	oppB2B := 0.0

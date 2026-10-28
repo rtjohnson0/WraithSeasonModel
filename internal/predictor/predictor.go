@@ -322,6 +322,21 @@ func Load(path string) (*Model, error) {
 	if m.Minutes == nil || m.Stat[0] == nil || m.Stat[1] == nil || m.Stat[2] == nil || m.Version != modelVersion {
 		return nil, errors.New("predictor: model file is incomplete or from another version; retrain with go run ./cmd/train")
 	}
+	// A model trained before the opt-in misses group existed does not list it as disabled, but it was
+	// fitted without it: record that, so the model predicts from the features it was fitted on.
+	hasMiss := false
+	for _, n := range m.Stat[data.StatIndex(data.Rebounds)].Names {
+		hasMiss = hasMiss || n == "exp_miss"
+	}
+	if !hasMiss {
+		off := false
+		for _, g := range m.Disabled {
+			off = off || g == feat.GroupMisses
+		}
+		if !off {
+			m.Disabled = append(m.Disabled, feat.GroupMisses)
+		}
+	}
 	return &m, nil
 }
 
