@@ -71,7 +71,7 @@ const (
 
 	v2GateMinN  = 150  // graded lines a stat and side needs before its record can promote or block a play
 	v2MinBooks  = 4    // books that must list the player's stat
-	v2GapMax    = 0.15 // model-to-book gap (probability points) beyond which a play is a CHECK
+	v2GapMax    = 0.25 // model-to-book gap (probability points) beyond which a play is a CHECK. The raw model is overconfident, so 15 flagged about half the board
 	v2AgreeBar  = 0.53 // the real model's probability for V2's side that counts as agreeing (tracking bar)
 	v2SpreadMin = 1.5  // the widest high-low line spread always allowed; wider stats allow 12% of the line
 
@@ -193,6 +193,9 @@ type V2Info struct {
 	Gates    []V2Gate           `json:"gates,omitempty"`
 	GateMinN int                `json:"gate_min_n"`
 	Watch    int                `json:"watch"`
+	Keep     bool               `json:"keep_disagree"`
+	EdgeBar  float64            `json:"edge_bar"`
+	MaxJuice int                `json:"max_juice"`
 }
 
 // V2File is data/v2.json: the latest run's V2 plays for the day.
@@ -296,8 +299,8 @@ func printV2(f v2Fix, info *V2Info, plays, combos []scored) {
 	}
 	sort.Strings(names)
 	fmt.Printf("  posted: %d Over, %d Under (%v)\n", overs, len(plays)-overs, names)
-	fmt.Printf("  tiers: %d STRONG, %d CHECK, %d LEAN. Left out: %d thin or scattered market, %d the real model disagrees with (%d of them Overs), %d on a stat and side that failed its gate.\n",
-		info.Strong, info.Check, info.Lean, info.Dropped.Thin, info.Dropped.Disagree, info.Dropped.DisagreeOver, info.Dropped.Failed)
+	fmt.Printf("  tiers: %d STRONG, %d CHECK, %d LEAN. Left out: %d thin or scattered market, %d priced worse than -%d, %d the real model disagrees with (%d of them Overs), %d on a stat and side that failed its gate.\n",
+		info.Strong, info.Check, info.Lean, info.Dropped.Thin, info.Dropped.Juiced, info.MaxJuice, info.Dropped.Disagree, info.Dropped.DisagreeOver, info.Dropped.Failed)
 	if info.Dropped.Disagree > 0 && info.Dropped.DisagreeOver*2 > info.Dropped.Disagree {
 		fmt.Println("  note: most of what the real model's disagreement removed are Overs. V2's level anchor lifts projections the real model leaves low, so that rule can undo it; -v2keep turns the drop into a Lean.")
 	}
@@ -412,6 +415,7 @@ type V2Drops struct {
 	Disagree     int `json:"disagree"`      // the real model leans the other way at 53% or more
 	DisagreeOver int `json:"disagree_over"` // of those, how many were Overs: the level anchor moves V2's Overs against the real model's Unders, so this shows what the rule costs
 	Failed       int `json:"failed"`        // V2's record on that stat and side does not beat the base rate
+	Juiced       int `json:"juiced"`        // priced worse than the price floor (a -190 favourite needs 65.5% just to break even)
 }
 
 // v2Rules are the knobs of v2Select.
@@ -419,9 +423,25 @@ type v2Rules struct {
 	Hi, MinEdge        float64
 	MaxGame, MaxPlayer int
 	Gates              map[string]V2Gate
-	MinBooks           int  // books that must list the stat (0 means the default, 4)
-	KeepDisagree       bool // a play the real model opposes at 53%+ is a Lean instead of dropped
+	MinBooks           int     // books that must list the stat (0 means the default, 4)
+	KeepDisagree       bool    // a play the real model opposes at 53%+ is a Lean instead of dropped
+	EdgeBar            float64 // a play also qualifies on edge alone at this size (0 turns it off), when V2 gives its side at least 50%
+	MaxJuice           int     // plays priced worse than -MaxJuice are left out (0 turns it off)
 }
+
+// qualifies reports whether a play clears V2's bar: the probability bar with the edge rule, or an edge
+// of EdgeBar or more with V2 giving the side at least 50%. A probability bar alone favours favourites,
+// because a -190 price implies 65% before any model is consulted, while an Over at +120 needs only 46%
+// to break even and could never reach 55%; the edge route lets those plays in.
+func (r v2Rules) qualifies(s scored) bool {
+	if s.Prob >= r.Hi && s.Edge >= r.MinEdge {
+		return true
+	}
+	return r.EdgeBar > 0 && s.Prob >= 0.5 && s.Edge >= r.EdgeBar
+}
+
+// juiced reports whether a play is priced worse than the floor.
+func (r v2Rules) juiced(s scored) bool { return r.MaxJuice > 0 && s.Odds < 0 && -s.Odds > r.MaxJuice }
 
 // spreadOK reports whether a market is deep and tight enough: 4+ books, and a high-low spread no wider
 // than the larger of 1.5 and 12% of the line.
@@ -437,6 +457,9 @@ func v2Tier(s scored, r v2Rules) (tier, drop string) {
 	gates := r.Gates
 	if !spreadOK(s.Books, r.MinBooks, s.Spread, s.Line) {
 		return "", "thin"
+	}
+	if r.juiced(s) {
+		return "", "juiced"
 	}
 	if s.V1Prob > 0 && s.V1Prob <= 1-v2AgreeBar && !r.KeepDisagree {
 		return "", "disagree"
@@ -462,13 +485,16 @@ func v2Select(all []scored, r v2Rules) ([]scored, V2Drops) {
 	var drops V2Drops
 	var picks []scored
 	for _, s := range all {
-		if s.Prob < r.Hi || s.Edge < r.MinEdge {
+		if !r.qualifies(s) {
 			continue
 		}
 		t, why := v2Tier(s, r)
 		switch why {
 		case "thin":
 			drops.Thin++
+			continue
+		case "juiced":
+			drops.Juiced++
 			continue
 		case "disagree":
 			drops.Disagree++
@@ -512,7 +538,7 @@ func v2Select(all []scored, r v2Rules) ([]scored, V2Drops) {
 		if out[i].Tier != out[j].Tier {
 			return picklog.TierRank(out[i].Tier) < picklog.TierRank(out[j].Tier)
 		}
-		return out[i].Prob > out[j].Prob
+		return out[i].Edge > out[j].Edge
 	})
 	return out, drops
 }
@@ -547,11 +573,13 @@ func v2Anchor(sumLine, sumProj float64) float64 {
 // v2OverNote says why an Over that cleared V2's bar is not on its board, or "" when it is just short
 // of the bar (the Overs watch status already says that).
 func v2OverNote(s scored, r v2Rules) string {
-	if s.Prob < r.Hi || s.Edge < r.MinEdge {
+	if !r.qualifies(s) {
 		return ""
 	}
 	_, why := v2Tier(s, r)
 	switch why {
+	case "juiced":
+		return fmt.Sprintf("V2 left it out: priced at %s, worse than the -%d floor", oddsStr(s.Odds), r.MaxJuice)
 	case "thin":
 		return fmt.Sprintf("V2 left it out: only %d book(s) list it, or their lines are scattered (%.1f apart)", s.Books, s.Spread)
 	case "disagree":
@@ -569,7 +597,7 @@ func v2OverNote(s scored, r v2Rules) string {
 func v2OversWatch(all, posted []scored, r v2Rules, limit int) []OverWatch {
 	var pool []scored
 	for _, s := range all {
-		if s.Side == "OVER" && (spreadOK(s.Books, r.MinBooks, s.Spread, s.Line) || (s.Prob >= r.Hi && s.Edge >= r.MinEdge)) {
+		if s.Side == "OVER" && (spreadOK(s.Books, r.MinBooks, s.Spread, s.Line) || r.qualifies(s)) {
 			pool = append(pool, s)
 		}
 	}

@@ -43,6 +43,9 @@ type V2Info struct {
 	Gates    []V2Gate           `json:"gates"`
 	GateMinN int                `json:"gate_min_n"`
 	Watch    int                `json:"watch"`
+	Keep     bool               `json:"keep_disagree"`
+	EdgeBar  float64            `json:"edge_bar"`
+	MaxJuice int                `json:"max_juice"`
 }
 
 // V2Drops counts the plays that cleared the bar and were left out, by reason.
@@ -50,6 +53,7 @@ type V2Drops struct {
 	Thin         int `json:"thin"`
 	Disagree     int `json:"disagree"`
 	DisagreeOver int `json:"disagree_over"`
+	Juiced       int `json:"juiced"`
 	Failed       int `json:"failed"`
 }
 

@@ -89,6 +89,11 @@ func parseDefense(why, side string) *DefenseInfo {
 	rank, _ := strconv.Atoi(m[2])
 	pct, _ := strconv.Atoi(m[5])
 	of, _ := strconv.Atoi(m[6])
+	// A matchup within 5% of average is no signal: "15th-fewest (-1%)" is the middle of the league, and
+	// colouring it as a help or a hurt reads as a reason when there is none.
+	if pct > -5 && pct < 5 {
+		return nil
+	}
 	d := &DefenseInfo{Rank: rank, Of: of, Kind: m[3], Pos: m[1], Pct: float64(pct), Early: m[7] != ""}
 	d.Helps = (side == "OVER") == (d.Kind == "most")
 	d.Text = fmt.Sprintf("Allows the %s %s to %s (%+d%%)", ordinalOf(rank, m[3]), m[4], m[1], pct)

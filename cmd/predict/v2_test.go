@@ -107,12 +107,14 @@ func TestTierRules(t *testing.T) {
 		{"real model 49% (a coin flip) is not a disagreement", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.V1Prob = 0.49; return s }(), nil, tierLean, ""},
 		{"three books: dropped", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.Books = 3; return s }(), proven, "", "thin"},
 		{"scattered books: dropped", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.Spread = 4; return s }(), proven, "", "thin"},
-		{"model and book 15 points apart: check", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.ProbRaw, s.Mkt = 0.70, 0.52; return s }(), proven, tierCheck, ""},
+		{"model and book 28 points apart: check", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.ProbRaw, s.Mkt = 0.80, 0.52; return s }(), proven, tierCheck, ""},
+		{"a 18 point gap is ordinary for the overconfident raw model: not a check", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.ProbRaw, s.Mkt = 0.70, 0.52; return s }(), proven, tierStrong, ""},
+		{"juiced past the floor: dropped", func() scored { s := play(1, data.Rebounds, "UNDER", 0.67); s.Odds = -190; return s }(), proven, "", "juiced"},
 		{"uncertain status: check", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.Maybe = "questionable"; return s }(), proven, tierCheck, ""},
 		{"failed gate: dropped", play(1, data.Points, "OVER", 0.58), map[string]V2Gate{gateKey("points", "OVER"): {N: 300, State: gateFailed}}, "", "failed"},
 	}
 	for _, c := range cases {
-		tier, drop := v2Tier(c.s, v2Rules{Gates: c.gates})
+		tier, drop := v2Tier(c.s, v2Rules{Gates: c.gates, MaxJuice: 160})
 		if tier != c.tier || drop != c.drop {
 			t.Errorf("%s: got tier %q drop %q, want %q %q", c.name, tier, drop, c.tier, c.drop)
 		}
@@ -286,5 +288,33 @@ func TestKeepDisagreeTurnsTheDropIntoALean(t *testing.T) {
 	got, drops := v2Select([]scored{s}, v2Rules{Hi: 0.55, MinEdge: 0.01, MaxGame: 4, MaxPlayer: 2, KeepDisagree: true})
 	if len(got) != 1 || drops.Disagree != 0 {
 		t.Errorf("kept play should post: %+v %+v", got, drops)
+	}
+}
+
+func TestEdgeRouteLetsInAPlusMoneyOverButNotAThinFavourite(t *testing.T) {
+	r := v2Rules{Hi: 0.55, MinEdge: 0.01, MaxGame: 4, MaxPlayer: 2, EdgeBar: 0.04, MaxJuice: 160}
+	plus := play(1, data.Rebounds, "OVER", 0.54) // 54% at +120: break-even 45.5%, an 8 point edge
+	plus.Odds, plus.Edge = 120, 0.082
+	plus.V1Prob = 0.5
+	fav := play(2, data.Assists, "OVER", 0.67) // 67% at -190: break-even 65.5%, a 1.5 point edge
+	fav.Odds, fav.Edge = -190, 0.015
+	coin := play(3, data.Assists, "UNDER", 0.47) // an edge on a side V2 gives under 50%: never posted
+	coin.Odds, coin.Edge = 250, 0.07
+	if !r.qualifies(plus) || r.qualifies(coin) {
+		t.Errorf("the edge route needs 4%% edge and V2 at 50%%+: plus %v coin %v", r.qualifies(plus), r.qualifies(coin))
+	}
+	if (v2Rules{Hi: 0.55, MinEdge: 0.01}).qualifies(plus) {
+		t.Error("without the edge route a 54% Over cannot pass the 55% bar")
+	}
+	got, drops := v2Select([]scored{plus, fav, coin}, r)
+	if len(got) != 1 || got[0].PlayerID != 1 || drops.Juiced != 1 {
+		t.Errorf("want only the plus-money Over, one juiced drop: %+v %+v", got, drops)
+	}
+	// Within a game the biggest edge is first.
+	a, b := play(4, data.Rebounds, "UNDER", 0.70), play(5, data.Rebounds, "UNDER", 0.58)
+	a.Edge, b.Edge = 0.03, 0.06
+	got, _ = v2Select([]scored{a, b}, v2Rules{Hi: 0.55, MinEdge: 0.01, MaxGame: 4, MaxPlayer: 2})
+	if len(got) != 2 || got[0].PlayerID != 5 {
+		t.Errorf("rank by edge, not probability: %+v", got)
 	}
 }

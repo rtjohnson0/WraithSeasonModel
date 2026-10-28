@@ -550,15 +550,15 @@ What V2 changes:
 
 ### V2 tiers and gates (tightening without picking a side)
 
-A play that clears the 55%/45% bar and the edge rule is then tiered. Every rule is the same for Overs and Unders.
+A play qualifies when V2 gives its side 55% with the 1% edge rule, **or** when V2 gives it at least 50% and the edge is 4% or more (`-v2edge`). The second route exists because a probability bar favours favourites: a -190 price implies 65% before any model is consulted, so a Under at -190 reaches 55% easily, while an Over at +120 breaks even at 45% and could never reach it. Plays priced worse than -160 are left out (`-v2juice`), and plays are ranked by edge, not probability. Qualifying plays are then tiered. Every rule is the same for Overs and Unders.
 
 - **Strong play**: the real model leans the same way (53% or more on that side) **and** V2's own record on that stat and side beats always saying the stat's base rate (Brier) on 150+ graded lines, with its leans right at least half the time. The record comes from the all-lines market log: each row now also stores V2's own P(over) (`p2`), so the gate grades V2, not the real model. Only days before the run date count.
 - **Lean** (tier `V2LEAN`): posted and tracked, not backed. The real model is under 53% on that side, or the stat and side has under 150 graded lines. Until a cell has 150 graded V2 lines, nothing in it can be Strong; expect no Strong plays for the first week or so.
-- **Risky play** (`CHECK`): the model alone and the book are 15+ points apart (more often missing news than an edge), or the player's status is uncertain.
-- **Left out**: the real model leans the other way at 53% or more (`-v2keep` turns this into a Lean); fewer than `-v2books` (4) books list it, or the high-low spread is over the larger of 1.5 and 12% of the line; or the stat and side has 150+ graded lines and does not beat the base rate (it re-earns its way back as lines grade, because the gate reads the all-lines log, not V2's posted plays).
+- **Risky play** (`CHECK`): the raw model alone and the book are 25+ points apart (more often missing news than an edge; 15 flagged about half the board because the raw model is overconfident), or the player's status is uncertain.
+- **Left out**: fewer than `-v2books` (4) books list it, or the high-low spread is over the larger of 1.5 and 12% of the line; or the stat and side has 150+ graded lines and does not beat the base rate (it re-earns its way back as lines grade, because the gate reads the all-lines log, not V2's posted plays). A play the real model opposes at 53% or more is a Lean, never Strong (`-v2keep=false` drops it instead; the level anchor lifts projections the real model leaves low, so dropping them removed the Overs the anchor creates).
 - **Overs watch**: the V2 page lists the closest Overs under the bar plus any Over the rules left out, with the reason. They are not graded as plays; `go run ./cmd/lines` grades every V2 lean by stat and side, which is the evidence for or against them.
 
-Each tier is capped per game and per player on its own, strongest first, so a Lean never takes a Strong play's place. `go run ./cmd/v2 settle` reports Strong, Lean and Check separately. The level anchor lifts V2's projections where the real model sits low, so the real-model-disagrees rule can remove the Overs the anchor creates; `predict` prints how many of the dropped were Overs and says so when it is most of them.
+Each tier is capped per game and per player on its own, strongest first, so a Lean never takes a Strong play's place. `go run ./cmd/v2 settle` reports Strong, Lean and Check separately.
 
 Combos are not tiered: they have no per-book line spread, so they keep the plain bar and the COMBO tracking tier.
 

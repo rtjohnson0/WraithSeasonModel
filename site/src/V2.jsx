@@ -64,17 +64,23 @@ function Changes({ info }) {
           : 'There are no earlier days to learn the live correction from yet.'}
       </p>
       <p>
-        <b>How V2 tightens the board.</b> A play that clears the {Math.round(info.bar * 100)}% bar is a <b>Strong play</b> only when the real model leans
-        the same way (53% or more on that side) and V2&apos;s own record on that stat and side, graded over every line in the market log, beats always
-        saying the stat&apos;s base rate on {info.gate_min_n}+ lines. Otherwise it is a <b>Lean</b>: posted and tracked, not backed. It is a <b>Risky
-        play</b> when the model and the book are 15+ points apart (more often missing news than an edge) or the player&apos;s status is uncertain. It is
-        left out when the real model leans the other way at 53% or more, when fewer than 4 books list it or their lines are scattered, or when V2&apos;s record
-        on that stat and side has {info.gate_min_n}+ graded lines and does not beat the base rate. Overs and Unders face identical rules.
+        <b>How V2 tightens the board.</b> A play qualifies when V2 gives it {Math.round(info.bar * 100)}% or more with an edge over the price, or, for a
+        play at a plus price that the {Math.round(info.bar * 100)}% bar would shut out, when V2 gives it at least 50% and the edge is{' '}
+        {Math.round((info.edge_bar || 0) * 100)}% or more. Plays priced worse than -{info.max_juice || 160} are left out: a -190 favorite needs 65.5% just to
+        break even. Qualifying plays are then tiered. A <b>Strong play</b> needs the real model on the same side (53% or more) and V2&apos;s own record on that
+        stat and side, graded over every line in the market log, beating always saying the stat&apos;s base rate on {info.gate_min_n}+ lines. Otherwise it is a{' '}
+        <b>Lean</b>: posted and tracked, not backed{info.keep_disagree ? ', including plays the real model opposes' : ''}. It is a <b>Risky play</b> when
+        the raw model and the book are 25+ points apart (usually missing news, not an edge) or the player&apos;s status is uncertain. It is left out when
+        fewer than 4 books list it or their lines are scattered{info.keep_disagree ? '' : ', when the real model leans the other way at 53% or more'}, or
+        when V2&apos;s record on that stat and side has {info.gate_min_n}+ graded lines and does not beat the base rate. Overs and Unders face identical
+        rules, and plays are ranked by edge.
       </p>
       <p>
         {info.scored} lines scored: {info.over} lean Over, {info.under} lean Under. {info.posted} posted: {info.strong} Strong, {info.check} Risky,{' '}
-        {info.lean} Lean. Left out: {info.dropped?.thin || 0} thin or scattered markets, {info.dropped?.disagree || 0} the real model disagrees with ({info.dropped?.disagree_over || 0} of them Overs),{' '}
-        {info.dropped?.failed || 0} on a stat and side that failed its gate. V2 does not force Overs; the mix is what its probabilities say.
+        {info.lean} Lean. Left out: {info.dropped?.thin || 0} thin or scattered markets, {info.dropped?.juiced || 0} priced too heavily,{' '}
+        {info.dropped?.failed || 0} on a stat and side that failed its gate
+        {info.keep_disagree ? '' : `, ${info.dropped?.disagree || 0} the real model disagrees with (${info.dropped?.disagree_over || 0} of them Overs)`}. V2
+        does not force Overs; the mix is what its probabilities say.
       </p>
       <Gates gates={info.gates} minN={info.gate_min_n} />
     </div>

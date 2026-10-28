@@ -113,7 +113,9 @@ func main() {
 	useV2 := flag.Bool("v2", true, "also run the V2 challenger beside the real model: a live correction fitted on earlier days plus a model-forward blend. Its plays are tracked in data/v2log.jsonl and shown on the site's V2 test page; they never change a real pick")
 	v2ModelFile := flag.String("v2model", "model_v2.json", "V2: a second model file in the data directory (train it with `go run ./cmd/train -v2`: teammates-out and missed-shots features on). V2 uses the main model when the file is missing")
 	v2Books := flag.Int("v2books", v2MinBooks, "V2: the fewest books that must list a player's stat for V2 to post it (a thin market is where the median line is least trustworthy)")
-	v2Keep := flag.Bool("v2keep", false, "V2: a play the real model opposes at 53%+ becomes a Lean instead of being dropped. V2's level anchor lifts projections the real model leaves low, so the drop can remove the Overs the anchor creates; this shows them, still not Strong")
+	v2Keep := flag.Bool("v2keep", true, "V2: a play the real model opposes at 53%+ is a Lean (never Strong) instead of being dropped. V2's level anchor lifts projections the real model leaves low, so dropping them removes the Overs the anchor creates; -v2keep=false drops them")
+	v2Edge := flag.Float64("v2edge", 0.04, "V2: a play also qualifies on edge alone at this size when V2 gives its side 50%+, so a plus-money Over with a real edge is not shut out by the 55% bar (0 turns it off)")
+	v2Juice := flag.Int("v2juice", 160, "V2: plays priced worse than -this are left out: a -190 favourite needs 65.5% to break even, so a 67% number there is almost all price (0 turns it off)")
 	v2Weight := flag.Float64("v2weight", 0.5, "V2: the model's share of the probability (the rest is the book's devigged price). The real model's calibration gives points 3% and rebounds 24%")
 	comboBar := flag.Float64("combobar", 0.53, "a combo is tracked at this probability (53% Over or 47% Under by default), looser than the 55% posting bar because combos are never staked and need a graded sample; the printout says how many reach 55%")
 	comboPer := flag.Int("comboperplayer", 1, "most combo plays to track per player (PRA and PR on the same player are one idea, not two)")
@@ -779,12 +781,13 @@ func main() {
 	var v2Overs []OverWatch
 	var v2Meta *V2Info
 	if *useV2 && gid == 0 {
-		rules := v2Rules{Hi: *hi, MinEdge: *minEdge, MaxGame: *maxGame, MaxPlayer: *maxPlayer, Gates: v2gates, MinBooks: *v2Books, KeepDisagree: *v2Keep}
+		rules := v2Rules{Hi: *hi, MinEdge: *minEdge, MaxGame: *maxGame, MaxPlayer: *maxPlayer, Gates: v2gates, MinBooks: *v2Books, KeepDisagree: *v2Keep, EdgeBar: *v2Edge, MaxJuice: *v2Juice}
 		var drops V2Drops
 		v2Plays, drops = v2Select(v2all, rules)
 		v2Overs = v2OversWatch(v2all, v2Plays, rules, 12)
 		v2Meta = v2Info(v2fix, *v2Weight, *hi, *comboBar, v2model, v2all, v2Plays, drops, v2gates)
 		v2Meta.Watch = len(v2Overs)
+		v2Meta.Keep, v2Meta.EdgeBar, v2Meta.MaxJuice = *v2Keep, *v2Edge, *v2Juice
 		printV2(v2fix, v2Meta, v2Plays, v2Combos)
 	}
 	fmt.Printf("skipped: %d no game info, %d player not on a team playing today, %d too little history, %d not enough minutes, %d ruled out, %d with no price on one side\n\n",
