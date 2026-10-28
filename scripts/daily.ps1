@@ -38,6 +38,7 @@ Run "current rosters"              { go run ./cmd/pull players }
 Run "grade past picks"             { go run ./cmd/settle } -Optional
 Run "grade combo plays"            { go run ./cmd/combos settle } -Optional
 Run "grade every logged line"      { go run ./cmd/lines } -Optional
+Run "grade the V2 challenger"      { go run ./cmd/v2 settle } -Optional
 Run "review yesterday (csv)"        { go run ./cmd/review } -Optional
 
 if (-not $SkipTrain) {

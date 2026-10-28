@@ -535,3 +535,17 @@ Referee tendencies, travel and altitude, and the opponent's three-point attempts
 ## push.ps1 settles data conflicts
 
 When the scheduled runs and your machine both changed a data file, `scripts/push.ps1` now resolves it: append-only logs (`picklog`, `settled`, `runs`, `combolog`, `combosettled`, `data/lines/*.jsonl`) keep both sides, everything else under `data/` takes your copy, and a conflict in a code file stops with a message. Duplicate market rows from a merge are collapsed on read.
+
+## V2 test: a challenger beside the real model (2026-10-28)
+
+`predict` now also runs a challenger, V2, on every run (`-v2=false` turns it off). It never changes a V1 pick, log, calibration or number. Its plays go to `data/v2log.jsonl` (append-only), the latest run's board to `data/v2.json`, and `go run ./cmd/v2 settle` grades them into `data/v2settled.jsonl` and prints V2 against V1 over the same days, by stat and side. The morning run does the grading. The site has a **V2 test** tab with its own Board, Combos and Record, built with the same components as the main pages. V2 is never staked.
+
+What V2 changes:
+
+1. **A level anchor every run.** `cmd/linecheck` showed the books' lines are right on average, and the main model's projections sit about 5% under them (the README's `-anchor` note), which is why the main board is mostly Unders. V2 rescales each stat so the slate's average projection equals its average line (bounded 0.85 to 1.15), keeping who the model likes more or less than the book. The main model leaves `-anchor` off.
+2. **A live correction, fitted on earlier days only.** From `projlog.jsonl` against final box scores: players projected 32+ minutes get their minutes miss added (shrunk by n/(n+40), capped at 3 minutes), and each stat is multiplied by actual/line over earlier days (shrunk by n/(n+150), clamped to +-5%). Only days before the run's date are used. With one or two days of data this is close to nothing, by design.
+3. **A model-forward blend.** The main calibration, fitted on the 2025 backtest, gives the model about 3% of the weight on points and 24% on rebounds. V2 mixes model and book probability 50/50 (`-v2weight`), so the model's own view reaches the board and a wrong view shows up in the record.
+4. **An optional second model.** `go run ./cmd/train -v2` trains `data/model_v2.json` with the teammates-out and expected-missed-shots features on (the main `model.json` is untouched). If the file exists, V2 projects with it; the live record is the only honest test for those features, since a backtest cannot validate who-is-out on opening lines. Commit it with `push.ps1` so the workflow uses it.
+5. **Combos get the same treatment**, so combos with points (PRA, PR, PA) show up instead of landing on the book's number.
+
+Same bar (55%/45%), edge rule, per-game and per-player caps as V1, so the two boards are comparable. V2 does not force Overs: if its Overs are scarce, that is the price. Read it by the `go run ./cmd/v2 settle` table once there are a few hundred graded plays; a few days cannot separate skill from luck. If V2 beats V1 on the same days over a real sample, the pieces that earned it (the correction, the weight) are what to move into the main model, one at a time.

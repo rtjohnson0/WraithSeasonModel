@@ -77,6 +77,7 @@ func main() {
 	}
 	attachCombos(&site.Board, mf, form)
 	attachCases(&site.Board, trackRecords(settled))
+	site.V2 = buildV2(*dir, form)
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		fatal(err)
 	}

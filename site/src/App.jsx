@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import Board from './Board.jsx'
 import Record from './Record.jsx'
 import Combos from './Combos.jsx'
+import V2 from './V2.jsx'
 import About from './About.jsx'
 
 const PAGES = [
   ['board', 'Board'],
   ['combos', 'Combos'],
   ['record', 'Record'],
+  ['v2', 'V2 test'],
   ['about', 'How it works'],
 ]
 
@@ -99,6 +101,7 @@ export default function App() {
         {site && page === 'board' && <Board site={site} />}
         {site && page === 'combos' && <Combos site={site} />}
         {site && page === 'record' && <Record site={site} />}
+        {site && page === 'v2' && <V2 site={site} />}
         {site && page === 'about' && <About />}
       </main>
 

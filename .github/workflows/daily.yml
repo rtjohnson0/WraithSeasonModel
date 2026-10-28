@@ -140,7 +140,7 @@ jobs:
         run: |
           git config user.name "wraithpicks-bot"
           git config user.email "wraithpicks-bot@users.noreply.github.com"
-          git add -f data/picklog.jsonl data/settled.jsonl data/calibration.json data/gamecal.json data/biasfix.json data/minfix.json data/wofix.json data/runs.jsonl data/more.json data/projlog.jsonl data/model.json data/combolog.jsonl data/combosettled.jsonl data/combocorr.json data/lines 2>/dev/null || true
+          git add -f data/picklog.jsonl data/settled.jsonl data/calibration.json data/gamecal.json data/biasfix.json data/minfix.json data/wofix.json data/runs.jsonl data/more.json data/projlog.jsonl data/model.json data/combolog.jsonl data/combosettled.jsonl data/combocorr.json data/lines data/v2log.jsonl data/v2settled.jsonl data/v2.json data/model_v2.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "nothing new to commit"
           else

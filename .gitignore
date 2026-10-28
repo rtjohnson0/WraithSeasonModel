@@ -17,6 +17,10 @@ data/*
 !data/combosettled.jsonl
 !data/combocorr.json
 !data/lines
+!data/v2log.jsonl
+!data/v2settled.jsonl
+!data/v2.json
+!data/model_v2.json
 demo_data/
 bin/
 *.exe

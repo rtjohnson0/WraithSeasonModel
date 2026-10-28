@@ -363,3 +363,12 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
 @media (max-width: 600px) { .overs ul { grid-template-columns: 1fr; } }
 
 .combopage { h3 { margin: 18px 0 6px; font-size: 1rem; } .record { margin-top: 26px; } .record h2 { margin: 0 0 6px; } }
+
+.v2changes {
+  margin: 0.8rem 0 1rem;
+  padding: 0.2rem 0 0.2rem 0.9rem;
+  border-left: 2px solid var(--purple-hi);
+  max-width: 62ch;
+  p { margin: 0 0 0.6rem; line-height: 1.5; }
+}
+.v2page > .day { margin-bottom: 0.4rem; }

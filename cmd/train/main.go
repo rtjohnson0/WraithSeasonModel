@@ -23,7 +23,11 @@ func main() {
 	dir := flag.String("data", "data", "data directory")
 	lineup := flag.Bool("lineup", false, "include teammates-out features")
 	missed := flag.Bool("missed", false, "add the expected-missed-shots rebound feature (backtest it first; the calibration must be refitted)")
+	v2 := flag.Bool("v2", false, "train the V2 challenger model instead: teammates-out and missed-shots features on, saved to data/model_v2.json. The main model.json is not touched")
 	flag.Parse()
+	if *v2 {
+		*lineup, *missed = true, true
+	}
 	pipeline.Missed = *missed
 
 	d, err := pipeline.Load(*dir, true)
@@ -36,6 +40,9 @@ func main() {
 		fatal(err)
 	}
 	out := filepath.Join(*dir, "model.json")
+	if *v2 {
+		out = filepath.Join(*dir, "model_v2.json")
+	}
 	if err := m.Save(out); err != nil {
 		fatal(err)
 	}

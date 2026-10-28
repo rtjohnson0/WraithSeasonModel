@@ -273,6 +273,8 @@ type Site struct {
 	Record      Record      `json:"record"`
 	Combos      ComboRecord `json:"combos"`
 	Lines       LinesRecord `json:"lines"`
+	// V2 is the challenger model's board and record, tracked apart from everything above.
+	V2 *V2Site `json:"v2,omitempty"`
 }
 
 // grade turns the model's calibrated probability into a letter. Only staked picks can earn an A:

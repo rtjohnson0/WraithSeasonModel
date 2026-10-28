@@ -103,6 +103,9 @@ func main() {
 	useBias := flag.Bool("bias", false, "apply data/biasfix.json. Off by default: on 2026-10-26 it pulled live projections to 14% under the lines while the lines themselves were accurate (cmd/linecheck)")
 	useCombos := flag.Bool("combos", true, "also score the combined markets (points+rebounds+assists, points+rebounds, points+assists, rebounds+assists). They are tracked in data/combolog.jsonl and shown on the site apart from the picks, never staked, until `go run ./cmd/combos settle` shows they earn it")
 	comboWeight := flag.Float64("comboweight", -1, "-1 (default): a combo's probability uses the calibration its parts (points, rebounds, assists) earned, weighted by their share of the total, so it is only as confident as the singles have earned. 0 to 1: a plain blend with this share from the model, the rest the book's devigged price")
+	useV2 := flag.Bool("v2", true, "also run the V2 challenger beside the real model: a live correction fitted on earlier days plus a model-forward blend. Its plays are tracked in data/v2log.jsonl and shown on the site's V2 test page; they never change a real pick")
+	v2ModelFile := flag.String("v2model", "model_v2.json", "V2: a second model file in the data directory (train it with `go run ./cmd/train -v2`: teammates-out and missed-shots features on). V2 uses the main model when the file is missing")
+	v2Weight := flag.Float64("v2weight", 0.5, "V2: the model's share of the probability (the rest is the book's devigged price). The real model's calibration gives points 3% and rebounds 24%")
 	comboBar := flag.Float64("combobar", 0.53, "a combo is tracked at this probability (53% Over or 47% Under by default), looser than the 55% posting bar because combos are never staked and need a graded sample; the printout says how many reach 55%")
 	comboPer := flag.Int("comboperplayer", 1, "most combo plays to track per player (PRA and PR on the same player are one idea, not two)")
 	comboMax := flag.Int("combomax", 30, "most combo plays to track per run")
@@ -368,6 +371,49 @@ func main() {
 	}
 	var all, picks []scored
 	projLog := map[int]*projlog.Entry{}
+	v2fix := newV2Fix()
+	var v2all []scored
+	m2, v2model := m, "the main model"
+	if *useV2 && gid == 0 {
+		prev, _ := projlog.Load(filepath.Join(*dir, "projlog.jsonl"))
+		v2fix = fitV2(prev, *date, ix.Actual)
+		if mm, err := predictor.Load(filepath.Join(*dir, *v2ModelFile)); err == nil {
+			m2, v2model = mm, *v2ModelFile+" (a second model with the teammates-out and missed-shots features)"
+		}
+		// Level anchor for V2: the slate's average line over V2's average projection, per stat.
+		sumP, sumL := map[data.Stat]float64{}, map[data.Stat]float64{}
+		seenM := map[marketKey]bool{}
+		for _, l := range lines {
+			mk := marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}
+			if seenM[mk] || !boardSet[l.Stat] || l.OverOdds == 0 || l.UnderOdds == 0 {
+				continue
+			}
+			g, ok := games[l.GameID]
+			if _, isOut := out[l.PlayerID]; !ok || isOut {
+				continue
+			}
+			team, ok := teamOf(l.PlayerID)
+			if !ok || (team != g.Home && team != g.Visitor) {
+				continue
+			}
+			row := rowFor(l.PlayerID, g, team)
+			if row == nil {
+				continue
+			}
+			p2 := v2fix.shiftMinutes(adjustMinutes(m2.Predict(row), row))
+			if !model.Eligible(row.AvgMin15, p2.Minutes) {
+				continue
+			}
+			seenM[mk] = true
+			ls := append([]float64(nil), byMarket[mk]...)
+			sort.Float64s(ls)
+			sumP[l.Stat] += p2.Mean(l.Stat)
+			sumL[l.Stat] += ls[len(ls)/2]
+		}
+		for _, st := range data.Stats {
+			v2fix.Anchor[st] = v2Anchor(sumL[st], sumP[st])
+		}
+	}
 	var offMarket []offRow
 	marketRows := map[marketKey]lineslog.Market{}
 	skip := struct{ noGame, noTeam, noHistory, minutes, out, noPrice int }{}
@@ -504,6 +550,7 @@ func main() {
 			Shift: pred.Minutes - row.TypicalMinutes(), Tip: g.Start,
 			Dist: pred.Dist(l.Stat, distMax(l.Stat, l.Line, pred.Mean(l.Stat))),
 		}
+		baseWhy := s.Why
 		if st, ok := statuses[l.PlayerID]; ok && props.IsUncertain(st) {
 			s.Maybe = st
 			s.Why = addWhy(s.Why, "HIS STATUS: "+st)
@@ -548,6 +595,11 @@ func main() {
 		}
 		s.Tier = "LEAN"
 		all = append(all, s)
+		if *useV2 && gid == 0 && !s.Far {
+			if v2s, ok := v2Score(s, baseWhy, adjustMinutes(m2.Predict(row), row), l, v2fix, *v2Weight); ok {
+				v2all = append(v2all, v2s)
+			}
+		}
 		if (pOver >= *hi || pOver <= 1-*hi) && s.Edge >= *minEdge {
 			s.Tier = "PICK"
 			if early {
@@ -609,12 +661,14 @@ func main() {
 
 	var comboPlays []scored
 	var comboSummary comboStats
+	var v2Combos []scored
+	var v2ComboSummary comboStats
 	if *useCombos && gid == 0 {
 		lookup := teamOf
 		comboLines, _ := props.LoadSnapshotCombos(propsPath)
 		comboLines = append(comboLines, sgoLinesFor(*dir, *date, b, gameOf, true)...)
 		var cs comboStats
-		comboPlays, cs = scoreCombos(comboDeps{
+		cd := comboDeps{
 			b: b, ix: ix, m: m, games: games, out: out, statuses: statuses, teamOf: lookup, rowFor: rowFor, adjust: adjustMinutes,
 			scale: func(st data.Stat, row *feat.Row) float64 {
 				f := biasFix.For(st)
@@ -625,8 +679,18 @@ func main() {
 			},
 			corr: combo.Load(filepath.Join(*dir, "combocorr.json")), cal: cal, calOK: calOK, weight: *comboWeight, hi: *comboBar, minEdge: *minEdge, maxGap: *maxGap,
 			maxTotal: *comboMax, perPlayer: *comboPer, date: *date,
-		}, comboLines)
+		}
+		comboPlays, cs = scoreCombos(cd, comboLines)
 		comboSummary = cs
+		if *useV2 {
+			// The same combos, priced with V2's live correction and a model-forward blend.
+			d2 := cd
+			d2.weight = *v2Weight
+			d2.m = m2
+			d2.adjust = func(p predictor.Pred, row *feat.Row) predictor.Pred { return v2fix.shiftMinutes(adjustMinutes(p, row)) }
+			d2.scale = func(st data.Stat, row *feat.Row) float64 { return v2fix.statFactor(st) }
+			v2Combos, v2ComboSummary = scoreCombos(d2, comboLines)
+		}
 	}
 
 	picks = bestLinePerPick(picks)
@@ -673,6 +737,13 @@ func main() {
 	overWatch(all, picks, *hi, *minEdge)
 	printOffMarket(offMarket)
 	printCombos(comboPlays, comboSummary, *comboBar)
+	var v2Plays []scored
+	var v2Meta *V2Info
+	if *useV2 && gid == 0 {
+		v2Plays = v2Select(v2all, *hi, *minEdge, *maxGame, *maxPlayer)
+		v2Meta = v2Info(v2fix, *v2Weight, *hi, *comboBar, v2model, v2all, v2Plays)
+		printV2(v2fix, v2Meta, v2Plays, v2Combos)
+	}
 	fmt.Printf("skipped: %d no game info, %d player not on a team playing today, %d too little history, %d not enough minutes, %d ruled out, %d with no price on one side\n\n",
 		skip.noGame, skip.noTeam, skip.noHistory, skip.minutes, skip.out, skip.noPrice)
 
@@ -743,6 +814,22 @@ func main() {
 			fmt.Println("note: could not save the off-market log:", err)
 		} else {
 			fmt.Printf("Logged %d lines at the market median to data/lines/market_%s.jsonl and %d new off-market lines to data/lines/offmarket.jsonl (graded by `go run ./cmd/lines`).\n", len(mkt), *date, n)
+		}
+	}
+
+	if !*noLog && gid == 0 && *useV2 {
+		pe, ce := v2Entries(*date, v2Plays, "PAPER"), v2Entries(*date, v2Combos, comboTier)
+		f := V2File{Date: *date, At: time.Now().UTC().Format(time.RFC3339), Plays: pe, Combos: ce,
+			ComboInfo: comboInfo(v2ComboSummary, len(v2Combos), *comboBar), Info: v2Meta}
+		if err := writeV2(*dir, f); err != nil {
+			fmt.Println("note: could not save data/v2.json:", err)
+		}
+		if len(pe)+len(ce) > 0 {
+			n, err := picklog.Append(filepath.Join(*dir, "v2log.jsonl"), append(pe, ce...))
+			if err != nil {
+				fatal(err)
+			}
+			fmt.Printf("Logged %d new V2 plays to %s (graded by `go run ./cmd/v2 settle`; the V2 test page shows them).\n", n, filepath.Join(*dir, "v2log.jsonl"))
 		}
 	}
 
