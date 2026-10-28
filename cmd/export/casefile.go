@@ -351,7 +351,7 @@ func attachMore(b *Board, mf moreFile, form Form) {
 	for _, e := range mf.Plays {
 		i, ok := idx[e.GameID]
 		if !ok {
-			b.Games = append(b.Games, Game{ID: e.GameID, Matchup: matchupOf(e), Tip: e.Tip})
+			b.Games = append(b.Games, Game{ID: e.GameID, Matchup: matchupOf(e), Tip: e.Tip, Plays: []Play{}})
 			i = len(b.Games) - 1
 			idx[e.GameID] = i
 		}

@@ -522,7 +522,7 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 		e := best[k]
 		g := byGame[e.GameID]
 		if g == nil {
-			g = &Game{ID: e.GameID, Matchup: matchupOf(e), Tip: e.Tip}
+			g = &Game{ID: e.GameID, Matchup: matchupOf(e), Tip: e.Tip, Plays: []Play{}}
 			byGame[e.GameID] = g
 			ids = append(ids, e.GameID)
 		}

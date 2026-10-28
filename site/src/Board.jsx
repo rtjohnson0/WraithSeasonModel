@@ -101,7 +101,7 @@ function TopPlays({ games, now, onPick }) {
   games.forEach((g) => {
     const ts = tipState(g.tip, now)
     if (ts.state === 'live' || ts.state === 'done') return
-    g.plays.forEach((p) => {
+    ;(g.plays || []).forEach((p) => {
       if (p.label !== 'Lean') open.push({ p, g, ts })
     })
   })
@@ -563,7 +563,7 @@ export default function Board({ site }) {
   const [focus, setFocus] = useState(null)
   const now = useNow()
 
-  const all = useMemo(() => board.games.flatMap((g) => g.plays), [board])
+  const all = useMemo(() => board.games.flatMap((g) => g.plays || []), [board])
   const count = (f) => all.filter(f).length
 
   const games = useMemo(
@@ -571,7 +571,7 @@ export default function Board({ site }) {
       board.games
         .map((g) => ({
           ...g,
-          plays: g.plays.filter(
+          plays: (g.plays || []).filter(
             (p) =>
               (stat === 'all' || p.stat === stat) &&
               (label === 'all' || p.label === label) &&

@@ -317,6 +317,9 @@ func TestAttachMore(t *testing.T) {
 	if len(b.Games) != 2 || b.Games[0].ID != 2 || len(b.Games[1].More) != 1 || len(b.Games[0].More) != 1 {
 		t.Fatalf("extras should attach to their game, create a missing game and keep tip order: %+v", b.Games)
 	}
+	if b.Games[0].Plays == nil {
+		t.Error("a game created only for extras must export plays as [], not null: the site reads it with .filter and went blank on null")
+	}
 	stale := Board{Date: "2026-10-27"}
 	attachMore(&stale, mf, nil)
 	if len(stale.Games) != 0 {
