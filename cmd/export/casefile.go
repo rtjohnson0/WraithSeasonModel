@@ -181,6 +181,8 @@ func buildCase(p Play, track map[string]Row, ctx *GameContext) *Case {
 		c.Against = append(c.Against, "The minutes projection needs a human look before trusting this one.")
 	case "LEAN":
 		c.Against = append(c.Against, "A fill-in play: it did not clear the model's normal bar.")
+	case "V2LEAN":
+		c.Against = append(c.Against, "It cleared V2's bar, but the real model does not back it at 53% yet or V2 has not proven this stat and side on enough graded lines, so it is a lean, not a strong play.")
 	}
 
 	// Live track record.

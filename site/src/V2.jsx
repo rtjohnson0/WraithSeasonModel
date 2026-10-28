@@ -10,6 +10,40 @@ const joinStats = (obj) =>
     .map((s) => `${(statLabel[s] || s).toLowerCase()} ${pctChange(obj[s])}`)
     .join(', ')
 
+const stateText = { proven: 'proven', failed: 'not beating the base rate', unproven: 'not enough lines yet' }
+
+// V2's own record by stat and side: what lets a play be Strong, and what blocks one.
+function Gates({ gates, minN }) {
+  if (!gates?.length) return null
+  return (
+    <details className="v2gates">
+      <summary>V2&apos;s record by stat and side (a play needs {minN}+ graded lines to be judged)</summary>
+      <table>
+        <thead>
+          <tr>
+            <th>Stat and side</th>
+            <th>Graded lines</th>
+            <th>Leans right</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {gates.map((g) => (
+            <tr key={`${g.stat}-${g.side}`}>
+              <td>
+                {(statLabel[g.stat] || g.stat).toLowerCase()} {g.side.toLowerCase()}s
+              </td>
+              <td>{g.n}</td>
+              <td>{g.n > 0 ? `${(g.hit * 100).toFixed(0)}%` : '-'}</td>
+              <td className={`state-${g.state}`}>{stateText[g.state] || g.state}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </details>
+  )
+}
+
 function Changes({ info }) {
   if (!info) return null
   const learned = info.players > 0
@@ -30,9 +64,19 @@ function Changes({ info }) {
           : 'There are no earlier days to learn the live correction from yet.'}
       </p>
       <p>
-        {info.scored} lines scored: {info.over} lean Over, {info.under} lean Under. {info.posted} posted. V2 does not force Overs; the mix is what its
-        probabilities say.
+        <b>How V2 tightens the board.</b> A play that clears the {Math.round(info.bar * 100)}% bar is a <b>Strong play</b> only when the real model leans
+        the same way (53% or more on that side) and V2&apos;s own record on that stat and side, graded over every line in the market log, beats always
+        saying the stat&apos;s base rate on {info.gate_min_n}+ lines. Otherwise it is a <b>Lean</b>: posted and tracked, not backed. It is a <b>Risky
+        play</b> when the model and the book are 15+ points apart (more often missing news than an edge) or the player&apos;s status is uncertain. It is
+        left out when the real model leans the other way at 53% or more, when fewer than 4 books list it or their lines are scattered, or when V2&apos;s record
+        on that stat and side has {info.gate_min_n}+ graded lines and does not beat the base rate. Overs and Unders face identical rules.
       </p>
+      <p>
+        {info.scored} lines scored: {info.over} lean Over, {info.under} lean Under. {info.posted} posted: {info.strong} Strong, {info.check} Risky,{' '}
+        {info.lean} Lean. Left out: {info.dropped?.thin || 0} thin or scattered markets, {info.dropped?.disagree || 0} the real model disagrees with ({info.dropped?.disagree_over || 0} of them Overs),{' '}
+        {info.dropped?.failed || 0} on a stat and side that failed its gate. V2 does not force Overs; the mix is what its probabilities say.
+      </p>
+      <Gates gates={info.gates} minN={info.gate_min_n} />
     </div>
   )
 }

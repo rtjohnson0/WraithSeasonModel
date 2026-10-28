@@ -27,8 +27,9 @@ export const statLabel = {
 export const labelInfo = {
   'Max play': { key: 'max', note: 'Staked: the model backs this one with a stake, on a stat that has held up in testing.' },
   'Great play': { key: 'great', note: 'A strong number, but not staked: the stat is unproven in testing or the team is early in its season.' },
+  'Strong play': { key: 'strong', note: 'V2 only. The real model leans the same way, and V2 has proven this stat and side on enough graded lines. Not staked.' },
   'Risky play': { key: 'risky', note: 'Clears the bar, but minutes, an injury status or an odd line need a look before you bet.' },
-  Lean: { key: 'lean', note: 'A smaller edge, listed so every game has plays. Not a recommendation.' },
+  Lean: { key: 'lean', note: 'Listed for tracking, not a recommendation: a smaller edge, or (on the V2 page) a play the real model does not back yet or on a stat and side V2 has not proven.' },
 }
 export const LABELS = Object.keys(labelInfo)
 

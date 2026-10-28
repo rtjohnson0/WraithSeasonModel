@@ -54,3 +54,44 @@ func TestBuildV2(t *testing.T) {
 		t.Error("info should pass through")
 	}
 }
+
+func TestBuildV2TiersOversAndRecordRows(t *testing.T) {
+	dir := t.TempDir()
+	strong := picklog.Entry{Date: "2026-10-28", GameID: 1, PlayerID: 5, Player: "A", Team: "ATL", Matchup: "MIA @ ATL", Stat: "rebounds", Side: "UNDER", Line: 8.5, Odds: -110, Prob: 0.60, Edge: 0.06, Tier: "STRONG"}
+	lean := picklog.Entry{Date: "2026-10-28", GameID: 1, PlayerID: 7, Player: "C", Team: "ATL", Matchup: "MIA @ ATL", Stat: "points", Side: "OVER", Line: 18.5, Odds: -110, Prob: 0.56, Edge: 0.03, Tier: "V2LEAN"}
+	f := v2File{Date: "2026-10-28", Plays: []picklog.Entry{lean, strong},
+		Overs: []OverWatch{{GameID: 1, Player: "D", Stat: "assists", Line: 5.5, Prob: 0.53, Status: "model gives it 53%; a pick needs 55%"}},
+		Info:  &V2Info{Strong: 1, Lean: 1}}
+	b, _ := json.Marshal(f)
+	os.WriteFile(filepath.Join(dir, "v2.json"), b, 0o644)
+	if _, err := picklog.AppendSettled(filepath.Join(dir, "v2settled.jsonl"), []picklog.Settled{picklog.Grade(strong, 6, 0, true), picklog.Grade(lean, 22, 0, true)}); err != nil {
+		t.Fatal(err)
+	}
+	v := buildV2(dir, nil)
+	if v == nil {
+		t.Fatal("V2 section missing")
+	}
+	labels := map[string]string{}
+	for _, p := range v.Board.Games[0].Plays {
+		labels[p.Player] = p.Label
+	}
+	if labels["A"] != "Strong play" || labels["C"] != "Lean" {
+		t.Errorf("tiers should read Strong play and Lean: %v", labels)
+	}
+	if v.Board.Games[0].Plays[0].Player != "A" {
+		t.Error("the strong play sorts first")
+	}
+	if len(v.Board.Overs) != 1 || v.Board.Overs[0].Player != "D" {
+		t.Errorf("the Overs watch should pass through: %+v", v.Board.Overs)
+	}
+	if v.Info.Gates == nil {
+		t.Error("gates must be a list, never null")
+	}
+	names := map[string]int{}
+	for _, r := range v.Record.Tiers {
+		names[r.Name] = r.Picks
+	}
+	if names["V2 strong plays (the real model agrees, stat and side proven)"] != 1 || names["V2 lean plays (posted, not yet backed by the real model or a proven record)"] != 1 {
+		t.Errorf("record should split strong and lean: %v", names)
+	}
+}

@@ -2,9 +2,11 @@ package main
 
 import (
 	"math"
+	"strings"
 	"testing"
 
 	"propsmodel/internal/data"
+	"propsmodel/internal/lineslog"
 	"propsmodel/internal/predictor"
 	"propsmodel/internal/projlog"
 )
@@ -72,24 +74,180 @@ func TestShiftMinutesOnlyForStars(t *testing.T) {
 	}
 }
 
-func TestBlendAndSelect(t *testing.T) {
+func TestBlend(t *testing.T) {
 	if got := blend(0.60, 0.50, 0.5); math.Abs(got-0.55) > 1e-9 {
 		t.Errorf("50/50 blend of 60 and 50 should be 55, got %v", got)
 	}
-	all := []scored{
-		{PlayerID: 1, GameID: 1, Stat: data.Points, Side: "OVER", Line: 20.5, Prob: 0.57, Edge: 0.03, Odds: -110},
-		{PlayerID: 2, GameID: 1, Stat: data.Points, Side: "UNDER", Line: 10.5, Prob: 0.54, Edge: 0.02, Odds: -110},  // under the bar
-		{PlayerID: 3, GameID: 1, Stat: data.Rebounds, Side: "UNDER", Line: 6.5, Prob: 0.58, Edge: 0.00, Odds: -110}, // no edge
-		{PlayerID: 4, GameID: 2, Stat: data.Assists, Side: "UNDER", Line: 4.5, Prob: 0.60, Edge: 0.05, Odds: -105},
+}
+
+// play builds a V2-scored line that clears the bar with a deep, tight market and the real model on the
+// same side.
+func play(id int, stat data.Stat, side string, prob float64) scored {
+	return scored{PlayerID: id, GameID: 1, Player: "P", Stat: stat, Side: side, Line: 20.5, Prob: prob, ProbRaw: prob + 0.02, Edge: prob - 0.52, Odds: -110,
+		Books: 8, Spread: 1, V1Prob: 0.55, Mkt: prob - 0.04}
+}
+
+func provenGates(stat data.Stat, side string) map[string]V2Gate {
+	return map[string]V2Gate{gateKey(string(stat), side): {Stat: string(stat), Side: side, N: 200, State: gateProven}}
+}
+
+func TestTierRules(t *testing.T) {
+	proven := provenGates(data.Rebounds, "UNDER")
+	cases := []struct {
+		name  string
+		s     scored
+		gates map[string]V2Gate
+		tier  string
+		drop  string
+	}{
+		{"proven, real model agrees: strong", play(1, data.Rebounds, "UNDER", 0.58), proven, tierStrong, ""},
+		{"no graded lines yet: lean", play(1, data.Rebounds, "UNDER", 0.58), nil, tierLean, ""},
+		{"real model only 51%: lean even when proven", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.V1Prob = 0.51; return s }(), proven, tierLean, ""},
+		{"real model 53% the other way: dropped", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.V1Prob = 0.46; return s }(), proven, "", "disagree"},
+		{"real model 49% (a coin flip) is not a disagreement", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.V1Prob = 0.49; return s }(), nil, tierLean, ""},
+		{"three books: dropped", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.Books = 3; return s }(), proven, "", "thin"},
+		{"scattered books: dropped", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.Spread = 4; return s }(), proven, "", "thin"},
+		{"model and book 15 points apart: check", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.ProbRaw, s.Mkt = 0.70, 0.52; return s }(), proven, tierCheck, ""},
+		{"uncertain status: check", func() scored { s := play(1, data.Rebounds, "UNDER", 0.58); s.Maybe = "questionable"; return s }(), proven, tierCheck, ""},
+		{"failed gate: dropped", play(1, data.Points, "OVER", 0.58), map[string]V2Gate{gateKey("points", "OVER"): {N: 300, State: gateFailed}}, "", "failed"},
 	}
-	got := v2Select(all, 0.55, 0.01, 4, 2)
-	if len(got) != 2 || got[0].PlayerID != 1 || got[1].PlayerID != 4 {
-		t.Errorf("only plays above the bar with an edge are posted: %+v", got)
+	for _, c := range cases {
+		tier, drop := v2Tier(c.s, v2Rules{Gates: c.gates})
+		if tier != c.tier || drop != c.drop {
+			t.Errorf("%s: got tier %q drop %q, want %q %q", c.name, tier, drop, c.tier, c.drop)
+		}
 	}
+}
+
+func TestOversAndUndersFaceTheSameRules(t *testing.T) {
+	gates := map[string]V2Gate{}
+	for _, side := range []string{"OVER", "UNDER"} {
+		gates[gateKey("assists", side)] = V2Gate{N: 200, State: gateProven}
+	}
+	over, under := play(1, data.Assists, "OVER", 0.58), play(2, data.Assists, "UNDER", 0.58)
+	over.V1Prob, under.V1Prob = 0.56, 0.56
+	to, do := v2Tier(over, v2Rules{Gates: gates})
+	tu, du := v2Tier(under, v2Rules{Gates: gates})
+	if to != tu || do != du || to != tierStrong {
+		t.Errorf("a mirrored Over and Under must be treated identically: %q/%q vs %q/%q", to, do, tu, du)
+	}
+}
+
+func TestSpreadOK(t *testing.T) {
+	cases := []struct {
+		books        int
+		spread, line float64
+		want         bool
+	}{
+		{8, 1, 20.5, true},
+		{4, 1.5, 4.5, true},
+		{3, 0.5, 20.5, false},
+		{8, 2.5, 20.5, true}, // 12% of 20.5 is 2.46: a 2.5 spread is just over
+		{8, 3, 30.5, true},
+		{8, 2, 4.5, false},
+	}
+	// 2.5 on a 20.5 line is wider than 12% of the line, so it is scattered.
+	cases[3].want = false
+	for _, c := range cases {
+		if got := spreadOK(c.books, 0, c.spread, c.line); got != c.want {
+			t.Errorf("spreadOK(%d,%v,%v) = %v, want %v", c.books, c.spread, c.line, got, c.want)
+		}
+	}
+}
+
+func TestGatesFromCells(t *testing.T) {
+	cells := []lineslog.Cell{
+		{Stat: "points", Side: "OVER", N: 40, Hit: 0.6, Brier: 0.24, Base: 0.25},     // too few lines
+		{Stat: "points", Side: "UNDER", N: 200, Hit: 0.56, Brier: 0.24, Base: 0.25},  // beats the base rate
+		{Stat: "assists", Side: "UNDER", N: 200, Hit: 0.55, Brier: 0.26, Base: 0.25}, // does not
+		{Stat: "rebounds", Side: "OVER", N: 200, Hit: 0.45, Brier: 0.24, Base: 0.25}, // beats Brier but leans are wrong more than right
+	}
+	g := v2Gates(cells, 150)
+	want := map[string]string{"points|OVER": gateUnproven, "points|UNDER": gateProven, "assists|UNDER": gateFailed, "rebounds|OVER": gateFailed}
+	for k, state := range want {
+		if g[k].State != state {
+			t.Errorf("%s: got %s, want %s (%s)", k, g[k].State, state, g[k].Reason)
+		}
+	}
+	if gateOf(g, "threes", "OVER").State != gateUnproven {
+		t.Error("a cell with no lines is unproven")
+	}
+	if got := len(gateList(g)); got != 8 {
+		t.Errorf("the gate list covers 4 stats and 2 sides, got %d", got)
+	}
+}
+
+func TestSelectTiersCapsAndDrops(t *testing.T) {
+	strong := play(1, data.Rebounds, "UNDER", 0.60)
+	lean := play(2, data.Rebounds, "OVER", 0.57)
+	lean.V1Prob = 0.50
+	underBar := play(3, data.Points, "UNDER", 0.54)
+	noEdge := play(4, data.Rebounds, "UNDER", 0.58)
+	noEdge.Edge = 0
+	thin := play(5, data.Rebounds, "UNDER", 0.58)
+	thin.Books = 2
+	disagree := play(6, data.Rebounds, "UNDER", 0.58)
+	disagree.V1Prob = 0.45
+	failed := play(7, data.Assists, "OVER", 0.58)
+	other := play(8, data.Assists, "UNDER", 0.59)
+	other.GameID = 2
+	gates := provenGates(data.Rebounds, "UNDER")
+	gates[gateKey("assists", "OVER")] = V2Gate{N: 300, State: gateFailed}
+	got, drops := v2Select([]scored{strong, lean, underBar, noEdge, thin, disagree, failed, other}, v2Rules{Hi: 0.55, MinEdge: 0.01, MaxGame: 4, MaxPlayer: 2, Gates: gates})
+	if drops != (V2Drops{Thin: 1, Disagree: 1, Failed: 1}) {
+		t.Errorf("drops: %+v", drops)
+	}
+	tiers := map[int]string{}
 	for _, s := range got {
+		tiers[s.PlayerID] = s.Tier
 		if s.Units != 0 {
 			t.Error("V2 is never staked")
 		}
+	}
+	if len(got) != 3 || tiers[1] != tierStrong || tiers[2] != tierLean || tiers[8] != tierLean {
+		t.Errorf("want a strong, a lean Over and a lean from the other game, got %+v", tiers)
+	}
+	if got[0].PlayerID != 1 || got[1].PlayerID != 2 {
+		t.Errorf("within a game the strong play comes first: %v %v", got[0].PlayerID, got[1].PlayerID)
+	}
+
+	// A Lean never takes a Strong play's place under the per-game cap.
+	var crowd []scored
+	for i := 0; i < 5; i++ {
+		l := play(10+i, data.Rebounds, "OVER", 0.59)
+		l.V1Prob = 0.50
+		crowd = append(crowd, l)
+	}
+	crowd = append(crowd, play(20, data.Rebounds, "UNDER", 0.56))
+	got, _ = v2Select(crowd, v2Rules{Hi: 0.55, MinEdge: 0.01, MaxGame: 2, MaxPlayer: 2, Gates: gates})
+	hasStrong := false
+	for _, s := range got {
+		if s.PlayerID == 20 && s.Tier == tierStrong {
+			hasStrong = true
+		}
+	}
+	if len(got) > 3 || !hasStrong {
+		t.Errorf("the strong play must survive the cap: %+v", got)
+	}
+}
+
+func TestOversWatchExplainsWhyAnOverIsOut(t *testing.T) {
+	good := play(1, data.Points, "OVER", 0.52) // just short of the bar
+	good.Edge = 0
+	disagrees := play(2, data.Points, "OVER", 0.58)
+	disagrees.Player, disagrees.V1Prob = "Q", 0.40
+	thin := play(3, data.Points, "OVER", 0.50) // thin and short of the bar: not worth listing
+	thin.Player, thin.Books = "R", 2
+	rows := v2OversWatch([]scored{good, disagrees, thin}, nil, v2Rules{Hi: 0.55, MinEdge: 0.01, MaxGame: 4, MaxPlayer: 2}, 12)
+	var names []string
+	for _, r := range rows {
+		names = append(names, r.Player)
+		if r.Player == "Q" && !strings.Contains(r.Status, "V2 left it out") {
+			t.Errorf("a cleared Over that V2 dropped must say why: %q", r.Status)
+		}
+	}
+	if len(rows) != 2 {
+		t.Errorf("want the near miss and the dropped Over, not the thin market: %v", names)
 	}
 }
 
@@ -113,5 +271,20 @@ func TestAnchorAndFactor(t *testing.T) {
 	}
 	if f.statFactor(data.Threes) != 1 {
 		t.Error("unset stats stay at 1")
+	}
+}
+
+func TestKeepDisagreeTurnsTheDropIntoALean(t *testing.T) {
+	s := play(1, data.Rebounds, "UNDER", 0.58)
+	s.V1Prob = 0.40
+	if tier, drop := v2Tier(s, v2Rules{}); tier != "" || drop != "disagree" {
+		t.Errorf("default drops it: %q %q", tier, drop)
+	}
+	if tier, drop := v2Tier(s, v2Rules{KeepDisagree: true}); tier != tierLean || drop != "" {
+		t.Errorf("with -v2keep it is a Lean, never Strong: %q %q", tier, drop)
+	}
+	got, drops := v2Select([]scored{s}, v2Rules{Hi: 0.55, MinEdge: 0.01, MaxGame: 4, MaxPlayer: 2, KeepDisagree: true})
+	if len(got) != 1 || drops.Disagree != 0 {
+		t.Errorf("kept play should post: %+v %+v", got, drops)
 	}
 }

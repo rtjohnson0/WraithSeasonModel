@@ -36,6 +36,33 @@ type V2Info struct {
 	Over     int                `json:"over"`
 	Under    int                `json:"under"`
 	Posted   int                `json:"posted"`
+	Strong   int                `json:"strong"`
+	Lean     int                `json:"lean"`
+	Check    int                `json:"check"`
+	Dropped  V2Drops            `json:"dropped"`
+	Gates    []V2Gate           `json:"gates"`
+	GateMinN int                `json:"gate_min_n"`
+	Watch    int                `json:"watch"`
+}
+
+// V2Drops counts the plays that cleared the bar and were left out, by reason.
+type V2Drops struct {
+	Thin         int `json:"thin"`
+	Disagree     int `json:"disagree"`
+	DisagreeOver int `json:"disagree_over"`
+	Failed       int `json:"failed"`
+}
+
+// V2Gate is V2's record on one stat and side over every graded line in the market log.
+type V2Gate struct {
+	Stat   string  `json:"stat"`
+	Side   string  `json:"side"`
+	N      int     `json:"n"`
+	Hit    float64 `json:"hit"`
+	Brier  float64 `json:"brier"`
+	Base   float64 `json:"base"`
+	State  string  `json:"state"`
+	Reason string  `json:"reason"`
 }
 
 type v2File struct {
@@ -45,6 +72,7 @@ type v2File struct {
 	Combos    []picklog.Entry `json:"combos"`
 	ComboInfo *ComboInfo      `json:"combo_info"`
 	Info      *V2Info         `json:"info"`
+	Overs     []OverWatch     `json:"overs"`
 }
 
 // buildV2 reads data/v2.json (the latest run) and data/v2settled.jsonl. It returns nil when V2 has
@@ -72,6 +100,10 @@ func buildV2(dir string, form Form) *V2Site {
 		Record: buildRecord(singles, 600),
 		Combos: buildComboRecord(combos, 120),
 		Info:   f.Info,
+	}
+	site.Board.Overs = f.Overs
+	if site.Info != nil && site.Info.Gates == nil {
+		site.Info.Gates = []V2Gate{} // the page reads it as a list
 	}
 	attachCombos(&site.Board, moreFile{Date: f.Date, Combos: f.Combos, ComboInfo: f.ComboInfo}, form)
 	attachCases(&site.Board, trackRecords(singles))

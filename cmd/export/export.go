@@ -320,6 +320,8 @@ func label(tier string, prob float64) string {
 	switch normTier(tier) {
 	case "PICK":
 		return "Max play"
+	case "STRONG":
+		return "Strong play"
 	case "CHECK":
 		return "Risky play"
 	case "PAPER":
@@ -642,6 +644,8 @@ func buildRecord(settled []picklog.Settled, recentN int) Record {
 	add("Not staked: unproven stat or early season", byTier["PAPER"], false)
 	add("Not staked: needed a check", byTier["CHECK"], false)
 	add("Not staked: fill-in leans", byTier["LEAN"], false)
+	add("V2 strong plays (the real model agrees, stat and side proven)", byTier["STRONG"], false)
+	add("V2 lean plays (posted, not yet backed by the real model or a proven record)", byTier["V2LEAN"], false)
 	add("Everything tracked", every, false)
 
 	for _, stat := range []string{"points", "rebounds", "assists", "threes"} {

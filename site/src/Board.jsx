@@ -647,7 +647,7 @@ export default function Board({ site }) {
           label="Play type"
           value={label}
           onChange={setLabel}
-          options={[['all', 'Any type'], ...LABELS.map((t) => [t, t, count((p) => p.label === t)])]}
+          options={[['all', 'Any type'], ...LABELS.map((t) => [t, t, count((p) => p.label === t)]).filter(([t, , n]) => t !== 'Strong play' || n > 0)]}
         />
         {board.runsToday?.length > 1 && (
           <Seg

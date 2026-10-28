@@ -191,7 +191,7 @@ func Summarize(rows []Settled) Summary {
 	return s
 }
 
-var tierRank = map[string]int{"": 0, "PICK": 0, "CHECK": 1, "PAPER": 2, "LEAN": 3}
+var tierRank = map[string]int{"": 0, "PICK": 0, "STRONG": 0, "CHECK": 1, "PAPER": 2, "LEAN": 3, "V2LEAN": 3}
 
 // TierRank orders tiers from most to least trusted (PICK first). Unknown tiers sort last.
 func TierRank(t string) int {

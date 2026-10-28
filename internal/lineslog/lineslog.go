@@ -46,6 +46,7 @@ type Market struct {
 	Hi       float64 `json:"hi"`
 	Open     float64 `json:"open,omitempty"` // the median at the day's first capture (0 when unknown)
 	POver    float64 `json:"p_over"`         // the model's calibrated P(over) at the median line
+	P2       float64 `json:"p2,omitempty"`   // the V2 challenger's blended P(over) at the same line (0 when V2 did not score it)
 	Proj     float64 `json:"proj"`
 	ProjMin  float64 `json:"proj_min"`
 	Shift    float64 `json:"shift"` // projected minutes minus his normal minutes
@@ -348,6 +349,80 @@ func Skill(gm []GradedMarket) (model, base float64, n int) {
 		base += (rate - y) * (rate - y)
 	}
 	return model / float64(n), base / float64(n), n
+}
+
+// Cell is how one probability did on one stat when it leaned one way: every graded line where the
+// probability was above 50% (an Over lean) or below it (an Under lean).
+type Cell struct {
+	Stat  string
+	Side  string  // OVER or UNDER: the side the probability leaned to
+	N     int     // graded lines (pushes left out)
+	Hit   float64 // share of those leans that were right
+	Brier float64 // mean squared error of the probability on those lines
+	Base  float64 // the same for always saying the stat's overall Over rate
+}
+
+// LeanCells cuts the graded rows into stat and lean-side cells for the probability p picks out of a
+// row (p returns 0 for a row that probability did not score; those rows are skipped). The base rate
+// is each stat's Over rate over the same scored rows, so a cell beats it only when the probability
+// carries information about which lines go over, not merely because the stat leans one way.
+func LeanCells(gm []GradedMarket, p func(GradedMarket) float64) []Cell {
+	type acc struct {
+		n, hit      int
+		brier, base float64
+	}
+	overRate := map[string]float64{}
+	{
+		n, over := map[string]int{}, map[string]int{}
+		for _, g := range gm {
+			if g.Push || p(g) <= 0 {
+				continue
+			}
+			n[g.Stat]++
+			if g.Over {
+				over[g.Stat]++
+			}
+		}
+		for st, c := range n {
+			overRate[st] = float64(over[st]) / float64(c)
+		}
+	}
+	cells := map[[2]string]*acc{}
+	for _, g := range gm {
+		pv := p(g)
+		if g.Push || pv <= 0 || pv == 0.5 {
+			continue
+		}
+		side := "OVER"
+		if pv < 0.5 {
+			side = "UNDER"
+		}
+		a := cells[[2]string{g.Stat, side}]
+		if a == nil {
+			a = &acc{}
+			cells[[2]string{g.Stat, side}] = a
+		}
+		y := 0.0
+		if g.Over {
+			y = 1
+		}
+		a.n++
+		if (side == "OVER") == g.Over {
+			a.hit++
+		}
+		a.brier += (pv - y) * (pv - y)
+		a.base += (overRate[g.Stat] - y) * (overRate[g.Stat] - y)
+	}
+	var out []Cell
+	for _, st := range data.Stats {
+		for _, side := range []string{"OVER", "UNDER"} {
+			if a := cells[[2]string{string(st), side}]; a != nil && a.n > 0 {
+				n := float64(a.n)
+				out = append(out, Cell{Stat: string(st), Side: side, N: a.n, Hit: float64(a.hit) / n, Brier: a.brier / n, Base: a.base / n})
+			}
+		}
+	}
+	return out
 }
 
 // Slice is a situation and how the Over rate compared with what the model said.

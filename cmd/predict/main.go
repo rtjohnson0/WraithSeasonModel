@@ -70,6 +70,13 @@ type scored struct {
 	Tip      string    // the game's scheduled tip-off, RFC3339 UTC
 	Maybe    string    // his own injury status when it is uncertain (questionable, doubtful, day-to-day)
 	Dist     []float64 // the model's probability of 0, 1, 2... of the stat
+	// Market context, used by V2's tiers: how many books list the player's stat, the spread between
+	// the lowest and highest line, the real model's probability for V2's side (V1Prob), and the book's
+	// devigged probability for the side (Mkt).
+	Books  int
+	Spread float64
+	V1Prob float64
+	Mkt    float64
 }
 
 func main() {
@@ -105,6 +112,8 @@ func main() {
 	comboWeight := flag.Float64("comboweight", -1, "-1 (default): a combo's probability uses the calibration its parts (points, rebounds, assists) earned, weighted by their share of the total, so it is only as confident as the singles have earned. 0 to 1: a plain blend with this share from the model, the rest the book's devigged price")
 	useV2 := flag.Bool("v2", true, "also run the V2 challenger beside the real model: a live correction fitted on earlier days plus a model-forward blend. Its plays are tracked in data/v2log.jsonl and shown on the site's V2 test page; they never change a real pick")
 	v2ModelFile := flag.String("v2model", "model_v2.json", "V2: a second model file in the data directory (train it with `go run ./cmd/train -v2`: teammates-out and missed-shots features on). V2 uses the main model when the file is missing")
+	v2Books := flag.Int("v2books", v2MinBooks, "V2: the fewest books that must list a player's stat for V2 to post it (a thin market is where the median line is least trustworthy)")
+	v2Keep := flag.Bool("v2keep", false, "V2: a play the real model opposes at 53%+ becomes a Lean instead of being dropped. V2's level anchor lifts projections the real model leaves low, so the drop can remove the Overs the anchor creates; this shows them, still not Strong")
 	v2Weight := flag.Float64("v2weight", 0.5, "V2: the model's share of the probability (the rest is the book's devigged price). The real model's calibration gives points 3% and rebounds 24%")
 	comboBar := flag.Float64("combobar", 0.53, "a combo is tracked at this probability (53% Over or 47% Under by default), looser than the 55% posting bar because combos are never staked and need a graded sample; the printout says how many reach 55%")
 	comboPer := flag.Int("comboperplayer", 1, "most combo plays to track per player (PRA and PR on the same player are one idea, not two)")
@@ -372,11 +381,23 @@ func main() {
 	var all, picks []scored
 	projLog := map[int]*projlog.Entry{}
 	v2fix := newV2Fix()
+	v2gates := map[string]V2Gate{}
 	var v2all []scored
 	m2, v2model := m, "the main model"
 	if *useV2 && gid == 0 {
 		prev, _ := projlog.Load(filepath.Join(*dir, "projlog.jsonl"))
 		v2fix = fitV2(prev, *date, ix.Actual)
+		// V2's gates: its own record on every graded line in the market log, from earlier days only.
+		if logged, err := lineslog.LoadMarkets(*dir); err == nil {
+			var earlier []lineslog.Market
+			for _, mr := range logged {
+				if mr.Date < *date {
+					earlier = append(earlier, mr)
+				}
+			}
+			gm := lineslog.GradeMarkets(earlier, lineslog.Actualer(ix.Actual))
+			v2gates = v2Gates(lineslog.LeanCells(gm, func(g lineslog.GradedMarket) float64 { return g.P2 }), v2GateMinN)
+		}
 		if mm, err := predictor.Load(filepath.Join(*dir, *v2ModelFile)); err == nil {
 			m2, v2model = mm, *v2ModelFile+" (a second model with the teammates-out and missed-shots features)"
 		}
@@ -551,6 +572,13 @@ func main() {
 			Dist: pred.Dist(l.Stat, distMax(l.Stat, l.Line, pred.Mean(l.Stat))),
 		}
 		baseWhy := s.Why
+		if ls := byMarket[marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}]; len(ls) > 0 {
+			lo, hi := ls[0], ls[0]
+			for _, x := range ls {
+				lo, hi = math.Min(lo, x), math.Max(hi, x)
+			}
+			s.Books, s.Spread = len(ls), hi-lo
+		}
 		if st, ok := statuses[l.PlayerID]; ok && props.IsUncertain(st) {
 			s.Maybe = st
 			s.Why = addWhy(s.Why, "HIS STATUS: "+st)
@@ -598,6 +626,16 @@ func main() {
 		if *useV2 && gid == 0 && !s.Far {
 			if v2s, ok := v2Score(s, baseWhy, adjustMinutes(m2.Predict(row), row), l, v2fix, *v2Weight); ok {
 				v2all = append(v2all, v2s)
+				// The market log also keeps V2's own P(over) at the median line, so the gates can be
+				// graded on what V2 said, not on the real model's number.
+				mk := marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}
+				if mr, done := marketRows[mk]; done && mr.Line == l.Line && mr.P2 == 0 {
+					mr.P2 = v2s.Prob
+					if v2s.Side == "UNDER" {
+						mr.P2 = 1 - v2s.Prob
+					}
+					marketRows[mk] = mr
+				}
 			}
 		}
 		if (pOver >= *hi || pOver <= 1-*hi) && s.Edge >= *minEdge {
@@ -738,10 +776,15 @@ func main() {
 	printOffMarket(offMarket)
 	printCombos(comboPlays, comboSummary, *comboBar)
 	var v2Plays []scored
+	var v2Overs []OverWatch
 	var v2Meta *V2Info
 	if *useV2 && gid == 0 {
-		v2Plays = v2Select(v2all, *hi, *minEdge, *maxGame, *maxPlayer)
-		v2Meta = v2Info(v2fix, *v2Weight, *hi, *comboBar, v2model, v2all, v2Plays)
+		rules := v2Rules{Hi: *hi, MinEdge: *minEdge, MaxGame: *maxGame, MaxPlayer: *maxPlayer, Gates: v2gates, MinBooks: *v2Books, KeepDisagree: *v2Keep}
+		var drops V2Drops
+		v2Plays, drops = v2Select(v2all, rules)
+		v2Overs = v2OversWatch(v2all, v2Plays, rules, 12)
+		v2Meta = v2Info(v2fix, *v2Weight, *hi, *comboBar, v2model, v2all, v2Plays, drops, v2gates)
+		v2Meta.Watch = len(v2Overs)
 		printV2(v2fix, v2Meta, v2Plays, v2Combos)
 	}
 	fmt.Printf("skipped: %d no game info, %d player not on a team playing today, %d too little history, %d not enough minutes, %d ruled out, %d with no price on one side\n\n",
@@ -818,9 +861,9 @@ func main() {
 	}
 
 	if !*noLog && gid == 0 && *useV2 {
-		pe, ce := v2Entries(*date, v2Plays, "PAPER"), v2Entries(*date, v2Combos, comboTier)
+		pe, ce := v2Entries(*date, v2Plays, ""), v2Entries(*date, v2Combos, comboTier)
 		f := V2File{Date: *date, At: time.Now().UTC().Format(time.RFC3339), Plays: pe, Combos: ce,
-			ComboInfo: comboInfo(v2ComboSummary, len(v2Combos), *comboBar), Info: v2Meta}
+			ComboInfo: comboInfo(v2ComboSummary, len(v2Combos), *comboBar), Info: v2Meta, Overs: v2Overs}
 		if err := writeV2(*dir, f); err != nil {
 			fmt.Println("note: could not save data/v2.json:", err)
 		}

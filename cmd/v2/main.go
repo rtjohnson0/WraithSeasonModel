@@ -124,6 +124,14 @@ func settle(dir string) {
 	row("V1 all plays, same days", v1same)
 	row("V2 singles", singles)
 	row("V2 combos", pick(v2, isCombo))
+	for _, t := range []struct{ tier, name string }{
+		{"STRONG", "V2 Strong plays (V1 agrees, stat and side proven)"},
+		{"V2LEAN", "V2 Lean plays (posted, not yet backed)"},
+		{"CHECK", "V2 Check plays (big gap to the book, or uncertain status)"},
+	} {
+		tier := t.tier
+		row(t.name, pick(singles, func(r picklog.Settled) bool { return r.Tier == tier }))
+	}
 	for _, st := range data.Stats {
 		stat := string(st)
 		row("V2 "+stat, pick(singles, func(r picklog.Settled) bool { return r.Stat == stat }))

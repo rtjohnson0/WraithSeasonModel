@@ -159,3 +159,50 @@ func TestDedupeKeepsLatestRun(t *testing.T) {
 		t.Errorf("want the 19:00 run kept: %+v", got)
 	}
 }
+
+func TestLeanCellsSplitsBySideAndBeatsTheBaseRate(t *testing.T) {
+	var gm []GradedMarket
+	add := func(stat string, p float64, over bool, n int) {
+		for i := 0; i < n; i++ {
+			gm = append(gm, GradedMarket{Market: Market{Stat: stat, P2: p}, Over: over})
+		}
+	}
+	// Points: the probability separates the lines. Under leans mostly go under, Over leans mostly over.
+	add("points", 0.40, false, 8)
+	add("points", 0.40, true, 2)
+	add("points", 0.60, true, 8)
+	add("points", 0.60, false, 2)
+	// Rows V2 did not score are ignored, and pushes are left out.
+	add("points", 0, true, 5)
+	gm = append(gm, GradedMarket{Market: Market{Stat: "points", P2: 0.6}, Push: true})
+	cells := LeanCells(gm, func(g GradedMarket) float64 { return g.P2 })
+	if len(cells) != 2 {
+		t.Fatalf("want an Over and an Under cell for points, got %+v", cells)
+	}
+	var over, under Cell
+	for _, c := range cells {
+		if c.Side == "OVER" {
+			over = c
+		} else {
+			under = c
+		}
+	}
+	if over.N != 10 || under.N != 10 {
+		t.Errorf("counts: over %d under %d", over.N, under.N)
+	}
+	if math.Abs(over.Hit-0.8) > 1e-9 || math.Abs(under.Hit-0.8) > 1e-9 {
+		t.Errorf("hit rates: over %v under %v", over.Hit, under.Hit)
+	}
+	if !(over.Brier < over.Base) || !(under.Brier < under.Base) {
+		t.Errorf("an informative probability should beat the base rate: over %v/%v under %v/%v", over.Brier, over.Base, under.Brier, under.Base)
+	}
+
+	// A probability that leans Over on everything while half the lines go over does not beat it.
+	gm = nil
+	add("rebounds", 0.60, true, 5)
+	add("rebounds", 0.60, false, 5)
+	cells = LeanCells(gm, func(g GradedMarket) float64 { return g.P2 })
+	if len(cells) != 1 || cells[0].Side != "OVER" || cells[0].Brier < cells[0].Base {
+		t.Errorf("an uninformative Over lean must not beat the base rate: %+v", cells)
+	}
+}

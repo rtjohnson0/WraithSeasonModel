@@ -548,4 +548,18 @@ What V2 changes:
 4. **An optional second model.** `go run ./cmd/train -v2` trains `data/model_v2.json` with the teammates-out and expected-missed-shots features on (the main `model.json` is untouched). If the file exists, V2 projects with it; the live record is the only honest test for those features, since a backtest cannot validate who-is-out on opening lines. Commit it with `push.ps1` so the workflow uses it.
 5. **Combos get the same treatment**, so combos with points (PRA, PR, PA) show up instead of landing on the book's number.
 
+### V2 tiers and gates (tightening without picking a side)
+
+A play that clears the 55%/45% bar and the edge rule is then tiered. Every rule is the same for Overs and Unders.
+
+- **Strong play**: the real model leans the same way (53% or more on that side) **and** V2's own record on that stat and side beats always saying the stat's base rate (Brier) on 150+ graded lines, with its leans right at least half the time. The record comes from the all-lines market log: each row now also stores V2's own P(over) (`p2`), so the gate grades V2, not the real model. Only days before the run date count.
+- **Lean** (tier `V2LEAN`): posted and tracked, not backed. The real model is under 53% on that side, or the stat and side has under 150 graded lines. Until a cell has 150 graded V2 lines, nothing in it can be Strong; expect no Strong plays for the first week or so.
+- **Risky play** (`CHECK`): the model alone and the book are 15+ points apart (more often missing news than an edge), or the player's status is uncertain.
+- **Left out**: the real model leans the other way at 53% or more (`-v2keep` turns this into a Lean); fewer than `-v2books` (4) books list it, or the high-low spread is over the larger of 1.5 and 12% of the line; or the stat and side has 150+ graded lines and does not beat the base rate (it re-earns its way back as lines grade, because the gate reads the all-lines log, not V2's posted plays).
+- **Overs watch**: the V2 page lists the closest Overs under the bar plus any Over the rules left out, with the reason. They are not graded as plays; `go run ./cmd/lines` grades every V2 lean by stat and side, which is the evidence for or against them.
+
+Each tier is capped per game and per player on its own, strongest first, so a Lean never takes a Strong play's place. `go run ./cmd/v2 settle` reports Strong, Lean and Check separately. The level anchor lifts V2's projections where the real model sits low, so the real-model-disagrees rule can remove the Overs the anchor creates; `predict` prints how many of the dropped were Overs and says so when it is most of them.
+
+Combos are not tiered: they have no per-book line spread, so they keep the plain bar and the COMBO tracking tier.
+
 Same bar (55%/45%), edge rule, per-game and per-player caps as V1, so the two boards are comparable. V2 does not force Overs: if its Overs are scarce, that is the price. Read it by the `go run ./cmd/v2 settle` table once there are a few hundred graded plays; a few days cannot separate skill from luck. If V2 beats V1 on the same days over a real sample, the pieces that earned it (the correction, the weight) are what to move into the main model, one at a time.

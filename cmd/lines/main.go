@@ -12,6 +12,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"text/tabwriter"
 
 	"propsmodel/internal/lineslog"
@@ -61,6 +62,25 @@ func main() {
 			fmt.Println("The model's probabilities carry information beyond the base rate.")
 		} else {
 			fmt.Println("The model's probabilities are not yet beating the base rate: its leans at the median line are not predictive on this sample.")
+		}
+		for _, v := range []struct {
+			name string
+			p    func(lineslog.GradedMarket) float64
+		}{
+			{"V2", func(g lineslog.GradedMarket) float64 { return g.P2 }},
+			{"The real model", func(g lineslog.GradedMarket) float64 { return g.POver }},
+		} {
+			cells := lineslog.LeanCells(gm, v.p)
+			if len(cells) == 0 {
+				continue
+			}
+			fmt.Printf("\n%s by stat and side: when it leaned that way at the median line, how often was it right, and does it beat always saying the stat's base rate? V2 gates its plays on this (150+ lines).\n", v.name)
+			tw := tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)
+			fmt.Fprintln(tw, "stat\tleans\tlines\tright\tBrier\tbase rate Brier\tbeats it")
+			for _, c := range cells {
+				fmt.Fprintf(tw, "%s\t%s\t%d\t%.1f%%\t%.4f\t%.4f\t%v\n", c.Stat, strings.ToLower(c.Side), c.N, 100*c.Hit, c.Brier, c.Base, c.Brier < c.Base)
+			}
+			tw.Flush()
 		}
 		fmt.Println("\nBy situation: share that went Over against the model's average P(over). A gap of 5+ points on 100+ lines is worth a look.")
 		tw = tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)

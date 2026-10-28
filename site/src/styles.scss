@@ -108,7 +108,7 @@ nav { display: flex; gap: 2px;
   &::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--edge); }
   &.over::before { background: rgba(84, 214, 160, 0.55); }
   &.under::before { background: rgba(228, 178, 94, 0.6); }
-  &.max { background: linear-gradient(90deg, rgba(124, 58, 237, 0.13), transparent 55%);
+  &.max, &.strong { background: linear-gradient(90deg, rgba(124, 58, 237, 0.13), transparent 55%);
     &::before { background: var(--purple-hi); width: 4px; } } }
 .playbtn { width: 100%; display: grid; grid-template-columns: 40px minmax(0, 1.2fr) 210px 130px; gap: 14px; align-items: center; text-align: left;
   background: transparent; border: 0; padding: 12px 16px 12px 20px; cursor: pointer;
@@ -140,7 +140,7 @@ nav { display: flex; gap: 2px;
   .price { font-size: 0.8rem; color: var(--muted); em { font-style: normal; } }
   .tier { font-size: 0.78rem; color: var(--muted); } }
 .tier { &.max { color: #fff; background: var(--purple); padding: 0 8px; }
-  &.great { color: var(--purple-hi); }
+  &.great, &.strong { color: var(--purple-hi); }
   &.risky { color: var(--amber); }
   &.lean { color: var(--muted); } }
 
@@ -372,3 +372,11 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
   p { margin: 0 0 0.6rem; line-height: 1.5; }
 }
 .v2page > .day { margin-bottom: 0.4rem; }
+.v2gates { margin: 0.2rem 0 1rem; max-width: 62ch;
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  th, td { text-align: left; padding: 4px 10px 4px 0; border-top: 1px solid var(--edge); font-weight: 400; }
+  thead th { color: var(--muted); border-top: 0; }
+  .state-proven { color: var(--win); }
+  .state-failed { color: var(--amber); }
+  .state-unproven { color: var(--muted); }
+}
