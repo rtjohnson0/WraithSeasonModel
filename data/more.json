@@ -1,7 +1,41 @@
 {
  "date": "2026-10-29",
- "at": "2026-10-29T22:52:19Z",
+ "at": "2026-10-29T23:17:45Z",
  "plays": [
+  {
+   "logged_at": "",
+   "date": "2026-10-29",
+   "game_id": 21717987,
+   "player_id": 3547299,
+   "player": "Sam Merrill",
+   "team": "CLE",
+   "stat": "threes",
+   "side": "UNDER",
+   "line": 2.5,
+   "odds": -178,
+   "book": "sgo/draftkings",
+   "prob": 0.6560502103052492,
+   "prob_raw": 0.6743516991960032,
+   "proj_mean": 2.0083929747109317,
+   "proj_min": 22.502432062440835,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "back-to-back; teammates uncertain: Jaylon Tyson (questionable)",
+   "matchup": "CLE @ ATL",
+   "edge": 0.01576244052107656,
+   "dist": [
+    0.158,
+    0.268,
+    0.248,
+    0.167,
+    0.09,
+    0.042,
+    0.017,
+    0.006,
+    0.002,
+    0.001
+   ]
+  },
   {
    "logged_at": "",
    "date": "2026-10-29",
@@ -14,16 +48,16 @@
    "line": 3.5,
    "odds": -106,
    "book": "fanduel",
-   "prob": 0.5277119543174404,
-   "prob_raw": 0.687552630476361,
-   "proj_mean": 4.844307060798797,
-   "proj_min": 29.40437939959924,
+   "prob": 0.5278057621541297,
+   "prob_raw": 0.6878907530201642,
+   "proj_mean": 4.8467562820195935,
+   "proj_min": 29.401918664323386,
    "units": 0,
    "tier": "LEAN",
    "why": "out: Shaedon Sharpe; minutes -5 vs his normal; defense vs guards: 14th-fewest rebounds allowed (-2%, of 30 teams); teammates uncertain: Robert Williams III (doubtful)",
    "matchup": "MEM @ POR",
    "tip": "2026-10-30T02:00:00Z",
-   "edge": 0.013148847521323948,
+   "edge": 0.013242655358013167,
    "dist": [
     0.012,
     0.049,
@@ -45,38 +79,6 @@
   {
    "logged_at": "",
    "date": "2026-10-29",
-   "game_id": 21717987,
-   "player_id": 9,
-   "player": "Jarrett Allen",
-   "team": "CLE",
-   "stat": "assists",
-   "side": "UNDER",
-   "line": 1.5,
-   "odds": -105,
-   "book": "sgo/espnbet",
-   "prob": 0.5251081982393987,
-   "prob_raw": 0.6107620924030011,
-   "proj_mean": 1.3582463290380131,
-   "proj_min": 28.512281913099162,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "back-to-back; defense vs centers: 14th-most assists allowed (-6%, of 30 teams); teammates uncertain: Jaylon Tyson (questionable)",
-   "matchup": "CLE @ ATL",
-   "edge": 0.01291307628817917,
-   "dist": [
-    0.27,
-    0.34,
-    0.227,
-    0.107,
-    0.039,
-    0.012,
-    0.003,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-29",
    "game_id": 21717989,
    "player_id": 214,
    "player": "Jrue Holiday",
@@ -86,16 +88,16 @@
    "line": 3.5,
    "odds": -125,
    "book": "betmgm",
-   "prob": 0.564093081754796,
-   "prob_raw": 0.7743712185766427,
-   "proj_mean": 5.609303112929826,
-   "proj_min": 29.40437939959924,
+   "prob": 0.5642173699867553,
+   "prob_raw": 0.774874649202044,
+   "proj_mean": 5.614229596381094,
+   "proj_min": 29.401918664323386,
    "units": 0,
    "tier": "LEAN",
    "why": "out: Shaedon Sharpe; minutes -5 vs his normal; defense vs guards: 15th-fewest assists allowed (-1%, of 30 teams); teammates uncertain: Robert Williams III (doubtful)",
    "matchup": "MEM @ POR",
    "tip": "2026-10-30T02:00:00Z",
-   "edge": 0.00853752619924042,
+   "edge": 0.008661814431199732,
    "dist": [
     0.007,
     0.032,
@@ -125,19 +127,19 @@
    "team": "POR",
    "stat": "rebounds",
    "side": "UNDER",
-   "line": 10.5,
-   "odds": 102,
-   "book": "fanduel",
-   "prob": 0.5017896179652805,
-   "prob_raw": 0.5604462385539822,
-   "proj_mean": 10.20907504271505,
-   "proj_min": 22.200174789010678,
+   "line": 11.5,
+   "odds": -115,
+   "book": "betrivers",
+   "prob": 0.5432706659464318,
+   "prob_raw": 0.6454217982485749,
+   "proj_mean": 10.213959212000102,
+   "proj_min": 22.197714053734824,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Shaedon Sharpe; defense vs centers: 5th-fewest rebounds allowed (-18%, of 30 teams); teammates uncertain: Robert Williams III (doubtful)",
+   "why": "out: Shaedon Sharpe; defense vs centers: 5th-fewest rebounds allowed (-18%, of 30 teams); line 11.5 is 1.0 above the market median 10.5 across 12 books: off the market, in your favor; teammates uncertain: Robert Williams III (doubtful)",
    "matchup": "MEM @ POR",
    "tip": "2026-10-30T02:00:00Z",
-   "edge": 0.006740113014785498,
+   "edge": 0.008386945016199299,
    "dist": [
     0.001,
     0.004,
@@ -180,19 +182,19 @@
    "line": 5.5,
    "odds": -150,
    "book": "sgo/draftkings",
-   "prob": 0.6055963496802921,
-   "prob_raw": 0.7334763304469619,
-   "proj_mean": 4.262992170044641,
-   "proj_min": 33.35058931609617,
+   "prob": 0.6056921116093724,
+   "prob_raw": 0.733923237372903,
+   "proj_mean": 4.260152619688895,
+   "proj_min": 33.36354885366842,
    "units": 0,
    "tier": "LEAN",
    "why": "back-to-back; defense vs guards: 10th-fewest assists allowed (-3%, of 30 teams); teammates uncertain: Jaylon Tyson (questionable)",
    "matchup": "CLE @ ATL",
-   "edge": 0.005596349680292101,
+   "edge": 0.005692111609372441,
    "dist": [
     0.02,
     0.071,
-    0.134,
+    0.135,
     0.176,
     0.18,
     0.152,
@@ -218,25 +220,104 @@
    "line": 1.5,
    "odds": 100,
    "book": "sgo/espnbet",
-   "prob": 0.505087599033059,
-   "prob_raw": 0.5445680813612731,
-   "proj_mean": 1.5682664073267056,
-   "proj_min": 30.91652348269212,
+   "prob": 0.504912040272747,
+   "prob_raw": 0.544024016124036,
+   "proj_mean": 1.5700372623660874,
+   "proj_min": 30.914062747416263,
    "units": 0,
    "tier": "LEAN",
    "why": "out: Shaedon Sharpe; minutes -3 vs his normal; teammates uncertain: Robert Williams III (doubtful)",
    "matchup": "MEM @ POR",
    "tip": "2026-10-30T02:00:00Z",
-   "edge": 0.005087599033058998,
+   "edge": 0.004912040272747054,
    "dist": [
     0.226,
-    0.319,
+    0.318,
     0.241,
     0.13,
     0.056,
     0.02,
     0.006,
     0.002
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-29",
+   "game_id": 21717989,
+   "player_id": 278,
+   "player": "Damian Lillard",
+   "team": "POR",
+   "stat": "assists",
+   "side": "OVER",
+   "line": 3.5,
+   "odds": -160,
+   "book": "fanduel",
+   "prob": 0.6193443427461102,
+   "prob_raw": 0.8140194056477523,
+   "proj_mean": 6.000212340502091,
+   "proj_min": 30.35819147003853,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "out: Shaedon Sharpe; minutes -6 vs his normal; defense vs guards: 15th-fewest assists allowed (-1%, of 30 teams); market line moved 4.5 to 4.5 since 1:51 am (3 of 6 books changed, 0 up 3 down; no net change); teammates uncertain: Robert Williams III (doubtful)",
+   "matchup": "MEM @ POR",
+   "tip": "2026-10-30T02:00:00Z",
+   "edge": 0.003959727361494747,
+   "dist": [
+    0.005,
+    0.024,
+    0.058,
+    0.099,
+    0.132,
+    0.147,
+    0.142,
+    0.122,
+    0.095,
+    0.068,
+    0.045,
+    0.028,
+    0.017,
+    0.009,
+    0.005,
+    0.003,
+    0.001,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-29",
+   "game_id": 21717987,
+   "player_id": 666541,
+   "player": "Luguentz Dort",
+   "team": "ATL",
+   "stat": "rebounds",
+   "side": "UNDER",
+   "line": 3.5,
+   "odds": -144,
+   "book": "sgo/draftkings",
+   "prob": 0.591897388638345,
+   "prob_raw": 0.6879402888307317,
+   "proj_mean": 2.790460135846784,
+   "proj_min": 22.213448558418253,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "back-to-back; defense vs guards: 9th-fewest rebounds allowed (-5%, of 30 teams)",
+   "matchup": "CLE @ ATL",
+   "edge": 0.0017334542121154595,
+   "dist": [
+    0.083,
+    0.183,
+    0.223,
+    0.198,
+    0.142,
+    0.086,
+    0.046,
+    0.022,
+    0.01,
+    0.004,
+    0.001,
+    0.001
    ]
   },
   {
@@ -249,17 +330,17 @@
    "stat": "rebounds",
    "side": "UNDER",
    "line": 9.5,
-   "odds": 100,
+   "odds": -104,
    "book": "fanduel",
-   "prob": 0.5043580920232358,
-   "prob_raw": 0.559430581768662,
-   "proj_mean": 9.228253297418574,
-   "proj_min": 34.02953952057342,
+   "prob": 0.5111725806887557,
+   "prob_raw": 0.5592429945371917,
+   "proj_mean": 9.229930204869236,
+   "proj_min": 34.05539947865361,
    "units": 0,
    "tier": "LEAN",
    "why": "back-to-back; defense vs forwards: 13th-fewest rebounds allowed (-1%, of 30 teams)",
    "matchup": "CLE @ ATL",
-   "edge": 0.004358092023235782,
+   "edge": 0.0013686591201282905,
    "dist": [
     0,
     0.003,
@@ -285,170 +366,6 @@
     0.001,
     0.001
    ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-29",
-   "game_id": 21717989,
-   "player_id": 278,
-   "player": "Damian Lillard",
-   "team": "POR",
-   "stat": "assists",
-   "side": "OVER",
-   "line": 3.5,
-   "odds": -160,
-   "book": "fanduel",
-   "prob": 0.6192153914871468,
-   "prob_raw": 0.8135465803621539,
-   "proj_mean": 5.9948098817183455,
-   "proj_min": 30.36003702149542,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "out: Shaedon Sharpe; minutes -6 vs his normal; defense vs guards: 15th-fewest assists allowed (-1%, of 30 teams); line 3.5 is 1.0 below the market median 4.5 across 12 books: off the market, in your favor; teammates uncertain: Robert Williams III (doubtful)",
-   "matchup": "MEM @ POR",
-   "tip": "2026-10-30T02:00:00Z",
-   "edge": 0.0038307761025313525,
-   "dist": [
-    0.005,
-    0.024,
-    0.058,
-    0.099,
-    0.132,
-    0.147,
-    0.142,
-    0.122,
-    0.095,
-    0.068,
-    0.045,
-    0.028,
-    0.017,
-    0.009,
-    0.005,
-    0.002,
-    0.001,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-29",
-   "game_id": 21717988,
-   "player_id": 666969,
-   "player": "Zion Williamson",
-   "team": "NOP",
-   "stat": "rebounds",
-   "side": "UNDER",
-   "line": 5.5,
-   "odds": -129,
-   "book": "sgo/draftkings",
-   "prob": 0.5663210005906747,
-   "prob_raw": 0.5746427837135859,
-   "proj_mean": 5.252998531424108,
-   "proj_min": 30.408255221020354,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "out: Dejounte Murray, Jordan Poole, Yves Missi; opponent out: Maxime Raynaud (starter), Dylan Cardwell; back-to-back; defense vs forwards: 7th-fewest rebounds allowed (-4%, of 30 teams)",
-   "matchup": "SAC @ NOP",
-   "edge": 0.0030022232980982944,
-   "dist": [
-    0.008,
-    0.036,
-    0.082,
-    0.129,
-    0.159,
-    0.161,
-    0.141,
-    0.108,
-    0.075,
-    0.047,
-    0.027,
-    0.015,
-    0.007,
-    0.004,
-    0.002,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-29",
-   "game_id": 21717987,
-   "player_id": 192,
-   "player": "James Harden",
-   "team": "CLE",
-   "stat": "assists",
-   "side": "UNDER",
-   "line": 7.5,
-   "odds": -152,
-   "book": "sgo/draftkings",
-   "prob": 0.6052249330862263,
-   "prob_raw": 0.6870498278440789,
-   "proj_mean": 6.332017737494571,
-   "proj_min": 34.47198823110315,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "back-to-back; defense vs guards: 10th-fewest assists allowed (-3%, of 30 teams); line 7.5 is 1.0 above the market median 6.5 across 12 books: off the market, in your favor; teammates uncertain: Jaylon Tyson (questionable)",
-   "matchup": "CLE @ ATL",
-   "edge": 0.0020503299116231277,
-   "dist": [
-    0.004,
-    0.018,
-    0.047,
-    0.085,
-    0.12,
-    0.141,
-    0.143,
-    0.129,
-    0.104,
-    0.077,
-    0.053,
-    0.034,
-    0.02,
-    0.012,
-    0.006,
-    0.003,
-    0.002,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-29",
-   "game_id": 21717988,
-   "player_id": 666656,
-   "player": "De'Andre Hunter",
-   "team": "SAC",
-   "stat": "rebounds",
-   "side": "UNDER",
-   "line": 4.5,
-   "odds": 100,
-   "book": "betparx",
-   "prob": 0.5012839614775683,
-   "prob_raw": 0.5560391105059469,
-   "proj_mean": 4.4159857169117815,
-   "proj_min": 26.040304137215394,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "out: Maxime Raynaud, Dylan Cardwell; opponent out: Dejounte Murray (starter), Jordan Poole, Yves Missi; defense vs forwards: 3rd-most rebounds allowed (+9%, of 30 teams)",
-   "matchup": "SAC @ NOP",
-   "edge": 0.0012839614775682628,
-   "dist": [
-    0.021,
-    0.071,
-    0.128,
-    0.165,
-    0.171,
-    0.149,
-    0.113,
-    0.077,
-    0.048,
-    0.028,
-    0.015,
-    0.007,
-    0.004,
-    0.002,
-    0.001
-   ]
   }
  ],
  "games": [
@@ -456,22 +373,22 @@
    "game_id": 21717987,
    "home": "ATL",
    "visitor": "CLE",
-   "spread_home": -1.25,
-   "total": 237.75
+   "spread_home": -1,
+   "total": 237.5
   },
   {
    "game_id": 21717988,
    "home": "NOP",
    "visitor": "SAC",
    "spread_home": -6.5,
-   "total": 234.75
+   "total": 235.5
   },
   {
    "game_id": 21717989,
    "home": "POR",
    "visitor": "MEM",
    "spread_home": -7.5,
-   "total": 232.75
+   "total": 233.25
   }
  ],
  "moves": {
@@ -487,6 +404,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 10.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 10.5
    }
   ],
   "1028025344|rebounds": [
@@ -501,20 +422,42 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 10.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 10.5
    }
   ],
-  "1057266649|points": [
+  "1028025754|points": [
    {
     "at": "2026-10-29T05:51:51Z",
-    "line": 13.5
+    "line": 8.5
    },
    {
     "at": "2026-10-29T22:23:07Z",
-    "line": 12.5
+    "line": 8.5
    },
    {
     "at": "2026-10-29T22:51:11Z",
-    "line": 12.5
+    "line": 8.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 8.5
+   }
+  ],
+  "1028048549|points": [
+   {
+    "at": "2026-10-29T22:23:07Z",
+    "line": 6
+   },
+   {
+    "at": "2026-10-29T22:51:11Z",
+    "line": 6.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 6
    }
   ],
   "1057266649|rebounds": [
@@ -529,6 +472,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 6
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 6.5
    }
   ],
   "17896040|rebounds": [
@@ -543,6 +490,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 9.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 9.5
    }
   ],
   "17896078|rebounds": [
@@ -552,6 +503,10 @@
    },
    {
     "at": "2026-10-29T22:51:11Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
     "line": 3.5
    }
   ],
@@ -567,6 +522,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 1.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 1.5
    }
   ],
   "182|points": [
@@ -581,20 +540,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 10.5
-   }
-  ],
-  "192|assists": [
-   {
-    "at": "2026-10-29T05:51:51Z",
-    "line": 6.5
    },
    {
-    "at": "2026-10-29T22:23:07Z",
-    "line": 6.5
-   },
-   {
-    "at": "2026-10-29T22:51:11Z",
-    "line": 6.5
+    "at": "2026-10-29T23:16:37Z",
+    "line": 10.5
    }
   ],
   "214|assists": [
@@ -608,6 +557,10 @@
    },
    {
     "at": "2026-10-29T22:51:11Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
     "line": 3.5
    }
   ],
@@ -623,6 +576,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 3.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 3.5
    }
   ],
   "278|assists": [
@@ -637,6 +594,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 4.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 4
    }
   ],
   "322|assists": [
@@ -650,6 +611,10 @@
    },
    {
     "at": "2026-10-29T22:51:11Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
     "line": 5.5
    }
   ],
@@ -665,6 +630,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 1.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 1.5
    }
   ],
   "3547299|assists": [
@@ -674,6 +643,10 @@
    },
    {
     "at": "2026-10-29T22:51:11Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
     "line": 1.5
    }
   ],
@@ -685,6 +658,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 2.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 2
    }
   ],
   "38017677|points": [
@@ -699,6 +676,20 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 10.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 10.5
+   }
+  ],
+  "38017686|threes": [
+   {
+    "at": "2026-10-29T22:51:11Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 0.5
    }
   ],
   "56677850|points": [
@@ -713,16 +704,38 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 10.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 10.5
    }
   ],
-  "666656|rebounds": [
+  "666541|rebounds": [
    {
     "at": "2026-10-29T22:23:07Z",
-    "line": 4.5
+    "line": 3.5
    },
    {
     "at": "2026-10-29T22:51:11Z",
-    "line": 4.5
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 3.5
+   }
+  ],
+  "666656|points": [
+   {
+    "at": "2026-10-29T22:23:07Z",
+    "line": 11.5
+   },
+   {
+    "at": "2026-10-29T22:51:11Z",
+    "line": 11.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
+    "line": 12
    }
   ],
   "666676|points": [
@@ -737,34 +750,10 @@
    {
     "at": "2026-10-29T22:51:11Z",
     "line": 24.5
-   }
-  ],
-  "666969|points": [
-   {
-    "at": "2026-10-29T05:51:51Z",
-    "line": 20.5
    },
    {
-    "at": "2026-10-29T22:23:07Z",
-    "line": 20.5
-   },
-   {
-    "at": "2026-10-29T22:51:11Z",
-    "line": 22.5
-   }
-  ],
-  "666969|rebounds": [
-   {
-    "at": "2026-10-29T05:51:51Z",
-    "line": 5.5
-   },
-   {
-    "at": "2026-10-29T22:23:07Z",
-    "line": 5.5
-   },
-   {
-    "at": "2026-10-29T22:51:11Z",
-    "line": 5.5
+    "at": "2026-10-29T23:16:37Z",
+    "line": 24.5
    }
   ],
   "9|assists": [
@@ -778,6 +767,10 @@
    },
    {
     "at": "2026-10-29T22:51:11Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-29T23:16:37Z",
     "line": 1.5
    }
   ]
@@ -829,73 +822,15 @@
    "line": 6.5,
    "odds": 110,
    "book": "sgo/bovada",
-   "prob": 0.4961396996290044,
-   "edge": 0.01994922343852823,
-   "proj": 7.843448897144901,
-   "proj_min": 18.09554617024368,
+   "prob": 0.49622197641106114,
+   "edge": 0.020031500220584975,
+   "proj": 7.847003995500236,
+   "proj_min": 18.09308543496783,
    "tip": "2026-10-30T02:00:00Z",
    "low_line": true,
    "median": 7.5,
    "books": 6,
    "status": "this book's line is 1.0 below the 6-book median of 7.5. Price is fine, but the model gives it 50% and a pick needs 55%"
-  },
-  {
-   "game_id": 21717989,
-   "player_id": 278,
-   "player": "Damian Lillard",
-   "team": "POR",
-   "matchup": "MEM @ POR",
-   "stat": "assists",
-   "line": 3.5,
-   "odds": -160,
-   "book": "fanduel",
-   "prob": 0.6192153914871468,
-   "edge": 0.0038307761025313525,
-   "proj": 5.9948098817183455,
-   "proj_min": 30.36003702149542,
-   "tip": "2026-10-30T02:00:00Z",
-   "low_line": true,
-   "median": 4.5,
-   "books": 12,
-   "status": "this book's line is 1.0 below the 12-book median of 4.5. Model likes it (62%) but the price of -160 leaves no edge"
-  },
-  {
-   "game_id": 21717988,
-   "player_id": 1057267077,
-   "player": "Jeremiah Fears",
-   "team": "NOP",
-   "matchup": "SAC @ NOP",
-   "stat": "assists",
-   "line": 2.5,
-   "odds": -150,
-   "book": "betmgm",
-   "prob": 0.586919426584328,
-   "edge": -0.013080573415671926,
-   "proj": 4.195085624150365,
-   "proj_min": 28.486484965671636,
-   "low_line": true,
-   "median": 3.5,
-   "books": 11,
-   "status": "this book's line is 1.0 below the 11-book median of 3.5. Model likes it (59%) but the price of -150 leaves no edge"
-  },
-  {
-   "game_id": 21717988,
-   "player_id": 1057267077,
-   "player": "Jeremiah Fears",
-   "team": "NOP",
-   "matchup": "SAC @ NOP",
-   "stat": "rebounds",
-   "line": 2.5,
-   "odds": -160,
-   "book": "betmgm",
-   "prob": 0.5996808247168158,
-   "edge": -0.01570379066779959,
-   "proj": 4.008591124213686,
-   "proj_min": 28.486484965671636,
-   "low_line": true,
-   "median": 3.5,
-   "books": 11,
-   "status": "this book's line is 1.0 below the 11-book median of 3.5. Model likes it (60%) but the price of -160 leaves no edge"
   },
   {
    "game_id": 21717989,
@@ -907,10 +842,10 @@
    "line": 0.5,
    "odds": -216,
    "book": "draftkings",
-   "prob": 0.6635227618998003,
-   "edge": -0.020021541897668027,
-   "proj": 1.4584515962583182,
-   "proj_min": 18.15718225808934,
+   "prob": 0.6636488821327442,
+   "edge": -0.019895421664724133,
+   "proj": 1.4600167790698881,
+   "proj_min": 18.15472152281349,
    "tip": "2026-10-30T02:00:00Z",
    "low_line": true,
    "median": 1.5,
@@ -927,10 +862,10 @@
    "line": 0.5,
    "odds": -237,
    "book": "draftkings",
-   "prob": 0.678753575618873,
-   "edge": -0.024510519336616632,
-   "proj": 1.418360206495295,
-   "proj_min": 33.3881636749103,
+   "prob": 0.6785754457797454,
+   "edge": -0.024688649175744204,
+   "proj": 1.416316597551148,
+   "proj_min": 33.399651807599774,
    "low_line": true,
    "median": 1.5,
    "books": 12,
@@ -946,10 +881,10 @@
    "line": 12.5,
    "odds": -105,
    "book": "sgo/draftkings",
-   "prob": 0.48460842224864464,
-   "edge": -0.02758669970257488,
-   "proj": 17.916865298593173,
-   "proj_min": 28.486484965671636,
+   "prob": 0.48463082537297386,
+   "edge": -0.02756429657824566,
+   "proj": 17.93108458539304,
+   "proj_min": 28.482793862757852,
    "low_line": true,
    "median": 15.5,
    "books": 12,
@@ -965,10 +900,10 @@
    "line": 13.5,
    "odds": -135,
    "book": "sgo/bovada",
-   "prob": 0.5406722122462189,
-   "edge": -0.03379587286016417,
-   "proj": 14.967030384922493,
-   "proj_min": 35.74084880160508,
+   "prob": 0.5408982877285107,
+   "edge": -0.03356979737787236,
+   "proj": 14.978715880942053,
+   "proj_min": 35.737157698691306,
    "low_line": true,
    "median": 14.5,
    "books": 13,
@@ -976,41 +911,22 @@
   },
   {
    "game_id": 21717988,
-   "player_id": 1057274415,
-   "player": "Derik Queen",
-   "team": "NOP",
-   "matchup": "SAC @ NOP",
-   "stat": "assists",
-   "line": 2.5,
-   "odds": -155,
-   "book": "betmgm",
-   "prob": 0.5731680363525287,
-   "edge": -0.034675100902373246,
-   "proj": 3.5189182191142794,
-   "proj_min": 28.131864454580985,
-   "low_line": true,
-   "median": 3.5,
-   "books": 11,
-   "status": "this book's line is 1.0 below the 11-book median of 3.5. Model likes it (57%) but the price of -155 leaves no edge"
-  },
-  {
-   "game_id": 21717988,
-   "player_id": 38017686,
-   "player": "Bennedict Mathurin",
+   "player_id": 666969,
+   "player": "Zion Williamson",
    "team": "NOP",
    "matchup": "SAC @ NOP",
    "stat": "points",
-   "line": 9.5,
-   "odds": -110,
-   "book": "caesars",
-   "prob": 0.48421754547654805,
-   "edge": -0.039591978332975786,
-   "proj": 12.0158494948775,
-   "proj_min": 20.08765787560702,
+   "line": 20.5,
+   "odds": -105,
+   "book": "sgo/betmgm",
+   "prob": 0.4738526143212922,
+   "edge": -0.0383425076299273,
+   "proj": 21.9521811641771,
+   "proj_min": 30.40456411810657,
    "low_line": true,
-   "median": 11.5,
-   "books": 11,
-   "status": "this book's line is 2.0 below the 11-book median of 11.5. Model gives it 48%; a pick needs 55%"
+   "median": 22.5,
+   "books": 13,
+   "status": "this book's line is 2.0 below the 13-book median of 22.5. Model gives it 47%; a pick needs 55%"
   },
   {
    "game_id": 21717987,
@@ -1020,16 +936,73 @@
    "matchup": "CLE @ ATL",
    "stat": "points",
    "line": 23.5,
-   "odds": -123,
-   "book": "sgo/draftkings",
-   "prob": 0.5076878062847008,
-   "edge": -0.043881700441756655,
-   "proj": 25.098567611368342,
-   "proj_min": 33.35058931609617,
+   "odds": -121,
+   "book": "draftkings",
+   "prob": 0.505115703249338,
+   "edge": -0.04239560896785666,
+   "proj": 25.08396638810911,
+   "proj_min": 33.36354885366842,
    "low_line": true,
    "median": 24.5,
    "books": 13,
    "status": "this book's line is 1.0 below the 13-book median of 24.5. Model gives it 51%; a pick needs 55%"
+  },
+  {
+   "game_id": 21717988,
+   "player_id": 666656,
+   "player": "De'Andre Hunter",
+   "team": "SAC",
+   "matchup": "SAC @ NOP",
+   "stat": "points",
+   "line": 11.5,
+   "odds": -125,
+   "book": "draftkings",
+   "prob": 0.5131403570649659,
+   "edge": -0.04241519849058972,
+   "proj": 13.489298705230315,
+   "proj_min": 26.036613034301602,
+   "low_line": true,
+   "median": 12.5,
+   "books": 6,
+   "status": "this book's line is 1.0 below the 6-book median of 12.5. Model gives it 51%; a pick needs 55%"
+  },
+  {
+   "game_id": 21717987,
+   "player_id": 17896076,
+   "player": "Evan Mobley",
+   "team": "CLE",
+   "matchup": "CLE @ ATL",
+   "stat": "points",
+   "line": 16.5,
+   "odds": -115,
+   "book": "betmgm",
+   "prob": 0.49169662137420056,
+   "edge": -0.04318709955603195,
+   "proj": 18.064322648603227,
+   "proj_min": 33.399651807599774,
+   "low_line": true,
+   "median": 17.5,
+   "books": 11,
+   "status": "this book's line is 1.0 below the 11-book median of 17.5. Model gives it 49%; a pick needs 55%"
+  },
+  {
+   "game_id": 21717988,
+   "player_id": 3547249,
+   "player": "Precious Achiuwa",
+   "team": "SAC",
+   "matchup": "SAC @ NOP",
+   "stat": "points",
+   "line": 9.5,
+   "odds": -135,
+   "book": "sgo/draftkings",
+   "prob": 0.5309454333300863,
+   "edge": -0.04352265177629677,
+   "proj": 13.931951933567923,
+   "proj_min": 27.911468084395775,
+   "low_line": true,
+   "median": 10.5,
+   "books": 12,
+   "status": "this book's line is 1.0 below the 12-book median of 10.5. Model gives it 53%; a pick needs 55%"
   },
   {
    "game_id": 21717988,
@@ -1041,14 +1014,33 @@
    "line": 17.5,
    "odds": -115,
    "book": "fanatics",
-   "prob": 0.4904245127042348,
-   "edge": -0.04445920822599769,
-   "proj": 18.479624454757502,
-   "proj_min": 32.13667611979329,
+   "prob": 0.4904498964294346,
+   "edge": -0.044433824500797914,
+   "proj": 18.494562585424895,
+   "proj_min": 32.1329850168795,
    "low_line": true,
    "median": 18.5,
    "books": 13,
    "status": "this book's line is 1.0 below the 13-book median of 18.5. Model gives it 49%; a pick needs 55%"
+  },
+  {
+   "game_id": 21717987,
+   "player_id": 192,
+   "player": "James Harden",
+   "team": "CLE",
+   "matchup": "CLE @ ATL",
+   "stat": "points",
+   "line": 16.5,
+   "odds": -125,
+   "book": "fanatics",
+   "prob": 0.5110453057881161,
+   "edge": -0.04451024976743945,
+   "proj": 19.305441572358383,
+   "proj_min": 34.485763846287526,
+   "low_line": true,
+   "median": 17.5,
+   "books": 13,
+   "status": "this book's line is 1.0 below the 13-book median of 17.5. Model gives it 51%; a pick needs 55%"
   }
  ],
  "combos": [
@@ -1062,18 +1054,18 @@
    "stat": "ra",
    "side": "OVER",
    "line": 7.5,
-   "odds": -108,
+   "odds": -106,
    "book": "fanduel",
-   "prob": 0.5447382953583321,
-   "prob_raw": 0.7626333333333334,
-   "proj_mean": 10.472766666666663,
-   "proj_min": 29.40437939959924,
+   "prob": 0.5418079672547286,
+   "prob_raw": 0.7629666666666667,
+   "proj_mean": 10.48013333333333,
+   "proj_min": 29.401918664323386,
    "units": 0,
    "tier": "COMBO",
    "why": "projects 4.8 reb + 5.6 ast (single-stat model, shared minutes); out: Shaedon Sharpe; minutes -5 vs his normal; model alone 76% over, book 49%, calibrated 54%",
    "matchup": "MEM @ POR",
    "tip": "2026-10-30T02:00:00Z",
-   "edge": 0.025507526127562796,
+   "edge": 0.027244860458612075,
    "dist": [
     0,
     0.002,
@@ -1081,18 +1073,18 @@
     0.015,
     0.026,
     0.044,
-    0.065,
+    0.064,
     0.08,
     0.091,
-    0.099,
     0.1,
-    0.096,
+    0.1,
+    0.097,
     0.089,
     0.073,
     0.06,
     0.049,
     0.032,
-    0.025,
+    0.026,
     0.017,
     0.01,
     0.007,
@@ -1115,36 +1107,36 @@
    "line": 9.5,
    "odds": -138,
    "book": "sgo/draftkings",
-   "prob": 0.6017386926489268,
-   "prob_raw": 0.6905333333333333,
-   "proj_mean": 8.0336,
-   "proj_min": 26.21786315596023,
+   "prob": 0.6015653654893189,
+   "prob_raw": 0.6898333333333333,
+   "proj_mean": 8.038566666666664,
+   "proj_min": 26.215402420684374,
    "units": 0,
    "tier": "COMBO",
    "why": "projects 5.6 reb + 2.4 ast (single-stat model, shared minutes); opponent out: Shaedon Sharpe; model alone 31% over, book 43%, calibrated 40%",
    "matchup": "MEM @ POR",
    "tip": "2026-10-30T02:00:00Z",
-   "edge": 0.021906759875817472,
+   "edge": 0.021733432716209644,
    "dist": [
     0.002,
-    0.008,
+    0.007,
     0.022,
     0.043,
-    0.069,
+    0.07,
     0.095,
     0.112,
     0.117,
     0.12,
     0.104,
     0.088,
-    0.071,
+    0.072,
     0.052,
     0.037,
     0.023,
     0.016,
     0.01,
     0.006,
-    0.003,
+    0.004,
     0.002,
     0.001
    ]
@@ -1161,20 +1153,20 @@
    "line": 7.5,
    "odds": -130,
    "book": "fanduel",
-   "prob": 0.5758585888583567,
-   "prob_raw": 0.7636,
-   "proj_mean": 10.427200000000001,
-   "proj_min": 30.36003702149542,
+   "prob": 0.5760311603916106,
+   "prob_raw": 0.7642333333333333,
+   "proj_mean": 10.4351,
+   "proj_min": 30.35819147003853,
    "units": 0,
    "tier": "COMBO",
    "why": "projects 4.4 reb + 6.0 ast (single-stat model, shared minutes); out: Shaedon Sharpe; minutes -6 vs his normal; model alone 76% over, book 53%, calibrated 58%",
    "matchup": "MEM @ POR",
    "tip": "2026-10-30T02:00:00Z",
-   "edge": 0.010641197554008941,
+   "edge": 0.010813769087262837,
    "dist": [
     0,
     0.002,
-    0.006,
+    0.005,
     0.015,
     0.027,
     0.045,
@@ -1187,10 +1179,10 @@
     0.085,
     0.072,
     0.059,
-    0.044,
+    0.045,
     0.036,
     0.024,
-    0.016,
+    0.017,
     0.011,
     0.007,
     0.005,
@@ -1202,13 +1194,13 @@
   }
  ],
  "combo_info": {
-  "priced": 898,
-  "over": 274,
-  "under": 624,
+  "priced": 908,
+  "over": 277,
+  "under": 631,
   "cleared": 8,
   "tracked": 3,
   "bar": 0.53,
   "basis": "the calibration its parts earned",
-  "at": "2026-10-29T22:52:19Z"
+  "at": "2026-10-29T23:17:45Z"
  }
 }
