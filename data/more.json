@@ -1,6 +1,6 @@
 {
  "date": "2026-10-31",
- "at": "2026-10-31T18:25:43Z",
+ "at": "2026-10-31T18:53:02Z",
  "plays": [
   {
    "logged_at": "",
@@ -12,27 +12,27 @@
    "stat": "rebounds",
    "side": "UNDER",
    "line": 4.5,
-   "odds": 112,
-   "book": "draftkings",
-   "prob": 0.5152854713293836,
-   "prob_raw": 0.6792390005307944,
-   "proj_mean": 3.699460983250902,
-   "proj_min": 25.06575784223385,
+   "odds": 116,
+   "book": "sgo/draftkings",
+   "prob": 0.5113986959791976,
+   "prob_raw": 0.679875097584944,
+   "proj_mean": 3.6958299864863937,
+   "proj_min": 25.070679312785558,
    "units": 0,
    "tier": "LEAN",
    "why": "out: Joel Embiid, LeBron James; back-to-back; defense vs forwards: 1st-fewest rebounds allowed (-13%, of 30 teams); teammates uncertain: Jaylen Brown (questionable)",
    "matchup": "PHI @ CHA",
    "tip": "2026-10-31T22:00:00Z",
-   "edge": 0.04358735812183645,
+   "edge": 0.04843573301623466,
    "dist": [
     0.039,
-    0.11,
+    0.111,
     0.17,
     0.19,
     0.17,
     0.129,
     0.086,
-    0.052,
+    0.051,
     0.028,
     0.014,
     0.007,
@@ -50,25 +50,58 @@
    "stat": "threes",
    "side": "UNDER",
    "line": 1.5,
-   "odds": -138,
+   "odds": -134,
    "book": "draftkings",
-   "prob": 0.6052508863006691,
-   "prob_raw": 0.6965571880086052,
-   "proj_mean": 1.1109252556057228,
-   "proj_min": 27.79097285745231,
+   "prob": 0.6011983321211628,
+   "prob_raw": 0.6974295089085247,
+   "proj_mean": 1.1084404494223865,
+   "proj_min": 27.795894328004014,
    "units": 0,
    "tier": "LEAN",
    "why": "opponent out: Joel Embiid (starter), LeBron James (starter); back-to-back",
    "matchup": "PHI @ CHA",
    "tip": "2026-10-31T22:00:00Z",
-   "edge": 0.02541895352755985,
+   "edge": 0.02854875947159019,
    "dist": [
-    0.343,
+    0.344,
     0.353,
     0.195,
     0.076,
     0.024,
     0.006,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-31",
+   "game_id": 21718007,
+   "player_id": 175,
+   "player": "Shai Gilgeous-Alexander",
+   "team": "OKC",
+   "stat": "threes",
+   "side": "UNDER",
+   "line": 1.5,
+   "odds": 108,
+   "book": "fanduel",
+   "prob": 0.5023606301838879,
+   "prob_raw": 0.5786841091338829,
+   "proj_mean": 1.4531037512452312,
+   "proj_min": 33.249355721864546,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "out: Alex Caruso, Chet Holmgren, Cason Wallace; opponent out: Fred VanVleet (starter), Reed Sheppard (starter); minutes -3 vs his normal",
+   "matchup": "OKC @ HOU",
+   "tip": "2026-11-01T00:30:00Z",
+   "edge": 0.021591399414657098,
+   "dist": [
+    0.245,
+    0.333,
+    0.238,
+    0.118,
+    0.046,
+    0.015,
+    0.004,
     0.001
    ]
   },
@@ -84,24 +117,24 @@
    "line": 2.5,
    "odds": -105,
    "book": "betmgm",
-   "prob": 0.5329785340450257,
-   "prob_raw": 0.6085344085596646,
-   "proj_mean": 2.2688494739212834,
-   "proj_min": 29.765568707607724,
+   "prob": 0.5334043354875773,
+   "prob_raw": 0.6098064996637496,
+   "proj_mean": 2.2637481494085554,
+   "proj_min": 29.770490178159434,
    "units": 0,
    "tier": "LEAN",
    "why": "opponent out: Joel Embiid (starter), LeBron James (starter); back-to-back",
    "matchup": "PHI @ CHA",
    "tip": "2026-10-31T22:00:00Z",
-   "edge": 0.020783412093806186,
+   "edge": 0.02120921353635774,
    "dist": [
-    0.118,
+    0.119,
     0.238,
-    0.252,
-    0.189,
+    0.253,
+    0.188,
     0.111,
-    0.055,
-    0.024,
+    0.054,
+    0.023,
     0.009,
     0.003,
     0.001
@@ -147,6 +180,43 @@
   {
    "logged_at": "",
    "date": "2026-10-31",
+   "game_id": 21718001,
+   "player_id": 56677747,
+   "player": "Scoot Henderson",
+   "team": "POR",
+   "stat": "assists",
+   "side": "UNDER",
+   "line": 3.5,
+   "odds": 100,
+   "book": "fanduel",
+   "prob": 0.5180130582051723,
+   "prob_raw": 0.6904052200759929,
+   "proj_mean": 2.771846295339848,
+   "proj_min": 21.647581475776494,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "out: Shaedon Sharpe; minutes -5 vs his normal; defense vs guards: 14th-fewest assists allowed (-2%, of 30 teams)",
+   "matchup": "POR @ UTA",
+   "tip": "2026-10-31T19:00:00Z",
+   "edge": 0.018013058205172294,
+   "dist": [
+    0.093,
+    0.188,
+    0.219,
+    0.191,
+    0.136,
+    0.084,
+    0.047,
+    0.023,
+    0.011,
+    0.005,
+    0.002,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-31",
    "game_id": 21718002,
    "player_id": 666940,
    "player": "Dean Wade",
@@ -156,60 +226,23 @@
    "line": 1.5,
    "odds": -175,
    "book": "betmgm",
-   "prob": 0.6530102702687062,
-   "prob_raw": 0.7378524903173365,
-   "proj_mean": 0.9937849847107219,
-   "proj_min": 25.06575784223385,
+   "prob": 0.6533021702485362,
+   "prob_raw": 0.7386301497039897,
+   "proj_mean": 0.9915812738590863,
+   "proj_min": 25.070679312785558,
    "units": 0,
    "tier": "LEAN",
    "why": "out: Joel Embiid, LeBron James; back-to-back; teammates uncertain: Jaylen Brown (questionable)",
    "matchup": "PHI @ CHA",
    "tip": "2026-10-31T22:00:00Z",
-   "edge": 0.01664663390506982,
+   "edge": 0.016938533884899853,
    "dist": [
-    0.386,
+    0.387,
     0.352,
     0.175,
     0.063,
     0.018,
     0.004,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-31",
-   "game_id": 21718001,
-   "player_id": 56677747,
-   "player": "Scoot Henderson",
-   "team": "POR",
-   "stat": "assists",
-   "side": "UNDER",
-   "line": 3.5,
-   "odds": -105,
-   "book": "draftkings",
-   "prob": 0.5248294404634284,
-   "prob_raw": 0.6909440098407292,
-   "proj_mean": 2.7689977099222842,
-   "proj_min": 21.61786553850806,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "out: Shaedon Sharpe; minutes -5 vs his normal; defense vs guards: 14th-fewest assists allowed (-2%, of 30 teams)",
-   "matchup": "POR @ UTA",
-   "tip": "2026-10-31T19:00:00Z",
-   "edge": 0.012634318512208864,
-   "dist": [
-    0.093,
-    0.188,
-    0.219,
-    0.19,
-    0.136,
-    0.084,
-    0.046,
-    0.023,
-    0.011,
-    0.005,
-    0.002,
     0.001
    ]
   },
@@ -222,27 +255,27 @@
    "team": "CHA",
    "stat": "assists",
    "side": "UNDER",
-   "line": 6.5,
-   "odds": -145,
-   "book": "fanatics",
-   "prob": 0.6029224514555465,
-   "prob_raw": 0.785080119204558,
-   "proj_mean": 4.683133746488947,
-   "proj_min": 27.79097285745231,
+   "line": 5.5,
+   "odds": 105,
+   "book": "betparx",
+   "prob": 0.5014024452164391,
+   "prob_raw": 0.6657386025467062,
+   "proj_mean": 4.67496377723533,
+   "proj_min": 27.795894328004014,
    "units": 0,
    "tier": "LEAN",
-   "why": "opponent out: Joel Embiid (starter), LeBron James (starter); back-to-back; defense vs guards: 5th-fewest assists allowed (-7%, of 30 teams); line 6.5 is 1.0 above the market median 5.5 across 7 books: off the market, in your favor",
+   "why": "opponent out: Joel Embiid (starter), LeBron James (starter); back-to-back; defense vs guards: 5th-fewest assists allowed (-7%, of 30 teams)",
    "matchup": "PHI @ CHA",
    "tip": "2026-10-31T22:00:00Z",
-   "edge": 0.011085716761668918,
+   "edge": 0.013597567167658586,
    "dist": [
     0.017,
     0.06,
-    0.114,
+    0.115,
     0.155,
     0.167,
-    0.152,
-    0.121,
+    0.151,
+    0.12,
     0.086,
     0.056,
     0.034,
@@ -257,47 +290,74 @@
    "logged_at": "",
    "date": "2026-10-31",
    "game_id": 21718006,
-   "player_id": 176,
-   "player": "Rudy Gobert",
+   "player_id": 1028028501,
+   "player": "Terrence Shannon Jr.",
    "team": "MIN",
    "stat": "rebounds",
    "side": "UNDER",
-   "line": 10.5,
-   "odds": -105,
-   "book": "sgo/draftkings",
-   "prob": 0.5232048124692064,
-   "prob_raw": 0.6050321015685591,
-   "proj_mean": 9.754041950162794,
-   "proj_min": 28.816834482995787,
+   "line": 3.5,
+   "odds": -130,
+   "book": "sgo/bovada",
+   "prob": 0.5738487610385166,
+   "prob_raw": 0.6767858524682789,
+   "proj_mean": 2.837624465807658,
+   "proj_min": 23.869872350226355,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Anthony Edwards; back-to-back; defense vs centers: 8th-fewest rebounds allowed (-13%, of 30 teams); HIS STATUS: Questionable",
+   "why": "out: Anthony Edwards; back-to-back; defense vs wings: 7th-most rebounds allowed (+21%, of 30 teams); teammates uncertain: Rudy Gobert (questionable)",
    "matchup": "MIN @ SAS",
-   "edge": 0.011009690517986837,
+   "edge": 0.008631369734168781,
    "dist": [
-    0,
-    0.003,
-    0.009,
-    0.02,
-    0.037,
-    0.056,
-    0.076,
-    0.093,
-    0.103,
-    0.106,
-    0.102,
-    0.092,
-    0.079,
-    0.064,
+    0.086,
+    0.18,
+    0.217,
+    0.194,
+    0.142,
+    0.089,
     0.049,
-    0.037,
-    0.026,
-    0.018,
-    0.012,
-    0.008,
+    0.024,
+    0.011,
     0.005,
-    0.003,
     0.002,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-31",
+   "game_id": 21718005,
+   "player_id": 265,
+   "player": "Kyle Kuzma",
+   "team": "MIL",
+   "stat": "rebounds",
+   "side": "UNDER",
+   "line": 5.5,
+   "odds": -120,
+   "book": "betmgm",
+   "prob": 0.5540702169723318,
+   "prob_raw": 0.6533607934376855,
+   "proj_mean": 4.742956235146738,
+   "proj_min": 25.856019016115116,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "opponent out: Jaylon Tyson; defense vs forwards: 3rd-fewest rebounds allowed (-7%, of 30 teams)",
+   "matchup": "CLE @ MIL",
+   "edge": 0.008615671517786416,
+   "dist": [
+    0.017,
+    0.06,
+    0.112,
+    0.151,
+    0.163,
+    0.15,
+    0.122,
+    0.088,
+    0.059,
+    0.036,
+    0.021,
+    0.011,
+    0.006,
+    0.003,
     0.001,
     0.001
    ]
@@ -345,79 +405,6 @@
   {
    "logged_at": "",
    "date": "2026-10-31",
-   "game_id": 21718007,
-   "player_id": 420,
-   "player": "Marcus Smart",
-   "team": "HOU",
-   "stat": "threes",
-   "side": "UNDER",
-   "line": 1.5,
-   "odds": -114,
-   "book": "fanduel",
-   "prob": 0.5398871038644621,
-   "prob_raw": 0.5884677340803353,
-   "proj_mean": 1.4325990003145068,
-   "proj_min": 27.336187997510237,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "out: Fred VanVleet, Reed Sheppard; opponent out: Alex Caruso, Chet Holmgren (starter), Cason Wallace; back-to-back; minutes -5 vs his normal",
-   "matchup": "OKC @ HOU",
-   "tip": "2026-11-01T00:30:00Z",
-   "edge": 0.007176823490630424,
-   "dist": [
-    0.258,
-    0.331,
-    0.23,
-    0.114,
-    0.046,
-    0.015,
-    0.005,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-31",
-   "game_id": 21718005,
-   "player_id": 265,
-   "player": "Kyle Kuzma",
-   "team": "MIL",
-   "stat": "rebounds",
-   "side": "UNDER",
-   "line": 5.5,
-   "odds": -123,
-   "book": "draftkings",
-   "prob": 0.5581280449327461,
-   "prob_raw": 0.6533607934376855,
-   "proj_mean": 4.742956235146738,
-   "proj_min": 25.856019016115116,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "opponent out: Jaylon Tyson; defense vs forwards: 3rd-fewest rebounds allowed (-7%, of 30 teams)",
-   "matchup": "CLE @ MIL",
-   "edge": 0.006558538206288711,
-   "dist": [
-    0.017,
-    0.06,
-    0.112,
-    0.151,
-    0.163,
-    0.15,
-    0.122,
-    0.088,
-    0.059,
-    0.036,
-    0.021,
-    0.011,
-    0.006,
-    0.003,
-    0.001,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-31",
    "game_id": 21718003,
    "player_id": 17896078,
    "player": "Aaron Wiggins",
@@ -456,6 +443,55 @@
   {
    "logged_at": "",
    "date": "2026-10-31",
+   "game_id": 21718006,
+   "player_id": 176,
+   "player": "Rudy Gobert",
+   "team": "MIN",
+   "stat": "rebounds",
+   "side": "UNDER",
+   "line": 10.5,
+   "odds": -107,
+   "book": "betparx",
+   "prob": 0.5229175486421663,
+   "prob_raw": 0.6050321015685591,
+   "proj_mean": 9.754041950162794,
+   "proj_min": 28.816834482995787,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "out: Anthony Edwards; back-to-back; defense vs centers: 8th-fewest rebounds allowed (-13%, of 30 teams); HIS STATUS: Questionable",
+   "matchup": "MIN @ SAS",
+   "edge": 0.006009336081779892,
+   "dist": [
+    0,
+    0.003,
+    0.009,
+    0.02,
+    0.037,
+    0.056,
+    0.076,
+    0.093,
+    0.103,
+    0.106,
+    0.102,
+    0.092,
+    0.079,
+    0.064,
+    0.049,
+    0.037,
+    0.026,
+    0.018,
+    0.012,
+    0.008,
+    0.005,
+    0.003,
+    0.002,
+    0.001,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-31",
    "game_id": 21718001,
    "player_id": 56677850,
    "player": "Toumani Camara",
@@ -464,24 +500,24 @@
    "side": "UNDER",
    "line": 4.5,
    "odds": -108,
-   "book": "sgo/fanduel",
-   "prob": 0.5246905436704131,
-   "prob_raw": 0.591526455601393,
-   "proj_mean": 4.202946805972246,
-   "proj_min": 27.738293971672782,
+   "book": "fanduel",
+   "prob": 0.5243579534756975,
+   "prob_raw": 0.5901779457300171,
+   "proj_mean": 4.210594601038313,
+   "proj_min": 27.77995987362278,
    "units": 0,
    "tier": "LEAN",
    "why": "out: Shaedon Sharpe; minutes -5 vs his normal; defense vs forwards: 8th-fewest rebounds allowed (-5%, of 30 teams)",
    "matchup": "POR @ UTA",
    "tip": "2026-10-31T19:00:00Z",
-   "edge": 0.00545977443964385,
+   "edge": 0.005127184244928196,
    "dist": [
     0.023,
     0.077,
-    0.139,
+    0.138,
     0.176,
     0.177,
-    0.148,
+    0.149,
     0.108,
     0.07,
     0.041,
@@ -510,7 +546,7 @@
    "proj_min": 27.241099719785428,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Alex Caruso, Chet Holmgren, Cason Wallace; opponent out: Fred VanVleet (starter), Reed Sheppard (starter); defense vs guards: 14th-most rebounds allowed (+1%, of 30 teams); line 3.5 is 1.0 above the market median 2.5 across 12 books: off the market, in your favor",
+   "why": "out: Alex Caruso, Chet Holmgren, Cason Wallace; opponent out: Fred VanVleet (starter), Reed Sheppard (starter); defense vs guards: 14th-most rebounds allowed (+1%, of 30 teams); line 3.5 is 1.0 above the market median 2.5 across 11 books: off the market, in your favor",
    "matchup": "OKC @ HOU",
    "tip": "2026-11-01T00:30:00Z",
    "edge": 0.005100204538105557,
@@ -577,39 +613,75 @@
    "logged_at": "",
    "date": "2026-10-31",
    "game_id": 21718001,
+   "player_id": 1057260888,
+   "player": "Airious Bailey",
+   "team": "UTA",
+   "stat": "threes",
+   "side": "OVER",
+   "line": 1.5,
+   "odds": -136,
+   "book": "fanduel",
+   "prob": 0.580833581044485,
+   "prob_raw": 0.6902052165538402,
+   "proj_mean": 2.5015433401632725,
+   "proj_min": 31.42570061883803,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "opponent out: Shaedon Sharpe",
+   "matchup": "POR @ UTA",
+   "tip": "2026-10-31T19:00:00Z",
+   "edge": 0.0045623946038070295,
+   "dist": [
+    0.098,
+    0.211,
+    0.243,
+    0.197,
+    0.127,
+    0.069,
+    0.033,
+    0.014,
+    0.005,
+    0.002,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-31",
+   "game_id": 21718001,
    "player_id": 1028025344,
    "player": "Donovan Clingan",
    "team": "POR",
    "stat": "rebounds",
    "side": "UNDER",
-   "line": 10.5,
-   "odds": 102,
-   "book": "fanduel",
-   "prob": 0.500116815806211,
-   "prob_raw": 0.553540035583481,
-   "proj_mean": 10.269742573665305,
-   "proj_min": 23.844666521611064,
+   "line": 11.5,
+   "odds": -138,
+   "book": "sgo/draftkings",
+   "prob": 0.5841273054249578,
+   "prob_raw": 0.6428803037066843,
+   "proj_mean": 10.285564288747452,
+   "proj_min": 23.873832928958176,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Shaedon Sharpe; defense vs centers: 15th-fewest rebounds allowed (-3%, of 30 teams)",
+   "why": "out: Shaedon Sharpe; defense vs centers: 15th-fewest rebounds allowed (-3%, of 30 teams); line 11.5 is 1.0 above the market median 10.5 across 12 books: off the market, in your favor; market line moved with the pick 11.5 to 10.5 since 1:46 am (5 of 6 books changed, 0 up 5 down; down)",
    "matchup": "POR @ UTA",
    "tip": "2026-10-31T19:00:00Z",
-   "edge": 0.00506731085571599,
+   "edge": 0.004295372651848539,
    "dist": [
     0,
     0.003,
     0.008,
-    0.019,
+    0.018,
     0.033,
     0.05,
     0.068,
     0.083,
-    0.094,
+    0.093,
     0.098,
     0.097,
     0.091,
     0.081,
-    0.068,
+    0.069,
     0.056,
     0.044,
     0.033,
@@ -627,79 +699,72 @@
   {
    "logged_at": "",
    "date": "2026-10-31",
-   "game_id": 21718001,
-   "player_id": 3547242,
-   "player": "Deni Avdija",
-   "team": "POR",
-   "stat": "assists",
+   "game_id": 21718005,
+   "player_id": 322,
+   "player": "Donovan Mitchell",
+   "team": "CLE",
+   "stat": "rebounds",
    "side": "UNDER",
-   "line": 7.5,
-   "odds": -151,
+   "line": 5.5,
+   "odds": -156,
    "book": "sgo/draftkings",
-   "prob": 0.6059354583849927,
-   "prob_raw": 0.7210481715575808,
-   "proj_mean": 6.014019100676683,
-   "proj_min": 30.852863593082958,
+   "prob": 0.6133328168749246,
+   "prob_raw": 0.6939228630436729,
+   "proj_mean": 4.5134358850042675,
+   "proj_min": 32.51128268265618,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Shaedon Sharpe; defense vs forwards: 3rd-fewest assists allowed (-16%, of 30 teams); line 7.5 is 1.0 above the market median 6.5 across 12 books: off the market, in your favor",
-   "matchup": "POR @ UTA",
-   "tip": "2026-10-31T19:00:00Z",
-   "edge": 0.004341832886984753,
+   "why": "out: Jaylon Tyson; minutes -3 vs his normal; defense vs guards: 6th-fewest rebounds allowed (-9%, of 30 teams); line 5.5 is 1.0 above the market median 4.5 across 12 books: off the market, in your favor",
+   "matchup": "CLE @ MIL",
+   "edge": 0.00395781687492458,
    "dist": [
-    0.006,
-    0.027,
-    0.062,
-    0.1,
-    0.129,
-    0.142,
-    0.137,
-    0.118,
-    0.093,
-    0.068,
-    0.047,
-    0.03,
-    0.018,
-    0.011,
-    0.006,
+    0.016,
+    0.06,
+    0.119,
+    0.165,
+    0.177,
+    0.158,
+    0.121,
+    0.082,
+    0.05,
+    0.028,
+    0.014,
+    0.007,
     0.003,
-    0.002,
+    0.001,
     0.001
    ]
   },
   {
    "logged_at": "",
    "date": "2026-10-31",
-   "game_id": 21718001,
-   "player_id": 1057260888,
-   "player": "Airious Bailey",
-   "team": "UTA",
+   "game_id": 21718007,
+   "player_id": 420,
+   "player": "Marcus Smart",
+   "team": "HOU",
    "stat": "threes",
-   "side": "OVER",
+   "side": "UNDER",
    "line": 1.5,
-   "odds": -138,
+   "odds": -118,
    "book": "fanduel",
-   "prob": 0.5834489765982546,
-   "prob_raw": 0.6902960392415022,
-   "proj_mean": 2.5020521332742707,
-   "proj_min": 31.414764892656105,
+   "prob": 0.543930672673238,
+   "prob_raw": 0.5884677340803353,
+   "proj_mean": 1.4325990003145068,
+   "proj_min": 27.336187997510237,
    "units": 0,
    "tier": "LEAN",
-   "why": "opponent out: Shaedon Sharpe",
-   "matchup": "POR @ UTA",
-   "tip": "2026-10-31T19:00:00Z",
-   "edge": 0.003617043825145272,
+   "why": "out: Fred VanVleet, Reed Sheppard; opponent out: Alex Caruso, Chet Holmgren (starter), Cason Wallace; back-to-back; minutes -5 vs his normal; teammates uncertain: Alperen Sengun (day-to-day)",
+   "matchup": "OKC @ HOU",
+   "tip": "2026-11-01T00:30:00Z",
+   "edge": 0.0026462690035132796,
    "dist": [
-    0.098,
-    0.211,
-    0.243,
-    0.197,
-    0.127,
-    0.069,
-    0.033,
-    0.014,
+    0.258,
+    0.331,
+    0.23,
+    0.114,
+    0.046,
+    0.015,
     0.005,
-    0.002,
     0.001
    ]
   },
@@ -747,6 +812,48 @@
   {
    "logged_at": "",
    "date": "2026-10-31",
+   "game_id": 21718001,
+   "player_id": 666626,
+   "player": "Jaxson Hayes",
+   "team": "UTA",
+   "stat": "rebounds",
+   "side": "UNDER",
+   "line": 5.5,
+   "odds": 100,
+   "book": "betmgm",
+   "prob": 0.5021926283794056,
+   "prob_raw": 0.5664585105504802,
+   "proj_mean": 5.31647596480331,
+   "proj_min": 24.83032994285822,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "opponent out: Shaedon Sharpe; defense vs centers: 14th-most rebounds allowed (+1%, of 30 teams)",
+   "matchup": "POR @ UTA",
+   "tip": "2026-10-31T19:00:00Z",
+   "edge": 0.0021926283794055923,
+   "dist": [
+    0.013,
+    0.046,
+    0.089,
+    0.126,
+    0.146,
+    0.146,
+    0.129,
+    0.103,
+    0.075,
+    0.051,
+    0.033,
+    0.02,
+    0.011,
+    0.006,
+    0.003,
+    0.002,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-31",
    "game_id": 21718005,
    "player_id": 56677785,
    "player": "Jaime Jaquez Jr.",
@@ -756,7 +863,7 @@
    "line": 5.5,
    "odds": -119,
    "book": "sgo/draftkings",
-   "prob": 0.5457276794698833,
+   "prob": 0.5449896224352275,
    "prob_raw": 0.6174788978809155,
    "proj_mean": 4.972114511920988,
    "proj_min": 27.295190778470744,
@@ -764,7 +871,7 @@
    "tier": "LEAN",
    "why": "opponent out: Jaylon Tyson; defense vs guards: 13th-most rebounds allowed (+2%, of 30 teams)",
    "matchup": "CLE @ MIL",
-   "edge": 0.0023486840360933403,
+   "edge": 0.0016106270014375479,
    "dist": [
     0.016,
     0.055,
@@ -794,9 +901,9 @@
    "stat": "rebounds",
    "side": "UNDER",
    "line": 4.5,
-   "odds": -115,
+   "odds": -118,
    "book": "betmgm",
-   "prob": 0.5365810545388754,
+   "prob": 0.5413527346304581,
    "prob_raw": 0.6113095102249172,
    "proj_mean": 4.092517603959664,
    "proj_min": 26.099654435084528,
@@ -804,7 +911,7 @@
    "tier": "LEAN",
    "why": "out: Jaylon Tyson; minutes -3 vs his normal; defense vs guards: 6th-fewest rebounds allowed (-9%, of 30 teams)",
    "matchup": "CLE @ MIL",
-   "edge": 0.0016973336086428814,
+   "edge": 0.00006833096073333156,
    "dist": [
     0.028,
     0.087,
@@ -821,45 +928,6 @@
     0.002,
     0.001
    ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-31",
-   "game_id": 21718005,
-   "player_id": 322,
-   "player": "Donovan Mitchell",
-   "team": "CLE",
-   "stat": "rebounds",
-   "side": "UNDER",
-   "line": 5.5,
-   "odds": -156,
-   "book": "sgo/draftkings",
-   "prob": 0.6105272812653705,
-   "prob_raw": 0.6939228630436729,
-   "proj_mean": 4.5134358850042675,
-   "proj_min": 32.51128268265618,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "out: Jaylon Tyson; minutes -3 vs his normal; defense vs guards: 6th-fewest rebounds allowed (-9%, of 30 teams); line 5.5 is 1.0 above the market median 4.5 across 12 books: off the market, in your favor",
-   "matchup": "CLE @ MIL",
-   "edge": 0.0011522812653704806,
-   "dist": [
-    0.016,
-    0.06,
-    0.119,
-    0.165,
-    0.177,
-    0.158,
-    0.121,
-    0.082,
-    0.05,
-    0.028,
-    0.014,
-    0.007,
-    0.003,
-    0.001,
-    0.001
-   ]
   }
  ],
  "games": [
@@ -867,15 +935,15 @@
    "game_id": 21718001,
    "home": "UTA",
    "visitor": "POR",
-   "spread_home": 7,
-   "total": 232.5
+   "spread_home": 6.5,
+   "total": 233.25
   },
   {
    "game_id": 21718002,
    "home": "CHA",
    "visitor": "PHI",
    "spread_home": 0.75,
-   "total": 213.5
+   "total": 212.5
   },
   {
    "game_id": 21718003,
@@ -913,6 +981,636 @@
    "total": 218.75
   }
  ],
+ "moves": {
+  "1028025344|points": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 11.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 11.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 10.5
+   }
+  ],
+  "1028025344|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 11.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 11.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 10.5
+   }
+  ],
+  "1028025754|points": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 9.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 8.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 8.5
+   }
+  ],
+  "1028027372|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 2.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 3
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 3
+   }
+  ],
+  "1028028501|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 3.5
+   }
+  ],
+  "1028037477|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 3.5
+   }
+  ],
+  "1028037477|threes": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 1.5
+   }
+  ],
+  "1057260888|threes": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 1.5
+   }
+  ],
+  "1057261935|rebounds": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 6.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 6.5
+   }
+  ],
+  "1057261935|threes": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 1.5
+   }
+  ],
+  "17553979|points": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 13.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 13.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 13.5
+   }
+  ],
+  "17553979|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 5.5
+   }
+  ],
+  "175|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 4.5
+   }
+  ],
+  "175|threes": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 1.5
+   }
+  ],
+  "176|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 10.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 10.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 10.5
+   }
+  ],
+  "17896040|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 9.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 9.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 9.5
+   }
+  ],
+  "17896076|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 9.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 9.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 9.5
+   }
+  ],
+  "17896078|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 3.5
+   }
+  ],
+  "17896078|threes": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 2.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 2.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 2
+   }
+  ],
+  "192|points": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 19
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 18.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 18.5
+   }
+  ],
+  "201|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 10.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 10
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 9.5
+   }
+  ],
+  "214|points": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 13.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 13.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 13.5
+   }
+  ],
+  "265|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 5.5
+   }
+  ],
+  "322|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 4.5
+   }
+  ],
+  "334|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 5.5
+   }
+  ],
+  "3547242|threes": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 1.5
+   }
+  ],
+  "3547254|rebounds": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 4.5
+   }
+  ],
+  "3547254|threes": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 3
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 3
+   }
+  ],
+  "3547259|points": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 16.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 16.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 16.5
+   }
+  ],
+  "3547259|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 5.5
+   }
+  ],
+  "3547299|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 2.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 2.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 2.5
+   }
+  ],
+  "38017677|points": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 11.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 11.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 11.5
+   }
+  ],
+  "38017721|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 4.5
+   }
+  ],
+  "409|assists": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 5.5
+   }
+  ],
+  "409|threes": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 1.5
+   }
+  ],
+  "420|points": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 8.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 9.5
+   }
+  ],
+  "420|threes": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 1.5
+   }
+  ],
+  "56677747|assists": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 3.5
+   }
+  ],
+  "56677747|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 3
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 2.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 2.5
+   }
+  ],
+  "56677785|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 5.5
+   }
+  ],
+  "56677834|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 3.5
+   }
+  ],
+  "56677850|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 4.5
+   }
+  ],
+  "666626|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 5.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 5.5
+   }
+  ],
+  "666682|points": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 9.5
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 9.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 9.5
+   }
+  ],
+  "666940|rebounds": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 4.5
+   }
+  ],
+  "666940|threes": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 1.5
+   }
+  ],
+  "667378|threes": [
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 2.5
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 2.5
+   }
+  ],
+  "9|rebounds": [
+   {
+    "at": "2026-10-31T05:46:47Z",
+    "line": 9
+   },
+   {
+    "at": "2026-10-31T17:59:45Z",
+    "line": 9
+   },
+   {
+    "at": "2026-10-31T18:51:08Z",
+    "line": 9
+   }
+  ]
+ },
  "news": [
   {
    "game_id": 21718001,
@@ -988,6 +1686,9 @@
    "out": [
     "Fred VanVleet",
     "Reed Sheppard"
+   ],
+   "maybe": [
+    "Alperen Sengun (day-to-day)"
    ]
   }
  ],
@@ -1019,37 +1720,17 @@
    "matchup": "ATL @ NOP",
    "stat": "assists",
    "line": 2.5,
-   "odds": -169,
-   "book": "draftkings",
-   "prob": 0.6159054207797141,
-   "edge": -0.012347367324375136,
+   "odds": -170,
+   "book": "sgo/draftkings",
+   "prob": 0.6163079415299537,
+   "edge": -0.013321688099675932,
    "proj": 4.384739287566666,
    "proj_min": 28.161923828091723,
    "tip": "2026-10-31T23:00:00Z",
    "low_line": true,
    "median": 3.5,
    "books": 11,
-   "status": "this book's line is 1.0 below the 11-book median of 3.5. Model likes it (62%) but the price of -169 leaves no edge"
-  },
-  {
-   "game_id": 21718007,
-   "player_id": 38017695,
-   "player": "Tari Eason",
-   "team": "HOU",
-   "matchup": "OKC @ HOU",
-   "stat": "rebounds",
-   "line": 4.5,
-   "odds": -172,
-   "book": "fanduel",
-   "prob": 0.6083924569860119,
-   "edge": -0.02396048419045871,
-   "proj": 6.41041704054813,
-   "proj_min": 27.548568499091147,
-   "tip": "2026-11-01T00:30:00Z",
-   "low_line": true,
-   "median": 5.5,
-   "books": 9,
-   "status": "this book's line is 1.0 below the 9-book median of 5.5. Model likes it (61%) but the price of -172 leaves no edge"
+   "status": "this book's line is 1.0 below the 11-book median of 3.5. Model likes it (62%) but the price of -170 leaves no edge"
   },
   {
    "game_id": 21718007,
@@ -1099,37 +1780,17 @@
    "matchup": "POR @ UTA",
    "stat": "assists",
    "line": 4.5,
-   "odds": -160,
-   "book": "betmgm",
-   "prob": 0.5814405526835086,
-   "edge": -0.033944062701106836,
-   "proj": 5.801633584475802,
-   "proj_min": 31.19363406468396,
+   "odds": -165,
+   "book": "sgo/betmgm",
+   "prob": 0.5837700993893018,
+   "edge": -0.03887141004466044,
+   "proj": 5.8060267530632395,
+   "proj_min": 31.228040463507536,
    "tip": "2026-10-31T19:00:00Z",
    "low_line": true,
    "median": 5.5,
-   "books": 12,
-   "status": "this book's line is 1.0 below the 12-book median of 5.5. Model likes it (58%) but the price of -160 leaves no edge"
-  },
-  {
-   "game_id": 21718002,
-   "player_id": 419,
-   "player": "Anfernee Simons",
-   "team": "PHI",
-   "matchup": "PHI @ CHA",
-   "stat": "assists",
-   "line": 1.5,
-   "odds": -178,
-   "book": "fanduel",
-   "prob": 0.6019100572312647,
-   "edge": -0.038377712552908005,
-   "proj": 2.3232802292046246,
-   "proj_min": 27.013616845978678,
-   "tip": "2026-10-31T22:00:00Z",
-   "low_line": true,
-   "median": 2.5,
-   "books": 10,
-   "status": "this book's line is 1.0 below the 10-book median of 2.5. Model likes it (60%) but the price of -178 leaves no edge"
+   "books": 13,
+   "status": "this book's line is 1.0 below the 13-book median of 5.5. Model likes it (58%) but the price of -165 leaves no edge"
   },
   {
    "game_id": 21718004,
@@ -1152,43 +1813,62 @@
   },
   {
    "game_id": 21718001,
-   "player_id": 666626,
-   "player": "Jaxson Hayes",
-   "team": "UTA",
+   "player_id": 214,
+   "player": "Jrue Holiday",
+   "team": "POR",
    "matchup": "POR @ UTA",
-   "stat": "points",
-   "line": 7.5,
-   "odds": -122,
-   "book": "fanduel",
-   "prob": 0.5091167127675752,
-   "edge": -0.0404328367819744,
-   "proj": 9.132922513897016,
-   "proj_min": 24.837272941555735,
-   "tip": "2026-10-31T19:00:00Z",
-   "low_line": true,
-   "median": 8.5,
-   "books": 9,
-   "status": "this book's line is 1.0 below the 9-book median of 8.5. Model gives it 51%; a pick needs 55%"
-  },
-  {
-   "game_id": 21718001,
-   "player_id": 1057260888,
-   "player": "Airious Bailey",
-   "team": "UTA",
-   "matchup": "POR @ UTA",
-   "stat": "assists",
+   "stat": "threes",
    "line": 1.5,
-   "odds": -188,
-   "book": "fanduel",
-   "prob": 0.6113935886889601,
-   "edge": -0.04138418908881769,
-   "proj": 2.282741388961513,
-   "proj_min": 31.414764892656105,
+   "odds": -195,
+   "book": "betrivers",
+   "prob": 0.620313223994202,
+   "edge": -0.04070372515834042,
+   "proj": 2.4100389359226684,
+   "proj_min": 29.564267473716033,
    "tip": "2026-10-31T19:00:00Z",
    "low_line": true,
    "median": 2.5,
-   "books": 4,
-   "status": "this book's line is 1.0 below the 4-book median of 2.5. Model likes it (61%) but the price of -188 leaves no edge"
+   "books": 12,
+   "status": "this book's line is 1.0 below the 12-book median of 2.5. Model likes it (62%) but the price of -195 leaves no edge"
+  },
+  {
+   "game_id": 21718005,
+   "player_id": 322,
+   "player": "Donovan Mitchell",
+   "team": "CLE",
+   "matchup": "CLE @ MIL",
+   "stat": "points",
+   "line": 23.5,
+   "odds": -114,
+   "book": "fanduel",
+   "prob": 0.4909757217027103,
+   "edge": -0.04173455867112141,
+   "proj": 25.132567585585978,
+   "proj_min": 32.51128268265618,
+   "low_line": true,
+   "median": 24.5,
+   "books": 12,
+   "status": "this book's line is 1.0 below the 12-book median of 24.5. Model gives it 49%; a pick needs 55%"
+  },
+  {
+   "game_id": 21718001,
+   "player_id": 297,
+   "player": "Lauri Markkanen",
+   "team": "UTA",
+   "matchup": "POR @ UTA",
+   "stat": "rebounds",
+   "line": 5.5,
+   "odds": -134,
+   "book": "betparx",
+   "prob": 0.5308512517387848,
+   "edge": -0.041798320910787834,
+   "proj": 6.252145841690305,
+   "proj_min": 31.254310876291417,
+   "tip": "2026-10-31T19:00:00Z",
+   "low_line": true,
+   "median": 6.5,
+   "books": 12,
+   "status": "this book's line is 1.0 below the 12-book median of 6.5. Model gives it 53%; a pick needs 55%"
   },
   {
    "game_id": 21718006,
@@ -1227,6 +1907,26 @@
    "median": 16.5,
    "books": 12,
    "status": "this book's line is 1.0 below the 12-book median of 16.5. Model gives it 49%; a pick needs 55%"
+  },
+  {
+   "game_id": 21718003,
+   "player_id": 3547256,
+   "player": "Saddiq Bey",
+   "team": "NOP",
+   "matchup": "ATL @ NOP",
+   "stat": "rebounds",
+   "line": 3.5,
+   "odds": -148,
+   "book": "betparx",
+   "prob": 0.5544035427115097,
+   "edge": -0.04237065083687741,
+   "proj": 4.358278432030739,
+   "proj_min": 26.321740129632897,
+   "tip": "2026-10-31T23:00:00Z",
+   "low_line": true,
+   "median": 4.5,
+   "books": 11,
+   "status": "this book's line is 1.0 below the 11-book median of 4.5. Model likes it (55%) but the price of -148 leaves no edge"
   }
  ],
  "combos": [
@@ -1240,18 +1940,18 @@
    "stat": "ra",
    "side": "UNDER",
    "line": 10.5,
-   "odds": -105,
-   "book": "sgo/bovada",
-   "prob": 0.5479107850044302,
-   "prob_raw": 0.7517333333333334,
-   "proj_mean": 8.367566666666665,
-   "proj_min": 35.77302740521677,
+   "odds": 100,
+   "book": "sgo/betmgm",
+   "prob": 0.5376734430958179,
+   "prob_raw": 0.7526666666666667,
+   "proj_mean": 8.355166666666667,
+   "proj_min": 35.77794887576848,
    "units": 0,
    "tier": "COMBO",
-   "why": "projects 3.5 reb + 4.9 ast (single-stat model, shared minutes); out: Joel Embiid, LeBron James; back-to-back; minutes -4 vs his normal; model alone 25% over, book 52%, calibrated 45%",
+   "why": "projects 3.5 reb + 4.9 ast (single-stat model, shared minutes); out: Joel Embiid, LeBron James; back-to-back; minutes -4 vs his normal; model alone 25% over, book 53%, calibrated 46%",
    "matchup": "PHI @ CHA",
    "tip": "2026-10-31T22:00:00Z",
-   "edge": 0.03571566305321072,
+   "edge": 0.03767344309581788,
    "dist": [
     0.001,
     0.006,
@@ -1261,16 +1961,16 @@
     0.085,
     0.107,
     0.116,
-    0.119,
+    0.12,
     0.112,
-    0.096,
+    0.095,
     0.077,
     0.056,
     0.043,
-    0.028,
-    0.018,
+    0.027,
+    0.017,
     0.01,
-    0.007,
+    0.006,
     0.004,
     0.002,
     0.001,
@@ -1289,30 +1989,30 @@
    "line": 10.5,
    "odds": 100,
    "book": "betmgm",
-   "prob": 0.5354979457581615,
-   "prob_raw": 0.7272333333333333,
-   "proj_mean": 8.651766666666669,
-   "proj_min": 32.998485410934556,
+   "prob": 0.535833326985555,
+   "prob_raw": 0.7284666666666666,
+   "proj_mean": 8.640466666666669,
+   "proj_min": 33.003406881486264,
    "units": 0,
    "tier": "COMBO",
    "why": "projects 5.2 reb + 3.4 ast (single-stat model, shared minutes); out: Joel Embiid, LeBron James; back-to-back; minutes -3 vs his normal; model alone 27% over, book 53%, calibrated 46%",
    "matchup": "PHI @ CHA",
    "tip": "2026-10-31T22:00:00Z",
-   "edge": 0.03549794575816145,
+   "edge": 0.03583332698555497,
    "dist": [
     0.001,
     0.005,
     0.013,
     0.031,
     0.05,
-    0.078,
+    0.079,
     0.1,
     0.115,
     0.116,
     0.114,
-    0.105,
-    0.08,
-    0.062,
+    0.104,
+    0.079,
+    0.063,
     0.046,
     0.032,
     0.02,
@@ -1335,28 +2035,28 @@
    "stat": "ra",
    "side": "UNDER",
    "line": 6.5,
-   "odds": -114,
-   "book": "sgo/draftkings",
-   "prob": 0.5560106527002362,
-   "prob_raw": 0.7261333333333333,
-   "proj_mean": 5.040266666666667,
-   "proj_min": 21.61786553850806,
+   "odds": -106,
+   "book": "fanduel",
+   "prob": 0.5460004030583708,
+   "prob_raw": 0.7253,
+   "proj_mean": 5.0466999999999995,
+   "proj_min": 21.647581475776494,
    "units": 0,
    "tier": "COMBO",
-   "why": "projects 2.3 reb + 2.8 ast (single-stat model, shared minutes); out: Shaedon Sharpe; minutes -5 vs his normal; model alone 27% over, book 50%, calibrated 44%",
+   "why": "projects 2.3 reb + 2.8 ast (single-stat model, shared minutes); out: Shaedon Sharpe; minutes -5 vs his normal; model alone 27% over, book 51%, calibrated 45%",
    "matchup": "POR @ UTA",
    "tip": "2026-10-31T19:00:00Z",
-   "edge": 0.023300372326404473,
+   "edge": 0.03143729626225433,
    "dist": [
     0.022,
     0.065,
     0.106,
-    0.129,
-    0.144,
+    0.128,
+    0.145,
     0.141,
     0.119,
     0.09,
-    0.066,
+    0.067,
     0.046,
     0.031,
     0.017,
@@ -1371,143 +2071,6 @@
   {
    "logged_at": "",
    "date": "2026-10-31",
-   "game_id": 21718005,
-   "player_id": 9,
-   "player": "Jarrett Allen",
-   "team": "CLE",
-   "stat": "ra",
-   "side": "UNDER",
-   "line": 10.5,
-   "odds": -106,
-   "book": "fanduel",
-   "prob": 0.5377703992281528,
-   "prob_raw": 0.6757333333333333,
-   "proj_mean": 9.0152,
-   "proj_min": 27.1152356333865,
-   "units": 0,
-   "tier": "COMBO",
-   "why": "projects 7.6 reb + 1.4 ast (single-stat model, shared minutes); out: Jaylon Tyson; model alone 32% over, book 52%, calibrated 46%",
-   "matchup": "CLE @ MIL",
-   "edge": 0.02320729243203634,
-   "dist": [
-    0.001,
-    0.006,
-    0.016,
-    0.033,
-    0.052,
-    0.072,
-    0.092,
-    0.102,
-    0.107,
-    0.102,
-    0.094,
-    0.082,
-    0.068,
-    0.051,
-    0.037,
-    0.031,
-    0.019,
-    0.013,
-    0.008,
-    0.005,
-    0.004,
-    0.002,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-31",
-   "game_id": 21718002,
-   "player_id": 409,
-   "player": "Dennis Schroder",
-   "team": "CHA",
-   "stat": "ra",
-   "side": "UNDER",
-   "line": 9.5,
-   "odds": -115,
-   "book": "fanduel",
-   "prob": 0.5574387537388636,
-   "prob_raw": 0.7211000000000001,
-   "proj_mean": 7.732066666666667,
-   "proj_min": 27.79097285745231,
-   "units": 0,
-   "tier": "COMBO",
-   "why": "projects 3.0 reb + 4.7 ast (single-stat model, shared minutes); opponent out: Joel Embiid (starter), LeBron James (starter); back-to-back; model alone 28% over, book 50%, calibrated 44%",
-   "matchup": "PHI @ CHA",
-   "tip": "2026-10-31T22:00:00Z",
-   "edge": 0.022555032808631137,
-   "dist": [
-    0.002,
-    0.01,
-    0.028,
-    0.051,
-    0.079,
-    0.101,
-    0.117,
-    0.121,
-    0.112,
-    0.1,
-    0.083,
-    0.064,
-    0.046,
-    0.031,
-    0.021,
-    0.013,
-    0.008,
-    0.006,
-    0.003,
-    0.002,
-    0.001,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-31",
-   "game_id": 21718006,
-   "player_id": 17553979,
-   "player": "Jonathan Kuminga",
-   "team": "MIN",
-   "stat": "ra",
-   "side": "UNDER",
-   "line": 7.5,
-   "odds": -105,
-   "book": "sgo/bovada",
-   "prob": 0.5339796771835189,
-   "prob_raw": 0.6749,
-   "proj_mean": 6.315300000000001,
-   "proj_min": 25.821731387652676,
-   "units": 0,
-   "tier": "COMBO",
-   "why": "projects 4.4 reb + 1.9 ast (single-stat model, shared minutes); out: Anthony Edwards; back-to-back; model alone 33% over, book 52%, calibrated 47%",
-   "matchup": "MIN @ SAS",
-   "edge": 0.021784555232299385,
-   "dist": [
-    0.007,
-    0.029,
-    0.058,
-    0.092,
-    0.118,
-    0.129,
-    0.128,
-    0.115,
-    0.101,
-    0.074,
-    0.055,
-    0.038,
-    0.024,
-    0.014,
-    0.009,
-    0.005,
-    0.003,
-    0.001,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-10-31",
    "game_id": 21718007,
    "player_id": 201,
    "player": "Isaiah Hartenstein",
@@ -1515,18 +2078,18 @@
    "stat": "ra",
    "side": "UNDER",
    "line": 13.5,
-   "odds": -135,
-   "book": "sgo/bovada",
-   "prob": 0.5930843331003441,
+   "odds": -125,
+   "book": "betparx",
+   "prob": 0.578343741466901,
    "prob_raw": 0.7354666666666667,
    "proj_mean": 10.977266666666663,
    "proj_min": 24.25186963255285,
    "units": 0,
    "tier": "COMBO",
-   "why": "projects 8.2 reb + 2.7 ast (single-stat model, shared minutes); out: Alex Caruso, Chet Holmgren, Cason Wallace; opponent out: Fred VanVleet (starter), Reed Sheppard (starter); model alone 26% over, book 46%, calibrated 41%",
+   "why": "projects 8.2 reb + 2.7 ast (single-stat model, shared minutes); out: Alex Caruso, Chet Holmgren, Cason Wallace; opponent out: Fred VanVleet (starter), Reed Sheppard (starter); model alone 26% over, book 48%, calibrated 42%",
    "matchup": "OKC @ HOU",
    "tip": "2026-11-01T00:30:00Z",
-   "edge": 0.01861624799396111,
+   "edge": 0.02278818591134546,
    "dist": [
     0.001,
     0.002,
@@ -1561,61 +2124,149 @@
   {
    "logged_at": "",
    "date": "2026-10-31",
-   "game_id": 21718002,
-   "player_id": 666940,
-   "player": "Dean Wade",
-   "team": "PHI",
-   "stat": "pr",
+   "game_id": 21718005,
+   "player_id": 9,
+   "player": "Jarrett Allen",
+   "team": "CLE",
+   "stat": "ra",
    "side": "UNDER",
    "line": 10.5,
-   "odds": -113,
+   "odds": -108,
    "book": "fanduel",
-   "prob": 0.5410369253576467,
-   "prob_raw": 0.7337333333333333,
-   "proj_mean": 8.3233,
-   "proj_min": 25.06575784223385,
+   "prob": 0.54117775469753,
+   "prob_raw": 0.6757333333333333,
+   "proj_mean": 9.0152,
+   "proj_min": 27.1152356333865,
    "units": 0,
    "tier": "COMBO",
-   "why": "projects 4.6 pts + 3.7 reb (single-stat model, shared minutes); out: Joel Embiid, LeBron James; back-to-back; model alone 27% over, book 50%, calibrated 46%",
+   "why": "projects 7.6 reb + 1.4 ast (single-stat model, shared minutes); out: Jaylon Tyson; model alone 32% over, book 51%, calibrated 46%",
+   "matchup": "CLE @ MIL",
+   "edge": 0.02194698546676077,
+   "dist": [
+    0.001,
+    0.006,
+    0.016,
+    0.033,
+    0.052,
+    0.072,
+    0.092,
+    0.102,
+    0.107,
+    0.102,
+    0.094,
+    0.082,
+    0.068,
+    0.051,
+    0.037,
+    0.031,
+    0.019,
+    0.013,
+    0.008,
+    0.005,
+    0.004,
+    0.002,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-31",
+   "game_id": 21718006,
+   "player_id": 17553979,
+   "player": "Jonathan Kuminga",
+   "team": "MIN",
+   "stat": "ra",
+   "side": "UNDER",
+   "line": 7.5,
+   "odds": -105,
+   "book": "sgo/espnbet",
+   "prob": 0.5339796771835189,
+   "prob_raw": 0.6749,
+   "proj_mean": 6.315300000000001,
+   "proj_min": 25.821731387652676,
+   "units": 0,
+   "tier": "COMBO",
+   "why": "projects 4.4 reb + 1.9 ast (single-stat model, shared minutes); out: Anthony Edwards; back-to-back; model alone 33% over, book 52%, calibrated 47%",
+   "matchup": "MIN @ SAS",
+   "edge": 0.021784555232299385,
+   "dist": [
+    0.007,
+    0.029,
+    0.058,
+    0.092,
+    0.118,
+    0.129,
+    0.128,
+    0.115,
+    0.101,
+    0.074,
+    0.055,
+    0.038,
+    0.024,
+    0.014,
+    0.009,
+    0.005,
+    0.003,
+    0.001,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-10-31",
+   "game_id": 21718002,
+   "player_id": 409,
+   "player": "Dennis Schroder",
+   "team": "CHA",
+   "stat": "ra",
+   "side": "UNDER",
+   "line": 9.5,
+   "odds": -120,
+   "book": "fanduel",
+   "prob": 0.565237229991577,
+   "prob_raw": 0.7220666666666666,
+   "proj_mean": 7.721566666666666,
+   "proj_min": 27.795894328004014,
+   "units": 0,
+   "tier": "COMBO",
+   "why": "projects 3.0 reb + 4.7 ast (single-stat model, shared minutes); opponent out: Joel Embiid (starter), LeBron James (starter); back-to-back; model alone 28% over, book 49%, calibrated 43%",
    "matchup": "PHI @ CHA",
    "tip": "2026-10-31T22:00:00Z",
-   "edge": 0.010520493432764066,
+   "edge": 0.01978268453703158,
    "dist": [
-    0.003,
-    0.011,
-    0.027,
-    0.05,
-    0.072,
-    0.087,
-    0.099,
-    0.104,
-    0.104,
-    0.096,
-    0.081,
-    0.069,
-    0.057,
-    0.042,
-    0.03,
-    0.023,
-    0.016,
-    0.011,
-    0.007,
-    0.005,
     0.002,
-    0.001,
+    0.011,
+    0.028,
+    0.052,
+    0.079,
+    0.101,
+    0.117,
+    0.121,
+    0.113,
+    0.1,
+    0.083,
+    0.063,
+    0.046,
+    0.031,
+    0.021,
+    0.013,
+    0.008,
+    0.006,
+    0.003,
+    0.002,
     0.001,
     0.001
    ]
   }
  ],
  "combo_info": {
-  "priced": 2069,
-  "over": 509,
-  "under": 1560,
-  "cleared": 32,
-  "tracked": 8,
+  "priced": 2214,
+  "over": 565,
+  "under": 1649,
+  "cleared": 30,
+  "tracked": 7,
   "bar": 0.53,
   "basis": "the calibration its parts earned",
-  "at": "2026-10-31T18:25:43Z"
+  "at": "2026-10-31T18:53:02Z"
  }
 }
