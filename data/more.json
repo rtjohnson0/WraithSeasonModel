@@ -1,7 +1,46 @@
 {
  "date": "2026-11-05",
- "at": "2026-11-05T09:00:52Z",
+ "at": "2026-11-05T17:15:56Z",
  "plays": [
+  {
+   "logged_at": "",
+   "date": "2026-11-05",
+   "game_id": 21718041,
+   "player_id": 66,
+   "player": "Dillon Brooks",
+   "team": "PHX",
+   "stat": "rebounds",
+   "side": "UNDER",
+   "line": 4.5,
+   "odds": 117,
+   "book": "sgo/draftkings",
+   "prob": 0.5404944255735674,
+   "prob_raw": 0.5759669208555969,
+   "proj_mean": 4.290391171580691,
+   "proj_min": 32.089099419582624,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "opponent out: Jalen Suggs (starter), Paolo Banchero (starter); back-to-back; defense vs wings: 7th-most rebounds allowed (+16%, of 30 teams); teammates uncertain: Jordan Goodwin (day-to-day)",
+   "matchup": "ORL @ PHX",
+   "tip": "2026-11-06T02:00:00Z",
+   "edge": 0.07966493248600981,
+   "dist": [
+    0.02,
+    0.071,
+    0.133,
+    0.174,
+    0.179,
+    0.152,
+    0.112,
+    0.073,
+    0.043,
+    0.023,
+    0.011,
+    0.005,
+    0.002,
+    0.001
+   ]
+  },
   {
    "logged_at": "",
    "date": "2026-11-05",
@@ -9,76 +48,36 @@
    "player_id": 115,
    "player": "Stephen Curry",
    "team": "GSW",
-   "stat": "threes",
+   "stat": "assists",
    "side": "UNDER",
-   "line": 4.5,
-   "odds": 125,
+   "line": 5.5,
+   "odds": 102,
    "book": "sgo/draftkings",
-   "prob": 0.5332651341931491,
-   "prob_raw": 0.5546088680966719,
-   "proj_mean": 4.426328357488971,
-   "proj_min": 29.442266050704802,
+   "prob": 0.5447330841284779,
+   "prob_raw": 0.5066567021174095,
+   "proj_mean": 5.7076985991245515,
+   "proj_min": 29.429742400573662,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Gui Santos; line 4.5 is 1.0 above the market median 3.5 across 9 books: off the market, in your favor",
+   "why": "out: Gui Santos; defense vs guards: 12th-fewest assists allowed (-4%, of 30 teams); line 5.5 is 1.0 above the market median 4.5 across 13 books: off the market, in your favor",
    "matchup": "MIA @ GSW",
    "tip": "2026-11-06T03:00:00Z",
-   "edge": 0.08882068974870472,
+   "edge": 0.04968357917798283,
    "dist": [
-    0.019,
-    0.068,
-    0.127,
-    0.167,
-    0.174,
-    0.151,
-    0.115,
-    0.077,
-    0.048,
-    0.027,
-    0.014,
+    0.006,
+    0.029,
+    0.067,
+    0.11,
+    0.142,
+    0.152,
+    0.141,
+    0.117,
+    0.087,
+    0.06,
+    0.038,
+    0.023,
+    0.013,
     0.007,
-    0.003,
-    0.001,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-11-05",
-   "game_id": 21718041,
-   "player_id": 17896026,
-   "player": "Franz Wagner",
-   "team": "ORL",
-   "stat": "rebounds",
-   "side": "UNDER",
-   "line": 6.5,
-   "odds": 117,
-   "book": "sgo/draftkings",
-   "prob": 0.5380973841374495,
-   "prob_raw": 0.6081776555369235,
-   "proj_mean": 5.982361225163671,
-   "proj_min": 35.698573905923574,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "out: Jalen Suggs, Paolo Banchero; opponent out: Jordan Goodwin; defense vs forwards: 13th-fewest rebounds allowed (-2%, of 30 teams); line 6.5 is 1.0 above the market median 5.5 across 11 books: off the market, in your favor",
-   "matchup": "ORL @ PHX",
-   "tip": "2026-11-06T02:00:00Z",
-   "edge": 0.07726789104989185,
-   "dist": [
-    0.004,
-    0.021,
-    0.055,
-    0.097,
-    0.133,
-    0.151,
-    0.147,
-    0.126,
-    0.097,
-    0.068,
-    0.044,
-    0.026,
-    0.015,
-    0.008,
     0.004,
     0.002,
     0.001
@@ -94,25 +93,25 @@
    "stat": "threes",
    "side": "UNDER",
    "line": 1.5,
-   "odds": 102,
-   "book": "betparx",
-   "prob": 0.5165289470815958,
-   "prob_raw": 0.5946434984284175,
-   "proj_mean": 1.4116274347063453,
-   "proj_min": 29.315261265630134,
+   "odds": 110,
+   "book": "draftkings",
+   "prob": 0.5060449244379246,
+   "prob_raw": 0.5961358715949823,
+   "proj_mean": 1.407023169391557,
+   "proj_min": 29.324968826670986,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Jalen Suggs, Paolo Banchero; opponent out: Jordan Goodwin",
+   "why": "out: Jalen Suggs, Paolo Banchero",
    "matchup": "ORL @ PHX",
    "tip": "2026-11-06T02:00:00Z",
-   "edge": 0.021479442131100757,
+   "edge": 0.02985444824744843,
    "dist": [
-    0.262,
+    0.263,
     0.333,
     0.229,
     0.112,
     0.044,
-    0.015,
+    0.014,
     0.004,
     0.001
    ]
@@ -120,44 +119,83 @@
   {
    "logged_at": "",
    "date": "2026-11-05",
+   "game_id": 21718042,
+   "player_id": 1057395872,
+   "player": "Will Richard",
+   "team": "GSW",
+   "stat": "points",
+   "side": "UNDER",
+   "line": 6.5,
+   "odds": 103,
+   "book": "sgo/draftkings",
+   "prob": 0.511943359769022,
+   "prob_raw": 0.5652378477521661,
+   "proj_mean": 6.433492002307173,
+   "proj_min": 21.51843536814657,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "out: Gui Santos; defense vs guards: 11th-most points allowed (+3%, of 30 teams); line 6.5 is 1.0 above the market median 5.5 across 10 books: off the market, in your favor",
+   "matchup": "MIA @ GSW",
+   "tip": "2026-11-06T03:00:00Z",
+   "edge": 0.0193325223305984,
+   "dist": [
+    0.023,
+    0.053,
+    0.078,
+    0.096,
+    0.106,
+    0.108,
+    0.102,
+    0.092,
+    0.079,
+    0.065,
+    0.052,
+    0.04,
+    0.03,
+    0.023,
+    0.017,
+    0.012,
+    0.008,
+    0.006,
+    0.004,
+    0.003,
+    0.002
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-11-05",
    "game_id": 21718041,
-   "player_id": 85,
-   "player": "Wendell Carter Jr.",
+   "player_id": 56677827,
+   "player": "Anthony Black",
    "team": "ORL",
    "stat": "rebounds",
    "side": "UNDER",
-   "line": 8.5,
-   "odds": 105,
-   "book": "sgo/bovada",
-   "prob": 0.5042189946117771,
-   "prob_raw": 0.5916704753065472,
-   "proj_mean": 7.996162907358044,
-   "proj_min": 32.54790135468354,
+   "line": 4.5,
+   "odds": -109,
+   "book": "draftkings",
+   "prob": 0.5397082053641735,
+   "prob_raw": 0.6528934293277681,
+   "proj_mean": 3.853783778037342,
+   "proj_min": 29.324968826670986,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Jalen Suggs, Paolo Banchero; opponent out: Jordan Goodwin; defense vs forwards: 13th-fewest rebounds allowed (-2%, of 30 teams)",
+   "why": "out: Jalen Suggs, Paolo Banchero; defense vs guards: 2nd-most rebounds allowed (+15%, of 30 teams)",
    "matchup": "ORL @ PHX",
    "tip": "2026-11-06T02:00:00Z",
-   "edge": 0.016414116562996628,
+   "edge": 0.018177104885704676,
    "dist": [
-    0.001,
-    0.006,
-    0.019,
-    0.04,
-    0.068,
-    0.095,
-    0.116,
-    0.125,
-    0.122,
-    0.109,
-    0.09,
-    0.069,
-    0.05,
-    0.035,
-    0.023,
-    0.014,
-    0.008,
-    0.005,
+    0.032,
+    0.098,
+    0.16,
+    0.188,
+    0.175,
+    0.137,
+    0.093,
+    0.057,
+    0.031,
+    0.016,
+    0.007,
     0.003,
     0.001,
     0.001
@@ -173,34 +211,142 @@
    "stat": "assists",
    "side": "UNDER",
    "line": 6.5,
-   "odds": 100,
-   "book": "sgo/espnbet",
-   "prob": 0.5108572257122292,
-   "prob_raw": 0.6611922786099592,
-   "proj_mean": 5.618802684138418,
-   "proj_min": 35.698573905923574,
+   "odds": 102,
+   "book": "betparx",
+   "prob": 0.5049090345418445,
+   "prob_raw": 0.6629809179249925,
+   "proj_mean": 5.606442850680123,
+   "proj_min": 35.709107816163886,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Jalen Suggs, Paolo Banchero; opponent out: Jordan Goodwin; defense vs forwards: 4th-most assists allowed (+13%, of 30 teams)",
+   "why": "out: Jalen Suggs, Paolo Banchero; defense vs forwards: 4th-most assists allowed (+13%, of 30 teams)",
    "matchup": "ORL @ PHX",
    "tip": "2026-11-06T02:00:00Z",
-   "edge": 0.010857225712229246,
+   "edge": 0.009859529591349503,
    "dist": [
-    0.006,
-    0.029,
-    0.069,
+    0.007,
+    0.03,
+    0.07,
     0.114,
-    0.145,
+    0.146,
     0.155,
     0.142,
     0.116,
     0.085,
-    0.058,
+    0.057,
     0.036,
     0.021,
-    0.012,
+    0.011,
     0.006,
     0.003,
+    0.001,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-11-05",
+   "game_id": 21718041,
+   "player_id": 1057279571,
+   "player": "Jase Richardson",
+   "team": "ORL",
+   "stat": "rebounds",
+   "side": "UNDER",
+   "line": 2.5,
+   "odds": -102,
+   "book": "draftkings",
+   "prob": 0.5088686418808599,
+   "prob_raw": 0.5735074373073343,
+   "proj_mean": 2.4256078592674326,
+   "proj_min": 23.974744445352563,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "out: Jalen Suggs, Paolo Banchero; minutes +10 vs his normal; defense vs guards: 2nd-most rebounds allowed (+15%, of 30 teams)",
+   "matchup": "ORL @ PHX",
+   "tip": "2026-11-06T02:00:00Z",
+   "edge": 0.003918146831354941,
+   "dist": [
+    0.117,
+    0.221,
+    0.236,
+    0.186,
+    0.119,
+    0.066,
+    0.032,
+    0.014,
+    0.006,
+    0.002,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-11-05",
+   "game_id": 21718042,
+   "player_id": 56677858,
+   "player": "Brandin Podziemski",
+   "team": "GSW",
+   "stat": "points",
+   "side": "UNDER",
+   "line": 17.5,
+   "odds": -114,
+   "book": "sgo/draftkings",
+   "prob": 0.5360795107289187,
+   "prob_raw": 0.48706020907115744,
+   "proj_mean": 18.61275741071297,
+   "proj_min": 31.395906994086218,
+   "units": 0,
+   "tier": "LEAN",
+   "why": "out: Gui Santos; defense vs guards: 11th-most points allowed (+3%, of 30 teams); line 17.5 is 1.0 above the market median 16.5 across 13 books: off the market, in your favor; market line moved against the pick 15.5 to 16.5 since 1:50 am (2 of 3 books changed, 2 up 0 down; up)",
+   "matchup": "MIA @ GSW",
+   "tip": "2026-11-06T03:00:00Z",
+   "edge": 0.0033692303550869607,
+   "dist": [
+    0,
+    0,
+    0.001,
+    0.002,
+    0.004,
+    0.008,
+    0.012,
+    0.017,
+    0.023,
+    0.029,
+    0.036,
+    0.041,
+    0.046,
+    0.05,
+    0.053,
+    0.054,
+    0.055,
+    0.054,
+    0.053,
+    0.051,
+    0.048,
+    0.045,
+    0.041,
+    0.037,
+    0.034,
+    0.03,
+    0.026,
+    0.023,
+    0.02,
+    0.017,
+    0.015,
+    0.013,
+    0.011,
+    0.009,
+    0.007,
+    0.006,
+    0.005,
+    0.004,
+    0.003,
+    0.003,
+    0.002,
+    0.002,
+    0.001,
+    0.001,
+    0.001,
     0.001,
     0.001
    ]
@@ -212,72 +358,39 @@
    "player_id": 1091351802,
    "player": "Yaxel Lendeborg",
    "team": "GSW",
-   "stat": "points",
+   "stat": "rebounds",
    "side": "UNDER",
-   "line": 20.5,
-   "odds": -102,
-   "book": "sgo/draftkings",
-   "prob": 0.5105880630381403,
-   "prob_raw": 0.5236395134049632,
-   "proj_mean": 20.97244729715494,
-   "proj_min": 29.264421471609577,
+   "line": 7.5,
+   "odds": -130,
+   "book": "sgo/espnbet",
+   "prob": 0.5677789823059414,
+   "prob_raw": 0.653713327742609,
+   "proj_mean": 6.560170703471443,
+   "proj_min": 29.25026296996251,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Gui Santos; minutes -4 vs his normal; defense vs forwards: 15th-most points allowed (+1%, of 30 teams); line 20.5 is 1.0 above the market median 19.5 across 8 books: off the market, in your favor",
+   "why": "out: Gui Santos; minutes -4 vs his normal; defense vs forwards: 8th-most rebounds allowed (+5%, of 30 teams)",
    "matchup": "MIA @ GSW",
    "tip": "2026-11-06T03:00:00Z",
-   "edge": 0.00563756798863535,
+   "edge": 0.0025615910015935883,
    "dist": [
-    0,
-    0,
-    0,
-    0.001,
-    0.002,
     0.004,
-    0.007,
-    0.011,
-    0.015,
-    0.02,
-    0.025,
-    0.03,
-    0.035,
-    0.039,
-    0.043,
-    0.046,
-    0.048,
-    0.049,
-    0.049,
-    0.049,
-    0.048,
-    0.046,
-    0.044,
-    0.042,
-    0.039,
-    0.036,
-    0.033,
-    0.03,
-    0.027,
-    0.024,
-    0.022,
-    0.019,
     0.017,
+    0.044,
+    0.079,
+    0.112,
+    0.133,
+    0.138,
+    0.127,
+    0.107,
+    0.083,
+    0.059,
+    0.04,
+    0.025,
     0.015,
-    0.013,
-    0.011,
     0.009,
-    0.008,
-    0.007,
-    0.006,
     0.005,
-    0.004,
-    0.003,
-    0.003,
     0.002,
-    0.002,
-    0.002,
-    0.001,
-    0.001,
-    0.001,
     0.001,
     0.001
    ]
@@ -286,177 +399,37 @@
    "logged_at": "",
    "date": "2026-11-05",
    "game_id": 21718042,
-   "player_id": 344,
-   "player": "Georges Niang",
-   "team": "GSW",
+   "player_id": 475,
+   "player": "Andrew Wiggins",
+   "team": "MIA",
    "stat": "rebounds",
    "side": "UNDER",
    "line": 3.5,
-   "odds": -138,
-   "book": "fanduel",
-   "prob": 0.5851464989907402,
-   "prob_raw": 0.6911064296002201,
-   "proj_mean": 2.771032908642594,
-   "proj_min": 19.375018868006602,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "out: Gui Santos; defense vs forwards: 8th-most rebounds allowed (+5%, of 30 teams)",
-   "matchup": "MIA @ GSW",
-   "tip": "2026-11-06T03:00:00Z",
-   "edge": 0.005314566217630934,
-   "dist": [
-    0.089,
-    0.187,
-    0.222,
-    0.194,
-    0.139,
-    0.085,
-    0.046,
-    0.023,
-    0.01,
-    0.004,
-    0.002,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-11-05",
-   "game_id": 21718042,
-   "player_id": 15,
-   "player": "Giannis Antetokounmpo",
-   "team": "MIA",
-   "stat": "rebounds",
-   "side": "UNDER",
-   "line": 11.5,
    "odds": 100,
    "book": "sgo/bovada",
-   "prob": 0.5050397292357262,
-   "prob_raw": 0.5669279797947357,
-   "proj_mean": 11.097643423664483,
-   "proj_min": 33.633477814034066,
+   "prob": 0.5011709091128255,
+   "prob_raw": 0.5509707049218242,
+   "proj_mean": 3.4728079295226966,
+   "proj_min": 25.624888306393277,
    "units": 0,
    "tier": "LEAN",
-   "why": "opponent out: Gui Santos; back-to-back; defense vs forwards: 10th-fewest rebounds allowed (-4%, of 30 teams)",
+   "why": "opponent out: Gui Santos; back-to-back; minutes -4 vs his normal",
    "matchup": "MIA @ GSW",
    "tip": "2026-11-06T03:00:00Z",
-   "edge": 0.005039729235726154,
+   "edge": 0.001170909112825469,
    "dist": [
-    0,
-    0.001,
-    0.003,
-    0.009,
-    0.019,
-    0.033,
-    0.05,
-    0.069,
-    0.085,
-    0.096,
-    0.102,
-    0.1,
-    0.093,
-    0.082,
-    0.069,
-    0.055,
+    0.043,
+    0.123,
+    0.186,
+    0.199,
+    0.17,
+    0.122,
+    0.076,
     0.042,
-    0.031,
-    0.022,
-    0.015,
+    0.021,
     0.01,
-    0.006,
     0.004,
     0.002,
-    0.001,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-11-05",
-   "game_id": 21718041,
-   "player_id": 62,
-   "player": "Miles Bridges",
-   "team": "PHX",
-   "stat": "rebounds",
-   "side": "UNDER",
-   "line": 6.5,
-   "odds": -110,
-   "book": "sgo/draftkings",
-   "prob": 0.527347502602093,
-   "prob_raw": 0.5963128543926304,
-   "proj_mean": 6.0630444180319465,
-   "proj_min": 30.633437910154893,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "out: Jordan Goodwin; opponent out: Jalen Suggs (starter), Paolo Banchero (starter); back-to-back; defense vs forwards: 5th-fewest rebounds allowed (-10%, of 30 teams)",
-   "matchup": "ORL @ PHX",
-   "tip": "2026-11-06T02:00:00Z",
-   "edge": 0.0035379787925691186,
-   "dist": [
-    0.004,
-    0.021,
-    0.054,
-    0.095,
-    0.13,
-    0.148,
-    0.145,
-    0.126,
-    0.098,
-    0.07,
-    0.046,
-    0.029,
-    0.017,
-    0.009,
-    0.005,
-    0.002,
-    0.001
-   ]
-  },
-  {
-   "logged_at": "",
-   "date": "2026-11-05",
-   "game_id": 21718042,
-   "player_id": 4,
-   "player": "Bam Adebayo",
-   "team": "MIA",
-   "stat": "rebounds",
-   "side": "UNDER",
-   "line": 10.5,
-   "odds": -135,
-   "book": "sgo/bovada",
-   "prob": 0.5770664365377858,
-   "prob_raw": 0.6634822806342293,
-   "proj_mean": 9.251349911267377,
-   "proj_min": 34.05432174308802,
-   "units": 0,
-   "tier": "LEAN",
-   "why": "opponent out: Gui Santos; back-to-back",
-   "matchup": "MIA @ GSW",
-   "tip": "2026-11-06T03:00:00Z",
-   "edge": 0.0025983514314027456,
-   "dist": [
-    0,
-    0.002,
-    0.008,
-    0.021,
-    0.04,
-    0.063,
-    0.087,
-    0.105,
-    0.115,
-    0.115,
-    0.106,
-    0.092,
-    0.074,
-    0.056,
-    0.041,
-    0.028,
-    0.018,
-    0.012,
-    0.007,
-    0.004,
-    0.002,
-    0.001,
     0.001
    ]
   }
@@ -466,28 +439,18 @@
    "game_id": 21718041,
    "home": "PHX",
    "visitor": "ORL",
-   "spread_home": -1.25,
-   "total": 223.5
+   "spread_home": -1,
+   "total": 222.5
   },
   {
    "game_id": 21718042,
    "home": "GSW",
    "visitor": "MIA",
-   "spread_home": -7.25,
-   "total": 235.5
+   "spread_home": -7.5,
+   "total": 233.75
   }
  ],
  "moves": {
-  "1028025497|points": [
-   {
-    "at": "2026-11-05T06:50:59Z",
-    "line": 12.5
-   },
-   {
-    "at": "2026-11-05T09:00:00Z",
-    "line": 11.5
-   }
-  ],
   "1028025497|threes": [
    {
     "at": "2026-11-05T06:50:59Z",
@@ -496,36 +459,94 @@
    {
     "at": "2026-11-05T09:00:00Z",
     "line": 2.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 2.5
    }
   ],
-  "1091351802|points": [
+  "1057279571|rebounds": [
    {
     "at": "2026-11-05T06:50:59Z",
-    "line": 19.5
+    "line": 2.5
    },
    {
     "at": "2026-11-05T09:00:00Z",
-    "line": 19.5
+    "line": 2.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 2.5
    }
   ],
-  "115|threes": [
+  "1057395872|points": [
    {
     "at": "2026-11-05T06:50:59Z",
-    "line": 3.5
+    "line": 6.5
    },
    {
     "at": "2026-11-05T09:00:00Z",
-    "line": 3.5
+    "line": 6.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 5.5
    }
   ],
-  "15|points": [
+  "1057395872|threes": [
    {
     "at": "2026-11-05T06:50:59Z",
-    "line": 29.5
+    "line": 1.5
    },
    {
     "at": "2026-11-05T09:00:00Z",
-    "line": 29.5
+    "line": 1.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 1
+   }
+  ],
+  "1091351802|rebounds": [
+   {
+    "at": "2026-11-05T06:50:59Z",
+    "line": 7.5
+   },
+   {
+    "at": "2026-11-05T09:00:00Z",
+    "line": 7.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 7.5
+   }
+  ],
+  "115|assists": [
+   {
+    "at": "2026-11-05T06:50:59Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-11-05T09:00:00Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 4.5
+   }
+  ],
+  "115|points": [
+   {
+    "at": "2026-11-05T06:50:59Z",
+    "line": 26.5
+   },
+   {
+    "at": "2026-11-05T09:00:00Z",
+    "line": 26.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 26.5
    }
   ],
   "15|rebounds": [
@@ -535,6 +556,10 @@
    },
    {
     "at": "2026-11-05T09:00:00Z",
+    "line": 11.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
     "line": 11.5
    }
   ],
@@ -546,6 +571,10 @@
    {
     "at": "2026-11-05T09:00:00Z",
     "line": 16.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 16.5
    }
   ],
   "17896026|assists": [
@@ -556,26 +585,24 @@
    {
     "at": "2026-11-05T09:00:00Z",
     "line": 6.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 6.5
    }
   ],
-  "17896026|rebounds": [
+  "17896026|points": [
    {
     "at": "2026-11-05T06:50:59Z",
-    "line": 5.5
+    "line": 22.5
    },
    {
     "at": "2026-11-05T09:00:00Z",
-    "line": 5.5
-   }
-  ],
-  "313|points": [
-   {
-    "at": "2026-11-05T06:50:59Z",
-    "line": 10.5
+    "line": 22.5
    },
    {
-    "at": "2026-11-05T09:00:00Z",
-    "line": 10.5
+    "at": "2026-11-05T17:15:03Z",
+    "line": 23.5
    }
   ],
   "344|rebounds": [
@@ -586,19 +613,27 @@
    {
     "at": "2026-11-05T09:00:00Z",
     "line": 3.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 3.5
    }
   ],
-  "38017734|points": [
+  "3547287|points": [
    {
     "at": "2026-11-05T06:50:59Z",
-    "line": 6.5
+    "line": 20.5
    },
    {
     "at": "2026-11-05T09:00:00Z",
-    "line": 6.5
+    "line": 20.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 20.5
    }
   ],
-  "56677827|assists": [
+  "3547287|threes": [
    {
     "at": "2026-11-05T06:50:59Z",
     "line": 3.5
@@ -606,16 +641,44 @@
    {
     "at": "2026-11-05T09:00:00Z",
     "line": 3.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 3
    }
   ],
-  "56677827|points": [
+  "4|assists": [
+   {
+    "at": "2026-11-05T09:00:00Z",
+    "line": 3.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 3.5
+   }
+  ],
+  "4|points": [
+   {
+    "at": "2026-11-05T09:00:00Z",
+    "line": 21.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 21.5
+   }
+  ],
+  "56677827|rebounds": [
    {
     "at": "2026-11-05T06:50:59Z",
-    "line": 14.5
+    "line": 4.5
    },
    {
     "at": "2026-11-05T09:00:00Z",
-    "line": 14.5
+    "line": 4.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 4.5
    }
   ],
   "56677827|threes": [
@@ -625,6 +688,10 @@
    },
    {
     "at": "2026-11-05T09:00:00Z",
+    "line": 1.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
     "line": 1.5
    }
   ],
@@ -636,26 +703,52 @@
    {
     "at": "2026-11-05T09:00:00Z",
     "line": 15.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 16.5
    }
   ],
-  "57|points": [
+  "57|rebounds": [
    {
     "at": "2026-11-05T06:50:59Z",
-    "line": 24.5
+    "line": 3.5
    },
    {
     "at": "2026-11-05T09:00:00Z",
-    "line": 24.5
+    "line": 3.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 3.5
    }
   ],
-  "62|rebounds": [
+  "66|points": [
    {
     "at": "2026-11-05T06:50:59Z",
-    "line": 6.5
+    "line": 16.5
    },
    {
     "at": "2026-11-05T09:00:00Z",
-    "line": 6.5
+    "line": 16.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 16.5
+   }
+  ],
+  "66|rebounds": [
+   {
+    "at": "2026-11-05T06:50:59Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-11-05T09:00:00Z",
+    "line": 4.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
+    "line": 4
    }
   ],
   "85|rebounds": [
@@ -665,6 +758,10 @@
    },
    {
     "at": "2026-11-05T09:00:00Z",
+    "line": 8.5
+   },
+   {
+    "at": "2026-11-05T17:15:03Z",
     "line": 8.5
    }
   ]
@@ -681,8 +778,8 @@
   {
    "game_id": 21718041,
    "team": "PHX",
-   "out": [
-    "Jordan Goodwin"
+   "maybe": [
+    "Jordan Goodwin (day-to-day)"
    ]
   },
   {
@@ -695,24 +792,183 @@
  ],
  "overs": [
   {
-   "game_id": 21718041,
-   "player_id": 17895966,
-   "player": "Jalen Green",
+   "game_id": 21718042,
+   "player_id": 15,
+   "player": "Giannis Antetokounmpo",
+   "team": "MIA",
+   "matchup": "MIA @ GSW",
+   "stat": "points",
+   "line": 7.5,
+   "odds": -114,
+   "book": "ballybet",
+   "prob": 0.5338570078742837,
+   "edge": 0.0011467275004519717,
+   "proj": 30.427113316833456,
+   "proj_min": 33.636242214882095,
+   "tip": "2026-11-06T03:00:00Z",
+   "low_line": true,
+   "median": 28.5,
+   "books": 13,
+   "status": "this book's line is 21.0 below the 13-book median of 28.5. Model gives it 53%; a pick needs 55%"
+  },
+  {
+   "game_id": 0,
+   "player_id": 62,
+   "player": "Miles Bridges",
    "team": "PHX",
    "matchup": "ORL @ PHX",
-   "stat": "assists",
-   "line": 2.5,
-   "odds": -148,
-   "book": "betparx",
-   "prob": 0.5617195205752291,
-   "edge": -0.03505467297315801,
-   "proj": 3.3645988663525594,
-   "proj_min": 32.05611391149278,
+   "stat": "points",
+   "line": 4.5,
+   "odds": 110,
+   "book": "ballybet",
+   "prob": 0.4768558342944248,
+   "edge": 0.0006653581039486323,
+   "proj": 15.825611151662045,
+   "proj_min": 0,
+   "low_line": true,
+   "median": 16.5,
+   "books": 13,
+   "status": "this book's line is 12.0 below the 13-book median of 16.5. Model gives it 48%; a pick needs 55%"
+  },
+  {
+   "game_id": 21718041,
+   "player_id": 57,
+   "player": "Devin Booker",
+   "team": "PHX",
+   "matchup": "ORL @ PHX",
+   "stat": "points",
+   "line": 7.5,
+   "odds": 104,
+   "book": "ballybet",
+   "prob": 0.4897352106048637,
+   "edge": -0.0004608678265088373,
+   "proj": 23.46214551894686,
+   "proj_min": 34.065096714754354,
    "tip": "2026-11-06T02:00:00Z",
    "low_line": true,
+   "median": 25.5,
+   "books": 13,
+   "status": "this book's line is 18.0 below the 13-book median of 25.5. Model gives it 49%; a pick needs 55%"
+  },
+  {
+   "game_id": 21718042,
+   "player_id": 1091351802,
+   "player": "Yaxel Lendeborg",
+   "team": "GSW",
+   "matchup": "MIA @ GSW",
+   "stat": "points",
+   "line": 4.5,
+   "odds": -121,
+   "book": "ballybet",
+   "prob": 0.5417615135336868,
+   "edge": -0.0057497986835077786,
+   "proj": 20.9257245470693,
+   "proj_min": 29.25026296996251,
+   "tip": "2026-11-06T03:00:00Z",
+   "low_line": true,
+   "median": 18.5,
+   "books": 13,
+   "status": "this book's line is 14.0 below the 13-book median of 18.5. Model gives it 54%; a pick needs 55%"
+  },
+  {
+   "game_id": 21718041,
+   "player_id": 1028025497,
+   "player": "Tristan Da Silva",
+   "team": "ORL",
+   "matchup": "ORL @ PHX",
+   "stat": "points",
+   "line": 2.5,
+   "odds": -104,
+   "book": "ballybet",
+   "prob": 0.5002382583597029,
+   "edge": -0.00956566320892449,
+   "proj": 11.754873661900596,
+   "proj_min": 27.955241043139118,
+   "tip": "2026-11-06T02:00:00Z",
+   "low_line": true,
+   "median": 12.5,
+   "books": 12,
+   "status": "this book's line is 10.0 below the 12-book median of 12.5. Model gives it 50%; a pick needs 55%"
+  },
+  {
+   "game_id": 21718041,
+   "player_id": 85,
+   "player": "Wendell Carter Jr.",
+   "team": "ORL",
+   "matchup": "ORL @ PHX",
+   "stat": "points",
+   "line": 2.5,
+   "odds": -121,
+   "book": "betparx",
+   "prob": 0.5359497918351159,
+   "edge": -0.011561520382078694,
+   "proj": 12.09304749283044,
+   "proj_min": 32.56043462939458,
+   "tip": "2026-11-06T02:00:00Z",
+   "low_line": true,
+   "median": 11.5,
+   "books": 13,
+   "status": "this book's line is 9.0 below the 13-book median of 11.5. Model gives it 54%; a pick needs 55%"
+  },
+  {
+   "game_id": 21718042,
+   "player_id": 443,
+   "player": "Klay Thompson",
+   "team": "MIA",
+   "matchup": "MIA @ GSW",
+   "stat": "threes",
+   "line": 2.5,
+   "odds": -164,
+   "book": "draftkings",
+   "prob": 0.6080796291642828,
+   "edge": -0.013132492047838396,
+   "proj": 3.8036059224007746,
+   "proj_min": 25.158041609006204,
+   "tip": "2026-11-06T03:00:00Z",
+   "low_line": true,
    "median": 3.5,
-   "books": 10,
-   "status": "this book's line is 1.0 below the 10-book median of 3.5. Model likes it (56%) but the price of -148 leaves no edge"
+   "books": 12,
+   "status": "this book's line is 1.0 below the 12-book median of 3.5. Model likes it (61%) but the price of -164 leaves no edge"
+  },
+  {
+   "game_id": 21718041,
+   "player_id": 56677827,
+   "player": "Anthony Black",
+   "team": "ORL",
+   "matchup": "ORL @ PHX",
+   "stat": "points",
+   "line": 4.5,
+   "odds": -109,
+   "book": "betparx",
+   "prob": 0.5029123934050662,
+   "edge": -0.01861870707340263,
+   "proj": 13.184164506789902,
+   "proj_min": 29.324968826670986,
+   "tip": "2026-11-06T02:00:00Z",
+   "low_line": true,
+   "median": 14.5,
+   "books": 13,
+   "status": "this book's line is 10.0 below the 13-book median of 14.5. Model gives it 50%; a pick needs 55%"
+  },
+  {
+   "game_id": 21718042,
+   "player_id": 4,
+   "player": "Bam Adebayo",
+   "team": "MIA",
+   "matchup": "MIA @ GSW",
+   "stat": "threes",
+   "line": 0.5,
+   "odds": -235,
+   "book": "betparx",
+   "prob": 0.6818365867587125,
+   "edge": -0.01965595055472036,
+   "proj": 1.5039575706383654,
+   "proj_min": 34.051783950564364,
+   "tip": "2026-11-06T03:00:00Z",
+   "low_line": true,
+   "median": 1.5,
+   "books": 12,
+   "status": "this book's line is 1.0 below the 12-book median of 1.5. Model likes it (68%) but the price of -235 leaves no edge"
   },
   {
    "game_id": 21718042,
@@ -724,75 +980,15 @@
    "line": 1.5,
    "odds": -240,
    "book": "sgo/bovada",
-   "prob": 0.6668008688385008,
-   "edge": -0.039081484102675756,
-   "proj": 2.9639056646386424,
-   "proj_min": 23.13465952975505,
+   "prob": 0.6665464018538128,
+   "edge": -0.03933595108736376,
+   "proj": 2.9556907507564083,
+   "proj_min": 23.127630151678375,
    "tip": "2026-11-06T03:00:00Z",
    "low_line": true,
    "median": 2.5,
-   "books": 7,
-   "status": "this book's line is 1.0 below the 7-book median of 2.5. Model likes it (67%) but the price of -240 leaves no edge"
-  },
-  {
-   "game_id": 21718042,
-   "player_id": 56677858,
-   "player": "Brandin Podziemski",
-   "team": "GSW",
-   "matchup": "MIA @ GSW",
-   "stat": "rebounds",
-   "line": 4.5,
-   "odds": -152,
-   "book": "caesars",
-   "prob": 0.5637527701170888,
-   "edge": -0.039421833057514344,
-   "proj": 5.56104135826456,
-   "proj_min": 31.410055095751137,
-   "tip": "2026-11-06T03:00:00Z",
-   "low_line": true,
-   "median": 5.5,
-   "books": 8,
-   "status": "this book's line is 1.0 below the 8-book median of 5.5. Model likes it (56%) but the price of -152 leaves no edge"
-  },
-  {
-   "game_id": 21718041,
-   "player_id": 3547287,
-   "player": "Desmond Bane",
-   "team": "ORL",
-   "matchup": "ORL @ PHX",
-   "stat": "rebounds",
-   "line": 3.5,
-   "odds": -170,
-   "book": "sgo/bovada",
-   "prob": 0.5838334810763652,
-   "edge": -0.045796148553264415,
-   "proj": 4.421698132871425,
-   "proj_min": 35.20002757303557,
-   "tip": "2026-11-06T02:00:00Z",
-   "low_line": true,
-   "median": 4.5,
-   "books": 10,
-   "status": "this book's line is 1.0 below the 10-book median of 4.5. Model likes it (58%) but the price of -170 leaves no edge"
-  },
-  {
-   "game_id": 21718041,
-   "player_id": 1028025497,
-   "player": "Tristan Da Silva",
-   "team": "ORL",
-   "matchup": "ORL @ PHX",
-   "stat": "points",
-   "line": 11.5,
-   "odds": -125,
-   "book": "sgo/espnbet",
-   "prob": 0.5063270113758764,
-   "edge": -0.049228544179679146,
-   "proj": 11.774269083283754,
-   "proj_min": 27.94840130927645,
-   "tip": "2026-11-06T02:00:00Z",
-   "low_line": true,
-   "median": 12.5,
-   "books": 10,
-   "status": "this book's line is 1.0 below the 10-book median of 12.5. Model gives it 51%; a pick needs 55%"
+   "books": 9,
+   "status": "this book's line is 1.0 below the 9-book median of 2.5. Model likes it (67%) but the price of -240 leaves no edge"
   },
   {
    "game_id": 21718042,
@@ -802,57 +998,17 @@
    "matchup": "MIA @ GSW",
    "stat": "assists",
    "line": 5.5,
-   "odds": -165,
-   "book": "sgo/bovada",
-   "prob": 0.5721699834932434,
-   "edge": -0.0504715259407188,
-   "proj": 6.250285202373699,
-   "proj_min": 33.633477814034066,
+   "odds": -141,
+   "book": "betrivers",
+   "prob": 0.5419768688900496,
+   "edge": -0.043085371773850856,
+   "proj": 6.233374325883141,
+   "proj_min": 33.636242214882095,
    "tip": "2026-11-06T03:00:00Z",
    "low_line": true,
    "median": 6.5,
-   "books": 8,
-   "status": "this book's line is 1.0 below the 8-book median of 6.5. Model likes it (57%) but the price of -165 leaves no edge"
-  },
-  {
-   "game_id": 21718041,
-   "player_id": 3547287,
-   "player": "Desmond Bane",
-   "team": "ORL",
-   "matchup": "ORL @ PHX",
-   "stat": "points",
-   "line": 19.5,
-   "odds": -129,
-   "book": "betparx",
-   "prob": 0.511342470029755,
-   "edge": -0.05197630726282143,
-   "proj": 20.34639433803664,
-   "proj_min": 35.20002757303557,
-   "tip": "2026-11-06T02:00:00Z",
-   "low_line": true,
-   "median": 20.5,
-   "books": 10,
-   "status": "this book's line is 1.0 below the 10-book median of 20.5. Model gives it 51%; a pick needs 55%"
-  },
-  {
-   "game_id": 21718041,
-   "player_id": 3547287,
-   "player": "Desmond Bane",
-   "team": "ORL",
-   "matchup": "ORL @ PHX",
-   "stat": "threes",
-   "line": 2.5,
-   "odds": -159,
-   "book": "betparx",
-   "prob": 0.5597563494159883,
-   "edge": -0.05414326448362561,
-   "proj": 3.032889358094011,
-   "proj_min": 35.20002757303557,
-   "tip": "2026-11-06T02:00:00Z",
-   "low_line": true,
-   "median": 3.5,
-   "books": 10,
-   "status": "this book's line is 1.0 below the 10-book median of 3.5. Model likes it (56%) but the price of -159 leaves no edge"
+   "books": 12,
+   "status": "this book's line is 1.0 below the 12-book median of 6.5. Model gives it 54%; a pick needs 55%"
   },
   {
    "game_id": 21718041,
@@ -862,77 +1018,17 @@
    "matchup": "ORL @ PHX",
    "stat": "rebounds",
    "line": 3.5,
-   "odds": -180,
-   "book": "sgo/bovada",
-   "prob": 0.5878937637206199,
-   "edge": -0.05496337913652305,
-   "proj": 4.385588007276307,
-   "proj_min": 32.753195421854734,
+   "odds": -155,
+   "book": "draftkings",
+   "prob": 0.5616137226887913,
+   "edge": -0.04622941456611063,
+   "proj": 4.290391171580691,
+   "proj_min": 32.089099419582624,
    "tip": "2026-11-06T02:00:00Z",
    "low_line": true,
    "median": 4.5,
-   "books": 10,
-   "status": "this book's line is 1.0 below the 10-book median of 4.5. Model likes it (59%) but the price of -180 leaves no edge"
-  },
-  {
-   "game_id": 21718041,
-   "player_id": 66,
-   "player": "Dillon Brooks",
-   "team": "PHX",
-   "matchup": "ORL @ PHX",
-   "stat": "assists",
-   "line": 1.5,
-   "odds": -275,
-   "book": "sgo/bovada",
-   "prob": 0.6690730857504325,
-   "edge": -0.06426024758290083,
-   "proj": 2.310433827045376,
-   "proj_min": 32.753195421854734,
-   "tip": "2026-11-06T02:00:00Z",
-   "low_line": true,
-   "median": 2.5,
-   "books": 9,
-   "status": "this book's line is 1.0 below the 9-book median of 2.5. Model likes it (67%) but the price of -275 leaves no edge"
-  },
-  {
-   "game_id": 21718041,
-   "player_id": 1028025497,
-   "player": "Tristan Da Silva",
-   "team": "ORL",
-   "matchup": "ORL @ PHX",
-   "stat": "rebounds",
-   "line": 3.5,
-   "odds": -180,
-   "book": "sgo/bovada",
-   "prob": 0.5695272063536198,
-   "edge": -0.07332993650352315,
-   "proj": 4.00389134380702,
-   "proj_min": 27.94840130927645,
-   "tip": "2026-11-06T02:00:00Z",
-   "low_line": true,
-   "median": 4.5,
-   "books": 10,
-   "status": "this book's line is 1.0 below the 10-book median of 4.5. Model likes it (57%) but the price of -180 leaves no edge"
-  },
-  {
-   "game_id": 21718041,
-   "player_id": 56677827,
-   "player": "Anthony Black",
-   "team": "ORL",
-   "matchup": "ORL @ PHX",
-   "stat": "rebounds",
-   "line": 3.5,
-   "odds": -180,
-   "book": "sgo/bovada",
-   "prob": 0.5648531483903267,
-   "edge": -0.07800399446681616,
-   "proj": 3.855941571703996,
-   "proj_min": 29.315261265630134,
-   "tip": "2026-11-06T02:00:00Z",
-   "low_line": true,
-   "median": 4.5,
-   "books": 10,
-   "status": "this book's line is 1.0 below the 10-book median of 4.5. Model likes it (56%) but the price of -180 leaves no edge"
+   "books": 12,
+   "status": "this book's line is 1.0 below the 12-book median of 4.5. Model likes it (56%) but the price of -155 leaves no edge"
   }
  ],
  "combos": [
@@ -945,23 +1041,23 @@
    "team": "ORL",
    "stat": "ra",
    "side": "UNDER",
-   "line": 8.5,
-   "odds": -114,
+   "line": 9.5,
+   "odds": 100,
    "book": "sgo/draftkings",
-   "prob": 0.5524488421107785,
-   "prob_raw": 0.7044333333333332,
-   "proj_mean": 6.969433333333333,
-   "proj_min": 29.315261265630134,
+   "prob": 0.5879128369583727,
+   "prob_raw": 0.7982666666666667,
+   "proj_mean": 6.9611,
+   "proj_min": 29.324968826670986,
    "units": 0,
    "tier": "COMBO",
-   "why": "projects 3.9 reb + 3.2 ast (single-stat model, shared minutes); out: Jalen Suggs, Paolo Banchero; opponent out: Jordan Goodwin; model alone 30% over, book 50%, calibrated 45%",
+   "why": "projects 3.9 reb + 3.1 ast (single-stat model, shared minutes); out: Jalen Suggs, Paolo Banchero; model alone 20% over, book 49%, calibrated 41%",
    "matchup": "ORL @ PHX",
    "tip": "2026-11-06T02:00:00Z",
-   "edge": 0.01973856173694677,
+   "edge": 0.08791283695837271,
    "dist": [
     0.005,
     0.017,
-    0.041,
+    0.042,
     0.072,
     0.099,
     0.114,
@@ -970,7 +1066,7 @@
     0.11,
     0.093,
     0.067,
-    0.049,
+    0.048,
     0.033,
     0.021,
     0.014,
@@ -979,16 +1075,125 @@
     0.003,
     0.002
    ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-11-05",
+   "game_id": 21718042,
+   "player_id": 4,
+   "player": "Bam Adebayo",
+   "team": "MIA",
+   "stat": "ra",
+   "side": "UNDER",
+   "line": 14.5,
+   "odds": 101,
+   "book": "sgo/draftkings",
+   "prob": 0.5459184194732876,
+   "prob_raw": 0.6333,
+   "proj_mean": 13.232533333333334,
+   "proj_min": 34.051783950564364,
+   "units": 0,
+   "tier": "COMBO",
+   "why": "projects 9.2 reb + 4.0 ast (single-stat model, shared minutes); opponent out: Gui Santos; back-to-back; model alone 37% over, book 49%, calibrated 45%",
+   "matchup": "MIA @ GSW",
+   "tip": "2026-11-06T03:00:00Z",
+   "edge": 0.04840598166234228,
+   "dist": [
+    0,
+    0,
+    0.001,
+    0.003,
+    0.007,
+    0.015,
+    0.024,
+    0.037,
+    0.05,
+    0.065,
+    0.077,
+    0.086,
+    0.09,
+    0.09,
+    0.088,
+    0.079,
+    0.069,
+    0.056,
+    0.045,
+    0.035,
+    0.025,
+    0.02,
+    0.013,
+    0.009,
+    0.006,
+    0.004,
+    0.003,
+    0.002,
+    0.001
+   ]
+  },
+  {
+   "logged_at": "",
+   "date": "2026-11-05",
+   "game_id": 21718042,
+   "player_id": 1057395872,
+   "player": "Will Richard",
+   "team": "GSW",
+   "stat": "pr",
+   "side": "UNDER",
+   "line": 9.5,
+   "odds": -111,
+   "book": "sgo/draftkings",
+   "prob": 0.5396590134407088,
+   "prob_raw": 0.5681,
+   "proj_mean": 9.194533333333334,
+   "proj_min": 21.51843536814657,
+   "units": 0,
+   "tier": "COMBO",
+   "why": "projects 6.4 pts + 2.7 reb (single-stat model, shared minutes); out: Gui Santos; model alone 43% over, book 47%, calibrated 46%",
+   "matchup": "MIA @ GSW",
+   "tip": "2026-11-06T03:00:00Z",
+   "edge": 0.013592662729808302,
+   "dist": [
+    0.01,
+    0.025,
+    0.037,
+    0.048,
+    0.061,
+    0.068,
+    0.077,
+    0.083,
+    0.082,
+    0.078,
+    0.075,
+    0.067,
+    0.055,
+    0.05,
+    0.04,
+    0.033,
+    0.027,
+    0.021,
+    0.016,
+    0.012,
+    0.011,
+    0.007,
+    0.006,
+    0.004,
+    0.003,
+    0.002,
+    0.002,
+    0.001,
+    0.001,
+    0.001
+   ]
   }
  ],
  "combo_info": {
-  "priced": 444,
-  "over": 122,
-  "under": 322,
-  "cleared": 4,
-  "tracked": 1,
+  "priced": 750,
+  "over": 187,
+  "under": 563,
+  "cleared": 5,
+  "tracked": 3,
   "bar": 0.53,
   "basis": "the calibration its parts earned",
-  "at": "2026-11-05T09:00:52Z"
+  "at": "2026-11-05T17:15:56Z"
  }
 }
