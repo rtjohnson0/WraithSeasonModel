@@ -46,5 +46,5 @@ export function marketLabel(p) {
   const period = String(p.period || '').toLowerCase()
   const name = statLabel[p.stat] || p.stat
   const labels = { game: 'Full game', full_game: 'Full game', '1q': '1Q', '2q': '2Q', '3q': '3Q', '4q': '4Q', '1h': '1H', '2h': '2H' }
-  return `${labels[period] || (period ? period.toUpperCase() : 'Period unverified')} · ${name}`
+  return `${labels[period] || (period ? period.toUpperCase() : 'Market')} · ${name}`
 }

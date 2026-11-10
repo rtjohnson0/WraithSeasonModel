@@ -343,10 +343,10 @@ function PlayRow({ p, focus, started }) {
           </span>
         </span>
       </button>
-      <QuoteDetails p={p} />
-      <PickReason p={p} />
       {open && (
         <div className="why">
+          <QuoteDetails p={p} compact />
+          <PickReason p={p} />
           <div className="facts">
             <p className="lead">
               {p.side === 'UNDER' ? 'Under' : 'Over'} {p.line}: the model gives it {pct(p.prob, 1)}.

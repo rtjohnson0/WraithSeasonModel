@@ -24,16 +24,36 @@ export function explainProp(p) {
  const fitted = (p.why || '').split(';').map((s) => s.trim()).filter((s) => s.startsWith('fitted defense-rate') || s.startsWith('opponent-defense rate') || s.startsWith('largest fitted minutes') || s.startsWith('injury feature policy'))
  return { decision: `${side} ${p.line} is the shown side at ${(100*p.prob).toFixed(1)}%. The final probability also reflects the book/calibration; the projection alone does not determine the bet.`, support, against, sensitivity, fitted }
 }
+// Derive price math from the selected book's exact odds, never a cached label.
+export function gameSide(s) {
+ const odds=Number(s.odds), p=Number(s.conditional)
+ const be=odds>0?100/(100+odds):odds<0?-odds/(100-odds):1
+ const profit=odds>0?odds/100:odds<0?100/-odds:0
+ return {...s,breakEven:be,edge:p-be,ev:(1-(s.push||0))*(p*profit-(1-p))}
+}
+function fairPrice(p) { return p >= .5 ? `−${Math.floor(100*p/(1-p))}` : `+${Math.ceil(100*(1-p)/p)}` }
 export function explainGame(game, quote) {
- const winner = game.margin >= 0 ? game.home : game.away
- const byProbability = quote.sides.reduce((a,b) => b.conditional > a.conditional ? b : a)
- const byValue = quote.sides.reduce((a,b) => b.ev > a.ev ? b : a)
- const choice = byValue.ev > 0 && byValue.edge > 0 ? `${byValue.label}${quote.market === 'total' ? ` ${quote.line}` : ' ML'} — paper value lean` : 'Pass at these prices'
- const why = quote.market === 'total'
-  ? `Projected total ${num(game.total)} versus ${quote.line}: the central projection leans ${game.total > quote.line ? 'Over' : game.total < quote.line ? 'Under' : 'neither side'}. The distribution gives ${byProbability.label} ${(byProbability.conditional*100).toFixed(1)}% excluding pushes.`
-  : `Projected winner ${winner}, by ${num(Math.abs(game.margin))} points. ${byProbability.label} has the higher model win probability (${(byProbability.conditional*100).toFixed(1)}%). The more likely winner is not automatically the better price.`
- const context = quote.market === 'total'
-  ? Number.isFinite(game.ratingsTotal) ? `Team ratings alone project ${num(game.ratingsTotal)} total points; the book consensus is ${num(game.marketTotal)}. Their fitted blend produces ${num(game.total)}, before comparing this book's exact ${quote.line} total.` : ''
-  : Number.isFinite(game.ratingsMargin) ? `Team ratings alone project a home margin of ${num(game.ratingsMargin)}; the market consensus implies ${num(game.marketMargin)}. The fitted blend gives ${num(game.margin)}. Positive margins favor ${game.home}.` : ''
- return {choice,why,context,price:`The best model return at this book is ${byValue.label}: ${(100*byValue.conditional).toFixed(1)}% versus ${(100*byValue.breakEven).toFixed(1)}% needed at the quoted price. ${byValue.ev > 0 ? 'A positive forecast still needs validation.' : 'Neither side has positive forecast value, so there is no price-based pick.'}`}
+ const sides=quote.sides.map(gameSide)
+ const primary=sides.reduce((a,b)=>b.conditional>a.conditional?b:a)
+ const other=sides.find((s)=>s!==primary)
+ const moneyline=quote.market==='moneyline'
+ const choice=`${primary.label}${moneyline?' ML':` ${quote.line}`}`
+ const value=primary.edge>0 && primary.ev>0
+ const shortPrice=value?`Positive model value · +${(primary.edge*100).toFixed(1)} pp`:`Model lean · wait for ${fairPrice(primary.conditional)} or better`
+ const why=moneyline?`Projected winner ${primary.label}, with ${(primary.conditional*100).toFixed(1)}% model win probability. Projected score: ${game.away} ${num(game.awayScore)}–${game.home} ${num(game.homeScore)}.`:`Projected total ${num(game.total)} versus ${quote.line}. The model gives ${primary.label} ${(primary.conditional*100).toFixed(1)}% excluding pushes.`
+ const price=`${primary.label} needs ${(primary.breakEven*100).toFixed(1)}% to break even at this book; the model gives ${(primary.conditional*100).toFixed(1)}%. ${value?'That clears the price by '+(primary.edge*100).toFixed(1)+' percentage points.':'The pick stays '+choice+', but this price costs more than the model supports.'}`
+ const alternative=other?.ev>0?`${other.label} has a positive payout-based estimate at this price, but a lower chance of winning (${(other.conditional*100).toFixed(1)}%). It is not the main model pick.`:''
+ const context=moneyline?Number.isFinite(game.ratingsMargin)?`Team ratings and market context combine to project a ${num(Math.abs(game.margin))}-point ${game.margin>=0?game.home:game.away} win.`:'':Number.isFinite(game.totalLow)?`Estimated total range: ${Math.round(game.totalLow)}–${Math.round(game.totalHigh)} points. This is an approximate model range.`:''
+ return {choice,why,price,context,alternative,primary,sides,shortPrice}
+}
+export function bestGameQuote(game, quotes, now=Date.now()) {
+ if(!quotes.length)return null
+ const fresh=quotes.filter(q=>Date.parse(q.quoteAt)>now-1800000 && Date.parse(q.tip)>now)
+ const pool=fresh.length?fresh:quotes
+ // Compare the same likely winner/total direction across all available books.
+ const direction=pool[0].market==='moneyline'?(game.margin>=0?game.home:game.away):(game.total>=pool[0].line?'Over':'Under')
+ return [...pool].sort((a,b)=>{
+  const score=q=>{const s=q.sides.find(s=>s.label===direction);return s?gameSide(s).ev:-Infinity}
+  return score(b)-score(a)||String(a.book).localeCompare(String(b.book))
+ })[0]
 }

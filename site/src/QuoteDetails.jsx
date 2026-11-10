@@ -10,11 +10,11 @@ export default function QuoteDetails({ p, compact = false }) {
     <div className={`quote-details ${status.key}`}>
       <div className="quote-pills">
         <span className={`quote-status ${status.key}`}>{status.label}</span>
-        <span className="model-evidence">{evidence}</span>
+
       </div>
       <p className="quote-caption">
         {bookName(p.book)} · {p.side === 'OVER' ? 'Over' : 'Under'} <b>{p.line}</b> at <b>{oddsText(p.odds)}</b>
-        {p.quoteAt && <> · Captured {ageText(p.quoteAt, now)}</>}
+        {p.quoteAt && <> · Checked {ageText(p.quoteAt, now)}</>}
       </p>
       {!compact && <>
         <p className="quote-caption">Model {pct(p.prob, 1)} · Break-even {pct(p.breakEven || implied(p.odds), 1)}. This probability applies only to this line and price.</p>

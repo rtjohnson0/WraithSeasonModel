@@ -528,3 +528,8 @@ After installing this update, run the GitHub workflow in pretip mode once to ref
 
 ## Forward accuracy and launch controls
 See LAUNCH_ACCURACY.md for the new evaluation, minutes sensitivity checks and experiments, separate stat/side evidence, market benchmarks, and stricter direct combo calibration. Unproven props remain visible as research/paper plays; missing forward evidence cannot earn a staked PICK. No unsupported improvement or launch hit rate is claimed.
+
+## Restored play layout and game selections
+All play rows use compact clickable summaries. The prop form, minutes and probability graphs stay in their expanded breakdown; combos and 1Q rows also expand on click. Quote age no longer crosses out a pick. Historical results display automatically with their charts; no archive checkbox or public unverified label is required. Historical totals stay separate from the validation used to qualify current picks. V2 history now uses its own archive instead of inheriting the primary model's archive.
+
+Moneyline headings show the likely winner, not the largest underdog payout. Prices are evaluated separately using the selected book's exact odds; the default compares books for the predicted side instead of taking the first feed entry. The OKC 55.9% / -120 example correctly clears 54.5% break-even. These display fixes do not change the underlying win probabilities or manufacture an available -120 quote.

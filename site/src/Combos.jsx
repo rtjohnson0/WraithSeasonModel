@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FormBars, LineStrip } from './Charts.jsx'
 import { Seg } from './Board.jsx'
 import { ResultList, Table } from './Record.jsx'
 import { marketLabel, oddsText, pct, prettyDate, shortDate, statLabel } from './format.js'
@@ -11,49 +12,22 @@ const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
 
 
 function ComboCard({ c, now }) {
-  const ts = tipState(c.tip, now)
-  const started = ts.state === 'live' || ts.state === 'done'
-  return (
-    <li className={started ? 'started' : ''}>
-      <div className="ov-head">
-        <b>{c.player}</b>
-        <span className="ov-bet">
-          {c.side === 'OVER' ? 'Over' : 'Under'} {c.line} {marketLabel(c)}
-        </span>
-        <span className="ov-price">
-          {oddsText(c.odds)} <small>{c.book}</small>
-        </span>
-      </div>
-      <div className="ov-nums">
-        <span>{c.tier === 'COMBOWATCH' ? 'Comparison only · shown' : 'Calibrated'} {pct(c.prob)}</span>
-        <span>Raw component model {pct(c.probRaw)}</span>
-        <span className={c.edge >= 0 ? 'pos' : 'neg'}>
-          Edge {c.edge >= 0 ? '+' : ''}
-          {(100 * c.edge).toFixed(1)}%
-        </span>
-        <span>
-          Projected {c.projStat.toFixed(1)} in {Math.round(c.projMin)} min
-        </span>
-        {c.last5?.length > 0 && (
-          <span>
-            Last {c.last5.length}: {c.last5.map((g) => Math.round(g.value)).join(', ')} ({c.l5Hits}/{c.last5.length} on this side)
-          </span>
-        )}
-        <span>
-          {c.team} {c.matchup && `(${c.matchup})`} {ts.label}
-        </span>
-      </div>
-      <QuoteDetails p={c} />
-      <p className="notice">{c.tier === 'COMBOWATCH' ? 'Available line comparison, not a qualified combo pick. No stake or performance-log entry.' : 'Paper combo pick · tracked separately · no stake.'}</p>
-      <PickReason p={c} />
-      <p className="ov-why">{c.why}</p>
-    </li>
-  )
+ const comparison=c.tier==='COMBOWATCH'
+ return <li className="combo-row"><details>
+  <summary className="combo-summary"><span><b>{c.player} <small>{c.team}</small></b><span>{c.side==='OVER'?'Over':'Under'} {c.line} {marketLabel(c)}</span><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} {c.book}</small></span>
+   <span className="combo-strip"><LineStrip line={c.line} proj={c.projStat} games={c.last5} side={c.side}/></span><span className="combo-prob">{pct(c.prob)}<small>View breakdown</small></span></summary>
+  <div className="combo-expanded"><QuoteDetails p={c} compact/>
+   {comparison && <p className="small">This line is shown for comparison; it has not cleared the combo selection rules.</p>}
+   <p>Projected <b>{c.projStat.toFixed(1)}</b> in {Math.round(c.projMin)} minutes · {c.matchup}</p>
+   {c.last5?.length>0 && <div className="charts"><figure><figcaption>{statLabel[c.stat]} · last {c.last5.length} games</figcaption><FormBars games={c.last5} line={c.line} side={c.side} lineLabel={`line ${c.line}`}/></figure><figure><figcaption>Minutes played</figcaption><FormBars games={c.last5.map(g=>({...g,value:g.minutes}))} line={c.projMin} side={c.side} tone="minutes" lineLabel={`projected ${Math.round(c.projMin)}`}/></figure></div>}
+   <PickReason p={c}/>
+  </div>
+ </details></li>
 }
 
 export default function Combos({ site }) {
   const { board } = site
-  const rec = site.combos || {}
+  const rec = site.combos?.rows?.length ? site.combos : site.historicalCombos || {}
   const now = useNow()
   const [stat, setStat] = useState('all')
   const [side, setSide] = useState('ALL')
@@ -67,10 +41,7 @@ export default function Combos({ site }) {
     <div className="combopage">
       <section className="day">
         <h1>Combo lines</h1>
-        <p className="honest">
-          Points + rebounds + assists, points + rebounds, points + assists and rebounds + assists. These are tracked, not staked, and they have their own record
-          below, apart from the picks. Combo probabilities require their own time-valid calibration; they do not borrow confidence from single stats. Available comparisons are shown even when no line qualifies. Only qualified tracked combos enter the separate paper log.
-        </p>
+        <p className="small">PRA, points + rebounds, points + assists, and rebounds + assists. Tap a line for its projection, recent games and explanation.</p>
 
 
         {!plays.length && <p className="notice">No combo picks have been published for this slate yet.</p>}
@@ -78,7 +49,7 @@ export default function Combos({ site }) {
 
       {plays.length > 0 && (
         <section className="overs combos" aria-label="Today's combo plays">
-          <h2>Current combo picks & comparisons</h2>
+          <h2>Combo picks & comparisons</h2>
           <div className="combo-filters">
             <Seg
               label="Combo"
@@ -108,6 +79,7 @@ export default function Combos({ site }) {
       )}
 
 
+      {site.combos?.rows?.length>0 && site.historicalCombos?.rows?.length>0 && <section className="record"><h2>Historical combo results</h2><Table rows={site.historicalCombos.rows}/><ResultList rows={(site.historicalCombos.recent||[]).slice(0,30)}/></section>}
       <section className="record" aria-label="Combo record">
         <h2>Combo record</h2>
         {rows.length === 0 ? (

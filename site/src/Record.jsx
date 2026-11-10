@@ -76,18 +76,19 @@ export function ResultList({ rows }) {
 }
 
 export default function Record({ site }) {
-  const [archived, setArchived] = useState(false)
-  const toggle = site.archive && <div className="archive-switch"><label><input type="checkbox" checked={archived} onChange={(e) => setArchived(e.target.checked)} /> Inspect historical unverified results</label></div>
-  const view = archived && site.archive ? { ...site, record: site.archive.record } : site
-  return <>{toggle}{archived && <p className="notice">Historical audit view. These results are not included in verified performance.</p>}<RecordBody site={view} />
-    {site.archive?.excluded?.length > 0 && <details className="exclusion-registry"><summary>{site.archive.excluded.length} explicitly excluded quote records</summary><ul>{site.archive.excluded.map((r) => <li key={r.id}><code>{r.id}</code><p>{r.reason}</p></li>)}</ul></details>}
+  const current = !!site.record?.tiers?.length
+  const historical = !!site.archive?.record?.tiers?.length
+  return <>
+    {current && <RecordBody site={site} />}
+    {historical && <RecordBody site={{...site,record:site.archive.record,lines:null}} title={current ? 'Historical results' : 'The record'} />}
+    {!current && !historical && <p className="notice">No completed results yet.</p>}
   </>
 }
 
-function RecordBody({ site }) {
+function RecordBody({ site, title = "The record" }) {
   const { record } = site
   if (!record.tiers?.length) {
-    return <p className="notice">{record.provenanceNote || 'No plays have been graded yet.'} New results appear the morning after games finish.</p>
+    return <p className="notice">No plays have been graded yet. New results appear the morning after games finish.</p>
   }
   const staked = record.tiers.find((t) => t.name === 'Max plays (staked)')
   const byDate = {}
@@ -96,8 +97,7 @@ function RecordBody({ site }) {
   return (
     <div className="record">
       <section className="day">
-        <h1>The record</h1>
-        {record.provenanceNote && <p className="small">{record.provenanceNote}</p>}
+        <h1>{title}</h1>
         <p className="counts">
           {record.since === record.until ? shortDate(record.since) : `${shortDate(record.since)} to ${shortDate(record.until)}`},{' '}
           {record.days} {record.days === 1 ? 'day' : 'days'} of results

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FormBars } from './Charts.jsx'
 import { useNow } from './time.js'
 import { visibleQuote, quoteState, bookName, clock } from './quote.js'
 import { oddsText } from './format.js'
@@ -9,7 +10,7 @@ function QuarterCard({ cards, now }) {
   const p = cards.find((p) => p.book === book) || cards[0]
   const c = p.comparison
   const counts = (p.side === 'UNDER' ? c.under : c.over)
-  return <article className="game-market-card quarter-card">
+  return <article className="game-market-card quarter-card"><details className="quarter-play"><summary className="combo-summary"><span><b>{p.player}</b><span>{p.side==='UNDER'?'Under':'Over'} {p.line} · 1Q Points</span><small>{p.matchup} · {bookName(p.book)}</small></span><span className="combo-prob">{p.estimate!=null?pct(p.estimate):'1Q'}<small>View breakdown</small></span></summary><div className="combo-expanded">
     <div className="game-market-heading"><h3>{p.player} <small>{p.matchup}</small></h3><select aria-label={`${p.player} 1Q book`} value={p.book} onChange={(e) => setBook(e.target.value)}>{cards.map((x) => <option key={x.book} value={x.book}>{bookName(x.book)}</option>)}</select></div>
     <h4>1Q · Points · {p.line}</h4>
     <p>Over {p.line} {oddsText(p.overOdds)} · Under {p.line} {oddsText(p.underOdds)}</p>
@@ -17,9 +18,10 @@ function QuarterCard({ cards, now }) {
     {c.missing > 0 && <p className="notice">{c.missing} recent game{c.missing === 1 ? '' : 's'} lack verified Q1 scoring. No full-game values are used to fill the gaps.</p>}
     <p className="small">Last {Math.min(5, c.history.length)} verified 1Q performances, newest first:</p>
     {c.history.length ? <div className="quarter-history">{c.history.slice(0, 5).map((h) => <span key={h.gameId}><b>{h.points} pts</b><small>{h.date} · 1Q</small></span>)}</div> : <p>1Q history unavailable.</p>}
+    {c.history.length>0 && <figure><figcaption>Points in his last {Math.min(5,c.history.length)} first quarters</figcaption><FormBars games={c.history.slice(0,5).reverse().map(h=>({...h,value:h.points}))} line={p.line} side={p.side} lineLabel={`1Q line ${p.line}`}/></figure>}
     {p.estimate != null ? <p className="small"><b>Paper estimate: {p.side === 'UNDER' ? 'Under' : 'Over'} {p.line}</b> · smoothed historical rate {pct(p.estimate)} · break-even {pct(p.breakEven)}. Observed: {counts} of {c.n - c.push} non-push 1Q appearances. This is a small-sample history estimate, not the calibrated full-game model.</p> : <p className="small">No probability estimate: at least eight verified 1Q appearances and complete recent-game coverage are required.</p>}
     <p className="small">{quoteState(p, now, '1q').label} · Checked {clock(p.quoteAt)} · price updated {clock(p.sourceUpdatedAt)} · {p.bookCount} books.</p>
-  </article>
+  </div></details></article>
 }
 export default function QuarterBoard({ data }) {
   const now = useNow()

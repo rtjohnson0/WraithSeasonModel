@@ -24,7 +24,7 @@ import { marketLabel } from './format.js'
 test('period labels distinguish full game, quarter, and unknown legacy entries', () => {
  assert.equal(marketLabel({stat:'points',period:'game'}), 'Full game · Points')
  assert.equal(marketLabel({stat:'points',period:'1q'}), '1Q · Points')
- assert.equal(marketLabel({stat:'points'}), 'Period unverified · Points')
+ assert.equal(marketLabel({stat:'points'}), 'Market · Points')
  assert.equal(quoteState({...recent,period:'1q'},now).usable,false)
 })
 

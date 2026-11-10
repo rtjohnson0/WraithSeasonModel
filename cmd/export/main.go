@@ -121,6 +121,14 @@ func main() {
 		fatal(err)
 	}
 	site.Archive = buildArchive(*dir, allHistory)
+	comboHistory, _ := picklog.LoadSettled(filepath.Join(*dir, "combosettled.jsonl"))
+	var oldCombos []picklog.Settled
+	for _, r := range comboHistory {
+		if !r.Verified() {
+			oldCombos = append(oldCombos, r)
+		}
+	}
+	site.HistoricalCombos = buildComboRecord(oldCombos, 120)
 	if !*legacy {
 		site.Record.ProvenanceNote = "Results require validated pregame quotes and identity-checked final player/game/stat actuals. Old or incomplete actuals are withheld until re-audited. Legacy logs are retained separately until their quotes can be audited."
 	}

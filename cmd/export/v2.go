@@ -12,11 +12,13 @@ import (
 // V2Site is the challenger's half of the site: a board and a record built from the same code as the
 // real ones, so the "V2 test" page looks like the main site. See cmd/predict/v2.go.
 type V2Site struct {
-	At     string      `json:"at"`
-	Board  Board       `json:"board"`
-	Record Record      `json:"record"`
-	Combos ComboRecord `json:"combos"`
-	Info   *V2Info     `json:"info,omitempty"`
+	Archive          *ArchiveData `json:"archive,omitempty"`
+	HistoricalCombos ComboRecord  `json:"historicalCombos,omitempty"`
+	At               string       `json:"at"`
+	Board            Board        `json:"board"`
+	Record           Record       `json:"record"`
+	Combos           ComboRecord  `json:"combos"`
+	Info             *V2Info      `json:"info,omitempty"`
 }
 
 // V2Info mirrors the summary predict writes about the day's V2 run.
@@ -98,6 +100,16 @@ func buildV2(dir string, form Form) *V2Site {
 			verified = append(verified, r)
 		}
 	}
+	var oldSingles, oldCombos []picklog.Settled
+	for _, r := range settled {
+		if !r.Verified() {
+			if data.Stat(r.Stat).IsCombo() {
+				oldCombos = append(oldCombos, r)
+			} else {
+				oldSingles = append(oldSingles, r)
+			}
+		}
+	}
 	settled = verified
 	var singles, combos []picklog.Settled
 	for _, s := range settled {
@@ -113,6 +125,10 @@ func buildV2(dir string, form Form) *V2Site {
 		Combos: buildComboRecord(combos, 120),
 		Info:   f.Info,
 	}
+	if len(oldSingles) > 0 {
+		site.Archive = &ArchiveData{Record: buildRecord(oldSingles, 600)}
+	}
+	site.HistoricalCombos = buildComboRecord(oldCombos, 120)
 	site.Record.ProvenanceNote = "Verified pregame quotes and identity-checked final actuals only. V2 remains an experimental model."
 	site.Board.Overs = f.Overs
 	if site.Info != nil && site.Info.Gates == nil {
