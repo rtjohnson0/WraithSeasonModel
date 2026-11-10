@@ -54,7 +54,7 @@ func buildArchive(dir string, all []picklog.Settled) *ArchiveData {
 		}
 	}
 	out := &ArchiveData{Record: buildRecord(legacy, 300)}
-	out.Record.ProvenanceNote = "Historical quotes without current validation. For audit only; excluded from verified performance."
+	out.Record.ProvenanceNote = "Historical quotes or actual results without current validation. For audit only; excluded from verified performance."
 	path := filepath.Join(dir, "exclusions.jsonl")
 	b, err := os.ReadFile(path)
 	if err == nil {

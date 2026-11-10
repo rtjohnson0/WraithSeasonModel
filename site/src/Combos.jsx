@@ -4,6 +4,8 @@ import { ResultList, Table } from './Record.jsx'
 import { marketLabel, oddsText, pct, prettyDate, shortDate, statLabel } from './format.js'
 import { tipState, useNow } from './time.js'
 import QuoteDetails from './QuoteDetails.jsx'
+import PickReason from './PickReason.jsx'
+import { quoteState } from './quote.js'
 
 const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
 
@@ -13,7 +15,7 @@ function Status({ info, date }) {
   }
   return (
     <p className="counts">
-      {prettyDate(date)}: {info.priced} combo lines priced, {info.over} lean Over and {info.under} lean Under. {info.cleared} reach the 55% / 45% bar, and{' '}
+      {prettyDate(date)}: {info.loaded ?? '?'} pregame quotes loaded → {info.fresh ?? '?'} fresh → {info.usable ?? '?'} after book checks → {info.priced} combo lines priced, {info.over} lean Over and {info.under} lean Under. {info.cleared} reach the 55% / 45% bar, and{' '}
       {info.tracked} {info.tracked === 1 ? 'play is' : 'plays are'} tracked at {pct(info.bar)} / {pct(1 - info.bar)}.
     </p>
   )
@@ -34,7 +36,8 @@ function ComboCard({ c, now }) {
         </span>
       </div>
       <div className="ov-nums">
-        <span>Model {pct(c.prob)}</span>
+        <span>{c.tier === 'COMBOWATCH' ? 'Comparison only · shown' : 'Calibrated'} {pct(c.prob)}</span>
+        <span>Raw component model {pct(c.probRaw)}</span>
         <span className={c.edge >= 0 ? 'pos' : 'neg'}>
           Edge {c.edge >= 0 ? '+' : ''}
           {(100 * c.edge).toFixed(1)}%
@@ -52,6 +55,8 @@ function ComboCard({ c, now }) {
         </span>
       </div>
       <QuoteDetails p={c} />
+      <p className="notice">{c.tier === 'COMBOWATCH' ? 'Available line comparison, not a qualified combo pick. No stake or performance-log entry.' : 'Paper combo pick · tracked separately · no stake.'}</p>
+      <PickReason p={c} />
       <p className="ov-why">{c.why}</p>
     </li>
   )
@@ -64,7 +69,7 @@ export default function Combos({ site }) {
   const [stat, setStat] = useState('all')
   const [side, setSide] = useState('ALL')
   const [all, setAll] = useState(false)
-  const plays = board.combos || []
+  const plays = (board.combos || []).filter((p) => quoteState(p,now).usable)
   const list = plays.filter((c) => (stat === 'all' || c.stat === stat) && (side === 'ALL' || c.side === side))
   const shown = all ? list : list.slice(0, 12)
   const rows = (rec.rows || []).map((r) => ({ ...r, name: r.name === 'OVER' ? 'Overs' : r.name === 'UNDER' ? 'Unders' : statLabel[r.name] || r.name }))
@@ -75,15 +80,16 @@ export default function Combos({ site }) {
         <h1>Combo lines</h1>
         <p className="honest">
           Points + rebounds + assists, points + rebounds, points + assists and rebounds + assists. These are tracked, not staked, and they have their own record
-          below, apart from the picks. The model has no graded results on combos yet, so each one is calibrated the way its parts (points, rebounds, assists)
-          have been: only as confident as they have earned. Every play is logged and graded the morning after, so combos can earn their way onto the board.
+          below, apart from the picks. Combo probabilities require their own time-valid calibration; they do not borrow confidence from single stats. Available comparisons are shown even when no line qualifies. Only qualified tracked combos enter the separate paper log.
         </p>
         <Status info={board.comboInfo} date={board.date} />
+        {board.comboInfo?.basis && <p className="small">Probability basis: {board.comboInfo.basis}</p>}
+        {!plays.length && <p className="notice">No current combo quotes survived feed, timing, book-consensus, history or availability checks. Refresh the pretip pipeline; comparisons are never built from unrelated single-stat lines.</p>}
       </section>
 
       {plays.length > 0 && (
         <section className="overs combos" aria-label="Today's combo plays">
-          <h2>Today&apos;s combo plays</h2>
+          <h2>Current combo picks & comparisons</h2>
           <div className="combo-filters">
             <Seg
               label="Combo"

@@ -29,6 +29,7 @@ const comboTier = "COMBO"
 // comboDeps is what scoring a combined market needs from main: the same rows, rosters and
 // corrections the single stats use.
 type comboDeps struct {
+	watch    *[]scored
 	b        *feat.Builder
 	ix       interface{ Name(int) string }
 	m        *predictor.Model
@@ -42,9 +43,8 @@ type comboDeps struct {
 	scale func(st data.Stat, row *feat.Row) float64
 
 	corr combo.Corr
-	// cal is the single-stat calibration. A combo's final probability uses the calibration its parts
-	// earned (weighted by how much of the sum each part is), unless weight is 0 or more, which
-	// forces a plain model/book blend with that share from the model.
+	// cal contains directly fitted combo calibration, never borrowed single-stat confidence.
+	// A nonnegative weight explicitly requests a plain experimental model/book blend.
 	cal       eval.Calibration
 	calOK     bool
 	weight    float64
@@ -60,14 +60,12 @@ type comboDeps struct {
 // comboStats summarises a day's combo scoring for the printout.
 type comboStats struct {
 	Scored, Over, Under, Cleared int
+	Loaded, Fresh, Usable        int
 	Basis                        string
 }
 
-// calibrate gives a combo's final P(over). The single stats have a calibration fitted on graded
-// lines (how much to trust the model against the book, and a shift); combos have no graded lines
-// yet, so each combo borrows the calibration of its parts, weighted by each part's share of the
-// projected total (a PRA is mostly points, so it gets mostly the points calibration). That keeps the
-// combos exactly as humble as the singles have earned. weight >= 0 overrides it with a plain blend.
+// calibrate uses direct combo calibration. Without it, use the book baseline;
+// comparisons remain visible, but this fallback does not manufacture an edge.
 func (d comboDeps) calibrate(st data.Stat, pred predictor.Pred, pModel, pMarket float64) float64 {
 	if d.weight >= 0 {
 		return d.weight*pModel + (1-d.weight)*pMarket
@@ -81,9 +79,8 @@ func (d comboDeps) calibrate(st data.Stat, pred predictor.Pred, pModel, pMarket 
 	return pMarket
 }
 
-// scoreCombos prices every combined-market line and returns the plays that clear the bar. The
-// probability is calibrated like the single stats (see calibrate), so a combo is only as confident
-// as the model has earned on its parts. Nothing here is staked.
+// scoreCombos prices validated combined markets. Qualified tracking and
+// available comparison-only rows are kept separate; nothing here is staked.
 func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 	var cs comboStats
 	type simKey struct{ pid, game int }
@@ -201,6 +198,12 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		if d.maxGap > 0 && math.Abs(s.Line-s.ProjMean)/math.Max(s.ProjMean, 2) > d.maxGap {
 			s.Far = true
 		}
+		if d.watch != nil {
+			w := s
+			w.Tier = "COMBOWATCH"
+			w.Why = addWhy(w.Why, "comparison only: does not imply a qualified combo pick")
+			*d.watch = append(*d.watch, w)
+		}
 		if !s.Far && (pOver >= d.hi || pOver <= 1-d.hi) && s.Edge >= d.minEdge {
 			cands = append(cands, s)
 		}
@@ -220,7 +223,7 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		out = append(out, c)
 	}
 	cs.Basis = "direct combo calibration where available; otherwise the market price only"
-	if d.weight >= 0 || !d.calOK {
+	if d.weight >= 0 {
 		cs.Basis = "a plain model/book blend"
 	}
 	return out, cs
@@ -260,7 +263,7 @@ func comboEntries(date string, plays []scored) []picklog.Entry {
 		out = append(out, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: comboTier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
+			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
 		})
 	}
 	return out
@@ -297,8 +300,26 @@ func printCombos(plays []scored, cs comboStats, bar float64) {
 // comboInfo summarises the day's combo pricing for data/more.json (nil when combos were off).
 func comboInfo(cs comboStats, tracked int, bar float64) *ComboInfo {
 	if cs.Scored == 0 {
-		return nil
+		cs.Basis = "No priceable combo quotes passed freshness, consensus, availability and history checks"
 	}
-	return &ComboInfo{Priced: cs.Scored, Over: cs.Over, Under: cs.Under, Cleared: cs.Cleared, Tracked: tracked, Bar: bar, Basis: cs.Basis,
+	return &ComboInfo{Loaded: cs.Loaded, Fresh: cs.Fresh, Usable: cs.Usable, Priced: cs.Scored, Over: cs.Over, Under: cs.Under, Cleared: cs.Cleared, Tracked: tracked, Bar: bar, Basis: cs.Basis,
 		At: time.Now().UTC().Format(time.RFC3339)}
+}
+
+// Display available quoted combinations without pretending they cleared tracking gates.
+func comboDisplay(picks, watch []scored) []scored {
+	out := append([]scored(nil), picks...)
+	seen := map[string]bool{}
+	key := func(s scored) string { return fmt.Sprintf("%d/%d/%s", s.GameID, s.PlayerID, s.Stat) }
+	for _, s := range out {
+		seen[key(s)] = true
+	}
+	sort.SliceStable(watch, func(i, j int) bool { return watch[i].Edge > watch[j].Edge })
+	for _, s := range watch {
+		if !seen[key(s)] && len(out) < 30 {
+			out = append(out, s)
+			seen[key(s)] = true
+		}
+	}
+	return out
 }

@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from sync_state import merge_jsonl, sync, is_input
+from sync_state import merge_jsonl, sync, is_input, merge_result_audit
 
 
 def run(cwd, *args):
@@ -19,6 +19,13 @@ def line(pid, **kwargs):
 
 
 class MergeTests(unittest.TestCase):
+    def test_concurrent_result_audits_keep_both_corrections(self):
+        older = dict(at='2026-11-10T17:00:00Z', checked=1, history=[dict(id='a', newResult='LOSS')])
+        newer = dict(at='2026-11-10T18:00:00Z', checked=2, history=[dict(id='b', newResult='REVIEW')])
+        result = json.loads(merge_result_audit(json.dumps(older), json.dumps(newer)))
+        self.assertEqual(result['checked'], 2)
+        self.assertEqual({r['id'] for r in result['history']}, {'a','b'})
+
     def test_input_identity_and_latest_local_correction(self):
         name = 'data/stats_2026.jsonl'
         a = dict(player={'id': 7}, game={'id': 1}, pts=10)
@@ -37,6 +44,26 @@ class MergeTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             merge_jsonl(name, '', '{"pts":1}\n', '')
 
+
+    def test_input_correction_prefers_newer_download_across_branches(self):
+        original = dict(player={'id':7}, game={'id':9}, reb=1)
+        fresh = dict(original, reb=13, _stats_fetched_at='2026-11-10T18:00:00Z')
+        stale = dict(original, reb=2, _stats_fetched_at='2026-11-10T17:00:00Z')
+        text = lambda r: json.dumps(r)+'\n'
+        result = json.loads(merge_jsonl('data/stats_2026.jsonl',text(original),text(fresh),text(stale)))
+        self.assertEqual(result['reb'],13)
+        result = json.loads(merge_jsonl('data/stats_2026.jsonl','',text(fresh)+text(stale),''))
+        self.assertEqual(result['reb'],13)
+
+    def test_newer_final_actual_survives_concurrent_older_result(self):
+        base = line(7, result='WIN', actual=1)
+        fresh = line(7, result='LOSS', actual=13, source_fetched_at='2026-11-10T18:00:00Z')
+        stale = line(7, result='WIN', actual=1, source_fetched_at='2026-11-10T17:00:00Z')
+        result = json.loads(merge_jsonl('data/settled.jsonl', base, fresh, stale))
+        self.assertEqual((result['result'], result['actual']), ('LOSS',13))
+        review = line(7, result='REVIEW', actual=0, source_fetched_at='2026-11-10T19:00:00Z')
+        result = json.loads(merge_jsonl('data/settled.jsonl', base, fresh, review))
+        self.assertEqual(result['result'],'REVIEW')
 
     def test_union_and_remote_correction(self):
         base = line(1, result='LOSS')

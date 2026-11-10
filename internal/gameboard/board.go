@@ -32,17 +32,21 @@ type Quote struct {
 	Sides           []Side  `json:"sides"`
 }
 type Game struct {
-	ID        int     `json:"id"`
-	Home      string  `json:"home"`
-	Away      string  `json:"away"`
-	Tip       string  `json:"tip"`
-	HomeScore float64 `json:"homeScore"`
-	AwayScore float64 `json:"awayScore"`
-	Margin    float64 `json:"margin"`
-	Total     float64 `json:"total"`
-	TotalLow  float64 `json:"totalLow"`
-	TotalHigh float64 `json:"totalHigh"`
-	Quotes    []Quote `json:"quotes"`
+	RatingsMargin *float64 `json:"ratingsMargin,omitempty"`
+	RatingsTotal  *float64 `json:"ratingsTotal,omitempty"`
+	MarketMargin  *float64 `json:"marketMargin,omitempty"`
+	MarketTotal   *float64 `json:"marketTotal,omitempty"`
+	ID            int      `json:"id"`
+	Home          string   `json:"home"`
+	Away          string   `json:"away"`
+	Tip           string   `json:"tip"`
+	HomeScore     float64  `json:"homeScore"`
+	AwayScore     float64  `json:"awayScore"`
+	Margin        float64  `json:"margin"`
+	Total         float64  `json:"total"`
+	TotalLow      float64  `json:"totalLow"`
+	TotalHigh     float64  `json:"totalHigh"`
+	Quotes        []Quote  `json:"quotes"`
 }
 type Snapshot struct {
 	Date  string             `json:"date"`

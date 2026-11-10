@@ -26,6 +26,7 @@ import (
 	"propsmodel/internal/data"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/pipeline"
+	"propsmodel/internal/settlement"
 )
 
 func main() {
@@ -61,7 +62,10 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
-	ix := d.Builder.Index()
+	ix, err := settlement.Load(*dir)
+	if err != nil {
+		fatal(err)
+	}
 
 	// Final team scores per game, from the box scores, to spot blowouts.
 	type tg struct{ game, team int }
@@ -73,7 +77,7 @@ func main() {
 	var outs []outcome
 	waiting := 0
 	for _, e := range day {
-		if _, known := ix.GameDate(e.GameID); !known {
+		if checked := ix.Grade(e, 0); checked.Result == "REVIEW" {
 			waiting++
 			continue
 		}

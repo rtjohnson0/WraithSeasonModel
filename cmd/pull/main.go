@@ -203,8 +203,18 @@ func runStats(c *bdl.Client, args []string) error {
 				q.Set("start_date", start)
 			}
 			err := c.Paginate("/nba/v1/stats", q, func(raw json.RawMessage) error {
+				var row map[string]json.RawMessage
+				if err := json.Unmarshal(raw, &row); err != nil {
+					return err
+				}
+				row["_stats_fetched_at"], _ = json.Marshal(time.Now().UTC().Format(time.RFC3339Nano))
+				row["_stats_endpoint"] = json.RawMessage(`"/nba/v1/stats"`)
+				stamped, err := json.Marshal(row)
+				if err != nil {
+					return err
+				}
 				n++
-				return out.writeRow(raw)
+				return out.writeRow(stamped)
 			})
 			if err != nil {
 				out.Close()

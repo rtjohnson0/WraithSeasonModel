@@ -113,7 +113,7 @@ func buildV2(dir string, form Form) *V2Site {
 		Combos: buildComboRecord(combos, 120),
 		Info:   f.Info,
 	}
-	site.Record.ProvenanceNote = "Verified pregame quotes only. V2 remains an experimental model."
+	site.Record.ProvenanceNote = "Verified pregame quotes and identity-checked final actuals only. V2 remains an experimental model."
 	site.Board.Overs = f.Overs
 	if site.Info != nil && site.Info.Gates == nil {
 		site.Info.Gates = []V2Gate{} // the page reads it as a list

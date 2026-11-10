@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { DayGrid, HitRateBars, UnitsChart } from './Charts.jsx'
 import Lines from './Lines.jsx'
+import ResultAudit from './ResultAudit.jsx'
 import { pct, prettyDate, shortDate, statLabel } from './format.js'
 
 export function Table({ rows, unitsNote }) {
@@ -79,7 +80,7 @@ export default function Record({ site }) {
   const [archived, setArchived] = useState(false)
   const toggle = site.archive && <div className="archive-switch"><label><input type="checkbox" checked={archived} onChange={(e) => setArchived(e.target.checked)} /> Inspect historical unverified results</label></div>
   const view = archived && site.archive ? { ...site, record: site.archive.record } : site
-  return <>{toggle}{archived && <p className="notice">Historical audit view. These results are not included in verified performance.</p>}<RecordBody site={view} />
+  return <><ResultAudit reports={site.resultAudits} />{toggle}{archived && <p className="notice">Historical audit view. These results are not included in verified performance.</p>}<RecordBody site={view} />
     {site.archive?.excluded?.length > 0 && <details className="exclusion-registry"><summary>{site.archive.excluded.length} explicitly excluded quote records</summary><ul>{site.archive.excluded.map((r) => <li key={r.id}><code>{r.id}</code><p>{r.reason}</p></li>)}</ul></details>}
   </>
 }
@@ -103,7 +104,7 @@ function RecordBody({ site }) {
           {record.days} {record.days === 1 ? 'day' : 'days'} of results
         </p>
         <p className="honest">
-          Every graded play is here, wins and losses, including the ones that were never staked. The same player, stat and
+          This view includes wins and losses, including tracked plays that were never staked. The same player, stat and
           side on one day counts once. This is a small sample: a few weeks of results cannot separate skill from luck.
         </p>
         {staked && (
@@ -128,7 +129,7 @@ function RecordBody({ site }) {
             l: byDate[d].filter((r) => r.result === 'LOSS').length,
           }))}
       />
-      <p className="small">Every graded play that day, board or not. Green is a day over 55%, red under 45%.</p>
+      <p className="small">Results in this view, board or not. Green is a day over 55%, red under 45%.</p>
 
       <h2>Units over time</h2>
       <UnitsChart daily={record.daily} />
@@ -171,7 +172,7 @@ function RecordBody({ site }) {
       <Lines lines={site.lines} />
 
       <h2>Results by day</h2>
-      <p className="small">Every graded play from each day: the ones on the final board, plays that earlier runs posted and later runs dropped, and the lean fill-ins.</p>
+      <p className="small">Results from each day. The default record includes only validated pregame quotes with identity-checked final actuals. Inspect Result audit above for corrections and withheld rows.</p>
       {Object.keys(byDate)
         .sort()
         .reverse()

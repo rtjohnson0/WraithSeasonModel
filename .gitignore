@@ -39,3 +39,8 @@ __pycache__/
 !data/quarterboard.json
 !data/quarterlog.jsonl
 !data/quarter_games/
+
+!data/settled_audit.json
+!data/combosettled_audit.json
+!data/v2settled_audit.json
+!data/side_audit.json

@@ -251,6 +251,9 @@ type moreFile struct {
 
 // ComboInfo mirrors the summary predict writes about the day's combo pricing.
 type ComboInfo struct {
+	Loaded  int     `json:"loaded"`
+	Fresh   int     `json:"fresh"`
+	Usable  int     `json:"usable"`
 	Priced  int     `json:"priced"`
 	Over    int     `json:"over"`
 	Under   int     `json:"under"`

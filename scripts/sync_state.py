@@ -8,12 +8,13 @@ import argparse
 import json
 import os
 import re
+from datetime import datetime
 import subprocess
 import time
 from pathlib import Path
 
 STATE_FILES = [
-    'quarterboard.json', 'quarterlog.jsonl', 'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
+    'settled_audit.json', 'combosettled_audit.json', 'v2settled_audit.json', 'side_audit.json', 'quarterboard.json', 'quarterlog.jsonl', 'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
     'biasfix.json', 'minfix.json', 'wofix.json', 'runs.jsonl', 'more.json',
     'projlog.jsonl', 'model.json', 'combolog.jsonl', 'combosettled.jsonl',
     'combocorr.json', 'v2log.jsonl', 'v2settled.jsonl', 'v2.json', 'model_v2.json',
@@ -52,7 +53,7 @@ def record_key(name, row):
             game = row.get('game_id', (row.get('game') or {}).get('id'))
             if player is None or game is None:
                 raise ValueError(f'{name}: input row needs player and game identifiers')
-            return (player, game, row.get('period', 0))
+            return (player, game, (row.get('period') or 0))
         if name == 'data/players_active.jsonl':
             if row.get('id') is None:
                 raise ValueError(f'{name}: player row needs an id')
@@ -73,6 +74,19 @@ def record_key(name, row):
             row.get('book'), row.get('line'), row.get('period', 'game'))
 
 
+def prefer_input(older, newer, field='_stats_fetched_at'):
+    def stamp(row):
+        try:
+            value = datetime.fromisoformat(row.get(field, '').replace('Z', '+00:00'))
+            return value.timestamp() if value.tzinfo else None
+        except (ValueError, TypeError):
+            return None
+    a, b = stamp(older), stamp(newer)
+    if a is not None and (b is None or a > b):
+        return older
+    return newer
+
+
 def records(name, content):
     result = {}
     for line in (content or '').splitlines():
@@ -83,8 +97,10 @@ def records(name, content):
             raise ValueError(f'{name}: expected a JSON object')
         key = record_key(name, row)
         prev = result.get(key)
-        if prev is None or is_input(name):
+        if prev is None:
             result[key] = row
+        elif is_input(name):
+            result[key] = prefer_input(prev, row)
         elif name.endswith('projlog.jsonl') or '/lines/market_' in name:
             if row.get('at', '') >= prev.get('at', ''):
                 result[key] = row
@@ -107,6 +123,10 @@ def merge_jsonl(name, base, ours, theirs):
             value = None if bv is not None else (tv or ov)
         elif ov == tv:
             value = ov
+        elif is_input(name):
+            value = prefer_input(ov, tv)
+        elif name.endswith('settled.jsonl'):
+            value = prefer_input(ov, tv, field='source_fetched_at')
         elif name.endswith('projlog.jsonl') or '/lines/market_' in name:
             value = max((ov, tv), key=lambda r: r.get('at', ''))
         else:
@@ -116,6 +136,17 @@ def merge_jsonl(name, base, ours, theirs):
             merged.append(value)
     merged.sort(key=lambda r: (r.get('date', ''), str(record_key(name, r))))
     return ''.join(json.dumps(r, separators=(',', ':'), ensure_ascii=False) + '\n' for r in merged)
+
+
+def merge_result_audit(local, upstream):
+    a, b = json.loads(local), json.loads(upstream)
+    newest = dict(a if a.get('at', '') > b.get('at', '') else b)
+    history = {}
+    for report in (b, a):
+        for change in report.get('history', report.get('changes', [])):
+            history[json.dumps(change, sort_keys=True, ensure_ascii=False)] = change
+    newest['history'] = list(history.values())[-2000:]
+    return json.dumps(newest, ensure_ascii=False, indent=2)
 
 
 def state_paths():
@@ -184,10 +215,12 @@ def sync(branch, message, attempts=5, delay=2):
                 else:
                     # Remote explicitly changed configuration; keep that change.
                     content = upstream
-                    if (name.startswith('data/quarter_games/') or name in {'data/quarterboard.json', 'data/gameboard.json', 'data/board.json', 'data/more.json', 'data/v2.json'}) and local and upstream:
+                    if (name.startswith('data/quarter_games/') or name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json', 'data/side_audit.json', 'data/quarterboard.json', 'data/gameboard.json', 'data/board.json', 'data/more.json', 'data/v2.json'}) and local and upstream:
                         a, b = json.loads(local), json.loads(upstream)
                         if a.get('at', '') > b.get('at', ''):
                             content = local
+                        if name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json'}:
+                            content = merge_result_audit(local, upstream)
                 if content is None:
                     git('rm', '-f', '--ignore-unmatch', '--', name)
                 else:

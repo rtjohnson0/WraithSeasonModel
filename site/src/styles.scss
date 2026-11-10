@@ -429,3 +429,15 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
 .quarter-history span { background: #202633; border-radius: 6px; padding: 10px; min-width: 90px; }
 .quarter-history b, .quarter-history small { display: block; }
 .quarter-history small { color: #acb6c9; margin-top: 5px; font-size: 11px; }
+.pick-reason { padding: 14px 22px; border-top: 1px solid #343b49; font-size: 13px; line-height: 1.55; }
+.pick-reason h4 { margin: 0 0 6px; }
+.reason-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 14px 0; }
+.reason-columns li { margin: 7px 0; }
+.reason-columns > div:last-child > b { color: #f0a6a6; }
+.result-audit input:not([type="checkbox"]) { width: min(100%,400px); background: #151a23; color: #edf2fa; border: 1px solid #465066; padding: 10px; border-radius: 6px; }
+.result-audit td small { display: block; margin-top: 5px; }
+.result-audit .booktable { max-height: 520px; overflow: auto; }
+.market-choice { padding: 8px 12px; background: #202633; border-radius: 6px; }
+@media (max-width: 650px) { .reason-columns { grid-template-columns: 1fr; gap: 10px; } .pick-reason { padding: 12px; } }
+
+.result-audit label { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }

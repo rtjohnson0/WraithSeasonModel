@@ -40,6 +40,9 @@ type MoreFile struct {
 
 // ComboInfo is a summary of one day's combo pricing.
 type ComboInfo struct {
+	Loaded  int     `json:"loaded"`
+	Fresh   int     `json:"fresh"`
+	Usable  int     `json:"usable"`
 	Priced  int     `json:"priced"`  // combo lines priced
 	Over    int     `json:"over"`    // lean Over after calibration
 	Under   int     `json:"under"`   // lean Under after calibration

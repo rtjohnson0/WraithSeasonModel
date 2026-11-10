@@ -630,6 +630,7 @@ func main() {
 			Shift: pred.Minutes - row.TypicalMinutes(), Tip: g.Start,
 			Dist: pred.Dist(l.Stat, distMax(l.Stat, l.Line, pred.Mean(l.Stat))),
 		}
+		s.Why = addWhy(s.Why, m.ExplainContext(row, l.Stat))
 		baseWhy := s.Why
 		if ls := byMarket[marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}]; len(ls) > 0 {
 			lo, hi := ls[0], ls[0]
@@ -756,6 +757,7 @@ func main() {
 		}
 	}
 
+	var comboWatch []scored
 	var comboPlays []scored
 	var comboSummary comboStats
 	var v2Combos []scored
@@ -765,6 +767,7 @@ func main() {
 		lookup := teamOf
 		comboLines, _ := props.LoadPregameSnapshot(propsPath, true, runAt, *maxQuoteAge)
 		comboLines = append(comboLines, sgoLinesFor(*dir, *date, b, gameOf, true)...)
+		loadedCombos := len(comboLines)
 		var freshCombos []props.Line
 		for _, line := range comboLines {
 			if props.Executable(line, games[line.GameID], runAt, *maxQuoteAge, *maxCaptureAge) {
@@ -777,7 +780,7 @@ func main() {
 		direct, directOK := eval.LoadCalibration(filepath.Join(*dir, "combocalibration.json"))
 		directOK = directOK && direct.Config == config && direct.ModelVersion == m.Version && direct.TrainedBefore != "" && direct.TrainedBefore < *date
 		cd := comboDeps{
-			b: b, ix: ix, m: m, games: games, out: out, statuses: statuses, teamOf: lookup, rowFor: rowFor, adjust: adjustMinutes,
+			watch: &comboWatch, b: b, ix: ix, m: m, games: games, out: out, statuses: statuses, teamOf: lookup, rowFor: rowFor, adjust: adjustMinutes,
 			scale: func(st data.Stat, row *feat.Row) float64 {
 				f := biasFix.For(st)
 				if a, ok := anchorScale[st]; ok {
@@ -794,10 +797,12 @@ func main() {
 			},
 		}
 		comboPlays, cs = scoreCombos(cd, comboLines)
+		cs.Loaded, cs.Fresh, cs.Usable = loadedCombos, len(freshCombos), len(comboLines)
 		comboSummary = cs
 		if *useV2 {
 			// The same combos, priced with V2's live correction and a model-forward blend.
 			d2 := cd
+			d2.watch = nil
 			d2.observe = nil
 			d2.weight = *v2Weight
 			d2.m = m2
@@ -906,6 +911,9 @@ func main() {
 	}
 
 	if !*noLog && gid == 0 {
+		if err := saveSideAudit(*dir, *date, all, picks, *hi, *minEdge); err != nil {
+			fatal(err)
+		}
 		extra := moreCandidates(picks, all, 5, 2)
 		var ctx []GameCtx
 		for id, c := range consensus {
@@ -918,7 +926,7 @@ func main() {
 		moves := buildMoves(series, picks, extra)
 		news := buildNews(b, ix.Name, games, out, statuses, *date)
 		overs := overWatchRows(all, picks, offMarket, *hi, *minEdge, 12)
-		if err := writeMore(*dir, *date, extra, ctx, moves, news, overs, comboEntries(*date, comboPlays), comboInfo(comboSummary, len(comboPlays), *comboBar), runAt.Format(time.RFC3339Nano)); err != nil {
+		if err := writeMore(*dir, *date, extra, ctx, moves, news, overs, comboEntries(*date, comboDisplay(comboPlays, comboWatch)), comboInfo(comboSummary, len(comboPlays), *comboBar), runAt.Format(time.RFC3339Nano)); err != nil {
 			fmt.Println("note: could not save data/more.json:", err)
 		} else {
 			fmt.Printf("Saved %d more plays for the site's \"More plays\" button to %s.\n", len(extra), filepath.Join(*dir, "more.json"))

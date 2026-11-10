@@ -5,6 +5,8 @@ import QuoteDetails from './QuoteDetails.jsx'
 import RunStatus from './RunStatus.jsx'
 import GameMarkets from './GameMarkets.jsx'
 import QuarterBoard from './QuarterBoard.jsx'
+import SideAudit from './SideAudit.jsx'
+import PickReason from './PickReason.jsx'
 import { quoteState } from './quote.js'
 import { DaySummary, ResultList } from './Record.jsx'
 import { tipState, useNow } from './time.js'
@@ -34,7 +36,7 @@ function reasons(p) {
     .filter(Boolean)
     .filter((x) => !x.startsWith('defense vs '))
     .forEach((x) => out.push(x.charAt(0).toUpperCase() + x.slice(1) + '.'))
-  if (p.defense) out.push(`${p.defense.text}, out of ${p.defense.of} teams.`)
+  if (p.defense) out.push(`${p.defense.helps ? 'Supports this side: ' : 'Against this side: '}{p.defense.text}, out of ${p.defense.of} teams.`)
   return out
 }
 
@@ -343,6 +345,7 @@ function PlayRow({ p, focus, started }) {
         </span>
       </button>
       <QuoteDetails p={p} />
+      <PickReason p={p} />
       {open && (
         <div className="why">
           <div className="facts">
@@ -640,6 +643,7 @@ export default function Board({ site }) {
       <GameMarkets data={site.gameMarkets} />
       <QuarterBoard data={site.quarter} />
       <h2>Full-game player props</h2>
+      <SideAudit data={site.sideAudit} />
       <p className="small quote-disclaimer">Lines are specific to the named book and price. A current sportsbook screen takes precedence over an API snapshot.</p>
       <label className="inactive-toggle"><input type="checkbox" checked={showInactive} onChange={(e) => setShowInactive(e.target.checked)} /> Show expired or unconfirmed snapshots</label>
       <TopPlays games={board.games || []} now={now} onPick={(p) => { setStat('all'); setLabel('all'); setSide('ALL'); setQ(''); setRepeatsOnly(false); setFocus({ id: playId(p), n: Date.now() }) }} />

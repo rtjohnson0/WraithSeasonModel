@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"propsmodel/internal/lineslog"
-	"propsmodel/internal/pipeline"
+	"propsmodel/internal/settlement"
 )
 
 // LinesRecord is the graded market log: every line the model scored (not only the plays it posted),
@@ -81,11 +81,11 @@ func buildLinesRecord(dir string) LinesRecord {
 	if len(mk) == 0 && len(off) == 0 {
 		return rec
 	}
-	d, err := pipeline.Load(dir, false)
+	d, err := settlement.Load(dir)
 	if err != nil {
 		return rec
 	}
-	return summariseLines(mk, off, lineslog.Actualer(d.Builder.Index().Actual))
+	return summariseLines(mk, off, lineslog.Actualer(d.Actual))
 }
 
 func summariseLines(mk []lineslog.Market, off []lineslog.Off, act lineslog.Actualer) LinesRecord {

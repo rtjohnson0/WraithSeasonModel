@@ -409,7 +409,10 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 		}
 		muM := cal.Margin.Mean(-c.SpreadHome, pm)
 		muT := cal.Total.Mean(c.Total, pt)
-		board.Games = append(board.Games, makeGameBoard(id, h, a, g.Start, muM, muT, cal.Total.Sigma, cal.Margin.Sigma, rowsO))
+		gameView := makeGameBoard(id, h, a, g.Start, muM, muT, cal.Total.Sigma, cal.Margin.Sigma, rowsO)
+		marketMargin, marketTotal := -c.SpreadHome, c.Total
+		gameView.RatingsMargin, gameView.RatingsTotal, gameView.MarketMargin, gameView.MarketTotal = &pm, &pt, &marketMargin, &marketTotal
+		board.Games = append(board.Games, gameView)
 		match := fmt.Sprintf("%s @ %s", a, h)
 		model := fmt.Sprintf("%s by %.1f, total %.1f", h, muM, muT)
 		if muM < 0 {

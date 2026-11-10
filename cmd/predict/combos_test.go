@@ -71,3 +71,18 @@ func TestComboCalibrationUsesItsOwnMarket(t *testing.T) {
 		t.Fatalf("explicit experimental blend ignored: %v", got)
 	}
 }
+
+func TestComboWatchDoesNotCreateQualifiedTracking(t *testing.T) {
+	watch := scored{GameID: 9, PlayerID: 7, Stat: data.PRA, Tier: "COMBOWATCH", Prob: .5, Edge: -.02}
+	rows := comboDisplay(nil, []scored{watch})
+	if len(rows) != 1 || comboEntries("2026-11-10", rows)[0].Tier != "COMBOWATCH" {
+		t.Fatal("watch comparison lost")
+	}
+	picked := watch
+	picked.Tier = comboTier
+	picked.Edge = .03
+	rows = comboDisplay([]scored{picked}, []scored{watch})
+	if len(rows) != 1 || rows[0].Tier != comboTier {
+		t.Fatal("watch duplicated a qualified pick")
+	}
+}

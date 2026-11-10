@@ -360,3 +360,115 @@ a rejected first push. It verifies a clean tracked worktree, all player rows,
 remote corrections and successful retry without adding untracked raw inputs.
 After pushing this script, start a new Daily workflow run on the updated
 branch; rerunning the old failed job uses its original source revision.
+
+## Corrected final-stat settlement and searchable result audit
+
+Settlement previously skipped every pick already in the settled log. A result
+saved from an incorrect or older actual therefore survived later box-score
+corrections. The generic feature loader also converts absent numeric fields to
+zero, which is unsafe as settlement evidence. New `internal/settlement` reads
+raw box-score fields with presence checks and keeps them separate from features.
+
+Individual, combo and V2 settlement now rechecks all saved full-game results.
+It requires the exact player/game IDs, matching player name, game date, explicit
+Final status, actual game team, logged team when present, positive recorded
+minutes, and a present nonnegative integer for each requested stat/component.
+When available, total rebounds must equal offensive plus defensive rebounds.
+Explicit partial-period rows cannot supply full-game actuals. Missing players
+or zero minutes do not prove a sportsbook DNP void. These cases become REVIEW
+and contribute neither wins/losses nor profit. Unknown stat names cannot turn
+into zero. Source player/game/team IDs, date, name and raw-row SHA-256 accompany
+confirmed results. Quote provenance alone no longer verifies a settled result.
+
+Before changing settlement files, the command saves an exact original backup.
+Corrections, old/new values and reasons are written to `settled_audit.json`,
+`combosettled_audit.json` and `v2settled_audit.json`. Audit history survives later
+runs and concurrent state sync. It is searchable on the Record page by player,
+date, game ID, stat or reason. The immutable original pick logs are not edited.
+Old results lacking final-stat evidence are withheld from the default record
+until checked. Historical unverified results remain an explicitly separate
+forensic view, not the verified headline record.
+
+The same strict final actuals now feed the CSV review, live projection check,
+and all-line calibration diagnostics. Diagnostics compare logged player names,
+dates and teams when both are present. They cannot silently use a missing
+requested component as zero. These checks validate provider row consistency;
+they are not an independent confirmation that the provider's final box score
+agrees with another statistics service.
+
+To audit current-season results in Windows PowerShell after copying this ZIP:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\audit_results.ps1 -Season 2026
+```
+
+This refreshes the selected season, regrades every saved individual/combo/V2
+result and exports the site data. `go run ./cmd/resultaudit` can instead use the
+existing downloaded files without a model or retraining. A regression fixture
+proves a saved Naz Reid Under 9.5 WIN with actual 1 changes to LOSS at actual 13;
+that fixture is not an audit of an unseen user's production data. To establish
+which source row caused a particular production error, supply the current pick
+logs, settled logs, stats and model/calibration files. Screenshots alone cannot
+establish the stored player/game identities or provider row contents.
+
+## Clearer individual, combo, moneyline and total explanations
+
+Individual prop cards now distinguish evidence supporting the side from
+counterarguments. A defense allowing a lot of points is explicitly against an
+Under, even if lower projected minutes or other factors still favor that side.
+A minutes sensitivity check warns when using the normal workload at the same
+rate would move the implied total across the quoted line. It is labeled a
+sensitivity, not a second calibrated forecast. Defense already enters the
+learned `opp_allow` and `pos5_allow` rate features; its raw rank percentage is
+not applied as an extra multiplier. New run notes report the actual fitted
+rate sensitivity to league-neutral defense inputs and the largest fitted
+minutes terms, with their reference and limitations. Disabled defense features
+are identified explicitly instead of claiming they influenced the projection.
+
+Moneyline/total cards name the projected winner or central Over/Under lean,
+then separately name a price-based paper value lean, or PASS when neither
+side has positive expected value. They explain projection versus exact line,
+probability versus break-even, and the ratings-only and market-consensus inputs
+to the fitted blend. A likely winner is not automatically a worthwhile price.
+
+A cause of absent combos was the conservative no-calibration fallback: book
+probabilities alone generally cannot beat the price's break-even probability.
+The site now shows available, validated combo comparisons even when none clear
+the tracking gates. Comparison-only rows are labeled COMBOWATCH, never staked,
+and never appended to the qualified combo paper log. Qualified combos retain
+their own tracking and grading. Feed, freshness, consensus and pricing counts
+explain where combo lines disappeared. No synthetic combo threshold is built
+from unrelated single-stat sportsbook lines. Direct combo calibration remains
+required to claim calibrated model confidence; singles' calibration is not
+borrowed to create picks.
+
+## Under/Over selection diagnostics
+
+Every new scoring run writes `data/side_audit.json`. The board shows one quote
+near the median per player/game/stat, raw-model Over/Under counts, calibrated
+counts, probability-bar counts, price-edge-bar counts, final posted counts,
+mean projected-minus-line gaps and minutes shifts. It highlights Under-heavy
+raw predictions, calibration majority reversals, rejected Over probabilities
+or prices, and repeated low-minute Under projections. This diagnoses where
+asymmetry arises without counting every duplicate book as a new market.
+It does not force a 50/50 split, refit weights on current games, or establish
+which component caused a production skew without the actual saved model and
+inputs. Correct actual-stat errors first; evaluate minutes/rates/calibration
+on strictly later dates before accepting a numerical bias correction.
+
+New stats downloads include their full-game endpoint and UTC fetch timestamp.
+Strict settlement requires this provenance; existing unstamped files need the
+one-time season refresh in `audit_results.ps1`. A newer verified result cannot
+be reversed by an older cached download. Stat-input conflict resolution also
+prefers a newer stamped API correction over an older competing row, while
+retaining the existing deliberate-deletion behavior. The audit reports older
+cached sources that were ignored. This prevents a cache restore or concurrent
+pull from silently undoing a correction on the next daily run.
+
+The audit page also has “Show every checked result,” so search covers all
+current checks rather than only changed outcomes. It retains bounded correction
+history alongside those current receipts. Confirmed settlement conflicts use
+their provider-download times: a concurrent older WIN cannot replace a newer
+verified LOSS, and newer evidence requiring REVIEW withholds the result.
+The full-season audit wrapper backs up the original stats file before download,
+so the pre-refresh source remains available for investigating an incorrect row.

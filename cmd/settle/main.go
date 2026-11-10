@@ -22,8 +22,8 @@ import (
 
 	"propsmodel/internal/data"
 	"propsmodel/internal/picklog"
-	"propsmodel/internal/pipeline"
 	"propsmodel/internal/props"
+	"propsmodel/internal/settlement"
 )
 
 func main() {
@@ -48,48 +48,20 @@ func main() {
 	}
 	if len(entries) == 0 {
 		fmt.Println("data/picklog.jsonl is empty. Run `go run ./cmd/predict` first; it logs every posted pick.")
-		return
 	}
 	settledPath := filepath.Join(*dir, "settled.jsonl")
-	done, err := picklog.LoadSettled(settledPath)
+
+	closing := map[string]map[closeKey]float64{}
+	report, err := settlement.Reconcile(*dir, "settled.jsonl", entries, func(e picklog.Entry) float64 {
+		if _, ok := closing[e.Date]; !ok {
+			closing[e.Date] = closingLines(*dir, e.Date)
+		}
+		return closing[e.Date][closeKey{e.GameID, e.PlayerID, e.Stat}]
+	})
 	if err != nil {
 		fatal(err)
 	}
-	have := map[string]bool{}
-	for _, s := range done {
-		have[fmt.Sprintf("%s|%d|%s|%s|%s|%.1f", s.Date, s.PlayerID, s.Stat, s.Side, s.Book, s.Line)] = true
-	}
-
-	d, err := pipeline.Load(*dir, false)
-	if err != nil {
-		fatal(err)
-	}
-	ix := d.Builder.Index()
-
-	closing := map[string]map[closeKey]float64{} // date -> closing median line
-	var fresh []picklog.Settled
-	pending := 0
-	for _, e := range entries {
-		if have[fmt.Sprintf("%s|%d|%s|%s|%s|%.1f", e.Date, e.PlayerID, e.Stat, e.Side, e.Book, e.Line)] {
-			continue
-		}
-		if _, known := ix.GameDate(e.GameID); !known {
-			pending++ // the game is not in the stats yet
-			continue
-		}
-		actual, played := ix.Actual(e.GameID, e.PlayerID)
-		cl, ok := closing[e.Date]
-		if !ok {
-			cl = closingLines(*dir, e.Date)
-			closing[e.Date] = cl
-		}
-		fresh = append(fresh, picklog.Grade(e, actual.Value(data.Stat(e.Stat)), cl[closeKey{e.GameID, e.PlayerID, e.Stat}], played))
-	}
-	if n, err := picklog.AppendSettled(settledPath, fresh); err != nil {
-		fatal(err)
-	} else {
-		fmt.Printf("settled %d new picks (%d still waiting for final stats)\n\n", n, pending)
-	}
+	fmt.Printf("Audited %d results: %d confirmed, %d withheld for review, %d changes. See data/settled_audit.json.\n", report.Checked, report.Confirmed, report.Review, len(report.Changes))
 
 	everyRaw, err := picklog.LoadSettled(settledPath)
 	if err != nil {

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { quoteState, bookName, clock } from './quote.js'
 import { useNow } from './time.js'
+import { explainGame } from './explain.js'
 import { oddsText } from './format.js'
 
 const pc = (p) => `${(p * 100).toFixed(1)}%`
@@ -10,10 +11,13 @@ function Market({ game, market, now }) {
   const [book, setBook] = useState('')
   const q = quotes.find((q) => q.book === book) || quotes[0]
   if (!q) return <p className="small">No current {market === 'total' ? 'total' : 'moneyline'} quote passed freshness and book checks.</p>
+  const explanation = explainGame(game,q)
   return <div className="game-market">
     <div className="game-market-heading"><h4>{market === 'total' ? `Game total · ${q.line}` : 'Moneyline'}</h4>
       <select aria-label={`${game.away} at ${game.home} ${market} book`} value={q.book} onChange={(e) => setBook(e.target.value)}>{quotes.map((x) => <option key={x.book} value={x.book}>{bookName(x.book)}</option>)}</select>
     </div>
+    <p className="market-choice"><b>{explanation.choice}</b></p>
+    <p>{explanation.why}</p>{explanation.context && <p className="small">{explanation.context}</p>}<p className="small">{explanation.price}</p>
     <div className="booktable"><table><thead><tr><th>Side / price</th><th>Model</th><th>Break-even</th><th>Book, no vig</th><th>Edge</th><th>Model ROI</th></tr></thead><tbody>
       {q.sides.map((s) => <tr key={s.label}><td><b>{s.label}{market === 'total' ? ` ${q.line}` : ''}</b> {oddsText(s.odds)}</td><td>{pc(s.conditional)}</td><td>{pc(s.breakEven)}</td><td>{pc(s.market)}</td><td>{signed(s.edge * 100)} pp</td><td>{signed(s.ev * 100)}%</td></tr>)}
     </tbody></table></div>

@@ -17,8 +17,8 @@ import (
 	"text/tabwriter"
 
 	"propsmodel/internal/data"
-	"propsmodel/internal/pipeline"
 	"propsmodel/internal/projlog"
+	"propsmodel/internal/settlement"
 )
 
 type obs struct {
@@ -72,12 +72,12 @@ func main() {
 		fmt.Println("data/projlog.jsonl is empty. Run `go run ./cmd/predict` on a game day (not with -nolog), then check again after the games are in your box scores.")
 		return
 	}
-	d, err := pipeline.Load(*dir, false)
+	d, err := settlement.Load(*dir)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
 		os.Exit(1)
 	}
-	ix := d.Builder.Index()
+	ix := d
 	var obss []obs
 	days := map[string]bool{}
 	for _, e := range entries {
@@ -85,7 +85,7 @@ func main() {
 			continue
 		}
 		g, ok := ix.Actual(e.GameID, e.PlayerID)
-		if !ok || g.Minutes <= 0 {
+		if !ok || g.Minutes <= 0 || g.Date != e.Date || g.Name != e.Player || (e.Team != "" && g.TeamAbbr != e.Team) {
 			continue
 		}
 		o := obs{e: e, minutes: g.Minutes, actual: map[string]float64{}}

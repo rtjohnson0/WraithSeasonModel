@@ -291,7 +291,7 @@ func GradeMarkets(ms []Market, act Actualer) []GradedMarket {
 	var out []GradedMarket
 	for _, m := range ms {
 		pg, ok := act(m.GameID, m.PlayerID)
-		if !ok {
+		if !ok || !matchingActual(pg, m.Date, m.Player, m.Team) {
 			continue
 		}
 		v := pg.Value(data.Stat(m.Stat))
@@ -519,7 +519,7 @@ func GradeOff(os []Off, act Actualer) []GradedOff {
 	for _, k := range order {
 		o := best[k]
 		pg, ok := act(o.GameID, o.PlayerID)
-		if !ok {
+		if !ok || !matchingActual(pg, o.Date, o.Player, o.Team) {
 			continue
 		}
 		v := pg.Value(data.Stat(o.Stat))
@@ -611,4 +611,8 @@ func OffSummary(gs []GradedOff) []OffRow {
 		out = append(out, r)
 	}
 	return out
+}
+
+func matchingActual(pg data.PlayerGame, date, name, team string) bool {
+	return !(pg.Date != "" && date != "" && pg.Date != date) && !(pg.Name != "" && name != "" && pg.Name != name) && !(pg.TeamAbbr != "" && team != "" && pg.TeamAbbr != team)
 }

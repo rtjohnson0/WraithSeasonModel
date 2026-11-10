@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"regexp"
@@ -289,15 +290,17 @@ type Record struct {
 
 // Site is everything the website reads.
 type Site struct {
-	Quarter     *quarter.Board      `json:"quarter,omitempty"`
-	GameMarkets *gameboard.Snapshot `json:"gameMarkets,omitempty"`
-	Status      *boardstate.Status  `json:"status,omitempty"`
-	Archive     *ArchiveData        `json:"archive,omitempty"`
-	GeneratedAt string              `json:"generatedAt"`
-	Board       Board               `json:"board"`
-	Record      Record              `json:"record"`
-	Combos      ComboRecord         `json:"combos"`
-	Lines       LinesRecord         `json:"lines"`
+	ResultAudits []json.RawMessage   `json:"resultAudits,omitempty"`
+	SideAudit    json.RawMessage     `json:"sideAudit,omitempty"`
+	Quarter      *quarter.Board      `json:"quarter,omitempty"`
+	GameMarkets  *gameboard.Snapshot `json:"gameMarkets,omitempty"`
+	Status       *boardstate.Status  `json:"status,omitempty"`
+	Archive      *ArchiveData        `json:"archive,omitempty"`
+	GeneratedAt  string              `json:"generatedAt"`
+	Board        Board               `json:"board"`
+	Record       Record              `json:"record"`
+	Combos       ComboRecord         `json:"combos"`
+	Lines        LinesRecord         `json:"lines"`
 	// V2 is the challenger model's board and record, tracked apart from everything above.
 	V2 *V2Site `json:"v2,omitempty"`
 }

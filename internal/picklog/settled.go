@@ -13,6 +13,17 @@ import (
 
 // Settled is a logged pick after the game, with its result and closing line value.
 type Settled struct {
+	SourceFetchedAt   string `json:"source_fetched_at,omitempty"`
+	SettlementVersion int    `json:"settlement_version,omitempty"`
+	SettlementSource  string `json:"settlement_source,omitempty"`
+	SettlementReason  string `json:"settlement_reason,omitempty"`
+	SourceHash        string `json:"source_hash,omitempty"`
+	SourcePlayerID    int    `json:"source_player_id,omitempty"`
+	SourceGameID      int    `json:"source_game_id,omitempty"`
+	SourceTeamID      int    `json:"source_team_id,omitempty"`
+	SourcePlayer      string `json:"source_player,omitempty"`
+	SourceDate        string `json:"source_date,omitempty"`
+
 	Entry
 	SettledAt string  `json:"settled_at"`
 	Result    string  `json:"result"` // WIN, LOSS, PUSH or VOID (player did not play)
@@ -165,7 +176,7 @@ func Summarize(rows []Settled) Summary {
 	var clvSum float64
 	var clvPos int
 	for _, r := range rows {
-		if !r.FullGame() || r.Result == "EXCLUDED" {
+		if !r.FullGame() || (r.Result != "WIN" && r.Result != "LOSS" && r.Result != "PUSH" && r.Result != "VOID") {
 			continue
 		}
 		s.Picks++
@@ -225,7 +236,7 @@ func DedupeSettled(in []Settled) ([]Settled, int) {
 	best := map[string]int{}
 	var out []Settled
 	for _, r := range in {
-		if !r.FullGame() || r.Result == "EXCLUDED" {
+		if !r.FullGame() || (r.Result != "WIN" && r.Result != "LOSS" && r.Result != "PUSH" && r.Result != "VOID") {
 			continue
 		}
 		k := fmt.Sprintf("%s|%d|%s|%s", r.Date, r.PlayerID, r.Stat, r.Side)
@@ -273,4 +284,9 @@ func HasFlag(why, flag string) bool {
 		}
 	}
 	return false
+}
+
+// Verified requires independent quote and actual-stat provenance.
+func (s Settled) Verified() bool {
+	return s.Entry.Verified() && s.SettlementVersion >= 1 && s.SourceHash != "" && s.SourceFetchedAt != "" && s.SourcePlayerID == s.PlayerID && s.SourceGameID == s.GameID && s.SourceDate == s.Date && (s.Result == "WIN" || s.Result == "LOSS" || s.Result == "PUSH")
 }

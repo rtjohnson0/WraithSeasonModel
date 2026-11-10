@@ -16,7 +16,7 @@ import (
 
 	"propsmodel/internal/data"
 	"propsmodel/internal/picklog"
-	"propsmodel/internal/pipeline"
+	"propsmodel/internal/settlement"
 )
 
 func main() {
@@ -41,43 +41,14 @@ func settle(dir string, legacy bool) {
 	}
 	if len(entries) == 0 {
 		fmt.Println("data/v2log.jsonl is empty. Run `go run ./cmd/predict` first; it logs the V2 plays.")
-		return
 	}
 	settledPath := filepath.Join(dir, "v2settled.jsonl")
-	done, err := picklog.LoadSettled(settledPath)
+
+	report, err := settlement.Reconcile(dir, "v2settled.jsonl", entries, nil)
 	if err != nil {
 		fatal(err)
 	}
-	key := func(date string, pid int, stat, side, book string, line float64) string {
-		return fmt.Sprintf("%s|%d|%s|%s|%s|%.1f", date, pid, stat, side, book, line)
-	}
-	have := map[string]bool{}
-	for _, s := range done {
-		have[key(s.Date, s.PlayerID, s.Stat, s.Side, s.Book, s.Line)] = true
-	}
-	d, err := pipeline.Load(dir, false)
-	if err != nil {
-		fatal(err)
-	}
-	ix := d.Builder.Index()
-	var fresh []picklog.Settled
-	pending := 0
-	for _, e := range entries {
-		if have[key(e.Date, e.PlayerID, e.Stat, e.Side, e.Book, e.Line)] {
-			continue
-		}
-		if _, known := ix.GameDate(e.GameID); !known {
-			pending++
-			continue
-		}
-		actual, played := ix.Actual(e.GameID, e.PlayerID)
-		fresh = append(fresh, picklog.Grade(e, actual.Value(data.Stat(e.Stat)), 0, played))
-	}
-	n, err := picklog.AppendSettled(settledPath, fresh)
-	if err != nil {
-		fatal(err)
-	}
-	fmt.Printf("settled %d new V2 plays (%d still waiting for final stats)\n\n", n, pending)
+	fmt.Printf("Audited %d results: %d confirmed, %d for review.\n", report.Checked, report.Confirmed, report.Review)
 
 	all, err := picklog.LoadSettled(settledPath)
 	if err != nil {

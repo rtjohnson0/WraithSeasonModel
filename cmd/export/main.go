@@ -105,6 +105,19 @@ func main() {
 		Combos:      buildComboRecord(comboSettled, 120),
 		Lines:       buildLinesRecord(*dir),
 	}
+	for _, name := range []string{"settled_audit.json", "combosettled_audit.json", "v2settled_audit.json"} {
+		if b, e := os.ReadFile(filepath.Join(*dir, name)); e == nil && json.Valid(b) {
+			site.ResultAudits = append(site.ResultAudits, json.RawMessage(b))
+		}
+	}
+	if b, e := os.ReadFile(filepath.Join(*dir, "side_audit.json")); e == nil {
+		var a struct {
+			Date string `json:"date"`
+		}
+		if json.Unmarshal(b, &a) == nil && a.Date == *date {
+			site.SideAudit = json.RawMessage(b)
+		}
+	}
 	site.Quarter, err = quarter.LoadBoard(*dir, *date)
 	if err != nil {
 		fatal(err)
@@ -122,7 +135,7 @@ func main() {
 	}
 	site.Archive = buildArchive(*dir, allHistory)
 	if !*legacy {
-		site.Record.ProvenanceNote = "Results include only picks with validated pregame quotes. Legacy logs are retained separately until their quotes can be audited."
+		site.Record.ProvenanceNote = "Results require validated pregame quotes and identity-checked final player/game/stat actuals. Old or incomplete actuals are withheld until re-audited. Legacy logs are retained separately until their quotes can be audited."
 	}
 	var mf moreFile
 	if raw, err := os.ReadFile(filepath.Join(*dir, "more.json")); err == nil {

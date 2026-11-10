@@ -16,7 +16,7 @@ import (
 	"text/tabwriter"
 
 	"propsmodel/internal/lineslog"
-	"propsmodel/internal/pipeline"
+	"propsmodel/internal/settlement"
 )
 
 func main() {
@@ -47,11 +47,11 @@ func main() {
 		fmt.Println("data/lines is empty. Run `go run ./cmd/predict` (without -nolog) first; it logs every line it scores.")
 		return
 	}
-	d, err := pipeline.Load(*dir, false)
+	d, err := settlement.Load(*dir)
 	if err != nil {
 		fatal(err)
 	}
-	act := lineslog.Actualer(d.Builder.Index().Actual)
+	act := lineslog.Actualer(d.Actual)
 
 	gm := lineslog.GradeMarkets(mk, act)
 	fmt.Printf("ALL LINES: %d graded of %d logged (the rest are waiting on final stats or the player did not play)\n\n", len(gm), len(mk))

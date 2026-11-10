@@ -28,8 +28,8 @@ func TestBuildV2(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, "v2.json"), b, 0o644)
 	// One graded single and one graded combo; each lands in its own record.
 	settled := []picklog.Settled{
-		picklog.Grade(f.Plays[0], 24, 0, true),
-		picklog.Grade(f.Combos[0], 25, 0, true),
+		verifiedResultFixture(f.Plays[0], 24, 0, true),
+		verifiedResultFixture(f.Combos[0], 25, 0, true),
 	}
 	if _, err := picklog.AppendSettled(filepath.Join(dir, "v2settled.jsonl"), settled); err != nil {
 		t.Fatal(err)
@@ -64,7 +64,7 @@ func TestBuildV2TiersOversAndRecordRows(t *testing.T) {
 		Info:  &V2Info{Strong: 1, Lean: 1}}
 	b, _ := json.Marshal(f)
 	os.WriteFile(filepath.Join(dir, "v2.json"), b, 0o644)
-	if _, err := picklog.AppendSettled(filepath.Join(dir, "v2settled.jsonl"), []picklog.Settled{picklog.Grade(strong, 6, 0, true), picklog.Grade(lean, 22, 0, true)}); err != nil {
+	if _, err := picklog.AppendSettled(filepath.Join(dir, "v2settled.jsonl"), []picklog.Settled{verifiedResultFixture(strong, 6, 0, true), verifiedResultFixture(lean, 22, 0, true)}); err != nil {
 		t.Fatal(err)
 	}
 	v := buildV2(dir, nil)
@@ -94,4 +94,15 @@ func TestBuildV2TiersOversAndRecordRows(t *testing.T) {
 	if names["V2 strong plays (the real model agrees, stat and side proven)"] != 1 || names["V2 lean plays (posted, not yet backed by the real model or a proven record)"] != 1 {
 		t.Errorf("record should split strong and lean: %v", names)
 	}
+}
+
+func verifiedResultFixture(e picklog.Entry, actual, close float64, played bool) picklog.Settled {
+	s := picklog.Grade(e, actual, close, played)
+	s.SettlementVersion = 1
+	s.SourceHash = "fixture"
+	s.SourceFetchedAt = "2026-11-10T18:00:00Z"
+	s.SourcePlayerID = e.PlayerID
+	s.SourceGameID = e.GameID
+	s.SourceDate = e.Date
+	return s
 }
