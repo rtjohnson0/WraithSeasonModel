@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -119,14 +120,22 @@ func cloneValues(q url.Values) url.Values {
 
 // PlayerLine is one book's over/under line for one player and stat.
 type PlayerLine struct {
-	PlayerKey string // SportsGameOdds player id, e.g. JALEN_DUREN_1_NBA
-	Name      string
-	Stat      data.Stat
-	Book      string
-	Line      float64
-	OverOdds  int
-	UnderOdds int
-	UpdatedAt string
+	OverUpdatedAt  string  `json:"over_updated_at,omitempty"`
+	EventID        string  `json:"event_id,omitempty"`
+	EventStart     string  `json:"event_start,omitempty"`
+	CapturedAt     string  `json:"-"`
+	PairVerified   bool    `json:"pair_verified,omitempty"`
+	UnderLine      float64 `json:"under_line"`
+	UnderUpdatedAt string  `json:"under_updated_at,omitempty"`
+	Period         string  `json:"period,omitempty"` // game for all accepted markets
+	PlayerKey      string  // SportsGameOdds player id, e.g. JALEN_DUREN_1_NBA
+	Name           string
+	Stat           data.Stat
+	Book           string
+	Line           float64
+	OverOdds       int
+	UnderOdds      int
+	UpdatedAt      string
 }
 
 // flex reads a JSON value that may be a number or a numeric string.
@@ -161,6 +170,12 @@ type odd struct {
 }
 
 type event struct {
+	EventID string `json:"eventID"`
+	Status  struct {
+		StartsAt  string `json:"startsAt"`
+		Started   bool   `json:"started"`
+		Completed bool   `json:"completed"`
+	} `json:"status"`
 	Odds    map[string]odd `json:"odds"`
 	Players map[string]struct {
 		Name string `json:"name"`
@@ -205,7 +220,7 @@ func ParseEvent(raw json.RawMessage) []PlayerLine {
 // it; LoadSnapshot and LoadSnapshotCombos split the two apart again on the way back in.
 func ParseEventAll(raw json.RawMessage) []PlayerLine {
 	var ev event
-	if json.Unmarshal(raw, &ev) != nil {
+	if json.Unmarshal(raw, &ev) != nil || ev.Status.Started || ev.Status.Completed {
 		return nil
 	}
 	var out []PlayerLine
@@ -224,15 +239,25 @@ func ParseEventAll(raw json.RawMessage) []PlayerLine {
 			name = NameFromKey(parts[1])
 		}
 		for book, over := range o.ByBookmaker {
-			if !over.OverUnder.ok || (over.Available != nil && !*over.Available) {
+			u, paired := under.ByBookmaker[book]
+			if !paired || !over.OverUnder.ok || !u.OverUnder.ok || over.OverUnder.v != u.OverUnder.v ||
+				!over.Odds.ok || !u.Odds.ok || !validOdds(over.Odds.v) || !validOdds(u.Odds.v) ||
+				over.OverUnder.v < 0 || math.IsNaN(over.OverUnder.v) || math.IsInf(over.OverUnder.v, 0) ||
+				(over.Available != nil && !*over.Available) || (u.Available != nil && !*u.Available) {
 				continue
 			}
 			pl := PlayerLine{
-				PlayerKey: parts[1], Name: name, Stat: stat, Book: book, Line: over.OverUnder.v,
+				EventID: ev.EventID, EventStart: ev.Status.StartsAt,
+				OverUpdatedAt: over.LastUpdatedAt, PairVerified: true, UnderLine: u.OverUnder.v, UnderUpdatedAt: u.LastUpdatedAt,
+				Period: "game", PlayerKey: parts[1], Name: name, Stat: stat, Book: book, Line: over.OverUnder.v,
 				OverOdds: int(over.Odds.v), UpdatedAt: over.LastUpdatedAt,
 			}
-			if u, ok := under.ByBookmaker[book]; ok && u.Odds.ok {
-				pl.UnderOdds = int(u.Odds.v)
+			pl.UnderOdds = int(u.Odds.v)
+			// A pair is only as fresh as its oldest side.
+			if older, err := time.Parse(time.RFC3339, u.LastUpdatedAt); err == nil {
+				if newer, err := time.Parse(time.RFC3339, pl.UpdatedAt); err == nil && older.Before(newer) {
+					pl.UpdatedAt = u.LastUpdatedAt
+				}
 			}
 			out = append(out, pl)
 		}
@@ -275,4 +300,8 @@ func NormName(s string) string {
 		keep = append(keep, w)
 	}
 	return strings.Join(keep, " ")
+}
+
+func validOdds(v float64) bool {
+	return !math.IsNaN(v) && !math.IsInf(v, 0) && math.Abs(v) >= 100 && v == math.Trunc(v)
 }

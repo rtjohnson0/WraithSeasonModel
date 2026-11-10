@@ -26,15 +26,34 @@ func main() {
 	out := flag.String("out", filepath.Join("site", "public", "data", "picks.json"), "file to write")
 	date := flag.String("date", "", "board day YYYY-MM-DD (default: the latest day in the pick log)")
 	recent := flag.Int("recent", 600, "how many recent settled plays to include")
+	legacy := flag.Bool("legacy", false, "include unverified legacy results (forensic export only)")
 	flag.Parse()
 
 	entries, err := picklog.Load(filepath.Join(*dir, "picklog.jsonl"))
 	if err != nil {
 		fatal(err)
 	}
+	if !*legacy {
+		var verified []picklog.Entry
+		for _, e := range entries {
+			if e.Verified() {
+				verified = append(verified, e)
+			}
+		}
+		entries = verified
+	}
 	settled, err := picklog.LoadSettled(filepath.Join(*dir, "settled.jsonl"))
 	if err != nil {
 		fatal(err)
+	}
+	if !*legacy {
+		var verified []picklog.Settled
+		for _, r := range settled {
+			if r.Verified() {
+				verified = append(verified, r)
+			}
+		}
+		settled = verified
 	}
 	runs, err := runlog.Load(filepath.Join(*dir, "runs.jsonl"))
 	if err != nil {
@@ -58,12 +77,25 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
+	if !*legacy {
+		var verified []picklog.Settled
+		for _, r := range comboSettled {
+			if r.Verified() {
+				verified = append(verified, r)
+			}
+		}
+		comboSettled = verified
+	}
+
 	site := Site{
 		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
 		Board:       buildBoard(entries, *date, form, runlog.ForDate(runs, *date)),
 		Record:      buildRecord(settled, *recent),
 		Combos:      buildComboRecord(comboSettled, 120),
 		Lines:       buildLinesRecord(*dir),
+	}
+	if !*legacy {
+		site.Record.ProvenanceNote = "Results include only picks with validated pregame quotes. Legacy logs are retained separately until their quotes can be audited."
 	}
 	var mf moreFile
 	if raw, err := os.ReadFile(filepath.Join(*dir, "more.json")); err == nil {

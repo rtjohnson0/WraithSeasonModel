@@ -26,3 +26,8 @@ bin/
 *.exe
 site/node_modules/
 site/dist/
+!data/combocalibration.json
+!data/exclusions.jsonl
+# Exact input/model replay captures are retained as workflow artifacts, not committed.
+__pycache__/
+*.pyc

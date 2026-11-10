@@ -20,7 +20,7 @@ var notBooks = map[string]bool{"kalshi": true, "polymarket": true}
 func IsSportsbook(vendor string) bool { return !notBooks[strings.ToLower(vendor)] }
 
 // LoadGameLines reads every known betting spread and total: last season's opening lines
-// (opening_games_*.jsonl, from `pull gameodds`) and the daily odds snapshots. It returns them
+// (opening_games_*.jsonl, from `pull gameodds`). Daily snapshots are not used to reconstruct historical opening-time features. It returns them
 // keyed by (day number, team) for feat.Builder.SetGameLines. The spread is signed from that
 // team's side, negative for the favourite. Files that are missing are simply skipped.
 func LoadGameLines(dir string, games []data.PlayerGame) map[[2]int]feat.GameLine {
@@ -32,7 +32,7 @@ func LoadGameLines(dir string, games []data.PlayerGame) map[[2]int]feat.GameLine
 		}
 	}
 	var files []string
-	for _, pat := range []string{"opening_games_*.jsonl", "snapshots/odds_*.jsonl"} {
+	for _, pat := range []string{"opening_games_*.jsonl"} {
 		m, _ := filepath.Glob(filepath.Join(dir, pat))
 		files = append(files, m...)
 	}

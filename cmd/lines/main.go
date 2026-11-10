@@ -22,6 +22,7 @@ import (
 func main() {
 	dir := flag.String("data", "data", "data directory")
 	since := flag.String("since", "", "only days on or after this date (YYYY-MM-DD)")
+	legacy := flag.Bool("legacy", false, "include unverified legacy quotes for forensic comparison only")
 	flag.Parse()
 
 	mk, err := lineslog.LoadMarkets(*dir)
@@ -31,6 +32,12 @@ func main() {
 	off, err := lineslog.LoadOff(*dir)
 	if err != nil {
 		fatal(err)
+	}
+	if !*legacy {
+		before := len(mk) + len(off)
+		mk = filter(mk, func(m lineslog.Market) bool { return m.AuditVersion >= 2 })
+		off = filter(off, func(o lineslog.Off) bool { return o.AuditVersion >= 2 })
+		fmt.Printf("Excluded %d legacy rows without validated quote provenance (use -legacy only for a forensic report).\n", before-len(mk)-len(off))
 	}
 	if *since != "" {
 		mk = filter(mk, func(m lineslog.Market) bool { return m.Date >= *since })
@@ -57,12 +64,11 @@ func main() {
 		}
 		tw.Flush()
 		model, base, n := lineslog.Skill(gm)
-		fmt.Printf("\nBrier score %.4f for the model against %.4f for always saying the day's base rate (%d lines; lower is better).\n", model, base, n)
-		if model < base {
-			fmt.Println("The model's probabilities carry information beyond the base rate.")
-		} else {
-			fmt.Println("The model's probabilities are not yet beating the base rate: its leans at the median line are not predictive on this sample.")
-		}
+		fmt.Printf("\nBrier score %.4f for the model against %.4f for a stat base rate estimated on strictly earlier dates (%d lines; lower is better).\n", model, base, n)
+		fmt.Println("This is a descriptive comparison, not proof of an edge; evaluate separate dates and quote availability.")
+		paired := lineslog.CompareModels(gm)
+		fmt.Printf("Matched V1/V2 questions: %d across %d dates; Brier V1 %.4f V2 %.4f; V2 gain %+.5f, date-clustered z %.2f\n", paired.N, paired.Days, paired.Brier1, paired.Brier2, paired.Gain, paired.Z)
+
 		for _, v := range []struct {
 			name string
 			p    func(lineslog.GradedMarket) float64
@@ -74,7 +80,7 @@ func main() {
 			if len(cells) == 0 {
 				continue
 			}
-			fmt.Printf("\n%s by stat and side: when it leaned that way at the median line, how often was it right, and does it beat always saying the stat's base rate? V2 gates its plays on this (150+ lines).\n", v.name)
+			fmt.Printf("\n%s by stat and side: when it leaned that way at the median line, how often was it right, and does it beat always saying the stat's base rate? Baseline probabilities use only earlier dates; 150 lines alone do not establish an edge.\n", v.name)
 			tw := tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)
 			fmt.Fprintln(tw, "stat\tleans\tlines\tright\tBrier\tbase rate Brier\tbeats it")
 			for _, c := range cells {

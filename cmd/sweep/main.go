@@ -26,6 +26,7 @@ func main() {
 	dir := flag.String("dir", "data", "data directory")
 	stat := flag.String("stat", "", "limit to one stat (points, rebounds, assists, threes)")
 	minN := flag.Int("minn", 30, "flag cutoffs with fewer graded plays than this as thin")
+	legacy := flag.Bool("legacy", false, "include unverified legacy results for forensic comparison")
 	flag.Parse()
 
 	all, err := picklog.LoadSettled(filepath.Join(*dir, "settled.jsonl"))
@@ -35,6 +36,9 @@ func main() {
 	}
 	var rows []picklog.Settled
 	for _, s := range all {
+		if !*legacy && !s.Verified() {
+			continue
+		}
 		if s.Result != "WIN" && s.Result != "LOSS" {
 			continue
 		}

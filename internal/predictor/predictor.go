@@ -26,7 +26,7 @@ import (
 // Nodes is how many points represent the minutes distribution.
 const Nodes = 15
 
-const modelVersion = 3
+const modelVersion = 4
 
 // maxProjMinutes caps the central minutes projection. No one is projected past a heavy-starter
 // load, even when many teammates are out and the regression extrapolates.
@@ -57,8 +57,11 @@ type Model struct {
 	// Vol scales the minutes spread for one player: above 1 for players whose minutes swing more
 	// than others at the same projected level, below 1 for steady ones. It is shrunk hard toward
 	// 1 (see volShrink), so a handful of games cannot make anyone look unusually safe or wild.
-	Vol  map[int]float64 `json:"vol"`
-	Stat [data.NStats]*glm.Model
+	Vol map[int]float64 `json:"vol"`
+	// Shrunk player-specific dispersion is estimated from a chronological holdout.
+	PlayerAlpha    [data.NStats]map[int]float64 `json:"player_alpha,omitempty"`
+	ResidualMethod string                       `json:"residual_method,omitempty"`
+	Stat           [data.NStats]*glm.Model
 }
 
 func disabledSet(names []string) map[string]bool {
@@ -126,13 +129,37 @@ func Train(rows []feat.Row, disabledGroups []string) (*Model, error) {
 		return nil, err
 	}
 	m.Minutes = lin
+	// Calibrate uncertainty on later dates the residual model never fitted.
+	split := len(played) * 4 / 5
+	for split > 0 && split < len(played) && played[split-1].G.Date == played[split].G.Date {
+		split--
+	}
+	residualModel := lin
+	residualStart := 0
+	if split >= 500 && len(played)-split >= 100 {
+		held, fitErr := glm.FitLinear(X[:split], y[:split], minNames, 5)
+		if fitErr != nil {
+			return nil, fitErr
+		}
+		residualModel, residualStart = held, split
+		m.ResidualMethod = "chronological-holdout"
+	} else {
+		// With too little history use a deliberately broad prior, not fitted residuals.
+		m.ResidualMethod = "broad-prior"
+	}
 	buckets := make([][]float64, len(bucketEdges)+1)
 	var all []float64
-	for i := range played {
-		pred := lin.Predict(X[i])
+	for i := residualStart; i < len(played); i++ {
+		pred := residualModel.Predict(X[i])
 		res := y[i] - pred
 		buckets[bucketOf(pred)] = append(buckets[bucketOf(pred)], res)
 		all = append(all, res)
+	}
+	if residualStart == 0 {
+		all = []float64{-14, -10, -8, -6, -4, -2, -1, 0, 1, 2, 4, 6, 8, 10, 14}
+		for i := range buckets {
+			buckets[i] = nil
+		}
 	}
 	global := quantiles(append([]float64(nil), all...))
 	sdOf := func(v []float64) float64 {
@@ -160,8 +187,12 @@ func Train(rows []feat.Row, disabledGroups []string) (*Model, error) {
 	// the same projected level, shrunk toward 1.
 	zsq := map[int]float64{}
 	zn := map[int]float64{}
-	for i, r := range played {
-		pred := lin.Predict(X[i])
+	for i := residualStart; i < len(played); i++ {
+		r := played[i]
+		if residualStart == 0 {
+			break
+		}
+		pred := residualModel.Predict(X[i])
 		z := (y[i] - pred) / m.BucketSD[bucketOf(pred)]
 		zsq[r.G.PlayerID] += z * z
 		zn[r.G.PlayerID]++
@@ -189,7 +220,37 @@ func Train(rows []feat.Row, disabledGroups []string) (*Model, error) {
 		if err != nil {
 			return nil, err
 		}
-		m.Stat[data.StatIndex(s)] = g
+		k := data.StatIndex(s)
+		m.Stat[k] = g
+		m.PlayerAlpha[k] = map[int]float64{}
+		if residualStart > 0 {
+			held, err := glm.Fit(XS[:residualStart], ys[:residualStart], logMin[:residualStart], names, 10)
+			if err != nil {
+				return nil, err
+			}
+			num, den, counts := map[int]float64{}, map[int]float64{}, map[int]float64{}
+			var allNum, allDen float64
+			for i := residualStart; i < len(played); i++ {
+				mu := held.Rate(XS[i]) * played[i].G.Minutes
+				miss := ys[i] - mu
+				pid := played[i].G.PlayerID
+				num[pid] += miss*miss - mu
+				den[pid] += mu * mu
+				counts[pid]++
+				allNum += miss*miss - mu
+				allDen += mu * mu
+			}
+			if allDen > 0 {
+				g.Alpha = math.Min(math.Max(allNum/allDen, 1e-4), 3)
+			}
+			for pid, n := range counts {
+				if den[pid] <= 0 {
+					continue
+				}
+				alpha := math.Min(math.Max(num[pid]/den[pid], 1e-4), 3)
+				m.PlayerAlpha[k][pid] = (n*alpha + 50*g.Alpha) / (n + 50)
+			}
+		}
 	}
 	return m, nil
 }
@@ -222,6 +283,9 @@ func (m *Model) Predict(r *feat.Row) Pred {
 		g := m.Stat[k]
 		p.Rate[k] = g.Rate(r.Vec(s, feat.StatNames(s, disabled)))
 		p.Alpha[k] = g.Alpha
+		if a, ok := m.PlayerAlpha[k][r.G.PlayerID]; ok {
+			p.Alpha[k] = a
+		}
 	}
 	return p
 }
@@ -319,7 +383,7 @@ func Load(path string) (*Model, error) {
 	if err := json.Unmarshal(b, &m); err != nil {
 		return nil, err
 	}
-	if m.Minutes == nil || m.Stat[0] == nil || m.Stat[1] == nil || m.Stat[2] == nil || m.Version != modelVersion {
+	if m.Minutes == nil || m.Stat[0] == nil || m.Stat[1] == nil || m.Stat[2] == nil || m.Stat[3] == nil || (m.Version != modelVersion && m.Version != 3) {
 		return nil, errors.New("predictor: model file is incomplete or from another version; retrain with go run ./cmd/train")
 	}
 	// A model trained before the opt-in misses group existed does not list it as disabled, but it was

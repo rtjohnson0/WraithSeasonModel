@@ -107,8 +107,15 @@ func SortChronologically(rs []Result) {
 // Split cuts chronologically ordered results at the midpoint: fit on the first half, judge on
 // the second, so the calibration is tested on games it never saw.
 func Split(rs []Result) (first, second []Result) {
-	mid := len(rs) / 2
-	return rs[:mid], rs[mid:]
+	ordered := append([]Result(nil), rs...)
+	SortChronologically(ordered)
+	mid := len(ordered) / 2
+	if mid < len(ordered) {
+		for mid > 0 && ordered[mid-1].Date == ordered[mid].Date {
+			mid--
+		}
+	}
+	return ordered[:mid], ordered[mid:]
 }
 
 // Fit fits a calibrator to the results, ignoring pushes.

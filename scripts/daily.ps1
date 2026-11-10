@@ -35,6 +35,7 @@ if ($Full) { $newFlag = @() }
 Run "refresh box scores ($Season)" { go run ./cmd/pull stats -seasons $Season @newFlag }
 Run "refresh advanced stats"       { go run ./cmd/pull advanced -seasons $Season @newFlag } -Optional
 Run "current rosters"              { go run ./cmd/pull players }
+Run "audit quote provenance"       { python scripts/audit_quotes.py --data data --apply }
 Run "grade past picks"             { go run ./cmd/settle } -Optional
 Run "grade combo plays"            { go run ./cmd/combos settle } -Optional
 Run "grade every logged line"      { go run ./cmd/lines } -Optional
@@ -43,6 +44,7 @@ Run "review yesterday (csv)"        { go run ./cmd/review } -Optional
 
 if (-not $SkipTrain) {
     Run "retrain" { go run ./cmd/train @lineupFlag }
+    Run "refit calibration" { go run ./cmd/backtest -season ($Season - 1) @lineupFlag }
 }
 
 Run "snapshot lines and injuries"  { go run ./cmd/pull snapshot }

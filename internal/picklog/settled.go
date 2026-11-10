@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"propsmodel/internal/marketperiod"
 	"strings"
 	"time"
 )
@@ -36,6 +37,11 @@ func Payout(odds int) float64 {
 // Grade settles an entry given the actual stat and the closing line (0 if unknown).
 func Grade(e Entry, actual, closeLine float64, played bool) Settled {
 	s := Settled{Entry: e, SettledAt: time.Now().UTC().Format(time.RFC3339), Actual: actual, CloseLine: closeLine}
+	if !e.FullGame() || !e.Pregame() {
+		s.Result = "EXCLUDED"
+		s.Actual, s.CloseLine = 0, 0
+		return s
+	}
 	stake := e.Units
 	if stake <= 0 {
 		stake = 1
@@ -65,6 +71,10 @@ func Grade(e Entry, actual, closeLine float64, played bool) Settled {
 
 // LoadSettled reads the settled log. A missing file is empty.
 func LoadSettled(path string) ([]Settled, error) {
+	excluded, err := exclusionIDs(path)
+	if err != nil {
+		return nil, err
+	}
 	f, err := os.Open(path)
 	if os.IsNotExist(err) {
 		return nil, nil
@@ -78,7 +88,7 @@ func LoadSettled(path string) ([]Settled, error) {
 	sc.Buffer(make([]byte, 1<<20), 1<<24)
 	for sc.Scan() {
 		var s Settled
-		if json.Unmarshal(sc.Bytes(), &s) == nil {
+		if json.Unmarshal(sc.Bytes(), &s) == nil && s.FullGame() && marketperiod.Metadata(sc.Bytes()) && s.Result != "EXCLUDED" && s.Pregame() && !excluded[s.ID()] {
 			out = append(out, s)
 		}
 	}
@@ -102,6 +112,10 @@ func AppendSettled(path string, rows []Settled) (int, error) {
 	defer f.Close()
 	n := 0
 	for _, s := range rows {
+		if !s.FullGame() || s.Result == "EXCLUDED" {
+			continue
+		}
+		s.Period = "game"
 		if seen[s.key()] {
 			continue
 		}
@@ -151,6 +165,9 @@ func Summarize(rows []Settled) Summary {
 	var clvSum float64
 	var clvPos int
 	for _, r := range rows {
+		if !r.FullGame() || r.Result == "EXCLUDED" {
+			continue
+		}
 		s.Picks++
 		switch r.Result {
 		case "WIN":
@@ -208,6 +225,9 @@ func DedupeSettled(in []Settled) ([]Settled, int) {
 	best := map[string]int{}
 	var out []Settled
 	for _, r := range in {
+		if !r.FullGame() || r.Result == "EXCLUDED" {
+			continue
+		}
 		k := fmt.Sprintf("%s|%d|%s|%s", r.Date, r.PlayerID, r.Stat, r.Side)
 		i, ok := best[k]
 		if !ok {

@@ -55,39 +55,19 @@ func TestComboDistTrimsTail(t *testing.T) {
 	}
 }
 
-func TestComboCalibrationBorrowsFromTheParts(t *testing.T) {
+func TestComboCalibrationUsesItsOwnMarket(t *testing.T) {
 	var p predictor.Pred
-	for i := range p.MinNodes {
-		p.MinNodes[i] = 30
+	singles := eval.Calibration{ByStat: map[string]eval.Cal{"points": {Slope: 1}, "rebounds": {Slope: 1}}}
+	d := comboDeps{cal: singles, calOK: true, weight: -1}
+	if got := d.calibrate(data.PR, p, 0.2, 0.5); got != 0.5 {
+		t.Fatalf("borrowed component calibration: %v", got)
 	}
-	p.Minutes = 30
-	p.Rate[data.StatIndex(data.Points)] = 0.8
-	p.Rate[data.StatIndex(data.Rebounds)] = 0.3
-	p.Rate[data.StatIndex(data.Assists)] = 0.2
-	cal := eval.Calibration{ByStat: map[string]eval.Cal{
-		"points":   {Slope: 0.03, Market: 0.85},
-		"rebounds": {Slope: 0.24, Market: 0.67},
-		"assists":  {Slope: 0.18, Market: 0.78},
-	}}
-	d := comboDeps{cal: cal, calOK: true, weight: -1}
-	// The model says 20% over, the book 50%: a model nobody has earned trust in barely moves a combo off the book.
-	got := d.calibrate(data.PRA, p, 0.20, 0.50)
-	if got < 0.45 || got > 0.50 {
-		t.Errorf("a points-heavy combo should stay close to the book, got %.3f", got)
+	d.cal.ByStat["pr"] = eval.Cal{Slope: 1}
+	if got := d.calibrate(data.PR, p, 0.2, 0.5); got < 0.199 || got > 0.201 {
+		t.Fatalf("direct PR fit ignored: %v", got)
 	}
-	// A rebounds + assists combo borrows more trust in the model, so it moves further.
-	ra := d.calibrate(data.RA, p, 0.20, 0.50)
-	if ra >= got {
-		t.Errorf("RA (rebounds and assists earned more model weight) should move further than PRA: %.3f vs %.3f", ra, got)
-	}
-	// An explicit blend overrides the calibration.
 	d.weight = 0.5
-	if b := d.calibrate(data.PRA, p, 0.20, 0.50); b < 0.349 || b > 0.351 {
-		t.Errorf("a 50/50 blend of 0.20 and 0.50 is 0.35, got %.3f", b)
-	}
-	// No calibration file: a modest default share from the model.
-	d = comboDeps{weight: -1}
-	if b := d.calibrate(data.PRA, p, 0.20, 0.50); b < 0.42 || b > 0.43 {
-		t.Errorf("default fallback is 25%% model, want about 0.425, got %.3f", b)
+	if got := d.calibrate(data.PR, p, 0.2, 0.5); got < 0.349 || got > 0.351 {
+		t.Fatalf("explicit experimental blend ignored: %v", got)
 	}
 }

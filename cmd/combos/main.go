@@ -41,6 +41,10 @@ func main() {
 	fs := flag.NewFlagSet(cmd, flag.ExitOnError)
 	dir := fs.String("data", "data", "data directory")
 	switch cmd {
+	case "calibrate":
+		before := fs.String("before", time.Now().Format("2006-01-02"), "use only dates strictly before this date")
+		fs.Parse(args)
+		calibrateCombos(*dir, *before)
 	case "count":
 		days := fs.Int("days", 3, "how many of the latest snapshot days to count")
 		date := fs.String("date", "", "count one day only (YYYY-MM-DD)")
@@ -57,15 +61,16 @@ func main() {
 		fs.Parse(args)
 		check(*dir, seasonOr(*season), *maxN)
 	case "settle":
+		legacy := fs.Bool("legacy", false, "include unverified legacy quotes for forensic comparison")
 		fs.Parse(args)
-		settle(*dir)
+		settle(*dir, *legacy)
 	default:
 		usage()
 	}
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: go run ./cmd/combos count|fit|check|settle [flags]")
+	fmt.Fprintln(os.Stderr, "usage: go run ./cmd/combos count|fit|check|settle|calibrate [flags]")
 	os.Exit(2)
 }
 
@@ -394,10 +399,13 @@ func check(dir string, season, maxN int) {
 
 // ---- settle -----------------------------------------------------------------------------------
 
-func settle(dir string) {
+func settle(dir string, legacy bool) {
 	entries, err := picklog.Load(filepath.Join(dir, "combolog.jsonl"))
 	if err != nil {
 		fatal(err)
+	}
+	if !legacy {
+		entries = picklog.VerifiedEntries(entries)
 	}
 	if len(entries) == 0 {
 		fmt.Println("data/combolog.jsonl is empty. Run `go run ./cmd/predict` first; it logs the combo plays that clear the bar.")
@@ -441,6 +449,9 @@ func settle(dir string) {
 	all, err := picklog.LoadSettled(settledPath)
 	if err != nil {
 		fatal(err)
+	}
+	if !legacy {
+		all = picklog.VerifiedSettled(all)
 	}
 	every, _ := picklog.DedupeSettled(all)
 	if len(every) == 0 {

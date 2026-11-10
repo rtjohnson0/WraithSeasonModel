@@ -59,7 +59,7 @@ func main() {
 			fmt.Printf("  %-14s %+.3f  (%+.1f%%)\n", c.Name, c.Value, 100*math.Expm1(c.Value))
 		}
 	}
-	fmt.Println("\nNext: go run ./cmd/predict")
+	fmt.Println("\nNext: rerun go run ./cmd/backtest with the same feature flags to refit calibration, then predict. Model version 4 requires matching calibration.")
 }
 
 func fatal(err error) {

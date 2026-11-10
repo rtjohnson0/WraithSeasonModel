@@ -38,6 +38,7 @@ import (
 	"propsmodel/internal/predictor"
 	"propsmodel/internal/projlog"
 	"propsmodel/internal/props"
+	"propsmodel/internal/replay"
 	"propsmodel/internal/sgo"
 	"propsmodel/internal/team"
 )
@@ -47,29 +48,32 @@ type marketKey struct {
 }
 
 type scored struct {
-	PlayerID int
-	GameID   int
-	Player   string
-	Team     string // his team, e.g. CHI, so the prop is easy to find in the app
-	Matchup  string // e.g. "CHI @ MIL" (visitor @ home)
-	Stat     data.Stat
-	Side     string
-	Line     float64
-	Prob     float64 // calibrated probability for the chosen side
-	ProbRaw  float64
-	Edge     float64 // Prob minus the break-even probability at the offered odds
-	Units    float64
-	Vendor   string
-	Odds     int
-	ProjMean float64
-	ProjMin  float64
-	Why      string
-	Tier     string    // "PICK" cleared the thresholds; "CHECK" cleared them but the minutes need a look; "LEAN" fills a game
-	Shift    float64   // projected minutes minus his recent (15-game) average
-	Far      bool      // the line sits far from the projection: often a bad or alternate line, not an edge
-	Tip      string    // the game's scheduled tip-off, RFC3339 UTC
-	Maybe    string    // his own injury status when it is uncertain (questionable, doubtful, day-to-day)
-	Dist     []float64 // the model's probability of 0, 1, 2... of the stat
+	QuoteAt         string
+	SourceUpdatedAt string
+	AuditVersion    int
+	PlayerID        int
+	GameID          int
+	Player          string
+	Team            string // his team, e.g. CHI, so the prop is easy to find in the app
+	Matchup         string // e.g. "CHI @ MIL" (visitor @ home)
+	Stat            data.Stat
+	Side            string
+	Line            float64
+	Prob            float64 // calibrated probability for the chosen side
+	ProbRaw         float64
+	Edge            float64 // Prob minus the break-even probability at the offered odds
+	Units           float64
+	Vendor          string
+	Odds            int
+	ProjMean        float64
+	ProjMin         float64
+	Why             string
+	Tier            string    // "PICK" cleared the thresholds; "CHECK" cleared them but the minutes need a look; "LEAN" fills a game
+	Shift           float64   // projected minutes minus his recent (15-game) average
+	Far             bool      // the line sits far from the projection: often a bad or alternate line, not an edge
+	Tip             string    // the game's scheduled tip-off, RFC3339 UTC
+	Maybe           string    // his own injury status when it is uncertain (questionable, doubtful, day-to-day)
+	Dist            []float64 // the model's probability of 0, 1, 2... of the stat
 	// Market context, used by V2's tiers: how many books list the player's stat, the spread between
 	// the lowest and highest line, the real model's probability for V2's side (V1Prob), and the book's
 	// devigged probability for the side (Mkt).
@@ -103,9 +107,9 @@ func main() {
 	topN := flag.Int("top", 20, "with -game: how many lines to show")
 	anchor := flag.Bool("anchor", false, "rescale each stat's projections so the slate's average projection equals its average line (the books are unbiased on average); replaces the bias file")
 	stakeBar := flag.Float64("stakebar", 0.60, "a play is posted at the -hi bar (55% by default) but only staked when its probability is at least this far from 50% (60% Over or 40% Under). Plays between the two bars are tiered PAPER with 0 units and graded separately, so the sweep can show whether that band earns its keep")
-	bigCut := flag.Float64("bigcut", 0.25, "when projected minutes are 6 or more below a player's normal, move this share of the cut back toward normal. On this season's games the biggest cuts recovered about a quarter of the way (cmd/bias prints the table); 0 turns it off")
-	noWo := flag.Bool("nowofix", false, "do not apply data/wofix.json (the with-and-without-teammate correction written by `go run ./cmd/bias -write`)")
-	noMinFix := flag.Bool("nominfix", false, "do not apply data/minfix.json (the spread-based minutes correction written by `go run ./cmd/bias -write`)")
+	bigCut := flag.Float64("bigcut", 0, "when projected minutes are 6 or more below a player's normal, move this share of the cut back toward normal. On this season's games the biggest cuts recovered about a quarter of the way (cmd/bias prints the table); 0 turns it off")
+	noWo := flag.Bool("nowofix", true, "do not apply data/wofix.json (the with-and-without-teammate correction written by `go run ./cmd/bias -write`)")
+	noMinFix := flag.Bool("nominfix", true, "do not apply data/minfix.json (the spread-based minutes correction written by `go run ./cmd/bias -write`)")
 	minBlend := flag.Float64("minblend", 0, "pull projected minutes this share of the way to each player's normal minutes (0 to 1). `go run ./cmd/bias` recommends a value from all of this season's games")
 	useBias := flag.Bool("bias", false, "apply data/biasfix.json. Off by default: on 2026-10-26 it pulled live projections to 14% under the lines while the lines themselves were accurate (cmd/linecheck)")
 	useCombos := flag.Bool("combos", true, "also score the combined markets (points+rebounds+assists, points+rebounds, points+assists, rebounds+assists). They are tracked in data/combolog.jsonl and shown on the site apart from the picks, never staked, until `go run ./cmd/combos settle` shows they earn it")
@@ -121,7 +125,10 @@ func main() {
 	comboPer := flag.Int("comboperplayer", 1, "most combo plays to track per player (PRA and PR on the same player are one idea, not two)")
 	comboMax := flag.Int("combomax", 30, "most combo plays to track per run")
 	noLog := flag.Bool("nolog", false, "do not append picks to data/picklog.jsonl")
+	maxQuoteAge := flag.Duration("maxquoteage", 6*time.Hour, "reject prices older than this; capture freshness is checked separately")
+	maxCaptureAge := flag.Duration("maxcaptureage", 30*time.Minute, "reject snapshots older than this")
 	flag.Parse()
+	runAt := time.Now().UTC()
 
 	if *date == "" {
 		loc, err := time.LoadLocation("America/New_York")
@@ -144,6 +151,9 @@ func main() {
 	}
 	config := pipeline.ConfigName(m.Disabled)
 	cal, calOK := eval.LoadCalibration(filepath.Join(*dir, "calibration.json"))
+	if calOK && m.Version >= 4 && cal.ModelVersion != m.Version {
+		fatal(fmt.Errorf("calibration was not fitted for model version %d; rerun cmd/backtest before prediction", m.Version))
+	}
 	switch {
 	case !calOK:
 		fmt.Println("WARNING: no data/calibration.json, so these probabilities are RAW and overconfident.")
@@ -174,13 +184,11 @@ func main() {
 			woFix.Minutes, woFix.Rate["points"], woFix.Rate["rebounds"], woFix.Rate["assists"], woFix.Rate["threes"], woFix.Samples)
 	}
 	adjustMinutes := func(p predictor.Pred, row *feat.Row) predictor.Pred {
-		p = p.WithMinutes(p.Minutes + woFix.MinutesShift(row.WoMin()))
-		p = p.WithMinutes(p.Minutes + minFix.Shift(row.AbsSpread(), p.Minutes))
-		if t := row.MinTypical; *bigCut > 0 && t > 0 && !math.IsNaN(t) && p.Minutes-t <= -6 {
-			p = p.WithMinutes(p.Minutes + *bigCut*(t-p.Minutes))
-		}
-		return p.BlendMinutes(row.MinTypical, *minBlend)
+		shift := woFix.MinutesShift(row.WoMin())
+		shift += minFix.Shift(row.AbsSpread(), p.Minutes+shift)
+		return (predictor.Adjustments{MinutesShift: shift, BigCut: *bigCut, Blend: *minBlend, Typical: row.MinTypical}).Apply(p)
 	}
+
 	biasFix, _ := eval.LoadBiasFix(filepath.Join(*dir, "biasfix.json"))
 	if !*useBias {
 		biasFix = eval.BiasFix{}
@@ -198,7 +206,7 @@ func main() {
 
 	snapDir := filepath.Join(*dir, "snapshots")
 	propsPath := filepath.Join(snapDir, fmt.Sprintf("props_%s.jsonl", *date))
-	lines, err := props.LoadSnapshot(propsPath)
+	lines, err := props.LoadPregameSnapshot(propsPath, false, runAt, *maxQuoteAge)
 	if err != nil {
 		fatal(fmt.Errorf("%w (run: go run ./cmd/pull snapshot)", err))
 	}
@@ -222,8 +230,7 @@ func main() {
 	if o, err := props.LoadOut(injPath, *doubtful); err == nil {
 		out = o
 	} else if strings.HasPrefix(config, "lineup") {
-		fmt.Println("WARNING: no injuries snapshot found, so the model assumes nobody is out.")
-		fmt.Println()
+		fatal(fmt.Errorf("lineup model requires a current injury snapshot; refresh cmd/pull snapshot before predicting"))
 	}
 
 	statuses, _ := props.LoadStatuses(injPath)
@@ -244,7 +251,7 @@ func main() {
 	consensus := map[int]team.Consensus{}
 	// Today's spread and total are inputs to the model (blowout risk, pace). They have to be in
 	// place before any row is built.
-	if gl, err := team.LoadOdds(filepath.Join(snapDir, fmt.Sprintf("odds_%s.jsonl", *date))); err == nil {
+	if gl, err := team.LoadPregameOdds(filepath.Join(snapDir, fmt.Sprintf("odds_%s.jsonl", *date)), games, runAt, *maxQuoteAge); err == nil {
 		var keep []team.Odds
 		for _, o := range gl {
 			if pipeline.IsSportsbook(o.Vendor) {
@@ -299,6 +306,9 @@ func main() {
 		lines = append(lines, extra...)
 	}
 
+	beforeFilter := len(lines)
+	lines = props.ExecutableLines(lines, games, runAt, *maxQuoteAge, *maxCaptureAge)
+	fmt.Printf("quote integrity: %d usable quotes; %d rejected or duplicate feed copies (pre-tip, paired prices, freshness)\n", len(lines), beforeFilter-len(lines))
 	staked := map[data.Stat]bool{}
 	for _, st := range strings.Split(*stakeStats, ",") {
 		staked[data.Stat(strings.TrimSpace(st))] = true
@@ -393,7 +403,7 @@ func main() {
 		if logged, err := lineslog.LoadMarkets(*dir); err == nil {
 			var earlier []lineslog.Market
 			for _, mr := range logged {
-				if mr.Date < *date {
+				if mr.Date < *date && mr.AuditVersion >= props.QuoteVersion {
 					earlier = append(earlier, mr)
 				}
 			}
@@ -439,6 +449,7 @@ func main() {
 	}
 	var offMarket []offRow
 	marketRows := map[marketKey]lineslog.Market{}
+	replayRows := map[marketKey]replay.Record{}
 	skip := struct{ noGame, noTeam, noHistory, minutes, out, noPrice int }{}
 	for _, l := range lines {
 		if gid != 0 && l.GameID != gid {
@@ -492,7 +503,12 @@ func main() {
 			pred = pred.Scaled(l.Stat, biasFix.For(l.Stat))
 		}
 		pred = pred.Scaled(l.Stat, woFix.RateFactor(l.Stat, row.WoRate(l.Stat)))
-		pr, err := pred.ProbOver(l.Stat, l.Line)
+		pr, pOver, err := predictor.Price(pred, l.Stat, l.Line, bets.MarketOver(l.OverOdds, l.UnderOdds), func(st data.Stat, raw, market float64) float64 {
+			if calOK {
+				return cal.Apply(st, raw, market)
+			}
+			return raw
+		})
 		if err != nil {
 			continue
 		}
@@ -500,7 +516,7 @@ func main() {
 			e := projLog[l.PlayerID]
 			if e == nil {
 				oppTeam := map[bool]int{true: g.Home, false: g.Visitor}[team == g.Visitor]
-				e = &projlog.Entry{Date: *date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID,
+				e = &projlog.Entry{AuditVersion: props.QuoteVersion, Date: *date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID,
 					Player: ix.Name(l.PlayerID), Team: teamAbbr, ProjMin: pred.Minutes, AvgMin15: row.AvgMin15, TypMin: row.TypicalMinutes(),
 					Stats: map[string]projlog.StatProj{}}
 				if ci, _ := feat.FeatureIndex("b2b", l.Stat); ci >= 0 && row.X[ci] == 1 {
@@ -533,10 +549,6 @@ func main() {
 			}
 			e.Stats[string(l.Stat)] = sp
 		}
-		pOver := pr.Over
-		if calOK {
-			pOver = cal.Apply(l.Stat, pr.Over, bets.MarketOver(l.OverOdds, l.UnderOdds))
-		}
 		name := ix.Name(l.PlayerID)
 		if name == "" {
 			name = fmt.Sprintf("player %d", l.PlayerID)
@@ -550,7 +562,8 @@ func main() {
 				if _, done := marketRows[mk]; !done && l.Line == sorted[len(sorted)/2] {
 					e := projLog[l.PlayerID]
 					mr := lineslog.Market{
-						Date: *date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID, Player: name,
+						AuditVersion: props.QuoteVersion,
+						Date:         *date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID, Player: name,
 						Team: teamAbbr, Stat: string(l.Stat), Tip: g.Start, Line: l.Line, Books: len(ls), Lo: sorted[0], Hi: sorted[len(sorted)-1],
 						POver: pOver, Proj: pred.Mean(l.Stat), ProjMin: pred.Minutes, Shift: pred.Minutes - row.TypicalMinutes(),
 					}
@@ -558,6 +571,30 @@ func main() {
 						mr.TeamOut, mr.OppOut, mr.B2B = e.TeamOut, e.OppOut, e.B2B
 					}
 					marketRows[mk] = mr
+					base := m.Predict(row)
+					shift := woFix.MinutesShift(row.WoMin())
+					shift += minFix.Shift(row.AbsSpread(), base.Minutes+shift)
+					policy := predictor.Adjustments{MinutesShift: shift, BigCut: *bigCut, Blend: *minBlend, Typical: row.MinTypical}
+					if math.IsNaN(policy.Typical) {
+						policy.Typical = 0
+					}
+					for k := range policy.Scale {
+						if base.Rate[k] > 0 {
+							policy.Scale[k] = pred.Rate[k] / base.Rate[k]
+						}
+					}
+					rule := eval.IdentityCal
+					if calOK {
+						rule = cal.Global
+						if c, ok := cal.ByStat[string(l.Stat)]; ok {
+							rule = c
+						}
+					}
+					replayRows[mk] = replay.Record{Date: *date, At: runAt.Format(time.RFC3339), Tip: g.Start,
+						Row: replay.Capture(row), Policy: policy, Cal: rule, Stat: l.Stat, Line: l.Line, Book: l.Vendor,
+						QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds,
+						Market: bets.MarketOver(l.OverOdds, l.UnderOdds), P1: pOver}
+
 				}
 			}
 		}
@@ -566,6 +603,7 @@ func main() {
 			side, prob, raw, odds = "UNDER", 1-pOver, 1-pr.Over, l.UnderOdds
 		}
 		s := scored{
+			QuoteAt: l.CapturedAt, SourceUpdatedAt: l.UpdatedAt, AuditVersion: props.QuoteVersion,
 			PlayerID: l.PlayerID, GameID: l.GameID, Player: name, Team: teamAbbr, Matchup: matchup, Stat: l.Stat, Side: side, Line: l.Line,
 			Prob: prob, ProbRaw: raw, Edge: bets.Edge(prob, odds), Units: bets.Units(prob, odds, *maxUnits),
 			Vendor: l.Vendor, Odds: odds, ProjMean: pred.Mean(l.Stat), ProjMin: pred.Minutes,
@@ -703,11 +741,15 @@ func main() {
 	var comboSummary comboStats
 	var v2Combos []scored
 	var v2ComboSummary comboStats
+	var comboMarkets []lineslog.Market
 	if *useCombos && gid == 0 {
 		lookup := teamOf
-		comboLines, _ := props.LoadSnapshotCombos(propsPath)
+		comboLines, _ := props.LoadPregameSnapshot(propsPath, true, runAt, *maxQuoteAge)
 		comboLines = append(comboLines, sgoLinesFor(*dir, *date, b, gameOf, true)...)
+		comboLines = props.ExecutableLines(comboLines, games, runAt, *maxQuoteAge, *maxCaptureAge)
 		var cs comboStats
+		direct, directOK := eval.LoadCalibration(filepath.Join(*dir, "combocalibration.json"))
+		directOK = directOK && direct.Config == config && direct.ModelVersion == m.Version && direct.TrainedBefore != "" && direct.TrainedBefore < *date
 		cd := comboDeps{
 			b: b, ix: ix, m: m, games: games, out: out, statuses: statuses, teamOf: lookup, rowFor: rowFor, adjust: adjustMinutes,
 			scale: func(st data.Stat, row *feat.Row) float64 {
@@ -717,14 +759,20 @@ func main() {
 				}
 				return f * woFix.RateFactor(st, row.WoRate(st))
 			},
-			corr: combo.Load(filepath.Join(*dir, "combocorr.json")), cal: cal, calOK: calOK, weight: *comboWeight, hi: *comboBar, minEdge: *minEdge, maxGap: *maxGap,
+			corr: combo.Load(filepath.Join(*dir, "combocorr.json")), cal: direct, calOK: directOK, weight: *comboWeight, hi: *comboBar, minEdge: *minEdge, maxGap: *maxGap,
 			maxTotal: *comboMax, perPlayer: *comboPer, date: *date,
+			observe: func(row lineslog.Market) {
+				row.ModelVersion = m.Version
+				row.Config = config
+				comboMarkets = append(comboMarkets, row)
+			},
 		}
 		comboPlays, cs = scoreCombos(cd, comboLines)
 		comboSummary = cs
 		if *useV2 {
 			// The same combos, priced with V2's live correction and a model-forward blend.
 			d2 := cd
+			d2.observe = nil
 			d2.weight = *v2Weight
 			d2.m = m2
 			d2.adjust = func(p predictor.Pred, row *feat.Row) predictor.Pred { return v2fix.shiftMinutes(adjustMinutes(p, row)) }
@@ -851,6 +899,36 @@ func main() {
 		}
 	}
 
+	if !*noLog && gid == 0 && len(comboMarkets) > 0 {
+		if err := lineslog.SaveComboMarket(*dir, *date, comboMarkets); err != nil {
+			fatal(err)
+		}
+	}
+	if !*noLog && gid == 0 && len(replayRows) > 0 {
+		checkpoint, err := replay.Checkpoint(*dir, m)
+		if err != nil {
+			fatal(err)
+		}
+		var records []replay.Record
+		for key, r := range replayRows {
+			r.ModelID = checkpoint
+			r.P2 = marketRows[key].P2
+			records = append(records, r)
+		}
+		sort.Slice(records, func(i, j int) bool {
+			a, b := records[i], records[j]
+			if a.Row.G.GameID != b.Row.G.GameID {
+				return a.Row.G.GameID < b.Row.G.GameID
+			}
+			if a.Row.G.PlayerID != b.Row.G.PlayerID {
+				return a.Row.G.PlayerID < b.Row.G.PlayerID
+			}
+			return a.Stat < b.Stat
+		})
+		if err := replay.Append(*dir, *date, records); err != nil {
+			fatal(err)
+		}
+	}
 	if !*noLog && gid == 0 && len(marketRows) > 0 {
 		series, _ := props.LineSeries(propsPath)
 		mkt, off := linesLogRows(*date, marketRows, series, offMarket, time.Now().UTC().Format(time.RFC3339), games)
@@ -894,7 +972,7 @@ func main() {
 			entries = append(entries, picklog.Entry{
 				Date: *date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 				Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-				ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist,
+				ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion,
 			})
 		}
 		n, err := picklog.Append(filepath.Join(*dir, "picklog.jsonl"), entries)
@@ -1115,7 +1193,20 @@ func sgoLinesFor(dir, date string, b *feat.Builder, gameOf map[int]props.GameInf
 		if !ok || dup[n] {
 			continue
 		}
+		overAt, eo := time.Parse(time.RFC3339, l.OverUpdatedAt)
+		underAt, eu := time.Parse(time.RFC3339, l.UnderUpdatedAt)
+		captured, ec := time.Parse(time.RFC3339, l.CapturedAt)
+		now := time.Now().UTC()
+		if eo != nil || eu != nil || ec != nil || overAt.After(now) || underAt.After(now) || overAt.After(captured.Add(2*time.Minute)) || underAt.After(captured.Add(2*time.Minute)) {
+			continue
+		}
+		eventStart, ee := time.Parse(time.RFC3339, l.EventStart)
+		gameStart, eg := time.Parse(time.RFC3339, gameOf[pid].Start)
+		if ee != nil || eg != nil || eventStart.Sub(gameStart) > 15*time.Minute || gameStart.Sub(eventStart) > 15*time.Minute {
+			continue
+		}
 		out = append(out, props.Line{
+			CapturedAt: l.CapturedAt, QuoteVerified: l.PairVerified, Period: l.Period,
 			GameID: gameOf[pid].ID, PlayerID: pid, Vendor: "sgo/" + l.Book, Stat: l.Stat,
 			Line: l.Line, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds, UpdatedAt: l.UpdatedAt,
 		})

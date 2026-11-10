@@ -52,7 +52,8 @@ func linesLogRows(date string, rows map[marketKey]lineslog.Market, series map[pr
 			continue
 		}
 		out = append(out, lineslog.Off{
-			Date: date, At: at, GameID: gid, PlayerID: r.PlayerID, Player: r.Player, Team: r.Team, Stat: string(r.Stat),
+			AuditVersion: props.QuoteVersion,
+			Date:         date, At: at, GameID: gid, PlayerID: r.PlayerID, Player: r.Player, Team: r.Team, Stat: string(r.Stat),
 			Tip: games[gid].Start, Book: r.Vendor, Side: r.Side, Line: r.Line, Median: r.Median, Books: r.Books, Odds: r.Odds,
 			PSide: r.Prob, Edge: r.Edge, Proj: r.Proj,
 		})

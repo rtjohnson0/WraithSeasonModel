@@ -94,7 +94,7 @@ func WalkForwardMinutes(rows []feat.Row, lines []props.Line, testSeasons []int, 
 			if !inTest[r.G.Season] || r.G.Minutes < 1 {
 				continue
 			}
-			pred := m.Predict(r)
+			pred := m.Forecast(r, predictor.Adjustments{})
 			naive := r.Vec(data.Points, []string{"m_ewma"})[0]
 			if math.IsNaN(naive) || math.IsNaN(pred.Minutes) {
 				continue
@@ -107,11 +107,11 @@ func WalkForwardMinutes(rows []feat.Row, lines []props.Line, testSeasons []int, 
 		}
 		for _, l := range byMonth[month] {
 			r := byKey[rowKey{l.GameID, l.PlayerID}]
-			pred := m.Predict(r)
+			pred := m.Forecast(r, predictor.Adjustments{})
 			if !model.Eligible(r.AvgMin15, pred.Minutes) {
 				continue
 			}
-			pr, err := pred.ProbOver(l.Stat, l.Line)
+			pr, _, err := predictor.Price(pred, l.Stat, l.Line, bets.MarketOver(l.OverOdds, l.UnderOdds), nil)
 			if err != nil {
 				continue
 			}
@@ -252,24 +252,56 @@ func zScore(diffs []float64) (mean, z float64) {
 // has to clear to know anything the sportsbook does not. Treat z below about 2 as noise.
 func SkillVsCoinFlip(rs []backtest.Result) (gain, z float64) {
 	var d []float64
+	var dates []string
 	for _, r := range rs {
 		if l, ok := lossOf(r); ok {
 			d = append(d, math.Ln2-l)
+			dates = append(dates, r.Date)
 		}
 	}
-	return zScore(d)
+	return ClusterGain(d, dates)
 }
 
 // PairedGain is how much better model a scores than model b on the same lines (a and b must
 // be aligned, as Intersect returns them), with a z-score.
 func PairedGain(a, b []backtest.Result) (gain, z float64) {
 	var d []float64
+	var dates []string
 	for i := range a {
 		la, ok1 := lossOf(a[i])
 		lb, ok2 := lossOf(b[i])
 		if ok1 && ok2 {
 			d = append(d, lb-la)
+			dates = append(dates, a[i].Date)
 		}
 	}
-	return zScore(d)
+	return ClusterGain(d, dates)
+}
+
+// ClusterGain accounts for shared game-day shocks; one busy slate is not hundreds of independent samples.
+func ClusterGain(diffs []float64, dates []string) (mean, z float64) {
+	if len(diffs) == 0 || len(diffs) != len(dates) {
+		return 0, 0
+	}
+	for _, d := range diffs {
+		mean += d
+	}
+	mean /= float64(len(diffs))
+	sums := map[string]float64{}
+	for i, d := range diffs {
+		sums[dates[i]] += d - mean
+	}
+	if len(sums) < 2 {
+		return mean, 0
+	}
+	var ss float64
+	for _, s := range sums {
+		ss += s * s
+	}
+	g := float64(len(sums))
+	se := math.Sqrt(g/(g-1)*ss) / float64(len(diffs))
+	if se > 0 {
+		z = mean / se
+	}
+	return
 }

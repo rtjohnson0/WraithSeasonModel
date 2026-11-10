@@ -17,6 +17,7 @@ const fixture = `{"eventID":"e1","odds":{
    "draftkings":{"odds":"-105","overUnder":"17.5","available":true},
    "fanduel":{"odds":"+100","overUnder":18.5,"available":true}}},
  "rebounds-JALEN_DUREN_1_NBA-game-ou-over":{"byBookmaker":{"draftkings":{"odds":"+120","overUnder":"10.5","available":true}}},
+ "rebounds-JALEN_DUREN_1_NBA-game-ou-under":{"byBookmaker":{"draftkings":{"odds":"-130","overUnder":"10.5","available":true}}},
  "points-JALEN_DUREN_1_NBA-1h-ou-over":{"byBookmaker":{"draftkings":{"odds":"-110","overUnder":"8.5","available":true}}},
  "steals-JALEN_DUREN_1_NBA-game-ou-over":{"byBookmaker":{"draftkings":{"odds":"-110","overUnder":"0.5","available":true}}},
  "points-home-game-ml-home":{"byBookmaker":{"draftkings":{"odds":"-150","available":true}}}
@@ -57,6 +58,8 @@ const comboFixture = `{"eventID":"e2","odds":{
  "points+rebounds+assists-JALEN_DUREN_1_NBA-game-ou-over":{"byBookmaker":{"draftkings":{"odds":"-115","overUnder":"32.5","available":true}}},
  "points+rebounds+assists-JALEN_DUREN_1_NBA-game-ou-under":{"byBookmaker":{"draftkings":{"odds":"-105","overUnder":"32.5","available":true}}},
  "rebounds+assists-JALEN_DUREN_1_NBA-game-ou-over":{"byBookmaker":{"fanduel":{"odds":"-110","overUnder":"16.5","available":true}}},
+ "rebounds+assists-JALEN_DUREN_1_NBA-game-ou-under":{"byBookmaker":{"fanduel":{"odds":"-110","overUnder":"16.5","available":true}}},
+ "points-JALEN_DUREN_1_NBA-game-ou-under":{"byBookmaker":{"fanduel":{"odds":"-110","overUnder":"17.5","available":true}}},
  "blocks+steals-JALEN_DUREN_1_NBA-game-ou-over":{"byBookmaker":{"fanduel":{"odds":"-110","overUnder":"2.5","available":true}}},
  "points-JALEN_DUREN_1_NBA-game-ou-over":{"byBookmaker":{"fanduel":{"odds":"-110","overUnder":"17.5","available":true}}}
 }}`

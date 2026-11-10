@@ -259,16 +259,17 @@ type Day struct {
 
 // Record is the live record.
 type Record struct {
-	Since   string   `json:"since"`
-	Until   string   `json:"until"`
-	Days    int      `json:"days"`
-	Dups    int      `json:"duplicatesCollapsed"`
-	Tiers   []Row    `json:"tiers"`
-	Stats   []Row    `json:"stats"`
-	Sides   []Row    `json:"sides"`
-	Buckets []Bucket `json:"buckets"`
-	Daily   []Day    `json:"daily"`
-	Recent  []Result `json:"recent"`
+	ProvenanceNote string   `json:"provenanceNote,omitempty"`
+	Since          string   `json:"since"`
+	Until          string   `json:"until"`
+	Days           int      `json:"days"`
+	Dups           int      `json:"duplicatesCollapsed"`
+	Tiers          []Row    `json:"tiers"`
+	Stats          []Row    `json:"stats"`
+	Sides          []Row    `json:"sides"`
+	Buckets        []Bucket `json:"buckets"`
+	Daily          []Day    `json:"daily"`
+	Recent         []Result `json:"recent"`
 }
 
 // Site is everything the website reads.

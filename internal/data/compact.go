@@ -109,6 +109,7 @@ func CompactAdvanced(path string) (before, after int, err error) {
 func CompactStats(path string) (before, after int, err error) {
 	return compactFile(path, func(line []byte) (idPair, []byte, bool) {
 		var s struct {
+			Period *int `json:"period"`
 			Player struct {
 				ID int `json:"id"`
 			} `json:"player"`
@@ -117,6 +118,9 @@ func CompactStats(path string) (before, after int, err error) {
 			} `json:"game"`
 		}
 		if json.Unmarshal(line, &s) != nil || s.Player.ID == 0 || s.Game.ID == 0 {
+			return idPair{}, nil, false
+		}
+		if s.Period != nil && *s.Period != 0 {
 			return idPair{}, nil, false
 		}
 		return idPair{s.Player.ID, s.Game.ID}, line, true

@@ -1,34 +1,28 @@
 name: WraithPicksSZN daily
 
-# Runs the model on a schedule and publishes the site to GitHub Pages.
-#   9:17 am Eastern (13:17 UTC)  morning run: refresh box scores, grade picks, retrain, pull lines, make picks, publish
-#   3:17 pm Eastern (19:17 UTC)  refresh lines and injuries, make picks, publish
-#   6:17 pm Eastern (22:17 UTC)  refresh lines and injuries, make picks, publish
-#   8:17 pm Eastern (00:17 UTC)  late games: refresh lines and injuries, make picks, publish
-# GitHub schedules are in UTC and do not follow daylight saving: after the clocks go back in
-# November (Nov 1, 2026) every run is an hour earlier on the Eastern clock (8:17 am, 2:17 pm,
-# 5:17 pm, 7:17 pm). Change the hours below then if you want the Eastern times to stay put.
-# Scheduled runs can also start a few minutes late when GitHub is busy.
-#
-# Run it by hand from the Actions tab (Run workflow) with a mode:
-#   bootstrap  first time only: download the last two seasons of box scores (the model itself is
-#              trained on your PC and committed as data/model.json; see the README)
-#   daily      the morning run
-#   pretip     the lines-and-picks refresh (the 3 pm, 6 pm and 8 pm runs)
-#   site       rebuild and publish the site from the data already saved (after a code change)
-#
-# State that must never be lost (the pick log, graded results, the calibration) is committed back to
-# the repo. Everything that can be downloaded again lives in the Actions cache.
 on:
+  push:
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'scripts/**'
+      - '.github/workflows/daily.yml'
+      - 'site/**'
+      - 'data/**'
   schedule:
+    # Both UTC offsets are listed; Pick the mode chooses the Eastern DST offset.
     - cron: "17 13 * * *"
+    - cron: "17 14 * * *"
     - cron: "17 19 * * *"
+    - cron: "17 20 * * *"
     - cron: "17 22 * * *"
+    - cron: "17 23 * * *"
     - cron: "17 0 * * *"
+    - cron: "17 1 * * *"
   workflow_dispatch:
     inputs:
       mode:
-        description: "What to run"
+        description: What to run
         type: choice
         default: daily
         options: [bootstrap, daily, pretip, site]
@@ -38,152 +32,189 @@ permissions:
   pages: write
   id-token: write
 
+# Serialize the complete state-write and Pages deployment cycle.
 concurrency:
-  group: wraithpicks
+  group: wraithpicks-${{ github.repository }}
   cancel-in-progress: false
 
 env:
-  BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
-  SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
   TZ: America/New_York
 
 jobs:
   run:
+    if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    outputs:
+      publish: ${{ steps.mode.outputs.publish }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
 
       - name: Pick the mode
         id: mode
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "mode=${{ inputs.mode }}" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event.schedule }}" = "17 13 * * *" ]; then
-            echo "mode=daily" >> "$GITHUB_OUTPUT"
-          else
-            echo "mode=pretip" >> "$GITHUB_OUTPUT"
-          fi
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REQUESTED_MODE: ${{ inputs.mode }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          RUN_BRANCH: ${{ github.ref_name }}
+        run: python3 scripts/workflow_mode.py
 
       - uses: actions/setup-go@v5
+        if: steps.mode.outputs.active == 'true'
         with:
           go-version-file: go.mod
 
-      # Downloaded data and the trained model come from the newest cache. The committed state
-      # files are put back afterwards so an older cached copy can never replace them.
-      - name: Restore saved data
+      - name: Check source and merge regression tests
+        if: steps.mode.outputs.active == 'true'
+        run: |
+          go test ./...
+          python3 -m unittest discover -s scripts -p 'test_*.py'
+
+      # Cache only reproducible inputs. Tracked logs/models are always from Git,
+      # so a cache can never restore an old copy of a corrected/deleted record.
+      - name: Restore downloaded inputs
+        if: steps.mode.outputs.active == 'true'
         uses: actions/cache/restore@v4
         with:
-          path: data
-          key: data-${{ github.run_id }}
-          restore-keys: data-
-      - name: Keep the committed state files
-        run: git checkout -- data/ 2>/dev/null || true
+          path: |
+            data/stats_*.jsonl
+            data/advanced_*.jsonl
+            data/snapshots
+            data/players_active.jsonl
+            data/opening_props_*.jsonl
+            data/opening_odds_*.jsonl
+            data/opening_games_*.jsonl
+          key: inputs-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: inputs-v2-${{ github.ref_name }}-
 
-      - name: Check the keys and the model are set
-        if: steps.mode.outputs.mode != 'site'
+      - name: Check API keys and trained files
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
         run: |
-          [ -n "$BALLDONTLIE_API_KEY" ] || { echo "Add the BALLDONTLIE_API_KEY secret: repo Settings > Secrets and variables > Actions"; exit 1; }
-          if [ "${{ steps.mode.outputs.mode }}" != "bootstrap" ]; then
-            [ -f data/model.json ] || { echo "data/model.json is missing. Train locally (go run ./cmd/train) and commit data/model.json and data/calibration.json."; exit 1; }
-            [ -f data/calibration.json ] || { echo "data/calibration.json is missing. Run the backtest locally and commit it."; exit 1; }
+          test -n "$BALLDONTLIE_API_KEY" || { echo "Set the BALLDONTLIE_API_KEY repository secret."; exit 1; }
+          if [ "${{ steps.mode.outputs.mode }}" != bootstrap ]; then
+            test -f data/model.json || { echo "Train and commit data/model.json first."; exit 1; }
+            test -f data/calibration.json || { echo "Backtest and commit data/calibration.json first."; exit 1; }
           fi
 
-      # Only the last two seasons are downloaded: that is all the features need to score today's
-      # players. The model was trained on the full history on your PC and is committed to the repo,
-      # so this step does not train. Each step has its own time limit, and the downloaded data is
-      # saved to the cache even if one stops, so running bootstrap again picks up where it left off.
-      - name: Bootstrap, box scores
-        if: steps.mode.outputs.mode == 'bootstrap'
+      - name: Bootstrap box scores
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'bootstrap'
         timeout-minutes: 40
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
         run: |
           YEAR=$(date +%Y); MONTH=$((10#$(date +%m)))
           if [ "$MONTH" -ge 8 ]; then CUR=$YEAR; else CUR=$((YEAR-1)); fi
           go run ./cmd/pull stats -seasons "$((CUR-1)),$CUR"
           go run ./cmd/pull players
 
-      - name: Bootstrap, advanced stats
-        if: steps.mode.outputs.mode == 'bootstrap'
+      - name: Bootstrap advanced stats
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'bootstrap'
         timeout-minutes: 60
         continue-on-error: true
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
         run: |
           YEAR=$(date +%Y); MONTH=$((10#$(date +%m)))
           if [ "$MONTH" -ge 8 ]; then CUR=$YEAR; else CUR=$((YEAR-1)); fi
           go run ./cmd/pull advanced -seasons "$((CUR-1)),$CUR"
 
       - name: Morning run
-        if: steps.mode.outputs.mode == 'daily'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'daily'
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
         run: bash scripts/daily.sh -s
 
       - name: Pre-tip run
-        if: steps.mode.outputs.mode == 'pretip'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'pretip'
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
         run: bash scripts/pretip.sh
 
-      - name: Export the site data
-        run: go run ./cmd/export
+      # Runs even after a failed model step/push. These are actual recoverable run
+      # outputs, including quote evidence; a failed push must never lose the logs.
+      - name: Retain run evidence and generated state
+        if: always() && steps.mode.outputs.active == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-run-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            data/*.json
+            data/*log.jsonl
+            data/*settled.jsonl
+            data/runs.jsonl
+            data/lines
+            data/snapshots
+            data/replay
+            data/*audit*.json
+            data/exclusions.jsonl
+            data/*.csv
+          retention-days: 90
+          if-no-files-found: ignore
 
-      - name: Refuse to publish sample data
-        run: |
-          if grep -q '"sample": *true' site/public/data/picks.json; then
-            echo "picks.json is still the made-up sample."
-            exit 1
-          fi
-
-      - name: Save downloaded data for the next run
-        if: always()
+      - name: Save downloaded inputs
+        if: always() && steps.mode.outputs.active == 'true'
         uses: actions/cache/save@v4
         with:
-          path: data
-          key: data-${{ github.run_id }}
+          path: |
+            data/stats_*.jsonl
+            data/advanced_*.jsonl
+            data/snapshots
+            data/players_active.jsonl
+            data/opening_props_*.jsonl
+            data/opening_odds_*.jsonl
+            data/opening_games_*.jsonl
+          key: inputs-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
 
-      - name: Commit the pick log and results
+      - name: Synchronize state with latest branch
+        if: steps.mode.outputs.active == 'true'
+        env:
+          RUN_BRANCH: ${{ github.ref_name }}
         run: |
           git config user.name "wraithpicks-bot"
           git config user.email "wraithpicks-bot@users.noreply.github.com"
-          git add -f data/picklog.jsonl data/settled.jsonl data/calibration.json data/gamecal.json data/biasfix.json data/minfix.json data/wofix.json data/runs.jsonl data/more.json data/projlog.jsonl data/model.json data/combolog.jsonl data/combosettled.jsonl data/combocorr.json data/lines data/v2log.jsonl data/v2settled.jsonl data/v2.json data/model_v2.json 2>/dev/null || true
-          if git diff --cached --quiet; then
-            echo "nothing new to commit"
-          else
-            git commit -m "data: picks and results ${{ steps.mode.outputs.mode }} [skip ci]"
-            # The export step rewrites tracked files (the site data), so stash them while rebasing.
-            ok=0
-            for i in 1 2 3; do
-              if git pull --rebase --autostash && git push; then ok=1; break; fi
-              echo "push attempt $i failed, retrying"; sleep 5
-            done
-            [ "$ok" = 1 ] || { echo "could not push the pick log"; exit 1; }
-          fi
+          python3 scripts/sync_state.py --branch "$RUN_BRANCH"
 
-      - name: Keep the CSVs
-        uses: actions/upload-artifact@v4
-        with:
-          name: csv
-          path: |
-            data/picks_*.csv
-            data/gamepicks_*.csv
-            data/review_*.csv
-          retention-days: 14
-          if-no-files-found: ignore
+      # The merge may bring in a source update. Validate the code actually being
+      # deployed and export AGAIN from the merged logs; do not publish a stale view.
+      - name: Validate merged source and export
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap'
+        run: |
+          go test ./...
+          go run ./cmd/export
+          python3 -c 'import json; p=json.load(open("site/public/data/picks.json")); assert not p.get("sample"), "Refusing sample data"'
 
       - uses: actions/setup-node@v4
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap'
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: site/package-lock.json
 
       - name: Build the site
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap'
         working-directory: site
         run: |
           npm ci
           npm run build
 
       - uses: actions/configure-pages@v5
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap'
       - uses: actions/upload-pages-artifact@v3
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap'
         with:
           path: site/dist
 
   deploy:
     needs: run
+    if: needs.run.outputs.publish == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

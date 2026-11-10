@@ -1,0 +1,81 @@
+import json
+import os
+import subprocess
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+from sync_state import merge_jsonl, sync
+
+
+def run(cwd, *args):
+    return subprocess.run(['git', *args], cwd=cwd, check=True, text=True,
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.strip()
+
+
+def line(pid, **kwargs):
+    return json.dumps(dict(date='2026-11-10', game_id=9, player_id=pid,
+                           stat='points', side='OVER', book='dk', line=20.5, **kwargs))+'\n'
+
+
+class MergeTests(unittest.TestCase):
+    def test_union_and_remote_correction(self):
+        base = line(1, result='LOSS')
+        ours = base + line(2)
+        theirs = line(1, result='WIN') + line(3)
+        rows = [json.loads(x) for x in merge_jsonl('data/settled.jsonl',base,ours,theirs).splitlines()]
+        self.assertEqual(len(rows),3)
+        self.assertEqual(rows[0]['result'],'WIN')
+
+    def test_deletion_is_not_resurrected(self):
+        base=line(1)
+        self.assertEqual(merge_jsonl('data/picklog.jsonl',base,base,''),'')
+        self.assertEqual(merge_jsonl('data/picklog.jsonl',base,'',base),'')
+        self.assertEqual(merge_jsonl('data/picklog.jsonl',base,base.replace('20.5','21.5'),''),
+                         line(1).replace('20.5','21.5').replace(' ',''))
+
+    def test_bad_json_stops_resolution(self):
+        with self.assertRaises(json.JSONDecodeError):
+            merge_jsonl('data/picklog.jsonl','','<<<<<<< conflict\n','')
+
+    def test_real_remote_updates_and_rejected_push(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); remote=root/'remote.git';bot=root/'bot';user=root/'user'
+            run(root,'init','--bare',str(remote))
+            run(root,'clone',str(remote),str(bot))
+            run(bot,'checkout','-b','main')
+            for repo in [bot]:
+                run(repo,'config','user.email','test@example.invalid');run(repo,'config','user.name','Test')
+            (bot/'data').mkdir();(bot/'README.md').write_text('base\n')
+            (bot/'data/picklog.jsonl').write_text(line(1))
+            (bot/'data/model.json').write_text('{"version":3}\n')
+            (bot/'data/calibration.json').write_text('{"config":"old"}\n')
+            run(bot,'add','.');run(bot,'commit','-m','base');run(bot,'push','-u','origin','main')
+            run(root,'clone','-b','main',str(remote),str(user))
+            run(user,'config','user.email','test@example.invalid');run(user,'config','user.name','Test')
+            (user/'data/picklog.jsonl').write_text(line(1)+line(3))
+            (user/'README.md').write_text('new source\n')
+            (user/'data/model.json').write_text('{"version":4}\n')
+            (user/'data/calibration.json').write_text('{"config":"new"}\n')
+            run(user,'add','.');run(user,'commit','-m','upstream');run(user,'push')
+            (bot/'data/picklog.jsonl').write_text(line(1)+line(2))
+            (bot/'data/calibration.json').write_text('{"config":"concurrent-old-model"}\n')
+            # Reject once, as a protected branch race/transient push failure would.
+            hook=remote/'hooks/pre-receive'
+            hook.write_text('#!/bin/sh\nif [ ! -f rejected-once ]; then touch rejected-once; exit 1; fi\nexit 0\n')
+            hook.chmod(0o755)
+            previous=Path.cwd()
+            try:
+                os.chdir(bot)
+                sync('main','generated',attempts=3,delay=0)
+            finally:
+                os.chdir(previous)
+            self.assertEqual((bot/'README.md').read_text(),'new source\n')
+            records=[json.loads(x) for x in (bot/'data/picklog.jsonl').read_text().splitlines()]
+            self.assertEqual({r['player_id'] for r in records},{1,2,3})
+            self.assertEqual(json.loads((bot/'data/calibration.json').read_text())['config'],'new')
+            self.assertEqual(run(bot,'rev-parse','HEAD'),run(bot,'rev-parse','origin/main'))
+            self.assertFalse(run(bot,'diff','--name-only','--diff-filter=U'))
+
+
+if __name__=='__main__':unittest.main()

@@ -26,14 +26,18 @@ func main() {
 	}
 	fs := flag.NewFlagSet("settle", flag.ExitOnError)
 	dir := fs.String("data", "data", "data directory")
+	legacy := fs.Bool("legacy", false, "include unverified legacy quotes for forensic comparison")
 	fs.Parse(os.Args[2:])
-	settle(*dir)
+	settle(*dir, *legacy)
 }
 
-func settle(dir string) {
+func settle(dir string, legacy bool) {
 	entries, err := picklog.Load(filepath.Join(dir, "v2log.jsonl"))
 	if err != nil {
 		fatal(err)
+	}
+	if !legacy {
+		entries = picklog.VerifiedEntries(entries)
 	}
 	if len(entries) == 0 {
 		fmt.Println("data/v2log.jsonl is empty. Run `go run ./cmd/predict` first; it logs the V2 plays.")
@@ -79,11 +83,17 @@ func settle(dir string) {
 	if err != nil {
 		fatal(err)
 	}
+	if !legacy {
+		all = picklog.VerifiedSettled(all)
+	}
 	v2, _ := picklog.DedupeSettled(all)
 	if len(v2) == 0 {
 		return
 	}
 	v1all, _ := picklog.LoadSettled(filepath.Join(dir, "settled.jsonl"))
+	if !legacy {
+		v1all = picklog.VerifiedSettled(v1all)
+	}
 	v1, _ := picklog.DedupeSettled(v1all)
 	days := map[string]bool{}
 	for _, r := range v2 {
@@ -120,7 +130,7 @@ func settle(dir string) {
 	}
 	isCombo := func(r picklog.Settled) bool { return data.Stat(r.Stat).IsCombo() }
 	singles := pick(v2, func(r picklog.Settled) bool { return !isCombo(r) })
-	fmt.Printf("V2 against V1 over the same %d day(s). Both are graded at the odds offered; V1 includes unstaked plays so the two are comparable.\n", len(days))
+	fmt.Printf("V2 against V1 over the same %d day(s). These are different selected sets, not a matched model comparison. Use cmd/lines for identical questions.\n", len(days))
 	row("V1 all plays, same days", v1same)
 	row("V2 singles", singles)
 	row("V2 combos", pick(v2, isCombo))
@@ -143,7 +153,7 @@ func settle(dir string) {
 		row("V1 "+strings.ToLower(sd)+"s", pick(v1same, func(r picklog.Settled) bool { return r.Side == sd }))
 	}
 	tw.Flush()
-	fmt.Println("\nA few days of plays cannot separate skill from luck. Look for V2 beating V1 on the same days over a few hundred plays before reading anything into it.")
+	fmt.Println("\nA few days of plays cannot separate skill from luck. Compare V1 and V2 on identical market questions and separate future dates before promotion.")
 }
 
 func fatal(err error) {

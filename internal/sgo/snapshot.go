@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"encoding/json"
 	"os"
+	"propsmodel/internal/marketperiod"
+	"time"
 )
 
 // SnapshotRow is one captured line as stored in data/snapshots/sgo_DATE.jsonl.
@@ -37,12 +39,23 @@ func loadSnapshot(path string, combos bool) ([]PlayerLine, error) {
 		if json.Unmarshal(sc.Bytes(), &r) != nil {
 			continue
 		}
-		if r.Stat.IsCombo() != combos {
+		if !r.PairVerified || r.UnderLine != r.Line || !validOdds(float64(r.OverOdds)) || !validOdds(float64(r.UnderOdds)) {
+			continue
+		}
+		r.PlayerLine.CapturedAt = r.CapturedAt
+		if !marketperiod.FullGame(r.Period) || !marketperiod.Stat(string(r.Stat)) || r.Stat.IsCombo() != combos {
 			continue
 		}
 		k := key{r.PlayerKey, string(r.Stat), r.Book}
 		if _, ok := latest[k]; !ok {
 			order = append(order, k)
+		}
+		if prev, exists := latest[k]; exists {
+			a, ea := time.Parse(time.RFC3339, prev.CapturedAt)
+			b, eb := time.Parse(time.RFC3339, r.CapturedAt)
+			if ea == nil && eb == nil && b.Before(a) {
+				continue
+			}
 		}
 		latest[k] = r.PlayerLine
 	}

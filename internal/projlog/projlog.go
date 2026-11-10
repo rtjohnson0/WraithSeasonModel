@@ -21,22 +21,23 @@ type StatProj struct {
 
 // Entry is one player on one day, from the latest run.
 type Entry struct {
-	Date     string              `json:"date"`
-	At       string              `json:"at"`
-	GameID   int                 `json:"game_id"`
-	PlayerID int                 `json:"player_id"`
-	Player   string              `json:"player"`
-	Team     string              `json:"team,omitempty"`
-	ProjMin  float64             `json:"proj_min"`
-	AvgMin15 float64             `json:"avg_min15"`
-	TypMin   float64             `json:"typ_min,omitempty"`
-	B2B      bool                `json:"b2b,omitempty"`
-	TeamOut  int                 `json:"team_out,omitempty"` // rotation teammates ruled out
-	OppOut   int                 `json:"opp_out,omitempty"`  // rotation players ruled out on the other side
-	Maybe    string              `json:"maybe,omitempty"`    // his own uncertain status
-	Spread   float64             `json:"spread,omitempty"`   // size of the game's consensus spread (0 if unknown)
-	Total    float64             `json:"total,omitempty"`    // the game's consensus total (0 if unknown)
-	Stats    map[string]StatProj `json:"stats"`
+	AuditVersion int                 `json:"audit_version,omitempty"`
+	Date         string              `json:"date"`
+	At           string              `json:"at"`
+	GameID       int                 `json:"game_id"`
+	PlayerID     int                 `json:"player_id"`
+	Player       string              `json:"player"`
+	Team         string              `json:"team,omitempty"`
+	ProjMin      float64             `json:"proj_min"`
+	AvgMin15     float64             `json:"avg_min15"`
+	TypMin       float64             `json:"typ_min,omitempty"`
+	B2B          bool                `json:"b2b,omitempty"`
+	TeamOut      int                 `json:"team_out,omitempty"` // rotation teammates ruled out
+	OppOut       int                 `json:"opp_out,omitempty"`  // rotation players ruled out on the other side
+	Maybe        string              `json:"maybe,omitempty"`    // his own uncertain status
+	Spread       float64             `json:"spread,omitempty"`   // size of the game's consensus spread (0 if unknown)
+	Total        float64             `json:"total,omitempty"`    // the game's consensus total (0 if unknown)
+	Stats        map[string]StatProj `json:"stats"`
 }
 
 // Key identifies an entry: one per player per day.

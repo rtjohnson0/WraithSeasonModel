@@ -77,7 +77,7 @@ export function ResultList({ rows }) {
 export default function Record({ site }) {
   const { record } = site
   if (!record.tiers?.length) {
-    return <p className="notice">No plays have been graded yet. Results appear here the morning after games finish.</p>
+    return <p className="notice">{record.provenanceNote || 'No plays have been graded yet.'} New results appear the morning after games finish.</p>
   }
   const staked = record.tiers.find((t) => t.name === 'Max plays (staked)')
   const byDate = {}
@@ -87,6 +87,7 @@ export default function Record({ site }) {
     <div className="record">
       <section className="day">
         <h1>The record</h1>
+        {record.provenanceNote && <p className="small">{record.provenanceNote}</p>}
         <p className="counts">
           {record.since === record.until ? shortDate(record.since) : `${shortDate(record.since)} to ${shortDate(record.until)}`},{' '}
           {record.days} {record.days === 1 ? 'day' : 'days'} of results

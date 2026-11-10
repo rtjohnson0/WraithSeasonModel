@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"math"
 	"os"
+	"propsmodel/internal/props"
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"propsmodel/internal/bets"
 )
@@ -36,7 +38,7 @@ func num(raw json.RawMessage) (float64, bool) {
 		return 0, false
 	}
 	v, err := strconv.ParseFloat(s, 64)
-	return v, err == nil
+	return v, err == nil && !math.IsNaN(v) && !math.IsInf(v, 0)
 }
 
 func whole(raw json.RawMessage) int {
@@ -93,7 +95,14 @@ func (a apiOdds) toOdds() Odds {
 // LoadOdds reads a JSONL file of game odds: either bare rows (the opening-odds pull) or
 // {"captured_at":..., "row":{...}} (the daily snapshot). When a game and book appear more
 // than once the latest row wins.
-func LoadOdds(path string) ([]Odds, error) {
+func LoadOdds(path string) ([]Odds, error) { return loadOdds(path, nil, time.Time{}, 0) }
+
+// LoadPregameOdds filters BEFORE selecting the latest capture, so live/stale game
+// spreads cannot leak into the prop model's pace and blowout features.
+func LoadPregameOdds(path string, games map[int]props.GameInfo, asOf time.Time, maxAge time.Duration) ([]Odds, error) {
+	return loadOdds(path, games, asOf, maxAge)
+}
+func loadOdds(path string, games map[int]props.GameInfo, asOf time.Time, maxAge time.Duration) ([]Odds, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -125,6 +134,13 @@ func LoadOdds(path string) ([]Odds, error) {
 			continue
 		}
 		o := a.toOdds()
+		if games != nil {
+			captured, ec := time.Parse(time.RFC3339, w.CapturedAt)
+			updated, eu := time.Parse(time.RFC3339, o.Stamp)
+			if !props.BeforeTip(games[o.GameID].Start, asOf) || ec != nil || eu != nil || captured.After(asOf) || updated.After(asOf) || asOf.Sub(captured) > 30*time.Minute || (maxAge > 0 && asOf.Sub(updated) > maxAge) {
+				continue
+			}
+		}
 		k := key{o.GameID, o.Vendor}
 		c := w.CapturedAt
 		if prev, ok := capt[k]; !ok || c >= prev {

@@ -17,6 +17,8 @@ go run ./cmd/pull stats -seasons "$SEASON" $NEW
 go run ./cmd/pull advanced -seasons "$SEASON" $NEW || echo "advanced refresh skipped"
 echo "== current rosters =="
 go run ./cmd/pull players
+echo "== audit quote provenance =="
+python3 scripts/audit_quotes.py --data data --apply
 echo "== grade past picks =="
 go run ./cmd/settle || echo "settle skipped"
 go run ./cmd/combos settle || echo "combo settle skipped"
@@ -27,6 +29,7 @@ go run ./cmd/review || echo "review skipped"
 if [ "$SKIP" = 0 ]; then
   echo "== retrain =="
   go run ./cmd/train $LINEUP
+  go run ./cmd/backtest -season "$((SEASON-1))" $LINEUP
 fi
 echo "== snapshot lines and injuries =="
 go run ./cmd/pull snapshot

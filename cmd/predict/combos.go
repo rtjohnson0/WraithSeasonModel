@@ -14,6 +14,7 @@ import (
 	"propsmodel/internal/data"
 	"propsmodel/internal/eval"
 	"propsmodel/internal/feat"
+	"propsmodel/internal/lineslog"
 	"propsmodel/internal/model"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/predictor"
@@ -53,6 +54,7 @@ type comboDeps struct {
 	maxTotal  int
 	perPlayer int
 	date      string
+	observe   func(lineslog.Market)
 }
 
 // comboStats summarises a day's combo scoring for the printout.
@@ -67,29 +69,16 @@ type comboStats struct {
 // projected total (a PRA is mostly points, so it gets mostly the points calibration). That keeps the
 // combos exactly as humble as the singles have earned. weight >= 0 overrides it with a plain blend.
 func (d comboDeps) calibrate(st data.Stat, pred predictor.Pred, pModel, pMarket float64) float64 {
-	if d.weight >= 0 || !d.calOK {
-		w := d.weight
-		if w < 0 {
-			w = 0.25
+	if d.weight >= 0 {
+		return d.weight*pModel + (1-d.weight)*pMarket
+	}
+	if d.calOK {
+		if cal, ok := d.cal.ByStat[string(st)]; ok {
+			return cal.Apply(pModel, pMarket)
 		}
-		return w*pModel + (1-w)*pMarket
 	}
-	var total float64
-	for _, c := range st.Parts() {
-		total += math.Max(pred.Mean(c), 0.01)
-	}
-	var mix eval.Cal
-	for _, c := range st.Parts() {
-		share := math.Max(pred.Mean(c), 0.01) / total
-		cal, ok := d.cal.ByStat[string(c)]
-		if !ok {
-			cal = d.cal.Global
-		}
-		mix.Intercept += share * cal.Intercept
-		mix.Slope += share * cal.Slope
-		mix.Market += share * cal.Market
-	}
-	return mix.Apply(pModel, pMarket)
+	// No direct, time-valid calibration: do not invent confidence from the singles.
+	return pMarket
 }
 
 // scoreCombos prices every combined-market line and returns the plays that clear the bar. The
@@ -107,6 +96,19 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 	}
 	sims := map[simKey]*sim{}
 	var cands []scored
+	type marketKey struct {
+		game, pid int
+		stat      data.Stat
+	}
+	marketLines := map[marketKey][]float64{}
+	for _, l := range lines {
+		k := marketKey{l.GameID, l.PlayerID, l.Stat}
+		marketLines[k] = append(marketLines[k], l.Line)
+	}
+	for _, ls := range marketLines {
+		sort.Float64s(ls)
+	}
+	seen := map[marketKey]bool{}
 	for _, l := range lines {
 		g, ok := d.games[l.GameID]
 		if !ok || !l.Stat.IsCombo() || l.OverOdds == 0 || l.UnderOdds == 0 {
@@ -148,6 +150,13 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		}
 		market := bets.MarketOver(l.OverOdds, l.UnderOdds)
 		pOver := d.calibrate(l.Stat, sm.pred, pr.Over, market)
+		mk := marketKey{l.GameID, l.PlayerID, l.Stat}
+		ls := marketLines[mk]
+		if d.observe != nil && !seen[mk] && len(ls) > 0 && l.Line == ls[len(ls)/2] {
+			seen[mk] = true
+			d.observe(lineslog.Market{Date: d.date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID,
+				Stat: string(l.Stat), Tip: g.Start, Line: l.Line, Books: len(ls), Lo: ls[0], Hi: ls[len(ls)-1], RawOver: pr.Over, MarketOver: market, POver: pOver, AuditVersion: props.QuoteVersion})
+		}
 		cs.Scored++
 		if pOver >= 0.5 {
 			cs.Over++
@@ -174,6 +183,7 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		parts := []string{componentNote(l.Stat, sm.pred)}
 		parts = append(parts, whyContext(d.b, d.ix, sm.row, data.Points, sm.pred, team, oppTeam, d.out)...)
 		s := scored{
+			QuoteAt: l.CapturedAt, SourceUpdatedAt: l.UpdatedAt, AuditVersion: props.QuoteVersion,
 			PlayerID: l.PlayerID, GameID: l.GameID, Player: name, Team: teamAbbr, Matchup: matchup, Stat: l.Stat, Side: side, Line: l.Line,
 			Prob: prob, ProbRaw: raw, Edge: bets.Edge(prob, odds), Vendor: l.Vendor, Odds: odds, ProjMean: proj, ProjMin: sm.pred.Minutes,
 			Shift: sm.pred.Minutes - sm.row.TypicalMinutes(), Tip: sm.g.Start, Tier: comboTier,
@@ -206,7 +216,7 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		perP[c.PlayerID]++
 		out = append(out, c)
 	}
-	cs.Basis = "the calibration its parts earned"
+	cs.Basis = "direct combo calibration where available; otherwise the market price only"
 	if d.weight >= 0 || !d.calOK {
 		cs.Basis = "a plain model/book blend"
 	}
@@ -247,7 +257,7 @@ func comboEntries(date string, plays []scored) []picklog.Entry {
 		out = append(out, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: comboTier, Why: s.Why, Tip: s.Tip, Dist: s.Dist,
+			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: comboTier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion,
 		})
 	}
 	return out

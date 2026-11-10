@@ -68,6 +68,7 @@ func baseQuery() url.Values {
 	q := url.Values{}
 	q.Set("leagueID", "NBA")
 	q.Set("oddsAvailable", "true")
+	q.Set("started", "false")
 	q.Set("oddIDs", oddIDs())
 	return q
 }
@@ -155,10 +156,16 @@ func snapshotOnce(c *sgo.Client, date string) error {
 	q.Set("limit", "50")
 
 	captured := time.Now().UTC().Format(time.RFC3339)
+	var rawRows []json.RawMessage
 	var rows []sgo.SnapshotRow
 	events := 0
 	err = c.Events(q, func(raw json.RawMessage) error {
 		events++
+		row, err := json.Marshal(map[string]any{"captured_at": captured, "event": raw})
+		if err != nil {
+			return err
+		}
+		rawRows = append(rawRows, row)
 		for _, l := range sgo.ParseEventAll(raw) {
 			rows = append(rows, sgo.SnapshotRow{CapturedAt: captured, PlayerLine: l})
 		}
@@ -168,11 +175,21 @@ func snapshotOnce(c *sgo.Client, date string) error {
 		return err
 	}
 	fmt.Printf("%s: %d events, %d player lines for %s\n", captured, events, len(rows), date)
-	if len(rows) == 0 {
-		return nil
-	}
 	dir := filepath.Join(dataDir, "snapshots")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return err
+	}
+	rf, err := os.OpenFile(filepath.Join(dir, fmt.Sprintf("sgo_raw_%s.jsonl", date)), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+	if err != nil {
+		return err
+	}
+	for _, r := range rawRows {
+		if _, err := rf.Write(append(r, '\n')); err != nil {
+			rf.Close()
+			return err
+		}
+	}
+	if err := rf.Close(); err != nil {
 		return err
 	}
 	f, err := os.OpenFile(filepath.Join(dir, fmt.Sprintf("sgo_%s.jsonl", date)), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)

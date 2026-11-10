@@ -139,24 +139,36 @@ func marketOf(r backtest.Result) float64 {
 // Calibration holds the final-probability rule: one global fit, plus one per stat where there
 // is enough data.
 type Calibration struct {
-	Config string         `json:"config"` // "pregame" or "lineup": which feature set it was fitted for
-	Global Cal            `json:"global"`
-	ByStat map[string]Cal `json:"by_stat"`
+	TrainedBefore string         `json:"trained_before,omitempty"`
+	ModelVersion  int            `json:"model_version,omitempty"`
+	Config        string         `json:"config"` // "pregame" or "lineup": which feature set it was fitted for
+	Global        Cal            `json:"global"`
+	ByStat        map[string]Cal `json:"by_stat"`
 }
 
 const minPerStat = 1500
 
 // FitCalibration fits the rule on rs.
 func FitCalibration(rs []backtest.Result) Calibration {
+	return FitCalibrationStats(rs, data.Stats, minPerStat)
+}
+
+// FitCalibrationStats supports direct calibration of combined markets; never borrows component slopes.
+func FitCalibrationStats(rs []backtest.Result, stats []data.Stat, minN int) Calibration {
 	c := Calibration{Global: fitCal(rs), ByStat: map[string]Cal{}}
-	for _, s := range data.Stats {
+	for _, r := range rs {
+		if r.Date > c.TrainedBefore {
+			c.TrainedBefore = r.Date
+		}
+	}
+	for _, s := range stats {
 		var sub []backtest.Result
 		for _, r := range rs {
 			if r.Stat == s {
 				sub = append(sub, r)
 			}
 		}
-		if len(sub) >= minPerStat {
+		if len(sub) >= minN {
 			c.ByStat[string(s)] = fitCal(sub)
 		}
 	}

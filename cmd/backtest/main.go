@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 	"text/tabwriter"
+	"time"
 
 	"propsmodel/internal/backtest"
 	"propsmodel/internal/data"
@@ -66,6 +67,9 @@ func main() {
 			}
 		}
 		fmt.Printf("live snapshots: %d lines from %d season(s) added\n", len(extra), len(liveSeasons))
+	}
+	if *lineup {
+		fmt.Println("EXPLORATORY ONLY: historical absence features use realized participation. This run cannot establish a pregame edge and will not write production calibration. Use timestamped decision replay for lineup calibration.")
 	}
 	disabled := pipeline.DisabledFor(*lineup)
 	config := pipeline.ConfigName(disabled)
@@ -176,6 +180,10 @@ func main() {
 		fmt.Printf("(full model log loss %.5f; a positive change means removing the group made it worse)\n", full.LogLoss)
 	}
 
+	if *lineup {
+		fmt.Println("No calibration saved from realized historical lineups. Collect audited decisions, then use cmd/replay -fitcal.")
+		return
+	}
 	// Final calibration for live use is fitted on every scored line.
 	if *noBlowout || *noVol || *noExitFix {
 		fmt.Println("\nExperiment run (-noblowout, -noexitfix or -novol): calibration.json was NOT saved, so the live calibration still matches the real model.")
@@ -188,6 +196,7 @@ func main() {
 		// An opt-in feature set must not overwrite the calibration the live model uses.
 		out = filepath.Join(*dir, "calibration_misses.json")
 	}
+	final.ModelVersion = 4
 	if err := final.Save(out); err != nil {
 		fatal(err)
 	}
@@ -247,7 +256,7 @@ func loadSnapshotLines(dir string) ([]props.Line, []int) {
 	seen := map[int]bool{}
 	var seasons []int
 	for _, f := range files {
-		ls, err := props.LoadSnapshot(f)
+		ls, err := props.LoadPregameSnapshot(f, false, time.Time{}, 6*time.Hour)
 		if err != nil {
 			continue
 		}

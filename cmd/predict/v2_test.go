@@ -17,7 +17,7 @@ func TestFitV2UsesOnlyEarlierDaysAndShrinks(t *testing.T) {
 	id := 0
 	add := func(date string, projMin, actMin, projPts, actPts float64) {
 		id++
-		entries = append(entries, projlog.Entry{Date: date, GameID: id, PlayerID: id, ProjMin: projMin,
+		entries = append(entries, projlog.Entry{AuditVersion: 2, Date: date, GameID: id, PlayerID: id, ProjMin: projMin,
 			Stats: map[string]projlog.StatProj{"points": {Proj: projPts, Line: projPts}}})
 		act[[2]int{id, id}] = data.PlayerGame{Minutes: actMin, Pts: actPts}
 	}
@@ -49,7 +49,7 @@ func TestFitV2IsCapped(t *testing.T) {
 	var entries []projlog.Entry
 	act := map[[2]int]data.PlayerGame{}
 	for i := 1; i <= 2000; i++ {
-		entries = append(entries, projlog.Entry{Date: "2026-10-01", GameID: i, PlayerID: i, ProjMin: 34, Stats: map[string]projlog.StatProj{"points": {Proj: 10, Line: 10}}})
+		entries = append(entries, projlog.Entry{AuditVersion: 2, Date: "2026-10-01", GameID: i, PlayerID: i, ProjMin: 34, Stats: map[string]projlog.StatProj{"points": {Proj: 10, Line: 10}}})
 		act[[2]int{i, i}] = data.PlayerGame{Minutes: 44, Pts: 30}
 	}
 	f := fitV2(entries, "2026-10-28", func(g, p int) (data.PlayerGame, bool) { pg, ok := act[[2]int{g, p}]; return pg, ok })
@@ -159,10 +159,10 @@ func TestSpreadOK(t *testing.T) {
 
 func TestGatesFromCells(t *testing.T) {
 	cells := []lineslog.Cell{
-		{Stat: "points", Side: "OVER", N: 40, Hit: 0.6, Brier: 0.24, Base: 0.25},     // too few lines
-		{Stat: "points", Side: "UNDER", N: 200, Hit: 0.56, Brier: 0.24, Base: 0.25},  // beats the base rate
-		{Stat: "assists", Side: "UNDER", N: 200, Hit: 0.55, Brier: 0.26, Base: 0.25}, // does not
-		{Stat: "rebounds", Side: "OVER", N: 200, Hit: 0.45, Brier: 0.24, Base: 0.25}, // beats Brier but leans are wrong more than right
+		{Stat: "points", Side: "OVER", N: 40, Hit: 0.6, Brier: 0.24, Base: 0.25},                     // too few lines
+		{Stat: "points", Side: "UNDER", N: 200, Days: 25, Z: 3, Hit: 0.56, Brier: 0.24, Base: 0.25},  // beats the base rate
+		{Stat: "assists", Side: "UNDER", N: 200, Days: 25, Z: 3, Hit: 0.55, Brier: 0.26, Base: 0.25}, // does not
+		{Stat: "rebounds", Side: "OVER", N: 200, Days: 25, Z: 3, Hit: 0.45, Brier: 0.24, Base: 0.25}, // beats Brier but leans are wrong more than right
 	}
 	g := v2Gates(cells, 150)
 	want := map[string]string{"points|OVER": gateUnproven, "points|UNDER": gateProven, "assists|UNDER": gateFailed, "rebounds|OVER": gateFailed}

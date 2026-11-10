@@ -37,10 +37,10 @@ export default function Lines({ lines }) {
           </div>
           {lines.brierBase > 0 && (
             <p className="small">
-              Score (Brier, lower is better): the model {lines.brierModel.toFixed(4)}, a guess that every line is the day's average{' '}
+              Score (Brier, lower is better): the model {lines.brierModel.toFixed(4)}, a stat baseline estimated from earlier dates{' '}
               {lines.brierBase.toFixed(4)}.{' '}
               {beats
-                ? "The model's leans carry real information."
+                ? "The model scores better on this sample; separate future dates are needed to test whether that persists."
                 : "The model's leans are not beating that guess yet, so treat its edges with caution."}
             </p>
           )}

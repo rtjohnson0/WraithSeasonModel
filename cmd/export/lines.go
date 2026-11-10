@@ -63,6 +63,20 @@ func buildLinesRecord(dir string) LinesRecord {
 		return rec
 	}
 	off, _ := lineslog.LoadOff(dir)
+	var verifiedMarkets []lineslog.Market
+	for _, r := range mk {
+		if r.AuditVersion >= 2 {
+			verifiedMarkets = append(verifiedMarkets, r)
+		}
+	}
+	mk = verifiedMarkets
+	var verifiedOff []lineslog.Off
+	for _, r := range off {
+		if r.AuditVersion >= 2 {
+			verifiedOff = append(verifiedOff, r)
+		}
+	}
+	off = verifiedOff
 	if len(mk) == 0 && len(off) == 0 {
 		return rec
 	}

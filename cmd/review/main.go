@@ -32,6 +32,7 @@ func main() {
 	dir := flag.String("data", "data", "data directory")
 	date := flag.String("date", "", "day to review as YYYY-MM-DD (default: yesterday)")
 	all := flag.Bool("all", false, "review every logged day")
+	legacy := flag.Bool("legacy", false, "include unverified legacy picks for forensic comparison")
 	flag.Parse()
 
 	if *date == "" {
@@ -40,6 +41,9 @@ func main() {
 	entries, err := picklog.Load(filepath.Join(*dir, "picklog.jsonl"))
 	if err != nil {
 		fatal(err)
+	}
+	if !*legacy {
+		entries = picklog.VerifiedEntries(entries)
 	}
 	var day []picklog.Entry
 	for _, e := range entries {

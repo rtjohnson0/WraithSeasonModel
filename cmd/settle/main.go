@@ -18,6 +18,7 @@ import (
 	"path/filepath"
 	"sort"
 	"text/tabwriter"
+	"time"
 
 	"propsmodel/internal/data"
 	"propsmodel/internal/picklog"
@@ -27,11 +28,23 @@ import (
 
 func main() {
 	dir := flag.String("data", "data", "data directory")
+	legacy := flag.Bool("legacy", false, "include legacy unverified quotes for forensic comparison")
 	flag.Parse()
 
 	entries, err := picklog.Load(filepath.Join(*dir, "picklog.jsonl"))
 	if err != nil {
 		fatal(err)
+	}
+	if !*legacy {
+		original := len(entries)
+		var verified []picklog.Entry
+		for _, e := range entries {
+			if e.Verified() {
+				verified = append(verified, e)
+			}
+		}
+		entries = verified
+		fmt.Printf("%d legacy picks retained in the log but excluded from the verified record. Use -legacy for a forensic report.\n", original-len(entries))
 	}
 	if len(entries) == 0 {
 		fmt.Println("data/picklog.jsonl is empty. Run `go run ./cmd/predict` first; it logs every posted pick.")
@@ -81,6 +94,15 @@ func main() {
 	everyRaw, err := picklog.LoadSettled(settledPath)
 	if err != nil {
 		fatal(err)
+	}
+	if !*legacy {
+		var verified []picklog.Settled
+		for _, r := range everyRaw {
+			if r.Verified() {
+				verified = append(verified, r)
+			}
+		}
+		everyRaw = verified
 	}
 	if len(everyRaw) == 0 {
 		return
@@ -238,7 +260,7 @@ type closeKey struct {
 // closingLines returns the median line across books in the latest snapshot for a date.
 func closingLines(dir, date string) map[closeKey]float64 {
 	out := map[closeKey]float64{}
-	lines, err := props.LoadSnapshot(filepath.Join(dir, "snapshots", fmt.Sprintf("props_%s.jsonl", date)))
+	lines, err := props.LoadClosingSnapshot(filepath.Join(dir, "snapshots", fmt.Sprintf("props_%s.jsonl", date)), time.Hour)
 	if err != nil {
 		return out
 	}

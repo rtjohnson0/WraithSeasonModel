@@ -21,6 +21,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"sort"
@@ -32,27 +33,32 @@ import (
 
 // Market is one player's stat for one day at the market's median line.
 type Market struct {
-	Date     string  `json:"date"`
-	At       string  `json:"at"` // when the run that wrote it happened (RFC 3339)
-	GameID   int     `json:"game"`
-	PlayerID int     `json:"pid"`
-	Player   string  `json:"player"`
-	Team     string  `json:"team"`
-	Stat     string  `json:"stat"`
-	Tip      string  `json:"tip,omitempty"`
-	Line     float64 `json:"line"` // median across books
-	Books    int     `json:"books"`
-	Lo       float64 `json:"lo"` // lowest and highest line any book listed
-	Hi       float64 `json:"hi"`
-	Open     float64 `json:"open,omitempty"` // the median at the day's first capture (0 when unknown)
-	POver    float64 `json:"p_over"`         // the model's calibrated P(over) at the median line
-	P2       float64 `json:"p2,omitempty"`   // the V2 challenger's blended P(over) at the same line (0 when V2 did not score it)
-	Proj     float64 `json:"proj"`
-	ProjMin  float64 `json:"proj_min"`
-	Shift    float64 `json:"shift"` // projected minutes minus his normal minutes
-	TeamOut  int     `json:"team_out"`
-	OppOut   int     `json:"opp_out"`
-	B2B      bool    `json:"b2b,omitempty"`
+	ModelVersion int     `json:"model_version,omitempty"`
+	Config       string  `json:"config,omitempty"`
+	AuditVersion int     `json:"audit_version,omitempty"`
+	Date         string  `json:"date"`
+	At           string  `json:"at"` // when the run that wrote it happened (RFC 3339)
+	GameID       int     `json:"game"`
+	PlayerID     int     `json:"pid"`
+	Player       string  `json:"player"`
+	Team         string  `json:"team"`
+	Stat         string  `json:"stat"`
+	Tip          string  `json:"tip,omitempty"`
+	Line         float64 `json:"line"` // median across books
+	Books        int     `json:"books"`
+	Lo           float64 `json:"lo"` // lowest and highest line any book listed
+	Hi           float64 `json:"hi"`
+	Open         float64 `json:"open,omitempty"` // the median at the day's first capture (0 when unknown)
+	RawOver      float64 `json:"raw_over,omitempty"`
+	MarketOver   float64 `json:"market_over,omitempty"`
+	POver        float64 `json:"p_over"`       // the model's calibrated P(over) at the median line
+	P2           float64 `json:"p2,omitempty"` // the V2 challenger's blended P(over) at the same line (0 when V2 did not score it)
+	Proj         float64 `json:"proj"`
+	ProjMin      float64 `json:"proj_min"`
+	Shift        float64 `json:"shift"` // projected minutes minus his normal minutes
+	TeamOut      int     `json:"team_out"`
+	OppOut       int     `json:"opp_out"`
+	B2B          bool    `json:"b2b,omitempty"`
 }
 
 // Move is how far the median line travelled since the day's first capture (0 when unknown).
@@ -65,23 +71,24 @@ func (m Market) Move() float64 {
 
 // Off is one book's line that sits off the market, and the side it favours.
 type Off struct {
-	Date     string  `json:"date"`
-	At       string  `json:"at"`
-	GameID   int     `json:"game"`
-	PlayerID int     `json:"pid"`
-	Player   string  `json:"player"`
-	Team     string  `json:"team"`
-	Stat     string  `json:"stat"`
-	Tip      string  `json:"tip,omitempty"`
-	Book     string  `json:"book"`
-	Side     string  `json:"side"` // Under at a high line, Over at a low one
-	Line     float64 `json:"line"`
-	Median   float64 `json:"median"`
-	Books    int     `json:"books"`
-	Odds     int     `json:"odds"`
-	PSide    float64 `json:"p_side"` // the model's probability for that side at that book's line and price
-	Edge     float64 `json:"edge"`
-	Proj     float64 `json:"proj"`
+	AuditVersion int     `json:"audit_version,omitempty"`
+	Date         string  `json:"date"`
+	At           string  `json:"at"`
+	GameID       int     `json:"game"`
+	PlayerID     int     `json:"pid"`
+	Player       string  `json:"player"`
+	Team         string  `json:"team"`
+	Stat         string  `json:"stat"`
+	Tip          string  `json:"tip,omitempty"`
+	Book         string  `json:"book"`
+	Side         string  `json:"side"` // Under at a high line, Over at a low one
+	Line         float64 `json:"line"`
+	Median       float64 `json:"median"`
+	Books        int     `json:"books"`
+	Odds         int     `json:"odds"`
+	PSide        float64 `json:"p_side"` // the model's probability for that side at that book's line and price
+	Edge         float64 `json:"edge"`
+	Proj         float64 `json:"proj"`
 }
 
 // Gap is how far the book's line is from the median.
@@ -142,7 +149,13 @@ func readJSONL[T any](path string) ([]T, error) {
 // one for the same game, player and stat, and rows from earlier runs that this run did not score are
 // kept: the 8 pm run no longer lists the early games, but their lines still need grading.
 func SaveMarket(base, date string, rows []Market) error {
-	path := filepath.Join(dir(base), fmt.Sprintf("market_%s.jsonl", date))
+	return saveMarket(base, date, "market_", rows)
+}
+func SaveComboMarket(base, date string, rows []Market) error {
+	return saveMarket(base, date, "combo_market_", rows)
+}
+func saveMarket(base, date, prefix string, rows []Market) error {
+	path := filepath.Join(dir(base), fmt.Sprintf("%s%s.jsonl", prefix, date))
 	old, err := readJSONL[Market](path)
 	if err != nil {
 		return err
@@ -199,8 +212,10 @@ func Dedupe(ms []Market) []Market {
 }
 
 // LoadMarkets reads every day's market file, oldest first.
-func LoadMarkets(base string) ([]Market, error) {
-	files, _ := filepath.Glob(filepath.Join(dir(base), "market_*.jsonl"))
+func LoadMarkets(base string) ([]Market, error)      { return loadMarkets(base, "market_") }
+func LoadComboMarkets(base string) ([]Market, error) { return loadMarkets(base, "combo_market_") }
+func loadMarkets(base, prefix string) ([]Market, error) {
+	files, _ := filepath.Glob(filepath.Join(dir(base), prefix+"*.jsonl"))
 	sort.Strings(files)
 	var out []Market
 	for _, f := range files {
@@ -323,30 +338,22 @@ func CalBins(gm []GradedMarket) []CalBin {
 // (the share of all lines that went over). Positive means the model's probabilities carry
 // information beyond "the median line is a coin flip with this lean". n is the rows used.
 func Skill(gm []GradedMarket) (model, base float64, n int) {
-	var overs int
+	prior := priorRates(gm)
 	for _, g := range gm {
 		if g.Push {
 			continue
 		}
-		n++
-		if g.Over {
-			overs++
-		}
-	}
-	if n == 0 {
-		return 0, 0, 0
-	}
-	rate := float64(overs) / float64(n)
-	for _, g := range gm {
-		if g.Push {
-			continue
-		}
-		y := 0.0
+		y := 0.
 		if g.Over {
 			y = 1
 		}
+		rate := prior[[2]string{g.Date, g.Stat}]
 		model += (g.POver - y) * (g.POver - y)
 		base += (rate - y) * (rate - y)
+		n++
+	}
+	if n == 0 {
+		return 0, 0, 0
 	}
 	return model / float64(n), base / float64(n), n
 }
@@ -354,6 +361,8 @@ func Skill(gm []GradedMarket) (model, base float64, n int) {
 // Cell is how one probability did on one stat when it leaned one way: every graded line where the
 // probability was above 50% (an Over lean) or below it (an Under lean).
 type Cell struct {
+	Days  int
+	Z     float64
 	Stat  string
 	Side  string  // OVER or UNDER: the side the probability leaned to
 	N     int     // graded lines (pushes left out)
@@ -370,23 +379,10 @@ func LeanCells(gm []GradedMarket, p func(GradedMarket) float64) []Cell {
 	type acc struct {
 		n, hit      int
 		brier, base float64
+		daySum      map[string]float64
+		dayN        map[string]int
 	}
-	overRate := map[string]float64{}
-	{
-		n, over := map[string]int{}, map[string]int{}
-		for _, g := range gm {
-			if g.Push || p(g) <= 0 {
-				continue
-			}
-			n[g.Stat]++
-			if g.Over {
-				over[g.Stat]++
-			}
-		}
-		for st, c := range n {
-			overRate[st] = float64(over[st]) / float64(c)
-		}
-	}
+	prior := priorRates(gm)
 	cells := map[[2]string]*acc{}
 	for _, g := range gm {
 		pv := p(g)
@@ -399,7 +395,7 @@ func LeanCells(gm []GradedMarket, p func(GradedMarket) float64) []Cell {
 		}
 		a := cells[[2]string{g.Stat, side}]
 		if a == nil {
-			a = &acc{}
+			a = &acc{daySum: map[string]float64{}, dayN: map[string]int{}}
 			cells[[2]string{g.Stat, side}] = a
 		}
 		y := 0.0
@@ -411,14 +407,29 @@ func LeanCells(gm []GradedMarket, p func(GradedMarket) float64) []Cell {
 			a.hit++
 		}
 		a.brier += (pv - y) * (pv - y)
-		a.base += (overRate[g.Stat] - y) * (overRate[g.Stat] - y)
+		baseLoss := (prior[[2]string{g.Date, g.Stat}] - y) * (prior[[2]string{g.Date, g.Stat}] - y)
+		a.base += baseLoss
+		a.daySum[g.Date] += baseLoss - (pv-y)*(pv-y)
+		a.dayN[g.Date]++
 	}
 	var out []Cell
 	for _, st := range data.Stats {
 		for _, side := range []string{"OVER", "UNDER"} {
 			if a := cells[[2]string{string(st), side}]; a != nil && a.n > 0 {
 				n := float64(a.n)
-				out = append(out, Cell{Stat: string(st), Side: side, N: a.n, Hit: float64(a.hit) / n, Brier: a.brier / n, Base: a.base / n})
+				mean := (a.base - a.brier) / n
+				var ss, z float64
+				for day, sum := range a.daySum {
+					v := sum - mean*float64(a.dayN[day])
+					ss += v * v
+				}
+				if days := float64(len(a.daySum)); days > 1 {
+					se := math.Sqrt(days/(days-1)*ss) / n
+					if se > 0 {
+						z = mean / se
+					}
+				}
+				out = append(out, Cell{Days: len(a.daySum), Z: z, Stat: string(st), Side: side, N: a.n, Hit: float64(a.hit) / n, Brier: a.brier / n, Base: a.base / n})
 			}
 		}
 	}

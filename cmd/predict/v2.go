@@ -94,7 +94,7 @@ func fitV2(entries []projlog.Entry, before string, actual func(gameID, playerID 
 	sumAct := map[data.Stat]float64{}
 	sumLine := map[data.Stat]float64{}
 	for _, e := range entries {
-		if e.Date >= before || e.ProjMin <= 0 {
+		if e.AuditVersion < 2 || e.Date >= before || e.ProjMin <= 0 {
 			continue
 		}
 		pg, ok := actual(e.GameID, e.PlayerID)
@@ -250,7 +250,7 @@ func v2Entries(date string, plays []scored, tier string) []picklog.Entry {
 		out = append(out, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: t, Why: s.Why, Tip: s.Tip, Dist: s.Dist,
+			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: t, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion,
 		})
 	}
 	return out
@@ -350,6 +350,8 @@ func v2Score(s scored, baseWhy string, pred predictor.Pred, l props.Line, f v2Fi
 type V2Gate struct {
 	Stat   string  `json:"stat"`
 	Side   string  `json:"side"`
+	Days   int     `json:"days"`
+	Z      float64 `json:"z"`
 	N      int     `json:"n"`
 	Hit    float64 `json:"hit"`
 	Brier  float64 `json:"brier"`
@@ -373,12 +375,16 @@ func gateKey(stat, side string) string { return stat + "|" + side }
 func v2Gates(cells []lineslog.Cell, minN int) map[string]V2Gate {
 	out := map[string]V2Gate{}
 	for _, c := range cells {
-		g := V2Gate{Stat: c.Stat, Side: c.Side, N: c.N, Hit: c.Hit, Brier: c.Brier, Base: c.Base}
+		g := V2Gate{Stat: c.Stat, Side: c.Side, N: c.N, Hit: c.Hit, Brier: c.Brier, Base: c.Base, Days: c.Days, Z: c.Z}
 		switch {
 		case c.N < minN:
 			g.State, g.Reason = gateUnproven, fmt.Sprintf("%d of %d graded lines", c.N, minN)
-		case c.Brier < c.Base && c.Hit >= 0.5:
+		case c.Days < 20:
+			g.State, g.Reason = gateUnproven, fmt.Sprintf("only %d independent dates; need 20", c.Days)
+		case c.Brier < c.Base && c.Hit >= 0.5 && c.Z >= 2:
 			g.State, g.Reason = gateProven, fmt.Sprintf("beats the base rate (%.3f against %.3f) and %.0f%% of leans were right", c.Brier, c.Base, 100*c.Hit)
+		case c.Brier < c.Base && c.Hit >= 0.5:
+			g.State, g.Reason = gateUnproven, fmt.Sprintf("date-clustered gain is not clear (z %.2f)", c.Z)
 		default:
 			g.State, g.Reason = gateFailed, fmt.Sprintf("does not beat the base rate (%.3f against %.3f); %.0f%% of leans were right", c.Brier, c.Base, 100*c.Hit)
 		}

@@ -8,21 +8,26 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"propsmodel/internal/data"
+	"propsmodel/internal/marketperiod"
 )
 
 // Line is one sportsbook over/under line for one player and stat.
 type Line struct {
-	GameID    int
-	PlayerID  int
-	Vendor    string
-	Stat      data.Stat
-	Line      float64
-	OverOdds  int // American odds, 0 if unknown
-	UnderOdds int
-	UpdatedAt string
-	Row       int // which response row of the snapshot file the line came from (LoadAllLines only)
+	CapturedAt    string
+	QuoteVerified bool
+	Period        string
+	GameID        int
+	PlayerID      int
+	Vendor        string
+	Stat          data.Stat
+	Line          float64
+	OverOdds      int // American odds, 0 if unknown
+	UnderOdds     int
+	UpdatedAt     string
+	Row           int // which response row of the snapshot file the line came from (LoadAllLines only)
 }
 
 type apiProp struct {
@@ -85,13 +90,24 @@ func ParseCombos(body json.RawMessage, fallbackGame int) []Line {
 
 func parseResponse(body json.RawMessage, fallbackGame int, combos bool) []Line {
 	var resp struct {
-		Data []apiProp `json:"data"`
+		Data []json.RawMessage `json:"data"`
 	}
 	if json.Unmarshal(body, &resp) != nil {
 		return nil
 	}
 	var out []Line
-	for _, p := range resp.Data {
+	for _, raw := range resp.Data {
+		var p apiProp
+		if json.Unmarshal(raw, &p) != nil || !marketperiod.Metadata(raw) {
+			continue
+		}
+		var meta struct {
+			Market json.RawMessage `json:"market"`
+		}
+		if json.Unmarshal(raw, &meta) != nil || !marketperiod.Metadata(meta.Market) {
+			continue
+		}
+
 		stat, ok := statFor(p.PropType)
 		if !ok || stat.IsCombo() != combos {
 			continue
@@ -101,7 +117,7 @@ func parseResponse(body json.RawMessage, fallbackGame int, combos bool) []Line {
 			continue
 		}
 		line, ok := parseFloatRaw(p.LineValue)
-		if !ok || p.PlayerID == 0 {
+		if !ok || p.PlayerID == 0 || line < 0 || math.IsNaN(line) || math.IsInf(line, 0) {
 			continue
 		}
 		game := p.GameID
@@ -109,6 +125,7 @@ func parseResponse(body json.RawMessage, fallbackGame int, combos bool) []Line {
 			game = fallbackGame
 		}
 		out = append(out, Line{
+			Period: "game", QuoteVerified: ValidOdds(p.Market.OverOdds) && ValidOdds(p.Market.UnderOdds),
 			GameID:    game,
 			PlayerID:  p.PlayerID,
 			Vendor:    p.Vendor,
@@ -179,12 +196,27 @@ func LoadSnapshot(path string) ([]Line, error) { return loadSnapshot(path, false
 func LoadSnapshotCombos(path string) ([]Line, error) { return loadSnapshot(path, true) }
 
 func loadSnapshot(path string, combos bool) ([]Line, error) {
+	return loadSnapshotPolicy(path, combos, false, time.Time{}, 0)
+}
+
+// LoadPregameSnapshot selects only timestamped, paired captures strictly before tip.
+// A zero asOf selects the latest historical pre-tip capture, never a live line.
+func LoadPregameSnapshot(path string, combos bool, asOf time.Time, maxAge time.Duration) ([]Line, error) {
+	return loadSnapshotPolicy(path, combos, true, asOf, maxAge)
+}
+
+func loadSnapshotPolicy(path string, combos, strict bool, asOf time.Time, maxAge time.Duration) ([]Line, error) {
+	games, err := LoadGames(path)
+	if err != nil {
+		return nil, err
+	}
 	latest := map[lineKey]Line{}
 	var order []lineKey
-	err := readLines(path, func(b []byte) {
+	err = readLines(path, func(b []byte) {
 		var row struct {
-			GameID   int             `json:"game_id"`
-			Response json.RawMessage `json:"response"`
+			CapturedAt string          `json:"captured_at"`
+			GameID     int             `json:"game_id"`
+			Response   json.RawMessage `json:"response"`
 		}
 		if json.Unmarshal(b, &row) != nil {
 			return
@@ -192,6 +224,24 @@ func loadSnapshot(path string, combos bool) ([]Line, error) {
 		inRow := map[lineKey][]Line{}
 		var rowOrder []lineKey
 		for _, l := range parseResponse(row.Response, row.GameID, combos) {
+			l.CapturedAt = row.CapturedAt
+			captured, ec := time.Parse(time.RFC3339, row.CapturedAt)
+			tip, et := time.Parse(time.RFC3339, games[l.GameID].Start)
+			if ec == nil && et == nil && !captured.Before(tip) {
+				continue
+			}
+			if strict {
+				if ec != nil || et != nil || !l.QuoteVerified || (!asOf.IsZero() && captured.After(asOf)) {
+					continue
+				}
+				updated, eu := time.Parse(time.RFC3339, l.UpdatedAt)
+				if eu != nil || !updated.Before(tip) || updated.After(captured.Add(2*time.Minute)) {
+					continue
+				}
+				if maxAge > 0 && captured.Sub(updated) > maxAge {
+					continue
+				}
+			}
 			k := lineKey{l.GameID, l.PlayerID, l.Vendor, l.Stat}
 			if _, seen := inRow[k]; !seen {
 				rowOrder = append(rowOrder, k)
@@ -202,7 +252,15 @@ func loadSnapshot(path string, combos bool) ([]Line, error) {
 			if _, seen := latest[k]; !seen {
 				order = append(order, k)
 			}
-			latest[k] = mainLine(inRow[k])
+			chosen := mainLine(inRow[k])
+			if prev, exists := latest[k]; exists {
+				before, eb := time.Parse(time.RFC3339, prev.CapturedAt)
+				after, ea := time.Parse(time.RFC3339, chosen.CapturedAt)
+				if eb == nil && ea == nil && after.Before(before) {
+					continue
+				}
+			}
+			latest[k] = chosen
 		}
 	})
 	if err != nil {

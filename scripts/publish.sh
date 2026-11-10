@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
-# Writes the website data from your logs and pushes it, which triggers the GitHub Pages build.
-#   ./scripts/publish.sh [YYYY-MM-DD]
+# Publish authoritative saved state. Source/data pushes trigger the site workflow.
 set -euo pipefail
 if [ "${1:-}" != "" ]; then go run ./cmd/export -date "$1"; else go run ./cmd/export; fi
-git add site/public/data/picks.json
-if git diff --cached --quiet; then echo "No changes to publish."; exit 0; fi
-git commit -m "Update picks $(date '+%Y-%m-%d %H:%M')"
-git push
-echo "Pushed. The site updates in about a minute (see the Actions tab)."
+branch=$(git branch --show-current)
+[ -n "$branch" ] || { echo "Check out your branch before publishing."; exit 1; }
+python3 scripts/sync_state.py --branch "$branch" --message "Publish saved records"
+echo "Saved records synchronized. New commits trigger the site workflow on the default branch."

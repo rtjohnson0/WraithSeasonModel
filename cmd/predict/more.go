@@ -132,7 +132,7 @@ func writeMore(dir, date string, extra []scored, ctx []GameCtx, moves map[string
 		f.Plays = append(f.Plays, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor,
-			Prob: s.Prob, ProbRaw: s.ProbRaw, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Tier: "LEAN", Why: s.Why, Tip: s.Tip, Dist: s.Dist,
+			Prob: s.Prob, ProbRaw: s.ProbRaw, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Tier: "LEAN", Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion,
 		})
 	}
 	b, err := json.MarshalIndent(f, "", " ")

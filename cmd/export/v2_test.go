@@ -17,10 +17,10 @@ func TestBuildV2(t *testing.T) {
 	f := v2File{
 		Date: "2026-10-28",
 		Plays: []picklog.Entry{
-			{Date: "2026-10-28", GameID: 1, PlayerID: 5, Player: "A", Team: "ATL", Matchup: "MIA @ ATL", Stat: "points", Side: "OVER", Line: 20.5, Odds: -110, Prob: 0.57, Edge: 0.04, Tier: "PAPER"},
+			{AuditVersion: 2, Date: "2026-10-28", GameID: 1, PlayerID: 5, Player: "A", Team: "ATL", Matchup: "MIA @ ATL", Stat: "points", Side: "OVER", Line: 20.5, Odds: -110, Prob: 0.57, Edge: 0.04, Tier: "PAPER"},
 		},
 		Combos: []picklog.Entry{
-			{Date: "2026-10-28", GameID: 1, PlayerID: 6, Player: "B", Team: "MIA", Matchup: "MIA @ ATL", Stat: "pra", Side: "UNDER", Line: 30.5, Odds: -110, Prob: 0.54, Edge: 0.02, Tier: "COMBO"},
+			{AuditVersion: 2, Date: "2026-10-28", GameID: 1, PlayerID: 6, Player: "B", Team: "MIA", Matchup: "MIA @ ATL", Stat: "pra", Side: "UNDER", Line: 30.5, Odds: -110, Prob: 0.54, Edge: 0.02, Tier: "COMBO"},
 		},
 		Info: &V2Info{Weight: 0.5, MinShift: 0.4},
 	}
@@ -57,8 +57,8 @@ func TestBuildV2(t *testing.T) {
 
 func TestBuildV2TiersOversAndRecordRows(t *testing.T) {
 	dir := t.TempDir()
-	strong := picklog.Entry{Date: "2026-10-28", GameID: 1, PlayerID: 5, Player: "A", Team: "ATL", Matchup: "MIA @ ATL", Stat: "rebounds", Side: "UNDER", Line: 8.5, Odds: -110, Prob: 0.60, Edge: 0.06, Tier: "STRONG"}
-	lean := picklog.Entry{Date: "2026-10-28", GameID: 1, PlayerID: 7, Player: "C", Team: "ATL", Matchup: "MIA @ ATL", Stat: "points", Side: "OVER", Line: 18.5, Odds: -110, Prob: 0.56, Edge: 0.03, Tier: "V2LEAN"}
+	strong := picklog.Entry{AuditVersion: 2, Date: "2026-10-28", GameID: 1, PlayerID: 5, Player: "A", Team: "ATL", Matchup: "MIA @ ATL", Stat: "rebounds", Side: "UNDER", Line: 8.5, Odds: -110, Prob: 0.60, Edge: 0.06, Tier: "STRONG"}
+	lean := picklog.Entry{AuditVersion: 2, Date: "2026-10-28", GameID: 1, PlayerID: 7, Player: "C", Team: "ATL", Matchup: "MIA @ ATL", Stat: "points", Side: "OVER", Line: 18.5, Odds: -110, Prob: 0.56, Edge: 0.03, Tier: "V2LEAN"}
 	f := v2File{Date: "2026-10-28", Plays: []picklog.Entry{lean, strong},
 		Overs: []OverWatch{{GameID: 1, Player: "D", Stat: "assists", Line: 5.5, Prob: 0.53, Status: "model gives it 53%; a pick needs 55%"}},
 		Info:  &V2Info{Strong: 1, Lean: 1}}

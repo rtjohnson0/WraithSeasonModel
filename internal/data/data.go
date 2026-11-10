@@ -180,6 +180,7 @@ func ParseMinutes(raw json.RawMessage) float64 {
 }
 
 type rawStat struct {
+	Period *int            `json:"period"`
 	Min    json.RawMessage `json:"min"`
 	Pts    *float64        `json:"pts"`
 	Reb    *float64        `json:"reb"`
@@ -201,6 +202,7 @@ type rawStat struct {
 		Abbr string `json:"abbreviation"`
 	} `json:"team"`
 	Game struct {
+		Status        string `json:"status"`
 		ID            int    `json:"id"`
 		Date          string `json:"date"`
 		Season        int    `json:"season"`
@@ -230,6 +232,12 @@ func LoadStatsFile(path string) ([]PlayerGame, error) {
 	for sc.Scan() {
 		var r rawStat
 		if json.Unmarshal(sc.Bytes(), &r) != nil {
+			continue
+		}
+		if r.Period != nil && *r.Period != 0 {
+			continue
+		}
+		if r.Game.Status != "" && !strings.EqualFold(strings.TrimSpace(r.Game.Status), "Final") {
 			continue
 		}
 		mins := ParseMinutes(r.Min)

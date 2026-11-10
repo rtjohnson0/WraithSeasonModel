@@ -91,6 +91,13 @@ func buildV2(dir string, form Form) *V2Site {
 		return nil
 	}
 	settled, _ := picklog.LoadSettled(filepath.Join(dir, "v2settled.jsonl"))
+	var verified []picklog.Settled
+	for _, r := range settled {
+		if r.Verified() {
+			verified = append(verified, r)
+		}
+	}
+	settled = verified
 	var singles, combos []picklog.Settled
 	for _, s := range settled {
 		if data.Stat(s.Stat).IsCombo() {
@@ -105,6 +112,7 @@ func buildV2(dir string, form Form) *V2Site {
 		Combos: buildComboRecord(combos, 120),
 		Info:   f.Info,
 	}
+	site.Record.ProvenanceNote = "Verified pregame quotes only. V2 remains an experimental model."
 	site.Board.Overs = f.Overs
 	if site.Info != nil && site.Info.Gates == nil {
 		site.Info.Gates = []V2Gate{} // the page reads it as a list
