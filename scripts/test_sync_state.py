@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from sync_state import merge_jsonl, sync
+from sync_state import merge_jsonl, sync, is_input
 
 
 def run(cwd, *args):
@@ -19,6 +19,25 @@ def line(pid, **kwargs):
 
 
 class MergeTests(unittest.TestCase):
+    def test_input_identity_and_latest_local_correction(self):
+        name = 'data/stats_2026.jsonl'
+        a = dict(player={'id': 7}, game={'id': 1}, pts=10)
+        fixed = dict(a, pts=12)
+        b = dict(player={'id': 8}, game={'id': 1}, pts=20)
+        text = lambda rows: ''.join(json.dumps(r)+'\n' for r in rows)
+        result = [json.loads(x) for x in merge_jsonl(name, text([a]),
+                  text([a, fixed, b]), text([a])).splitlines()]
+        self.assertEqual({r['player']['id']: r['pts'] for r in result}, {7:12,8:20})
+        # A partial advanced-stat row cannot replace the full-game row.
+        result = merge_jsonl('data/advanced_2026.jsonl', '',
+                 text([dict(a, period=0), dict(a, period=1)]), '')
+        self.assertEqual(len(result.splitlines()), 2)
+        self.assertFalse(is_input('data/.env'))
+        self.assertFalse(is_input('scripts/private.jsonl'))
+        with self.assertRaises(ValueError):
+            merge_jsonl(name, '', '{"pts":1}\n', '')
+
+
     def test_union_and_remote_correction(self):
         base = line(1, result='LOSS')
         ours = base + line(2)
@@ -50,16 +69,21 @@ class MergeTests(unittest.TestCase):
             (bot/'data/picklog.jsonl').write_text(line(1))
             (bot/'data/model.json').write_text('{"version":3}\n')
             (bot/'data/calibration.json').write_text('{"config":"old"}\n')
+            stat = lambda pid, pts: json.dumps(dict(player={'id':pid}, game={'id':9}, pts=pts))+'\n'
+            (bot/'data/stats_2026.jsonl').write_text(stat(1,10))
             run(bot,'add','.');run(bot,'commit','-m','base');run(bot,'push','-u','origin','main')
             run(root,'clone','-b','main',str(remote),str(user))
             run(user,'config','user.email','test@example.invalid');run(user,'config','user.name','Test')
             (user/'data/picklog.jsonl').write_text(line(1)+line(3))
             (user/'README.md').write_text('new source\n')
+            (user/'data/stats_2026.jsonl').write_text(stat(1,12)+stat(3,30))
             (user/'data/model.json').write_text('{"version":4}\n')
             (user/'data/calibration.json').write_text('{"config":"new"}\n')
             run(user,'add','.');run(user,'commit','-m','upstream');run(user,'push')
             (bot/'data/picklog.jsonl').write_text(line(1)+line(2))
             (bot/'data/calibration.json').write_text('{"config":"concurrent-old-model"}\n')
+            (bot/'data/stats_2026.jsonl').write_text(stat(1,11)+stat(2,20))
+            (bot/'data/stats_2027.jsonl').write_text(stat(4,40))
             # Reject once, as a protected branch race/transient push failure would.
             hook=remote/'hooks/pre-receive'
             hook.write_text('#!/bin/sh\nif [ ! -f rejected-once ]; then touch rejected-once; exit 1; fi\nexit 0\n')
@@ -74,6 +98,10 @@ class MergeTests(unittest.TestCase):
             records=[json.loads(x) for x in (bot/'data/picklog.jsonl').read_text().splitlines()]
             self.assertEqual({r['player_id'] for r in records},{1,2,3})
             self.assertEqual(json.loads((bot/'data/calibration.json').read_text())['config'],'new')
+            stats=[json.loads(x) for x in (bot/'data/stats_2026.jsonl').read_text().splitlines()]
+            self.assertEqual({r['player']['id']:r['pts'] for r in stats},{1:12,2:20,3:30})
+            self.assertEqual(run(bot,'diff','--name-only'),'')
+            self.assertEqual(run(bot,'ls-files','--','data/stats_2027.jsonl'),'')
             self.assertEqual(run(bot,'rev-parse','HEAD'),run(bot,'rev-parse','origin/main'))
             self.assertFalse(run(bot,'diff','--name-only','--diff-filter=U'))
 

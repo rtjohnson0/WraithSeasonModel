@@ -7,6 +7,7 @@ Unrelated source conflicts stop with the merge aborted; generated commits remain
 import argparse
 import json
 import os
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -36,7 +37,30 @@ def blob(ref, name):
     return None if result.returncode else result.stdout
 
 
+def is_input(name):
+    # Some existing checkouts already track cached API inputs. Preserve those
+    # updates, but do not force-add new raw downloads to the repository.
+    return bool(re.fullmatch(
+        r'data/(?:stats_\d+\.jsonl|advanced_\d+\.jsonl|players_active\.jsonl|'
+        r'opening_(?:props|games|odds)_\d+\.jsonl|snapshots/[^\n]+\.jsonl)', name))
+
+
 def record_key(name, row):
+    if is_input(name):
+        if name.startswith(('data/stats_', 'data/advanced_')):
+            player = row.get('player_id', (row.get('player') or {}).get('id'))
+            game = row.get('game_id', (row.get('game') or {}).get('id'))
+            if player is None or game is None:
+                raise ValueError(f'{name}: input row needs player and game identifiers')
+            return (player, game, row.get('period', 0))
+        if name == 'data/players_active.jsonl':
+            if row.get('id') is None:
+                raise ValueError(f'{name}: player row needs an id')
+            return row['id']
+        # Snapshot/opening rows can hold a whole response. Keep distinct captures
+        # intact rather than applying the pick-log identity to unrelated rows.
+        return json.dumps(row, sort_keys=True, separators=(',', ':'))
+
     if name.endswith('projlog.jsonl') or '/lines/market_' in name:
         return (row.get('date'), row.get('game_id', row.get('game')),
                 row.get('player_id', row.get('pid')), row.get('stat'))
@@ -59,7 +83,7 @@ def records(name, content):
             raise ValueError(f'{name}: expected a JSON object')
         key = record_key(name, row)
         prev = result.get(key)
-        if prev is None:
+        if prev is None or is_input(name):
             result[key] = row
         elif name.endswith('projlog.jsonl') or '/lines/market_' in name:
             if row.get('at', '') >= prev.get('at', ''):
@@ -98,11 +122,12 @@ def state_paths():
     names = {'data/' + x for x in STATE_FILES}
     names.update(str(p).replace(os.sep, '/') for p in Path('data/lines').glob('*.jsonl'))
     names.update(str(p).replace(os.sep, '/') for p in Path('data/quarter_games').glob('*.json'))
+    names.update(p for p in git('ls-files', '-z', '--', 'data').stdout.split('\0') if is_input(p))
     return sorted(names)
 
 
 def is_state(name):
-    return name in {'data/' + x for x in STATE_FILES} or (
+    return is_input(name) or name in {'data/' + x for x in STATE_FILES} or (
         name.startswith('data/lines/') and name.endswith('.jsonl')) or (
         name.startswith('data/quarter_games/') and name.endswith('.json'))
 

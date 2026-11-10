@@ -339,3 +339,24 @@ and regression checks; live coverage depends on the account's endpoint access.
 Both daily and pretip wrappers now call the quarter command automatically.
 For an immediate Windows refresh, run `scripts/pretip.ps1`, then export and
 push. New quarter data needs a first download, but no full-game model retrain.
+
+
+## Daily sync fix for previously tracked downloaded inputs
+
+Some older checkouts track `data/stats_2026.jsonl` despite the ignore rule.
+Daily refreshed that file, but the state synchronizer only staged prediction
+outputs and then stopped on the remaining tracked change. The synchronizer
+now includes already tracked stats, advanced stats, active-player lists,
+opening lines and snapshot JSONL inputs. New untracked downloads remain out of
+Git. Concurrent stats edits merge by player/game/period identity; distinct
+players cannot collapse under the pick-log key, and the last row in a local
+input file wins before the three-way merge. Concurrent remote corrections
+retain priority, with deliberate deletions still respected. Unknown source
+changes continue to stop synchronization.
+
+A local bare-remote regression reproduces tracked stats updates, concurrent
+source and model changes, conflicting stats corrections, new player rows and
+a rejected first push. It verifies a clean tracked worktree, all player rows,
+remote corrections and successful retry without adding untracked raw inputs.
+After pushing this script, start a new Daily workflow run on the updated
+branch; rerunning the old failed job uses its original source revision.
