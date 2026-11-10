@@ -46,3 +46,5 @@ __pycache__/
 !data/side_audit.json
 # Local audit evidence and recovery bundle; keep it out of source pushes.
 audit_findings/
+
+!data/accuracy.json

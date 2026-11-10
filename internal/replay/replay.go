@@ -67,23 +67,26 @@ func (r Row) Features() *feat.Row {
 }
 
 type Record struct {
-	Date      string                `json:"date"`
-	At        string                `json:"at"`
-	Tip       string                `json:"tip"`
-	ModelID   string                `json:"model_id"`
-	Row       Row                   `json:"row"`
-	Policy    predictor.Adjustments `json:"policy"`
-	Cal       eval.Cal              `json:"cal"`
-	Stat      data.Stat             `json:"stat"`
-	Line      float64               `json:"line"`
-	Book      string                `json:"book"`
-	QuoteAt   string                `json:"quote_at"`
-	UpdatedAt string                `json:"updated_at"`
-	OverOdds  int                   `json:"over_odds"`
-	UnderOdds int                   `json:"under_odds"`
-	Market    float64               `json:"market"`
-	P1        float64               `json:"p1"`
-	P2        float64               `json:"p2,omitempty"`
+	Period            string                `json:"period,omitempty"`
+	BookCount         int                   `json:"book_count,omitempty"`
+	CalibrationBefore string                `json:"calibration_before,omitempty"`
+	Date              string                `json:"date"`
+	At                string                `json:"at"`
+	Tip               string                `json:"tip"`
+	ModelID           string                `json:"model_id"`
+	Row               Row                   `json:"row"`
+	Policy            predictor.Adjustments `json:"policy"`
+	Cal               eval.Cal              `json:"cal"`
+	Stat              data.Stat             `json:"stat"`
+	Line              float64               `json:"line"`
+	Book              string                `json:"book"`
+	QuoteAt           string                `json:"quote_at"`
+	UpdatedAt         string                `json:"updated_at"`
+	OverOdds          int                   `json:"over_odds"`
+	UnderOdds         int                   `json:"under_odds"`
+	Market            float64               `json:"market"`
+	P1                float64               `json:"p1"`
+	P2                float64               `json:"p2,omitempty"`
 }
 
 func Checkpoint(dir string, m *predictor.Model) (string, error) {

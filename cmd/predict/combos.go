@@ -152,7 +152,7 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		ls := marketLines[mk]
 		if d.observe != nil && !seen[mk] && len(ls) > 0 && l.Line == ls[len(ls)/2] {
 			seen[mk] = true
-			d.observe(lineslog.Market{Date: d.date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID,
+			d.observe(lineslog.Market{Player: d.ix.Name(l.PlayerID), TrainedBefore: d.m.TrainedBefore, QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds, Date: d.date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID,
 				Stat: string(l.Stat), Tip: g.Start, Line: l.Line, Books: len(ls), Lo: ls[0], Hi: ls[len(ls)-1], RawOver: pr.Over, MarketOver: market, POver: pOver, AuditVersion: props.QuoteVersion})
 		}
 		cs.Scored++

@@ -36,6 +36,8 @@ echo "== snapshot lines and injuries =="
 go run ./cmd/pull snapshot
 go run ./cmd/sgo snapshot || echo "sgo snapshot skipped"
 echo "== player props =="
+go run ./cmd/accuracy
+python3 scripts/accuracy_report.py
 go run ./cmd/predict
 echo "== game lines =="
 go run ./cmd/games || echo "game lines skipped"

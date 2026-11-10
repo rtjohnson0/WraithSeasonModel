@@ -14,7 +14,7 @@ import time
 from pathlib import Path
 
 STATE_FILES = [
-    'settled_audit.json', 'combosettled_audit.json', 'v2settled_audit.json', 'side_audit.json', 'quarterboard.json', 'quarterlog.jsonl', 'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
+    'settled_audit.json', 'combosettled_audit.json', 'v2settled_audit.json', 'side_audit.json', 'accuracy.json', 'quarterboard.json', 'quarterlog.jsonl', 'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
     'biasfix.json', 'minfix.json', 'wofix.json', 'runs.jsonl', 'more.json',
     'projlog.jsonl', 'model.json', 'combolog.jsonl', 'combosettled.jsonl',
     'combocorr.json', 'v2log.jsonl', 'v2settled.jsonl', 'v2.json', 'model_v2.json',
@@ -215,7 +215,7 @@ def sync(branch, message, attempts=5, delay=2):
                 else:
                     # Remote explicitly changed configuration; keep that change.
                     content = upstream
-                    if (name.startswith('data/quarter_games/') or name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json', 'data/side_audit.json', 'data/quarterboard.json', 'data/gameboard.json', 'data/board.json', 'data/more.json', 'data/v2.json'}) and local and upstream:
+                    if (name.startswith('data/quarter_games/') or name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json', 'data/side_audit.json', 'data/accuracy.json', 'data/quarterboard.json', 'data/gameboard.json', 'data/board.json', 'data/more.json', 'data/v2.json'}) and local and upstream:
                         a, b = json.loads(local), json.loads(upstream)
                         if a.get('at', '') > b.get('at', ''):
                             content = local

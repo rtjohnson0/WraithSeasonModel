@@ -525,3 +525,6 @@ Published plays remain visible for their slate after their price expires or the 
 Source-only pushes preserve saved board state. If an older checkout has no board snapshot, the workflow runs pretip once to create one before deploying. Missing state cannot silently overwrite the site with an empty export. Synchronization selects board/more/v2 as a single run bundle. Audits and detailed diagnostics remain offline in audit_findings and workflow artifacts, rather than public pages.
 
 After installing this update, run the GitHub workflow in pretip mode once to refresh the saved slate and prices. No retraining is needed for these display and publishing fixes.
+
+## Forward accuracy and launch controls
+See LAUNCH_ACCURACY.md for the new evaluation, minutes sensitivity checks and experiments, separate stat/side evidence, market benchmarks, and stricter direct combo calibration. Unproven props remain visible as research/paper plays; missing forward evidence cannot earn a staked PICK. No unsupported improvement or launch hit rate is claimed.

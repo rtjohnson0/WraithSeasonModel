@@ -33,32 +33,37 @@ import (
 
 // Market is one player's stat for one day at the market's median line.
 type Market struct {
-	ModelVersion int     `json:"model_version,omitempty"`
-	Config       string  `json:"config,omitempty"`
-	AuditVersion int     `json:"audit_version,omitempty"`
-	Date         string  `json:"date"`
-	At           string  `json:"at"` // when the run that wrote it happened (RFC 3339)
-	GameID       int     `json:"game"`
-	PlayerID     int     `json:"pid"`
-	Player       string  `json:"player"`
-	Team         string  `json:"team"`
-	Stat         string  `json:"stat"`
-	Tip          string  `json:"tip,omitempty"`
-	Line         float64 `json:"line"` // median across books
-	Books        int     `json:"books"`
-	Lo           float64 `json:"lo"` // lowest and highest line any book listed
-	Hi           float64 `json:"hi"`
-	Open         float64 `json:"open,omitempty"` // the median at the day's first capture (0 when unknown)
-	RawOver      float64 `json:"raw_over,omitempty"`
-	MarketOver   float64 `json:"market_over,omitempty"`
-	POver        float64 `json:"p_over"`       // the model's calibrated P(over) at the median line
-	P2           float64 `json:"p2,omitempty"` // the V2 challenger's blended P(over) at the same line (0 when V2 did not score it)
-	Proj         float64 `json:"proj"`
-	ProjMin      float64 `json:"proj_min"`
-	Shift        float64 `json:"shift"` // projected minutes minus his normal minutes
-	TeamOut      int     `json:"team_out"`
-	OppOut       int     `json:"opp_out"`
-	B2B          bool    `json:"b2b,omitempty"`
+	TrainedBefore string  `json:"trained_before,omitempty"`
+	QuoteAt       string  `json:"quote_at,omitempty"`
+	UpdatedAt     string  `json:"updated_at,omitempty"`
+	OverOdds      int     `json:"over_odds,omitempty"`
+	UnderOdds     int     `json:"under_odds,omitempty"`
+	ModelVersion  int     `json:"model_version,omitempty"`
+	Config        string  `json:"config,omitempty"`
+	AuditVersion  int     `json:"audit_version,omitempty"`
+	Date          string  `json:"date"`
+	At            string  `json:"at"` // when the run that wrote it happened (RFC 3339)
+	GameID        int     `json:"game"`
+	PlayerID      int     `json:"pid"`
+	Player        string  `json:"player"`
+	Team          string  `json:"team"`
+	Stat          string  `json:"stat"`
+	Tip           string  `json:"tip,omitempty"`
+	Line          float64 `json:"line"` // median across books
+	Books         int     `json:"books"`
+	Lo            float64 `json:"lo"` // lowest and highest line any book listed
+	Hi            float64 `json:"hi"`
+	Open          float64 `json:"open,omitempty"` // the median at the day's first capture (0 when unknown)
+	RawOver       float64 `json:"raw_over,omitempty"`
+	MarketOver    float64 `json:"market_over,omitempty"`
+	POver         float64 `json:"p_over"`       // the model's calibrated P(over) at the median line
+	P2            float64 `json:"p2,omitempty"` // the V2 challenger's blended P(over) at the same line (0 when V2 did not score it)
+	Proj          float64 `json:"proj"`
+	ProjMin       float64 `json:"proj_min"`
+	Shift         float64 `json:"shift"` // projected minutes minus his normal minutes
+	TeamOut       int     `json:"team_out"`
+	OppOut        int     `json:"opp_out"`
+	B2B           bool    `json:"b2b,omitempty"`
 }
 
 // Move is how far the median line travelled since the day's first capture (0 when unknown).

@@ -91,6 +91,14 @@ jobs:
           key: inputs-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: inputs-v2-${{ github.ref_name }}-
 
+      - name: Restore immutable pregame decision evidence
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        uses: actions/cache/restore@v4
+        with:
+          path: data/replay
+          key: decisions-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: decisions-v1-${{ github.ref_name }}-
+
       - name: Check API keys and trained files
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
         env:
@@ -169,8 +177,16 @@ jobs:
             data/*before-result-*
             data/exclusions.jsonl
             data/*.csv
+            data/accuracy_report.html
           retention-days: 90
           if-no-files-found: ignore
+
+      - name: Retain decision history for forward evaluation
+        if: always() && steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        uses: actions/cache/save@v4
+        with:
+          path: data/replay
+          key: decisions-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Save downloaded inputs
         if: always() && steps.mode.outputs.active == 'true'

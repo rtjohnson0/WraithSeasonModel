@@ -19,6 +19,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"propsmodel/internal/accuracy"
 	"sort"
 	"strconv"
 	"strings"
@@ -135,6 +136,7 @@ func main() {
 	maxCaptureAge := flag.Duration("maxcaptureage", 30*time.Minute, "reject snapshots older than this")
 	minMarketBooks := flag.Int("minmarketbooks", 3, "minimum distinct physical books for posting")
 	maxMarketGap := flag.Float64("maxmarketgap", 0.5, "maximum distance from the market median in stat units; outliers require confirmation")
+	launchGate := flag.Bool("evidencegate", true, "require recent verified forward evidence for a staked PICK; unproven plays remain visible as PAPER")
 	flag.Parse()
 	runAt := time.Now().UTC()
 
@@ -607,7 +609,7 @@ func main() {
 							rule = c
 						}
 					}
-					replayRows[mk] = replay.Record{Date: *date, At: runAt.Format(time.RFC3339), Tip: g.Start,
+					replayRows[mk] = replay.Record{Period: "game", BookCount: marketViews[props.MarketKey{Game: l.GameID, Player: l.PlayerID, Stat: string(l.Stat)}].Books, CalibrationBefore: cal.TrainedBefore, Date: *date, At: runAt.Format(time.RFC3339), Tip: g.Start,
 						Row: decisionIdentity(row, l.GameID, *date), Policy: policy, Cal: rule, Stat: l.Stat, Line: l.Line, Book: l.Vendor,
 						QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds,
 						Market: bets.MarketOver(l.OverOdds, l.UnderOdds), P1: pOver}
@@ -718,6 +720,18 @@ func main() {
 				s.Tier, s.Units = "PAPER", 0
 				s.Why = addWhy(s.Why, fmt.Sprintf("posted, not staked: under the %.0f%% staking bar", 100**stakeBar))
 			}
+			rule := eval.IdentityCal
+			if calOK {
+				rule = cal.Global
+				if c, ok := cal.ByStat[string(l.Stat)]; ok {
+					rule = c
+				}
+			}
+			floor := probabilityFloor(pred, l.Stat, l.Line, bets.MarketOver(l.OverOdds, l.UnderOdds), rule, s.Side)
+			if floor < .5 {
+				s.Tier, s.Units = "CHECK", 0
+				s.Why = addWhy(s.Why, fmt.Sprintf("Minutes-sensitive: the %s lean reverses within a ±4-minute scenario; confirm rotation before betting", strings.ToLower(s.Side)))
+			}
 			picks = append(picks, s)
 		}
 	}
@@ -812,6 +826,10 @@ func main() {
 		}
 	}
 
+	if *launchGate {
+		evidence, _ := accuracy.Load(filepath.Join(*dir, "accuracy.json"))
+		picks = evidenceGate(picks, evidence, *date, config, m.Version)
+	}
 	picks = bestLinePerPick(picks)
 	// CHECK and PAPER plays are capped separately so they cannot crowd real picks out of a game.
 	var firm, check []scored
@@ -1396,11 +1414,25 @@ func fillLeans(picks, all []scored, games map[int]props.GameInfo, min, perPlayer
 	return picks
 }
 
-// capCorrelated limits picks per game and per player, keeping the largest edges. Picks in the
+// capCorrelated limits picks per game and per player, keeping higher win probabilities, then edges. Picks in the
 // same game or on the same player tend to win and lose together, so posting everything
 // concentrates risk.
 func capCorrelated(picks []scored, perGame, perPlayer int) []scored {
-	sort.Slice(picks, func(i, j int) bool { return picks[i].Edge > picks[j].Edge })
+	sort.SliceStable(picks, func(i, j int) bool {
+		if picks[i].Prob != picks[j].Prob {
+			return picks[i].Prob > picks[j].Prob
+		}
+		if picks[i].Edge != picks[j].Edge {
+			return picks[i].Edge > picks[j].Edge
+		}
+		if picks[i].GameID != picks[j].GameID {
+			return picks[i].GameID < picks[j].GameID
+		}
+		if picks[i].PlayerID != picks[j].PlayerID {
+			return picks[i].PlayerID < picks[j].PlayerID
+		}
+		return picks[i].Stat < picks[j].Stat
+	})
 	games, players := map[int]int{}, map[int]int{}
 	var out []scored
 	for _, s := range picks {

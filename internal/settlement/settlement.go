@@ -382,3 +382,13 @@ func sameName(logged, source string) bool {
 	}
 	return utf8.Valid(bytes) && norm(string(bytes)) == norm(source)
 }
+
+// ActualMinutes returns participation only after the exact requested stat and
+// identity have passed the same final-source checks used for settlement.
+func (ix *Index) ActualMinutes(e picklog.Entry) (float64, bool) {
+	s := ix.Grade(e, 0)
+	if s.Result == "REVIEW" {
+		return 0, false
+	}
+	return data.ParseMinutes(ix.rows[key{e.GameID, e.PlayerID}].raw.Min), true
+}

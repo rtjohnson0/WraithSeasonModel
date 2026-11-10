@@ -3,6 +3,8 @@
 set -euo pipefail
 go run ./cmd/pull snapshot
 go run ./cmd/sgo snapshot || echo "sgo snapshot skipped"
+go run ./cmd/accuracy
+python3 scripts/accuracy_report.py
 go run ./cmd/predict
 go run ./cmd/games || echo "game lines skipped"
 
