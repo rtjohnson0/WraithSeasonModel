@@ -201,7 +201,11 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		if d.watch != nil {
 			w := s
 			w.Tier = "COMBOWATCH"
-			w.Why = addWhy(w.Why, "comparison only: does not imply a qualified combo pick")
+			// A watch row displays the raw simulation, never the book baseline
+			// disguised as model confidence. Qualification above/below is unchanged.
+			w.Side, w.Prob, w.ProbRaw, w.Odds = comboEstimate(pr.Over, l.OverOdds, l.UnderOdds)
+			w.Edge = bets.Edge(w.Prob, w.Odds)
+			w.Why = addWhy(strings.Join(parts, "; "), "uncalibrated combo simulation; comparison estimate, not a qualified pick")
 			*d.watch = append(*d.watch, w)
 		}
 		if !s.Far && (pOver >= d.hi || pOver <= 1-d.hi) && s.Edge >= d.minEdge {
@@ -322,4 +326,12 @@ func comboDisplay(picks, watch []scored) []scored {
 		}
 	}
 	return out
+}
+
+// comboEstimate keeps the raw estimate, displayed side and exact price aligned.
+func comboEstimate(pOver float64, overOdds, underOdds int) (string, float64, float64, int) {
+	if pOver < .5 {
+		return "UNDER", 1 - pOver, 1 - pOver, underOdds
+	}
+	return "OVER", pOver, pOver, overOdds
 }

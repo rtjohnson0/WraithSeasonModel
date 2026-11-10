@@ -533,3 +533,10 @@ See LAUNCH_ACCURACY.md for the new evaluation, minutes sensitivity checks and ex
 All play rows use compact clickable summaries. The prop form, minutes and probability graphs stay in their expanded breakdown; combos and 1Q rows also expand on click. Quote age no longer crosses out a pick. Historical results display automatically with their charts; no archive checkbox or public unverified label is required. Historical totals stay separate from the validation used to qualify current picks. V2 history now uses its own archive instead of inheriting the primary model's archive.
 
 Moneyline headings show the likely winner, not the largest underdog payout. Prices are evaluated separately using the selected book's exact odds; the default compares books for the predicted side instead of taking the first feed entry. The OKC 55.9% / -120 example correctly clears 54.5% break-even. These display fixes do not change the underlying win probabilities or manufacture an available -120 quote.
+
+## Combo estimates, game leans and expandable controls
+Combo comparison rows now display the raw simulation probability to one decimal, labeled Model estimate; symmetric book prices are no longer displayed as if they were a 50% model forecast. The side and exact price are switched together when the simulation favors the opposite direction. This does not qualify or log comparison rows as combo picks.
+
+Default per-game coverage is two positive-edge leans when stronger props are unavailable. Bad lines and uncertain player status are excluded from these additions; no negative/zero-edge line is forced. Leans remain visible in the exact board snapshot but are not added to the permanent primary pick log. On existing publications, a game with no main picks automatically shows its available extra leans. Qualified picks keep the existing thresholds.
+
+Click targets show a View analysis label, chevron and hover/focus styling. Full analysis and graphs remain inside the dropdown. See audit_findings/under_selection_findings.md for the limits of the under-bias diagnosis from the supplied saved data; no validated numerical repair of the model's under bias is claimed.

@@ -55,3 +55,12 @@ func TestPartialGameCannotEnterPublishedFullGameBoard(t *testing.T) {
 		t.Fatal("period lost in export")
 	}
 }
+
+func TestCurrentSnapshotDisplaysLeansEvenWhenRunLogOnlyTracksPicks(t *testing.T) {
+	e := picklog.Entry{Date: "2026-11-10", Period: "game", GameID: 9, PlayerID: 7, Player: "P", Stat: "points", Side: "OVER", Line: 20.5, Odds: -110, Prob: .54, Edge: .016, Tier: "LEAN"}
+	snap := &boardstate.Snapshot{Date: e.Date, Plays: []picklog.Entry{e}}
+	board := currentBoard(snap, e.Date, nil, []runlog.Run{{Date: e.Date, Plays: []runlog.Play{}}})
+	if board.Plays != 1 || len(board.Games) != 1 || board.Games[0].Plays[0].Tier != "LEAN" {
+		t.Fatalf("lean lost from snapshot %+v", board)
+	}
+}

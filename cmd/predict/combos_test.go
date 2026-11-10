@@ -86,3 +86,14 @@ func TestComboWatchDoesNotCreateQualifiedTracking(t *testing.T) {
 		t.Fatal("watch duplicated a qualified pick")
 	}
 }
+
+func TestWatchEstimateDoesNotReuseMarketCoinFlip(t *testing.T) {
+	side, p, raw, odds := comboEstimate(.73, -115, -105)
+	if side != "OVER" || p != .73 || raw != .73 || odds != -115 {
+		t.Fatal(side, p, raw, odds)
+	}
+	side, p, raw, odds = comboEstimate(.25, -115, -105)
+	if side != "UNDER" || p != .75 || raw != .75 || odds != -105 {
+		t.Fatal(side, p, raw, odds)
+	}
+}

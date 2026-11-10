@@ -22,7 +22,7 @@ export function explainProp(p) {
   if ((adjusted > p.line) !== (p.projStat > p.line)) sensitivity = `Minutes-sensitive: at ${num(typical)} minutes and the same projected rate, the implied total would be ${num(adjusted)}, on the other side of the line. This is a sensitivity check, not a second forecast.`
  }
  const fitted = (p.why || '').split(';').map((s) => s.trim()).filter((s) => s.startsWith('fitted defense-rate') || s.startsWith('opponent-defense rate') || s.startsWith('largest fitted minutes') || s.startsWith('injury feature policy'))
- return { decision: `${side} ${p.line} is the shown side at ${(100*p.prob).toFixed(1)}%. The final probability also reflects the book/calibration; the projection alone does not determine the bet.`, support, against, sensitivity, fitted }
+ return { decision: `${side} ${p.line} is the shown side at ${(100*p.prob).toFixed(1)}%. ${p.probabilityBasis === "estimate" ? "This is an uncalibrated simulation estimate, not a validated win probability." : "The final probability also reflects the book/calibration; the projection alone does not determine the bet."}`, support, against, sensitivity, fitted }
 }
 // Derive price math from the selected book's exact odds, never a cached label.
 export function gameSide(s) {

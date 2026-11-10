@@ -471,7 +471,7 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
 .market-expanded { padding: 4px 0 16px; }
 .market-expanded p { max-width: 85ch; }
 .market-expanded table { min-width: 570px; }
-.market-play > summary:focus-visible, .combo-summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.market-play > summary:focus-visible, .combo-summary:focus-visible { outline: 2px solid var(--purple-hi); outline-offset: 4px; }
 @media (max-width: 700px) {
  .combo-summary { grid-template-columns: minmax(0,1fr) 90px; gap: 12px; padding: 14px; }
  .combo-strip { display: none; }
@@ -480,3 +480,15 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
 }
 .quarter-play > summary { grid-template-columns: minmax(0,1fr) 100px; }
 .quarter-play > summary small { display: block; }
+
+// Interactive affordances stay visible even without hover, including on touch.
+.expand-hint { display: inline-flex; align-items: center; gap: 7px; color: #c4a6ff; font-size: 12px; font-weight: 600; margin-top: 5px; }
+.expand-hint span { font-size: 20px; line-height: 1; }
+.playbtn { transition: background .15s ease; }
+.playbtn:hover, .playbtn:focus-visible, .market-play > summary:hover, .combo-summary:hover { background: rgba(157,104,245,.09); }
+.playbtn:focus-visible { outline: 2px solid #b48aff; outline-offset: -3px; }
+.playbtn[aria-expanded="true"] { background: rgba(157,104,245,.07); }
+.market-play > summary { border: 1px solid var(--edge); border-radius: 6px; padding: 14px; }
+.market-play[open] > summary { border-color: #9367ce; }
+.market-play[open] .expand-hint > span { transform: rotate(180deg); }
+.game-leans > .small { padding: 8px 18px; margin: 0; }

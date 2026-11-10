@@ -539,7 +539,7 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 			continue
 		}
 		k := fmt.Sprintf("%d|%s|%s", e.PlayerID, e.Stat, e.Side)
-		if live != nil && !live[k] {
+		if live != nil && !live[k] && e.Tier != "LEAN" {
 			continue
 		}
 		cur, ok := best[k]

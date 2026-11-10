@@ -100,7 +100,7 @@ func main() {
 	maxUnits := flag.Float64("maxunits", 0.5, "largest stake in units (1 unit = 1% of bankroll); the backtest edge is small, so the default is small")
 	maxGame := flag.Int("maxgame", 4, "most picks to post from any one game (picks in one game are correlated)")
 	maxPlayer := flag.Int("maxplayer", 2, "most picks to post on any one player")
-	perGame := flag.Int("pergame", 0, "make sure every game has at least this many plays; extras below the posting bar are marked LEAN, staked 0 units and not logged (0 turns this off)")
+	perGame := flag.Int("pergame", 2, "make sure every game has at least this many plays; extras below the posting bar are marked LEAN, staked 0 units and not logged (0 turns this off)")
 	maxGap := flag.Float64("maxgap", 1.0, "a line this far from the projection (as a share of max(projection, 2)) is marked CHECK, since it is more often a bad or alternate line than an edge; 0 turns the guard off")
 	maxCut := flag.Float64("maxshift", 8, "a play whose projected minutes differ from his recent average by this many or more is marked CHECK (0 units) until you confirm the minutes; 0 turns the guard off")
 	stakeStats := flag.String("stakestats", "rebounds", "stats that get a real stake; plays on other stats are tiered PAPER (0 units, still logged). Default follows the 2025 backtest: rebounds were profitable, assists lost money, points posted nothing")
@@ -1025,7 +1025,7 @@ func main() {
 		now := time.Now().UTC()
 		var current []picklog.Entry
 		for _, s := range picks {
-			if s.Tier == "LEAN" || !props.BeforeTip(s.Tip, now) {
+			if !props.BeforeTip(s.Tip, now) {
 				continue
 			}
 			current = append(current, boardEntry(*date, s, now))
@@ -1061,6 +1061,9 @@ func main() {
 		recordRun(*dir, *date, picks, all, out, *hi, *minEdge)
 		var entries []picklog.Entry
 		for _, s := range picks {
+			if s.Tier == "LEAN" {
+				continue
+			}
 			entries = append(entries, picklog.Entry{
 				Date: *date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 				Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
@@ -1397,7 +1400,7 @@ func fillLeans(picks, all []scored, games map[int]props.GameInfo, min, perPlayer
 			continue
 		}
 		k := [2]int{c.PlayerID, int(data.StatIndex(c.Stat))}
-		if used[k] || c.Edge < 0 {
+		if used[k] || c.Edge <= 0 || c.Far || c.Maybe != "" {
 			continue // a fill-in play must at least beat the price; otherwise leave the game short
 		}
 		used[k] = true

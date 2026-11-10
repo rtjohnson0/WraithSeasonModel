@@ -29,3 +29,7 @@ test('default book compares quotes for predicted winner instead of feed order',(
  const quotes=[{book:'ballybet',market:'moneyline',sides:[{label:'OKC',conditional:.559,odds:-143},{label:'POR',conditional:.441,odds:120}]},{book:'draftkings',market:'moneyline',sides:[{label:'OKC',conditional:.559,odds:-120},{label:'POR',conditional:.441,odds:100}]}]
  assert.equal(bestGameQuote({home:'POR',away:'OKC',margin:-2.1},quotes).book,'draftkings')
 })
+test('raw combo estimates are explicitly distinct from calibrated probabilities',()=>{
+ const e=explainProp({side:'OVER',period:'game',stat:'pra',line:30.5,projStat:34,prob:.637,probabilityBasis:'estimate'})
+ assert(e.decision.includes('63.7%'));assert(e.decision.includes('uncalibrated simulation'));assert(!e.decision.includes('final probability also reflects'))
+})

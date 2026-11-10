@@ -338,6 +338,7 @@ function PlayRow({ p, focus, started }) {
           <span className={`tier ${info.key}`} title={info.note}>
             {p.label}
           </span>
+          <span className="expand-hint">{open ? 'Hide analysis' : 'View analysis'} <span aria-hidden="true">{open ? '⌃' : '⌄'}</span></span>
           <span className="price">
             {oddsText(p.odds)} {p.book && <em>{p.book.replace('sgo/', '')}</em>}
           </span>
@@ -717,13 +718,13 @@ export default function Board({ site }) {
               {g.ctx && <GameContext c={g.ctx} />}
               {g.news?.length > 0 && <LineupNews news={g.news} />}
               {started && <p className="startednote">This game has started or is over, so these lines are closed. The plays are kept for the record.</p>}
-              {g.plays.length === 0 && <p className="no-qualifying">No published plays for this game.</p>}
+              {g.plays.length === 0 && <p className="no-qualifying">No props cleared the main selection rules for this game.</p>}
               <ul>
                 {g.plays.map((p) => (
                   <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} focus={focus} started={started} />
                 ))}
               </ul>
-              {g.more.length > 0 && <MorePlays plays={g.more} started={started} />}
+              {g.more.length > 0 && (g.plays.length === 0 ? <div className="game-leans"><p className="small">Available leans · below the main selection bar</p><ul>{g.more.map(p=><PlayRow key={`lean-${p.player}-${p.stat}-${p.side}`} p={p} started={started}/>)}</ul></div> : <MorePlays plays={g.more} started={started} />)}
             </article>
           )
         })}

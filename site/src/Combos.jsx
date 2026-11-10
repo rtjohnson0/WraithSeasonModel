@@ -13,14 +13,15 @@ const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
 
 function ComboCard({ c, now }) {
  const comparison=c.tier==='COMBOWATCH'
+ const confidence=comparison?(c.probRaw??c.prob):c.prob
  return <li className="combo-row"><details>
   <summary className="combo-summary"><span><b>{c.player} <small>{c.team}</small></b><span>{c.side==='OVER'?'Over':'Under'} {c.line} {marketLabel(c)}</span><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} {c.book}</small></span>
-   <span className="combo-strip"><LineStrip line={c.line} proj={c.projStat} games={c.last5} side={c.side}/></span><span className="combo-prob">{pct(c.prob)}<small>View breakdown</small></span></summary>
+   <span className="combo-strip"><LineStrip line={c.line} proj={c.projStat} games={c.last5} side={c.side}/></span><span className="combo-prob">{pct(confidence,1)}<small>{comparison ? 'Model estimate' : 'Model probability'}</small><small>View analysis⌄</small></span></summary>
   <div className="combo-expanded"><QuoteDetails p={c} compact/>
-   {comparison && <p className="small">This line is shown for comparison; it has not cleared the combo selection rules.</p>}
+   {comparison && <p className="small">Simulation estimate before calibration. It has not cleared the combo selection rules.</p>}
    <p>Projected <b>{c.projStat.toFixed(1)}</b> in {Math.round(c.projMin)} minutes · {c.matchup}</p>
    {c.last5?.length>0 && <div className="charts"><figure><figcaption>{statLabel[c.stat]} · last {c.last5.length} games</figcaption><FormBars games={c.last5} line={c.line} side={c.side} lineLabel={`line ${c.line}`}/></figure><figure><figcaption>Minutes played</figcaption><FormBars games={c.last5.map(g=>({...g,value:g.minutes}))} line={c.projMin} side={c.side} tone="minutes" lineLabel={`projected ${Math.round(c.projMin)}`}/></figure></div>}
-   <PickReason p={c}/>
+   <PickReason p={comparison?{...c,prob:confidence,probabilityBasis:"estimate"}:c}/>
   </div>
  </details></li>
 }

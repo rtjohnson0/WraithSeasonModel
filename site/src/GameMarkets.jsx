@@ -13,7 +13,7 @@ function Market({ game, market, now }) {
   if (!q) return null
   const e = explainGame(game,q)
   return <details className="market-play">
-    <summary><span><small>{market === 'total' ? 'Game total' : 'Moneyline'}</small><b>{e.choice}</b><small>{e.shortPrice}</small></span><span className="market-prob">{pc(e.primary.conditional)}<small>{oddsText(e.primary.odds)} · {bookName(q.book)}</small></span></summary>
+    <summary><span><small>{market === 'total' ? 'Game total' : 'Moneyline'}</small><b>{e.choice}</b><small>{e.shortPrice}</small><span className="expand-hint">View analysis <span aria-hidden="true">⌄</span></span></span><span className="market-prob">{pc(e.primary.conditional)}<small>{oddsText(e.primary.odds)} · {bookName(q.book)}</small></span></summary>
     <div className="market-expanded">
       <div className="game-market-heading"><h4>Pick breakdown</h4><select aria-label={`${game.away} at ${game.home} ${market} book`} value={q.book} onChange={(ev) => setBook(ev.target.value)}>{quotes.map((x) => <option key={x.book} value={x.book}>{bookName(x.book)}</option>)}</select></div>
       <p>{e.why}</p><p>{e.price}</p>{e.alternative && <p className="small">{e.alternative}</p>}
