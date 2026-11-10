@@ -1,9 +1,9 @@
 {
   "findings": [
-    "points: none of the 23 calibrated Over leans reach the probability threshold.",
-    "points: minutes average 2.1 below normal; 7 Under markets have cuts of at least four minutes. Check actual minutes errors before trusting this pattern.",
+    "points: none of the 24 calibrated Over leans reach the probability threshold.",
+    "points: minutes average 2.1 below normal; 6 Under markets have cuts of at least four minutes. Check actual minutes errors before trusting this pattern.",
     "rebounds: already Under-heavy before calibration (52/71 markets); investigate rate and minutes levels first.",
-    "rebounds: 7 Overs reach the probability bar, but none beat the exact price by the required margin.",
+    "rebounds: 6 Overs reach the probability bar, but none beat the exact price by the required margin.",
     "rebounds: minutes average 2.1 below normal; 6 Under markets have cuts of at least four minutes. Check actual minutes errors before trusting this pattern.",
     "assists: 9 Overs reach the probability bar, but none beat the exact price by the required margin.",
     "assists: minutes average 2.3 below normal; 7 Under markets have cuts of at least four minutes. Check actual minutes errors before trusting this pattern.",
@@ -11,26 +11,26 @@
     "threes: minutes average 2.3 below normal; 7 Under markets have cuts of at least four minutes. Check actual minutes errors before trusting this pattern."
   ],
   "date": "2026-11-10",
-  "at": "2026-11-10T22:05:52.612037843Z",
+  "at": "2026-11-10T22:20:21.688634805Z",
   "hi": 0.55,
   "minEdge": 0.01,
   "rows": [
     {
       "stat": "points",
       "markets": 76,
-      "rawOver": 23,
-      "rawUnder": 53,
-      "finalOver": 23,
-      "finalUnder": 53,
+      "rawOver": 25,
+      "rawUnder": 51,
+      "finalOver": 24,
+      "finalUnder": 52,
       "overProbBar": 0,
       "underProbBar": 0,
       "overEdgeBar": 0,
       "underEdgeBar": 0,
       "postedOver": 0,
       "postedUnder": 0,
-      "avgProjectionGap": -0.10964578082157156,
-      "avgMinutesShift": -2.1109421289691515,
-      "minutesDrivenUnders": 7
+      "avgProjectionGap": -0.08312811653718391,
+      "avgMinutesShift": -2.1126655635664533,
+      "minutesDrivenUnders": 6
     },
     {
       "stat": "rebounds",
@@ -39,14 +39,14 @@
       "rawUnder": 52,
       "finalOver": 19,
       "finalUnder": 52,
-      "overProbBar": 7,
+      "overProbBar": 6,
       "underProbBar": 20,
       "overEdgeBar": 0,
       "underEdgeBar": 2,
       "postedOver": 0,
-      "postedUnder": 4,
-      "avgProjectionGap": -0.1145217637670531,
-      "avgMinutesShift": -2.145621352762586,
+      "postedUnder": 6,
+      "avgProjectionGap": -0.11479733816142279,
+      "avgMinutesShift": -2.1473342092227456,
       "minutesDrivenUnders": 6
     },
     {
@@ -57,13 +57,13 @@
       "finalOver": 24,
       "finalUnder": 32,
       "overProbBar": 9,
-      "underProbBar": 21,
+      "underProbBar": 20,
       "overEdgeBar": 0,
       "underEdgeBar": 0,
       "postedOver": 0,
-      "postedUnder": 1,
-      "avgProjectionGap": -0.05736639816755259,
-      "avgMinutesShift": -2.254610619165831,
+      "postedUnder": 2,
+      "avgProjectionGap": -0.057179738889569474,
+      "avgMinutesShift": -2.2563169562167333,
       "minutesDrivenUnders": 7
     },
     {
@@ -78,9 +78,9 @@
       "overEdgeBar": 0,
       "underEdgeBar": 4,
       "postedOver": 0,
-      "postedUnder": 7,
-      "avgProjectionGap": -0.0007260093978674372,
-      "avgMinutesShift": -2.2685888003462984,
+      "postedUnder": 8,
+      "avgProjectionGap": -0.0005383412798834268,
+      "avgMinutesShift": -2.270174331675847,
       "minutesDrivenUnders": 7
     }
   ],
