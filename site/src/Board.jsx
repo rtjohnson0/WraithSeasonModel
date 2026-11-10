@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormBars, LineStrip, MoveSpark, OutcomeCurve } from './Charts.jsx'
 import Icon from './Icons.jsx'
+import QuoteDetails from './QuoteDetails.jsx'
+import RunStatus from './RunStatus.jsx'
+import GameMarkets from './GameMarkets.jsx'
+import { quoteState } from './quote.js'
 import { DaySummary, ResultList } from './Record.jsx'
 import { tipState, useNow } from './time.js'
 import { LABELS, gradeTone, labelInfo, oddsText, pct, prettyDate, statLabel } from './format.js'
@@ -102,7 +106,7 @@ function TopPlays({ games, now, onPick }) {
     const ts = tipState(g.tip, now)
     if (ts.state === 'live' || ts.state === 'done') return
     ;(g.plays || []).forEach((p) => {
-      if (p.label !== 'Lean') open.push({ p, g, ts })
+      if (p.label !== 'Lean' && quoteState(p, now).usable) open.push({ p, g, ts })
     })
   })
   open.sort((a, b) => b.p.prob - a.p.prob)
@@ -269,6 +273,7 @@ function MorePlays({ plays, started }) {
 const playId = (p) => `play-${p.player}-${p.stat}-${p.side}`.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
 function PlayRow({ p, focus, started }) {
+  const quote = quoteState(p, useNow())
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
   // A tap on the top-plays strip opens this play and scrolls to it.
@@ -281,7 +286,7 @@ function PlayRow({ p, focus, started }) {
   const info = labelInfo[p.label] || labelInfo.Lean
   const conf = Math.max(0, Math.min(1, (p.prob - 0.5) / 0.2))
   return (
-    <li ref={ref} id={playId(p)} className={`play ${p.side === 'OVER' ? 'over' : 'under'} ${info.key}${p.multi ? ' multi' : ''}${started ? ' started' : ''}`}>
+    <li ref={ref} id={playId(p)} className={`play quote-${quote.key} ${p.side === 'OVER' ? 'over' : 'under'} ${info.key}${p.multi ? ' multi' : ''}${started ? ' started' : ''}`}>
       <button type="button" className="playbtn" aria-expanded={open} onClick={() => setOpen(!open)}>
         <span className={`grade ${gradeTone(p.grade)}`} aria-label={`Grade ${p.grade}`}>
           {p.grade}
@@ -336,6 +341,7 @@ function PlayRow({ p, focus, started }) {
           </span>
         </span>
       </button>
+      <QuoteDetails p={p} />
       {open && (
         <div className="why">
           <div className="facts">
@@ -561,18 +567,22 @@ export default function Board({ site }) {
   const [q, setQ] = useState('')
   const [repeatsOnly, setRepeatsOnly] = useState(false)
   const [focus, setFocus] = useState(null)
+  const [showInactive, setShowInactive] = useState(false)
   const now = useNow()
 
-  const all = useMemo(() => board.games.flatMap((g) => g.plays || []), [board])
-  const count = (f) => all.filter(f).length
+  const all = useMemo(() => (board.games || []).flatMap((g) => g.plays || []), [board])
+  const current = all.filter((p) => quoteState(p, now).usable)
+  const currentStaked = current.filter((p) => p.tier === 'PICK' && p.units > 0).length
+  const count = (f) => current.filter(f).length
 
   const games = useMemo(
     () =>
-      board.games
+      (board.games || [])
         .map((g) => ({
           ...g,
           plays: (g.plays || []).filter(
             (p) =>
+              (showInactive || quoteState(p, now).usable) &&
               (stat === 'all' || p.stat === stat) &&
               (label === 'all' || p.label === label) &&
               (side === 'ALL' || p.side === side) &&
@@ -582,13 +592,14 @@ export default function Board({ site }) {
           // The extras ignore the play-type and repeat filters (they are all lean plays) but follow stat, side and search.
           more: (g.more || []).filter(
             (p) =>
+              (showInactive || quoteState(p, now).usable) &&
               (stat === 'all' || p.stat === stat) &&
               (side === 'ALL' || p.side === side) &&
               (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
           ),
         }))
-        .filter((g) => g.plays.length || (label === 'all' && !repeatsOnly && g.more.length)),
-    [board, stat, label, side, q, repeatsOnly],
+        .filter((g) => !q || g.plays.length || g.more.length),
+    [board, stat, label, side, q, repeatsOnly, showInactive, now],
   )
   const shown = games.reduce((n, g) => n + g.plays.length, 0)
 
@@ -602,13 +613,13 @@ export default function Board({ site }) {
         <div className="dayhead">
           <h1>{prettyDate(board.date)}</h1>
           <dl className="tally">
-            <div className={board.staked ? 'hot' : ''}>
+            <div className={currentStaked ? 'hot' : ''}>
               <dt>Max plays</dt>
-              <dd>{board.staked}</dd>
+              <dd>{currentStaked}</dd>
             </div>
             <div>
               <dt>Plays</dt>
-              <dd>{board.plays}</dd>
+              <dd>{current.length}</dd>
             </div>
             <div>
               <dt>Games</dt>
@@ -624,11 +635,15 @@ export default function Board({ site }) {
         </div>
       </section>
 
-      <TopPlays games={board.games} now={now} onPick={(p) => { setStat('all'); setLabel('all'); setSide('ALL'); setQ(''); setRepeatsOnly(false); setFocus({ id: playId(p), n: Date.now() }) }} />
-      <OversWatch overs={board.overs} now={now} />
+      <RunStatus site={site} />
+      <GameMarkets data={site.gameMarkets} />
+      <p className="small quote-disclaimer">Lines are specific to the named book and price. A current sportsbook screen takes precedence over an API snapshot.</p>
+      <label className="inactive-toggle"><input type="checkbox" checked={showInactive} onChange={(e) => setShowInactive(e.target.checked)} /> Show expired or unconfirmed snapshots</label>
+      <TopPlays games={board.games || []} now={now} onPick={(p) => { setStat('all'); setLabel('all'); setSide('ALL'); setQ(''); setRepeatsOnly(false); setFocus({ id: playId(p), n: Date.now() }) }} />
+      <details className="exploratory-watch"><summary>Exploratory overs watch · not current picks</summary><p className="small">Historical watch quotes need a fresh check at the named book.</p><OversWatch overs={board.overs} now={now} /></details>
       <LastResults record={site.record} date={board.date} />
       <RunChanges runs={board.runsToday} />
-      <EarlierPicks runs={board.runsToday} />
+      {/* Historical quotes belong in run changes, never in the current-pick list. */}
 
       <section className="filters" aria-label="Filters">
         <Seg
@@ -666,8 +681,8 @@ export default function Board({ site }) {
       {shown === 0 && (
         <p className="notice">
           {board.games.length === 0
-            ? 'No plays are posted for this day yet. The board updates after the daily run.'
-            : 'No plays match these filters. Pick "All" to see more.'}
+            ? 'No qualifying plays in the latest run. A new odds refresh is required to publish new quotes.'
+            : 'No recent qualifying quotes match these filters. Earlier snapshots may be expired; no replacement plays are forced.'}
         </p>
       )}
 
@@ -699,6 +714,7 @@ export default function Board({ site }) {
               {g.ctx && <GameContext c={g.ctx} />}
               {g.news?.length > 0 && <LineupNews news={g.news} />}
               {started && <p className="startednote">This game has started or is over, so these lines are closed. The plays are kept for the record.</p>}
+              {g.plays.length === 0 && <p className="no-qualifying">No qualifying recent plays for this game.</p>}
               <ul>
                 {g.plays.map((p) => (
                   <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} focus={focus} started={started} />

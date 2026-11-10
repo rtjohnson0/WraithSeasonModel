@@ -100,6 +100,7 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		game, pid int
 		stat      data.Stat
 	}
+	views := props.MarketViews(lines)
 	marketLines := map[marketKey][]float64{}
 	for _, l := range lines {
 		k := marketKey{l.GameID, l.PlayerID, l.Stat}
@@ -182,7 +183,9 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		oppTeam := map[bool]int{true: sm.g.Home, false: sm.g.Visitor}[team == sm.g.Visitor]
 		parts := []string{componentNote(l.Stat, sm.pred)}
 		parts = append(parts, whyContext(d.b, d.ix, sm.row, data.Points, sm.pred, team, oppTeam, d.out)...)
+		view := views[props.MarketKey{Game: l.GameID, Player: l.PlayerID, Stat: string(l.Stat)}]
 		s := scored{
+			MarketMedian: view.Median, BookCount: view.Books, BookQuotes: view.Quotes, CaptureMaxAgeSeconds: 1800, PriceMaxAgeSeconds: 21600,
 			QuoteAt: l.CapturedAt, SourceUpdatedAt: l.UpdatedAt, AuditVersion: props.QuoteVersion,
 			PlayerID: l.PlayerID, GameID: l.GameID, Player: name, Team: teamAbbr, Matchup: matchup, Stat: l.Stat, Side: side, Line: l.Line,
 			Prob: prob, ProbRaw: raw, Edge: bets.Edge(prob, odds), Vendor: l.Vendor, Odds: odds, ProjMean: proj, ProjMin: sm.pred.Minutes,
@@ -257,7 +260,7 @@ func comboEntries(date string, plays []scored) []picklog.Entry {
 		out = append(out, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: comboTier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion,
+			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: comboTier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
 		})
 	}
 	return out

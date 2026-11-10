@@ -30,5 +30,5 @@ if __name__ == '__main__':
                           os.environ['DEFAULT_BRANCH'])
     # Bootstrap downloads inputs; it intentionally does not deploy an untrained site.
     publish = active and mode != 'bootstrap'
-    with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+    with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as out:
         out.write(f'mode={mode}\nactive={str(active).lower()}\npublish={str(publish).lower()}\n')

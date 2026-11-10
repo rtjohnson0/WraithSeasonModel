@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 STATE_FILES = [
-    'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
+    'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
     'biasfix.json', 'minfix.json', 'wofix.json', 'runs.jsonl', 'more.json',
     'projlog.jsonl', 'model.json', 'combolog.jsonl', 'combosettled.jsonl',
     'combocorr.json', 'v2log.jsonl', 'v2settled.jsonl', 'v2.json', 'model_v2.json',
@@ -24,7 +24,7 @@ MODEL_BUNDLE = ['data/' + x for x in ('model.json', 'model_v2.json', 'calibratio
 
 
 def git(*args, check=True):
-    result = subprocess.run(['git', *args], text=True, capture_output=True)
+    result = subprocess.run(['git', *args], text=True, encoding='utf-8', capture_output=True)
     if check and result.returncode:
         # Never print a remote URL: credentials can be embedded in it.
         raise RuntimeError('git ' + args[0] + ' failed: ' + result.stderr[-2000:])
@@ -157,7 +157,7 @@ def sync(branch, message, attempts=5, delay=2):
                 else:
                     # Remote explicitly changed configuration; keep that change.
                     content = upstream
-                    if name in {'data/more.json', 'data/v2.json'} and local and upstream:
+                    if name in {'data/gameboard.json', 'data/board.json', 'data/more.json', 'data/v2.json'} and local and upstream:
                         a, b = json.loads(local), json.loads(upstream)
                         if a.get('at', '') > b.get('at', ''):
                             content = local

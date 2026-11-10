@@ -380,3 +380,48 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
   .state-failed { color: var(--amber); }
   .state-unproven { color: var(--muted); }
 }
+
+// Quote provenance stays separate from model confidence.
+.run-status { margin: 1.1rem 0; padding: 1rem 1.2rem; border: 1px solid #315346; border-radius: 12px; background: #101d18; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.8rem;
+  > div { flex: 1 1 230px; }
+  p { margin: .25rem 0; }
+  dl { display: flex; gap: 1.3rem; margin: 0; }
+  dt { font-size: .75rem; color: #aebbb4; }
+  dd { margin: .25rem 0 0; font-size: 1.2rem; font-weight: 700; }
+  .small, .feed-status { flex-basis: 100%; }
+  &.stale { background: #241e12; border-color: #74603d; }
+}
+.quote-disclaimer { max-width: 80ch; }
+.quote-details { padding: .65rem 1rem; border-top: 1px solid #29332e; background: #101812;
+  .quote-caption { color: #bec8c0; margin: .3rem 0; font-size: .79rem; line-height: 1.55; }
+  details { margin-top: .4rem; font-size: .8rem; }
+  summary { cursor: pointer; color: #b7dbbc; }
+  &.stale, &.closed, &.unknown { background: #211e16; border-color: #51452d; }
+}
+.quote-pills { display: flex; flex-wrap: wrap; gap: .4rem; }
+.quote-status, .model-evidence { display: inline-block; font-size: .69rem; padding: .25rem .5rem; border-radius: 5px; letter-spacing: .02em; }
+.quote-status { background: #233d2d; color: #c7f0d0; &.stale, &.closed, &.unknown { background: #51402b; color: #f1d5a4; } }
+.model-evidence { background: #28313c; color: #d1dce9; }
+.book-quotes { min-width: 580px; font-size: .78rem; .selected-quote { background: #1b3024; } }
+.inactive-toggle { display: flex; gap: .5rem; align-items: center; margin: .8rem 0; font-size: .83rem; color: #c6cec8; }
+.reload-board { border: 1px solid #495c4b; border-radius: 7px; padding: .5rem .7rem; background: #18241a; color: #d4e5d8; cursor: pointer; font-size: .73rem; }
+.no-qualifying { padding: 1rem; color: #aebaaf; font-size: .85rem; }
+.archive-switch { display: flex; gap: .6rem; align-items: center; padding: 1rem; margin-bottom: 1rem; background: #211e16; border: 1px solid #5d4b31; border-radius: 10px; }
+.exclusion-registry { margin: 1rem 0; code { overflow-wrap: anywhere; font-size: .72rem; } }
+.matched-models { border: 1px solid #354453; border-radius: 10px; background: #141d26; padding: 1rem; margin: 1rem 0; }
+.exploratory-watch { margin: 1rem 0; summary { cursor: pointer; color: #b9c7bd; font-size: .85rem; } }
+@media (max-width: 620px) { .run-status dl { width: 100%; justify-content: space-between; gap: .6rem; } .quote-details { padding: .7rem; } .reload-board { margin-left: auto; } }
+
+.play.quote-stale .pick, .play.quote-closed .pick { text-decoration: line-through; opacity: .7; }
+
+.game-markets { margin: 24px 0; padding: 20px; background: var(--panel, #151a23); border: 1px solid #343b49; border-radius: 14px; }
+.game-market-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.game-market-heading h2, .game-market-heading h4 { margin: 4px 0; }
+.game-market-heading select { background: #151a23; color: #edf2fa; padding: 7px 10px; border: 1px solid #465066; border-radius: 6px; }
+.game-market-card { border-top: 1px solid #343b49; margin-top: 20px; padding-top: 12px; }
+.game-market-card h3 small { font-size: 12px; color: #acb6c9; font-weight: normal; margin-left: 10px; }
+.projection-summary { display: flex; flex-wrap: wrap; gap: 12px 30px; margin: 16px 0; }
+.projection-summary span { font-size: 12px; color: #acb6c9; }
+.projection-summary b { display: block; font-size: 18px; color: #f1f5fc; margin-top: 5px; }
+.game-market { margin: 16px 0; }
+.game-market .booktable { overflow-x: auto; }

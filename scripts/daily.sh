@@ -5,6 +5,7 @@
 #   -f  re-download the whole current season instead of only new games
 # Run it in the morning, then run ./scripts/pretip.sh an hour before tip-off.
 set -euo pipefail
+export PYTHONUTF8=1
 LINEUP=""; SKIP=0; NEW="-new"
 for a in "$@"; do
   case "$a" in -l) LINEUP="-lineup";; -s) SKIP=1;; -f) NEW="";; esac

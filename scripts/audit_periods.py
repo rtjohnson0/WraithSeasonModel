@@ -41,7 +41,7 @@ def signature(row, fallback=0):
 
 def read_rows(path):
     # Fail before any write if a file is malformed. Do not silently discard rows.
-    return [(line, json.loads(line)) for line in path.read_text().splitlines(True)
+    return [(line, json.loads(line.lstrip("\ufeff"))) for line in path.read_text(encoding="utf-8-sig").splitlines(True)
             if line.strip()]
 
 
@@ -103,12 +103,12 @@ def audit(directory, apply=False):
             shutil.copy2(path, path.with_name(path.name + '.' + stamp + '.bak'))
         for path, keep, excluded in plans:
             quarantine = path.with_name(path.name + '.' + stamp + '.excluded')
-            quarantine.write_text(''.join(excluded))
+            quarantine.write_text(''.join(excluded), encoding='utf-8')
             temp = path.with_name(path.name + '.' + stamp + '.tmp')
-            temp.write_text(''.join(keep))
+            temp.write_text(''.join(keep), encoding='utf-8')
             temp.replace(path)
         report_path = directory / ('period_audit_' + stamp + '.json')
-        report_path.write_text(json.dumps(report, indent=2) + '\n')
+        report_path.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
         print(f'Applied; backups, quarantine and audit report saved in {directory}')
     else:
         for item in report:

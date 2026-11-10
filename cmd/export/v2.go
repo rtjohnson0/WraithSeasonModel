@@ -12,6 +12,7 @@ import (
 // V2Site is the challenger's half of the site: a board and a record built from the same code as the
 // real ones, so the "V2 test" page looks like the main site. See cmd/predict/v2.go.
 type V2Site struct {
+	At     string      `json:"at"`
 	Board  Board       `json:"board"`
 	Record Record      `json:"record"`
 	Combos ComboRecord `json:"combos"`
@@ -106,7 +107,7 @@ func buildV2(dir string, form Form) *V2Site {
 			singles = append(singles, s)
 		}
 	}
-	site := &V2Site{
+	site := &V2Site{At: f.At,
 		Board:  buildBoard(f.Plays, f.Date, form, nil),
 		Record: buildRecord(singles, 600),
 		Combos: buildComboRecord(combos, 120),

@@ -237,6 +237,7 @@ func statWord(s string) string { return s }
 
 // moreFile mirrors data/more.json, written by predict.
 type moreFile struct {
+	At    string              `json:"at"`
 	Date  string              `json:"date"`
 	Plays []picklog.Entry     `json:"plays"`
 	Games []ctxIn             `json:"games"`

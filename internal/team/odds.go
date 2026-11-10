@@ -28,6 +28,7 @@ type Odds struct {
 	Total          float64
 	Over, Under    int
 	HasTotal       bool
+	CapturedAt     string
 	Stamp          string
 }
 
@@ -134,6 +135,7 @@ func loadOdds(path string, games map[int]props.GameInfo, asOf time.Time, maxAge 
 			continue
 		}
 		o := a.toOdds()
+		o.CapturedAt = w.CapturedAt
 		if games != nil {
 			captured, ec := time.Parse(time.RFC3339, w.CapturedAt)
 			updated, eu := time.Parse(time.RFC3339, o.Stamp)
@@ -141,7 +143,7 @@ func loadOdds(path string, games map[int]props.GameInfo, asOf time.Time, maxAge 
 				continue
 			}
 		}
-		k := key{o.GameID, o.Vendor}
+		k := key{o.GameID, props.BookID(o.Vendor)}
 		c := w.CapturedAt
 		if prev, ok := capt[k]; !ok || c >= prev {
 			capt[k] = c

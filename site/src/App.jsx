@@ -22,7 +22,7 @@ export default function App() {
   const [page, setPage] = useState(pageFromHash())
   const [site, setSite] = useState(null)
   const [error, setError] = useState('')
-  const [fresh, setFresh] = useState(false)
+  const [refreshTick, setRefreshTick] = useState(0)
 
   useEffect(() => {
     const onHash = () => setPage(pageFromHash())
@@ -31,50 +31,40 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const url = new URL('data/picks.json', document.baseURI)
-    // A timestamp keeps a phone from showing yesterday's board out of its cache.
-    url.searchParams.set('t', Date.now())
-    fetch(url)
-      .then((r) => {
-        if (!r.ok) throw new Error(`The picks file did not load (${r.status}).`)
-        return r.json()
-      })
-      .then(setSite)
-      .catch((e) => setError(e.message))
-  }, [])
-
-  // Check for a newer board every few minutes and whenever the tab comes back into view.
-  useEffect(() => {
-    if (!site) return undefined
-    const check = () => {
-      const url = new URL('data/picks.json', document.baseURI)
-      url.searchParams.set('t', Date.now())
-      fetch(url, { cache: 'no-store' })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((d) => {
-          if (d && d.generatedAt && d.generatedAt !== site.generatedAt) setFresh(true)
-        })
-        .catch(() => {})
+    let active = true
+    let pending = false
+    const controller = new AbortController()
+    const load = async () => {
+      if (pending) return
+      pending = true
+      try {
+        const url = new URL('data/picks.json', document.baseURI)
+        url.searchParams.set('t', Date.now())
+        const r = await fetch(url, { cache: 'no-store', signal: controller.signal })
+        if (!r.ok) throw new Error(`The board did not load (${r.status}).`)
+        const next = await r.json()
+        if (active) {
+          setSite((prev) => !prev || (next.generatedAt || '') >= (prev.generatedAt || '') ? next : prev)
+          setError('')
+        }
+      } catch (e) {
+        if (active && e.name !== 'AbortError') setError(`Could not check for a newer publication: ${e.message}`)
+      } finally { pending = false }
     }
-    const id = setInterval(check, 5 * 60 * 1000)
-    const onVis = () => document.visibilityState === 'visible' && check()
-    document.addEventListener('visibilitychange', onVis)
+    load()
+    const timer = setInterval(load, 60000)
+    const onVisible = () => document.visibilityState === 'visible' && load()
+    document.addEventListener('visibilitychange', onVisible)
     return () => {
-      clearInterval(id)
-      document.removeEventListener('visibilitychange', onVis)
+      active = false
+      controller.abort()
+      clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVisible)
     }
-  }, [site])
+  }, [refreshTick])
 
   return (
     <>
-      {fresh && (
-        <div className="new-banner" role="status">
-          New picks are posted.
-          <button type="button" onClick={() => window.location.reload()}>
-            Reload
-          </button>
-        </div>
-      )}
       <header className="top">
         <a className="brand" href="#/board" aria-label="WraithPicksSZN home">
           <img src="./brand/logo.jpg" alt="" width="44" height="44" />
@@ -87,6 +77,7 @@ export default function App() {
             </a>
           ))}
         </nav>
+        <button type="button" className="reload-board" onClick={() => setRefreshTick((x) => x + 1)}>Reload published board</button>
       </header>
 
       {site?.sample && (

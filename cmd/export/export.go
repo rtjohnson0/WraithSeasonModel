@@ -9,28 +9,41 @@ import (
 	"strings"
 
 	"propsmodel/internal/bets"
+	"propsmodel/internal/boardstate"
+	"propsmodel/internal/gameboard"
 	"propsmodel/internal/picklog"
+	"propsmodel/internal/props"
 	"propsmodel/internal/runlog"
 )
 
 // Play is one pick on the board.
 type Play struct {
-	Player   string  `json:"player"`
-	Team     string  `json:"team"`
-	Stat     string  `json:"stat"`
-	Side     string  `json:"side"`
-	Line     float64 `json:"line"`
-	Prob     float64 `json:"prob"`
-	ProbRaw  float64 `json:"probRaw"`
-	Edge     float64 `json:"edge"`
-	Grade    string  `json:"grade"`
-	Tier     string  `json:"tier"`
-	Odds     int     `json:"odds"`
-	Book     string  `json:"book"`
-	ProjStat float64 `json:"projStat"`
-	ProjMin  float64 `json:"projMin"`
-	Units    float64 `json:"units"`
-	Why      string  `json:"why"`
+	Tip                  string            `json:"tip,omitempty"`
+	QuoteAt              string            `json:"quoteAt,omitempty"`
+	SourceUpdatedAt      string            `json:"sourceUpdatedAt,omitempty"`
+	MarketMedian         float64           `json:"marketMedian"`
+	BookCount            int               `json:"bookCount"`
+	BookQuotes           []props.BookQuote `json:"bookQuotes,omitempty"`
+	CaptureMaxAgeSeconds int               `json:"captureMaxAgeSeconds,omitempty"`
+	PriceMaxAgeSeconds   int               `json:"priceMaxAgeSeconds,omitempty"`
+	BreakEven            float64           `json:"breakEven"`
+	QuoteValidation      string            `json:"quoteValidation"`
+	Player               string            `json:"player"`
+	Team                 string            `json:"team"`
+	Stat                 string            `json:"stat"`
+	Side                 string            `json:"side"`
+	Line                 float64           `json:"line"`
+	Prob                 float64           `json:"prob"`
+	ProbRaw              float64           `json:"probRaw"`
+	Edge                 float64           `json:"edge"`
+	Grade                string            `json:"grade"`
+	Tier                 string            `json:"tier"`
+	Odds                 int               `json:"odds"`
+	Book                 string            `json:"book"`
+	ProjStat             float64           `json:"projStat"`
+	ProjMin              float64           `json:"projMin"`
+	Units                float64           `json:"units"`
+	Why                  string            `json:"why"`
 
 	// Form is how he has done against this line recently: the last five games, his average and how
 	// often this side would have hit. Empty when the stats are not available to the export.
@@ -274,11 +287,14 @@ type Record struct {
 
 // Site is everything the website reads.
 type Site struct {
-	GeneratedAt string      `json:"generatedAt"`
-	Board       Board       `json:"board"`
-	Record      Record      `json:"record"`
-	Combos      ComboRecord `json:"combos"`
-	Lines       LinesRecord `json:"lines"`
+	GameMarkets *gameboard.Snapshot `json:"gameMarkets,omitempty"`
+	Status      *boardstate.Status  `json:"status,omitempty"`
+	Archive     *ArchiveData        `json:"archive,omitempty"`
+	GeneratedAt string              `json:"generatedAt"`
+	Board       Board               `json:"board"`
+	Record      Record              `json:"record"`
+	Combos      ComboRecord         `json:"combos"`
+	Lines       LinesRecord         `json:"lines"`
 	// V2 is the challenger model's board and record, tracked apart from everything above.
 	V2 *V2Site `json:"v2,omitempty"`
 }
@@ -460,6 +476,8 @@ func matchupOf(e picklog.Entry) string {
 func makePlay(e picklog.Entry, date string, form Form, runs int, seenIn []string) Play {
 	t := normTier(e.Tier)
 	p := Play{
+		Tip: e.Tip, QuoteAt: e.QuoteAt, SourceUpdatedAt: e.SourceUpdatedAt, MarketMedian: e.MarketMedian, BookCount: e.BookCount, BookQuotes: e.BookQuotes,
+		CaptureMaxAgeSeconds: e.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: e.PriceMaxAgeSeconds, BreakEven: bets.Implied(e.Odds), QuoteValidation: "API snapshot; confirm at sportsbook",
 		Player: e.Player, Team: e.Team, Stat: e.Stat, Side: e.Side, Line: e.Line, Prob: e.Prob,
 		ProbRaw: e.ProbRaw, Edge: edgeOf(e), Grade: grade(e.Prob, t), Tier: t, Odds: e.Odds, Book: e.Book,
 		ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why, PlayerID: e.PlayerID, Dist: e.Dist,
@@ -527,7 +545,7 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 	}
 	byGame := map[int]*Game{}
 	var ids []int
-	b := Board{Date: date}
+	b := Board{Date: date, Games: []Game{}}
 	for _, k := range order {
 		e := best[k]
 		g := byGame[e.GameID]

@@ -13,6 +13,7 @@ export default function Lines({ lines }) {
   const slices = (lines.slices || []).filter((s) => s.n >= 20)
   return (
     <section className="lineslog">
+      {lines.matched?.N > 0 && <div className="matched-models"><h2>V1 vs V2 · identical questions</h2><p>{lines.matched.N} matched lines across {lines.matched.Days} dates.</p><p>Brier: V1 {lines.matched.Brier1.toFixed(4)} · V2 {lines.matched.Brier2.toFixed(4)}. V2 gain {lines.matched.Gain.toFixed(5)} · Date-clustered z {lines.matched.Z.toFixed(2)}.</p><p className="small">Lower Brier is better. This compares the same line at the same timestamp, rather than different selected bet lists.</p></div>}
       {lines.graded > 0 && (
         <>
           <h2>Every line, not just the picks</h2>

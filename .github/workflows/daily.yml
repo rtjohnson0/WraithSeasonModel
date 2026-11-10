@@ -203,6 +203,7 @@ jobs:
         working-directory: site
         run: |
           npm ci
+          node --test src/quote.test.js
           npm run build
 
       - uses: actions/configure-pages@v5

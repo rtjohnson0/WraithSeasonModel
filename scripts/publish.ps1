@@ -1,6 +1,8 @@
 # Publish saved state through the same conflict-safe synchronization as the workflow.
 param([string]$Date = "")
 $ErrorActionPreference = "Stop"
+# UTF-8 Go/JSON logs and Git output must not use the Windows ANSI code page.
+$env:PYTHONUTF8 = "1"
 $dateFlag = @()
 if ($Date -ne "") { $dateFlag = @("-date", $Date) }
 go run ./cmd/export @dateFlag

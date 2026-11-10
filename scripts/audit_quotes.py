@@ -18,7 +18,7 @@ LOGS=['picklog.jsonl','settled.jsonl','combolog.jsonl','combosettled.jsonl','v2l
 
 def read(path):
     if not path.exists(): return []
-    return [json.loads(x.lstrip('\ufeff')) for x in path.read_text().splitlines() if x.strip()]
+    return [json.loads(x.lstrip('\ufeff')) for x in path.read_text(encoding="utf-8-sig").splitlines() if x.strip()]
 
 
 def timestamp(value):
@@ -95,14 +95,14 @@ def audit(directory,apply=False):
         print(status,sum(r['status']==status for r in report))
     stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     report_path=directory/f'quote_audit_{stamp}.json'
-    report_path.write_text(json.dumps(report,indent=2)+'\n')
+    report_path.write_text(json.dumps(report,indent=2)+'\n', encoding='utf-8')
     if apply:
         path=directory/'exclusions.jsonl'
         existing={r['id']:r for r in read(path)}
         existing.update(exclude)
         if path.exists():path.with_name(path.name+'.'+stamp+'.bak').write_bytes(path.read_bytes())
         temp=path.with_suffix('.tmp')
-        temp.write_text(''.join(json.dumps(r,separators=(',',':'))+'\n' for r in existing.values()))
+        temp.write_text(''.join(json.dumps(r,separators=(',',':'))+'\n' for r in existing.values()), encoding='utf-8')
         temp.replace(path)
     print(f"Audit saved: {report_path}. Original pick and settlement rows are retained.")
     return report

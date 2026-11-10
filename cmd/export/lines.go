@@ -11,17 +11,18 @@ import (
 // LinesRecord is the graded market log: every line the model scored (not only the plays it posted),
 // and the lines that sat off the market. See internal/lineslog.
 type LinesRecord struct {
-	Since    string       `json:"since,omitempty"`
-	Until    string       `json:"until,omitempty"`
-	Days     int          `json:"days"`
-	Logged   int          `json:"logged"`
-	Graded   int          `json:"graded"`
-	Model    float64      `json:"brierModel,omitempty"` // Brier score of the model's P(over) at the median line
-	Base     float64      `json:"brierBase,omitempty"`  // Brier score of always saying the day's base rate
-	Bins     []LinesBin   `json:"bins,omitempty"`
-	Slices   []LinesSlice `json:"slices,omitempty"`
-	Off      []LinesOff   `json:"off,omitempty"`
-	OffCount int          `json:"offGraded"`
+	Matched  *lineslog.Comparison `json:"matched,omitempty"`
+	Since    string               `json:"since,omitempty"`
+	Until    string               `json:"until,omitempty"`
+	Days     int                  `json:"days"`
+	Logged   int                  `json:"logged"`
+	Graded   int                  `json:"graded"`
+	Model    float64              `json:"brierModel,omitempty"` // Brier score of the model's P(over) at the median line
+	Base     float64              `json:"brierBase,omitempty"`  // Brier score of always saying the day's base rate
+	Bins     []LinesBin           `json:"bins,omitempty"`
+	Slices   []LinesSlice         `json:"slices,omitempty"`
+	Off      []LinesOff           `json:"off,omitempty"`
+	OffCount int                  `json:"offGraded"`
 }
 
 // LinesBin is one band of the model's P(over) and how often those lines went over.
@@ -93,6 +94,8 @@ func summariseLines(mk []lineslog.Market, off []lineslog.Off, act lineslog.Actua
 	days := map[string]bool{}
 	gm := lineslog.GradeMarkets(mk, act)
 	rec.Graded = len(gm)
+	paired := lineslog.CompareModels(gm)
+	rec.Matched = &paired
 	for _, g := range gm {
 		days[g.Date] = true
 		if rec.Since == "" || g.Date < rec.Since {

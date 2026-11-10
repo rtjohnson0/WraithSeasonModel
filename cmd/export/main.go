@@ -15,7 +15,9 @@ import (
 	"path/filepath"
 	"time"
 
+	"propsmodel/internal/boardstate"
 	"propsmodel/internal/data"
+	"propsmodel/internal/gameboard"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/pipeline"
 	"propsmodel/internal/runlog"
@@ -55,12 +57,20 @@ func main() {
 		}
 		settled = verified
 	}
+	snapshot, err := boardstate.Load(*dir)
+	if err != nil {
+		fatal(err)
+	}
 	runs, err := runlog.Load(filepath.Join(*dir, "runs.jsonl"))
 	if err != nil {
 		fatal(err)
 	}
 	if *date == "" {
-		*date = latestDate(entries)
+		if snapshot != nil {
+			*date = snapshot.Date
+		} else {
+			*date = latestDate(entries)
+		}
 	}
 	form, abbr := loadForm(*dir)
 	res := newMatchupResolver(*dir, abbr)
@@ -89,17 +99,32 @@ func main() {
 
 	site := Site{
 		GeneratedAt: time.Now().UTC().Format(time.RFC3339),
-		Board:       buildBoard(entries, *date, form, runlog.ForDate(runs, *date)),
+		Board:       currentBoard(snapshot, *date, form, runlog.ForDate(runs, *date)),
 		Record:      buildRecord(settled, *recent),
 		Combos:      buildComboRecord(comboSettled, 120),
 		Lines:       buildLinesRecord(*dir),
 	}
+	site.GameMarkets, err = gameboard.Load(*dir, *date)
+	if err != nil {
+		fatal(err)
+	}
+	if snapshot != nil && snapshot.Date == *date {
+		site.Status = &snapshot.Status
+	}
+	allHistory, err := picklog.LoadSettled(filepath.Join(*dir, "settled.jsonl"))
+	if err != nil {
+		fatal(err)
+	}
+	site.Archive = buildArchive(*dir, allHistory)
 	if !*legacy {
 		site.Record.ProvenanceNote = "Results include only picks with validated pregame quotes. Legacy logs are retained separately until their quotes can be audited."
 	}
 	var mf moreFile
 	if raw, err := os.ReadFile(filepath.Join(*dir, "more.json")); err == nil {
 		_ = json.Unmarshal(raw, &mf)
+	}
+	if snapshot == nil || snapshot.Date != mf.Date || mf.At != snapshot.At {
+		mf = moreFile{}
 	}
 	attachMore(&site.Board, mf, form)
 	attachContext(&site.Board, mf)
@@ -110,6 +135,9 @@ func main() {
 	attachCombos(&site.Board, mf, form)
 	attachCases(&site.Board, trackRecords(settled))
 	site.V2 = buildV2(*dir, form)
+	if site.V2 != nil && (snapshot == nil || site.V2.At != snapshot.At) {
+		site.V2 = nil
+	}
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		fatal(err)
 	}

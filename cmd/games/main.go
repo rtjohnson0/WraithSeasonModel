@@ -23,6 +23,7 @@ import (
 
 	"propsmodel/internal/bets"
 	"propsmodel/internal/data"
+	"propsmodel/internal/gameboard"
 	"propsmodel/internal/props"
 	"propsmodel/internal/team"
 )
@@ -350,7 +351,9 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 	if err != nil {
 		fatal(fmt.Errorf("%w (run: go run ./cmd/pull snapshot)", err))
 	}
-	odds, err := team.LoadOdds(filepath.Join(snap, fmt.Sprintf("odds_%s.jsonl", date)))
+	asOf := time.Now().UTC()
+	board := gameboard.Snapshot{Date: date, At: asOf.Format(time.RFC3339Nano), Z: cal.Z}
+	odds, err := team.LoadPregameOdds(filepath.Join(snap, fmt.Sprintf("odds_%s.jsonl", date)), gm, asOf, 6*time.Hour)
 	if err != nil {
 		fatal(fmt.Errorf("%w (run: go run ./cmd/pull snapshot)", err))
 	}
@@ -400,8 +403,13 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 		kept, dropped := cleanRows(rowsO, c)
 		droppedRows += dropped
 		rowsO = kept
+		c = team.ConsensusOf(rowsO)[id]
+		if !c.HasSpread || !c.HasTotal || cal.Margin.Sigma <= 0 || cal.Total.Sigma <= 0 {
+			continue
+		}
 		muM := cal.Margin.Mean(-c.SpreadHome, pm)
 		muT := cal.Total.Mean(c.Total, pt)
+		board.Games = append(board.Games, makeGameBoard(id, h, a, g.Start, muM, muT, cal.Total.Sigma, cal.Margin.Sigma, rowsO))
 		match := fmt.Sprintf("%s @ %s", a, h)
 		model := fmt.Sprintf("%s by %.1f, total %.1f", h, muM, muT)
 		if muM < 0 {
@@ -442,9 +450,10 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 				add("spread", "away", fmt.Sprintf("%s %+.1f", a, o.SpreadAway), pa, o.SpreadAwayOdds, o.Vendor)
 			}
 			if o.HasTotal {
-				po := 1 - team.NormCDF((o.Total-muT)/cal.Total.Sigma)
+				po, pu, push := gameboard.TotalProb(muT, cal.Total.Sigma, o.Total)
+				po, pu = po/(1-push), pu/(1-push)
 				add("total", "over", fmt.Sprintf("OVER %.1f", o.Total), po, o.Over, o.Vendor)
-				add("total", "under", fmt.Sprintf("UNDER %.1f", o.Total), 1-po, o.Under, o.Vendor)
+				add("total", "under", fmt.Sprintf("UNDER %.1f", o.Total), pu, o.Under, o.Vendor)
 			}
 			if o.MLHome != 0 && o.MLAway != 0 {
 				pw := team.NormCDF(muM / cal.Margin.Sigma)
@@ -512,6 +521,9 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 	}
 	tw.Flush()
 
+	if err := board.Save(dir); err != nil {
+		fatal(err)
+	}
 	path := filepath.Join(dir, fmt.Sprintf("gamepicks_%s.csv", date))
 	if err := writeCSV(path, plays); err != nil {
 		fatal(err)

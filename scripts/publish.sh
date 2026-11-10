@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Publish authoritative saved state. Source/data pushes trigger the site workflow.
 set -euo pipefail
+export PYTHONUTF8=1
 if [ "${1:-}" != "" ]; then go run ./cmd/export -date "$1"; else go run ./cmd/export; fi
 branch=$(git branch --show-current)
 [ -n "$branch" ] || { echo "Check out your branch before publishing."; exit 1; }

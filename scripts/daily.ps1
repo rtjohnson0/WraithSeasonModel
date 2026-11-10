@@ -10,6 +10,8 @@ param(
     [switch]$Full
 )
 $ErrorActionPreference = "Stop"
+# UTF-8 Go/JSON logs and Git output must not use the Windows ANSI code page.
+$env:PYTHONUTF8 = "1"
 
 # Native commands do not stop the script on failure by themselves; this does.
 function Run {

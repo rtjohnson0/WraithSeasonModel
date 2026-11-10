@@ -3,6 +3,7 @@ import { Seg } from './Board.jsx'
 import { ResultList, Table } from './Record.jsx'
 import { oddsText, pct, prettyDate, shortDate, statLabel } from './format.js'
 import { tipState, useNow } from './time.js'
+import QuoteDetails from './QuoteDetails.jsx'
 
 const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
 
@@ -50,6 +51,7 @@ function ComboCard({ c, now }) {
           {c.team} {c.matchup && `(${c.matchup})`} {ts.label}
         </span>
       </div>
+      <QuoteDetails p={c} />
       <p className="ov-why">{c.why}</p>
     </li>
   )

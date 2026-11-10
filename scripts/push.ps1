@@ -1,6 +1,8 @@
 # Commit local work and synchronize with the bot using record-aware state merging.
 param([string]$Message = "update")
 $ErrorActionPreference = "Stop"
+# UTF-8 Go/JSON logs and Git output must not use the Windows ANSI code page.
+$env:PYTHONUTF8 = "1"
 function Run-Git { & git.exe @args; if ($LASTEXITCODE -ne 0) { throw "git $($args[0]) failed" } }
 $branch = (& git.exe branch --show-current).Trim()
 if (-not $branch) { throw "Check out your branch before pushing." }

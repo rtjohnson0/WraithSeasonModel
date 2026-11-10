@@ -1,5 +1,18 @@
 # Model and workflow upgrade
 
+## Windows UTF-8 hotfix
+
+The Python audits now explicitly read UTF-8 (with optional BOM) and write UTF-8.
+Git synchronization explicitly decodes UTF-8. Windows PowerShell wrappers also
+set PYTHONUTF8=1 for child Python processes. This fixes cp1252 decoding failures
+on player names such as Luka Dončić without changing the original logs.
+
+If a run stopped at `audit quote provenance`, it stopped before training.
+After replacing the updated files, rerun `scripts/daily.ps1` without SkipTrain,
+then export and push. Previously downloaded history does not need downloading
+again solely because of this encoding error.
+
+
 This package updates the source and GitHub Actions workflow. It does not contain
 or overwrite your real `data/` directory, API keys, trained models, or Git history.
 Copy the project files into your existing checkout, preserving those items.
@@ -222,3 +235,49 @@ Synthetic tests validate implementation, not a betting advantage. Your real
 logs and trained files were not included, so their corrected totals and any
 change in real predictive performance have not been measured. PowerShell
 wrappers were reviewed but not executed on a Windows host.
+
+## Current board and book accuracy
+
+The published props board now comes from a replaceable `data/board.json`, not the
+best edge ever logged that day. A new 6.5 quote replaces an old 8.5 quote; a
+successful run with no qualifying picks clears the old board. Historical logs
+remain available for audit and grading, separately from current opportunities.
+Extras and V2 must match the current prediction run exactly before export.
+
+The predictor requires three independent physical books by default and excludes
+prop thresholds more than 0.5 units from the market median. If direct and SGO
+feeds disagree on a book's available thresholds, that book is withheld. These
+are conservative API checks, not direct verification of a sportsbook screen.
+There is no forced pick per game or default extra-play filler.
+
+The frontend shows exact book, threshold, odds, source update and capture times,
+break-even probability and a per-book comparison. It hides stale, started and
+unconfirmed prop snapshots by default, refreshes published data every minute,
+and distinguishes publication time from the scoring run. Reloading the page
+cannot refresh the sportsbook feed: run the pretip workflow to fetch new odds.
+
+## Moneyline and game-total cards
+
+`cmd/games` writes `data/gameboard.json` on every successful run, including empty
+runs. It now uses timestamp-filtered pregame odds (capture within 30 minutes,
+source update within six hours), keeps each book once, cleans discrepant lines,
+and requires three books per displayed market. Export includes this separate
+snapshot only for the selected date; the frontend expires each quote using its
+own times and removes games at scheduled tip-off.
+
+Cards include projected scores, total, an approximate 80% total range, both
+moneyline sides, and Over/Under probabilities at each selected book's exact
+total. Comparisons show break-even, no-vig book probability, probability edge
+and model expected ROI. Whole-number totals include estimated push refunds;
+probability and edge columns condition on no push, while ROI includes pushes.
+The normal residual assumption and historical residual spread are estimates;
+the displayed range has not been independently calibrated for coverage.
+These cards stay labeled paper tracking and show backtest evidence separately.
+They do not add model probabilities to the verified props performance record.
+
+No prop-model retraining is needed for these display and quote changes. After
+copying these files into your checkout, run `scripts/pretip.ps1`, then export and
+push. The game cards need `data/gamecal.json`; if absent, train that calibration
+with `go run ./cmd/games -backtest -season 2025` first. Workflow state syncing
+includes both board snapshots, so concurrent changes cannot union old board
+quotes into the latest run. The site build also checks quote expiration logic.

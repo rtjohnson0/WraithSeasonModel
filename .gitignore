@@ -31,3 +31,7 @@ site/dist/
 # Exact input/model replay captures are retained as workflow artifacts, not committed.
 __pycache__/
 *.pyc
+
+!data/board.json
+
+!data/gameboard.json
