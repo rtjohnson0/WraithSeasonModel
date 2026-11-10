@@ -13,11 +13,13 @@ import (
 	"propsmodel/internal/gameboard"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/props"
+	"propsmodel/internal/quarter"
 	"propsmodel/internal/runlog"
 )
 
 // Play is one pick on the board.
 type Play struct {
+	Period               string            `json:"period,omitempty"`
 	Tip                  string            `json:"tip,omitempty"`
 	QuoteAt              string            `json:"quoteAt,omitempty"`
 	SourceUpdatedAt      string            `json:"sourceUpdatedAt,omitempty"`
@@ -287,6 +289,7 @@ type Record struct {
 
 // Site is everything the website reads.
 type Site struct {
+	Quarter     *quarter.Board      `json:"quarter,omitempty"`
 	GameMarkets *gameboard.Snapshot `json:"gameMarkets,omitempty"`
 	Status      *boardstate.Status  `json:"status,omitempty"`
 	Archive     *ArchiveData        `json:"archive,omitempty"`
@@ -476,11 +479,14 @@ func matchupOf(e picklog.Entry) string {
 func makePlay(e picklog.Entry, date string, form Form, runs int, seenIn []string) Play {
 	t := normTier(e.Tier)
 	p := Play{
-		Tip: e.Tip, QuoteAt: e.QuoteAt, SourceUpdatedAt: e.SourceUpdatedAt, MarketMedian: e.MarketMedian, BookCount: e.BookCount, BookQuotes: e.BookQuotes,
+		Period: e.Period, Tip: e.Tip, QuoteAt: e.QuoteAt, SourceUpdatedAt: e.SourceUpdatedAt, MarketMedian: e.MarketMedian, BookCount: e.BookCount, BookQuotes: e.BookQuotes,
 		CaptureMaxAgeSeconds: e.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: e.PriceMaxAgeSeconds, BreakEven: bets.Implied(e.Odds), QuoteValidation: "API snapshot; confirm at sportsbook",
 		Player: e.Player, Team: e.Team, Stat: e.Stat, Side: e.Side, Line: e.Line, Prob: e.Prob,
 		ProbRaw: e.ProbRaw, Edge: edgeOf(e), Grade: grade(e.Prob, t), Tier: t, Odds: e.Odds, Book: e.Book,
 		ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why, PlayerID: e.PlayerID, Dist: e.Dist,
+	}
+	if p.Period == "" && e.Verified() {
+		p.Period = "game"
 	}
 	if form != nil {
 		games, sAvg, sGP := form(e.PlayerID, e.Stat, date)
@@ -525,7 +531,7 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 		count, seenIn = runlog.Appearances(day)
 	}
 	for _, e := range entries {
-		if e.Date != date {
+		if e.Date != date || !e.FullGame() {
 			continue
 		}
 		k := fmt.Sprintf("%d|%s|%s", e.PlayerID, e.Stat, e.Side)

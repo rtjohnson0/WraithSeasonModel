@@ -57,3 +57,5 @@ Run "game lines"                   { go run ./cmd/games } -Optional
 
 Write-Host ""
 Write-Host "Done. Props: data\picks_<date>.csv   Game lines: data\gamepicks_<date>.csv"
+
+Run "first-quarter points comparisons" { go run ./cmd/quarter } -Optional

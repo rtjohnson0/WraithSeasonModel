@@ -206,6 +206,9 @@ func LoadPregameSnapshot(path string, combos bool, asOf time.Time, maxAge time.D
 }
 
 func loadSnapshotPolicy(path string, combos, strict bool, asOf time.Time, maxAge time.Duration) ([]Line, error) {
+	return loadSnapshotPeriod(path, combos, strict, asOf, maxAge, "game")
+}
+func loadSnapshotPeriod(path string, combos, strict bool, asOf time.Time, maxAge time.Duration, period string) ([]Line, error) {
 	games, err := LoadGames(path)
 	if err != nil {
 		return nil, err
@@ -223,7 +226,11 @@ func loadSnapshotPolicy(path string, combos, strict bool, asOf time.Time, maxAge
 		}
 		inRow := map[lineKey][]Line{}
 		var rowOrder []lineKey
-		for _, l := range parseResponse(row.Response, row.GameID, combos) {
+		parsed := parseResponse(row.Response, row.GameID, combos)
+		if period == "1q" {
+			parsed = ParseQuarterPoints(row.Response, row.GameID)
+		}
+		for _, l := range parsed {
 			l.CapturedAt = row.CapturedAt
 			captured, ec := time.Parse(time.RFC3339, row.CapturedAt)
 			tip, et := time.Parse(time.RFC3339, games[l.GameID].Start)

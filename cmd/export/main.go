@@ -20,6 +20,7 @@ import (
 	"propsmodel/internal/gameboard"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/pipeline"
+	"propsmodel/internal/quarter"
 	"propsmodel/internal/runlog"
 )
 
@@ -103,6 +104,10 @@ func main() {
 		Record:      buildRecord(settled, *recent),
 		Combos:      buildComboRecord(comboSettled, 120),
 		Lines:       buildLinesRecord(*dir),
+	}
+	site.Quarter, err = quarter.LoadBoard(*dir, *date)
+	if err != nil {
+		fatal(err)
 	}
 	site.GameMarkets, err = gameboard.Load(*dir, *date)
 	if err != nil {

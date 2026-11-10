@@ -35,3 +35,7 @@ __pycache__/
 !data/board.json
 
 !data/gameboard.json
+
+!data/quarterboard.json
+!data/quarterlog.jsonl
+!data/quarter_games/

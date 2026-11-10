@@ -40,3 +40,11 @@ export function gradeTone(g) {
   if (g.startsWith('C')) return 'c'
   return 'd'
 }
+
+// Keep market period beside the stat; absent legacy metadata is not proof of a full game.
+export function marketLabel(p) {
+  const period = String(p.period || '').toLowerCase()
+  const name = statLabel[p.stat] || p.stat
+  const labels = { game: 'Full game', full_game: 'Full game', '1q': '1Q', '2q': '2Q', '3q': '3Q', '4q': '4Q', '1h': '1H', '2h': '2H' }
+  return `${labels[period] || (period ? period.toUpperCase() : 'Period unverified')} · ${name}`
+}

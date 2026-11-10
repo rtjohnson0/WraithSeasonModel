@@ -281,3 +281,61 @@ push. The game cards need `data/gamecal.json`; if absent, train that calibration
 with `go run ./cmd/games -backtest -season 2025` first. Workflow state syncing
 includes both board snapshots, so concurrent changes cannot union old board
 quotes into the latest run. The site build also checks quote expiration logic.
+
+
+Period labels are now explicit on prop cards: “Full game · Points” (and the
+other full-game stats). Missing legacy period metadata is labeled “Period
+unverified”; it is not automatically presented as a verified full-game market.
+The exporter rejects explicit partial-game entries even if one appears in a
+saved board snapshot. Quarter picks are excluded from this full-game model because its features,
+projections, recent form and settlement totals are full-game only. The separate
+1Q points comparison below handles first-quarter data.
+
+
+## Separate 1Q points comparisons
+
+The site can now show both “1Q · Points” and “Full game · Points.”
+`go run ./cmd/quarter` reads explicitly tagged BDL first-quarter point markets
+from the existing snapshot. A small line is never used to guess the period.
+The usual three-book consensus, pregame and freshness checks still apply.
+Full-game and quarter parsers cannot admit one another's markets.
+
+The quarter command fetches BALLDONTLIE play-by-play, final game quarter totals
+and confirmed starting lineups for the last ten prior full-game appearances of
+each quoted player. Data begins in the provider's 2025 season. Scoring is
+attributed only when the participant ID, player name and team agree. All Q1
+scoring must reconcile with both official team Q1 totals, and there must be
+quarter-completion evidence. Ambiguous scorers, incomplete lineups and missing
+quarter totals leave that game unavailable. Nothing is divided by four.
+
+Actual zero-point quarters are retained when quarter participation is confirmed
+by the starting lineup or a Q1 play. Nonparticipants are not treated as a
+zero-point performance. Missing data is never substituted with full-game points.
+The latest five verified 1Q performances and average are shown, with missing
+recent-game coverage reported. The initial quarter average and smoothed hit
+rate are descriptive paper estimates, not the trained full-game model.
+A smoothed directional estimate requires at least eight confirmed quarter
+appearances and no missing games in the recent window. It has no stake or
+claimed calibration and needs a separate chronological backtest before use
+as a calibrated probability model.
+
+Quarter paper entries and grading live in `data/quarterlog.jsonl`. They use
+period-specific identities and actual Q1 points only. No confirmed Q1
+participation means REVIEW, not a win, loss, or automatic sportsbook void.
+Whole-number point lines push on equality. The record counts quote outcomes;
+multiple books/refreshes are correlated and do not represent independent bets.
+It never enters full-game training or the full-game record. Old mislabeled
+historical results are not retroactively relabeled as quarter results.
+
+Normalized verified quarter games are cached under `data/quarter_games/`, and
+recent games are refreshed for corrections. These small normalized files and
+the separate board/log participate in the existing conflict-safe state sync.
+A failed quarter refresh clears its current board; it cannot reuse a full-game
+board or retain an old quarter board as if it were new. API access failures
+appear under quarter data coverage. The command can run with `-offline` against
+previously validated cache. No external API calls were needed for the fixture
+and regression checks; live coverage depends on the account's endpoint access.
+
+Both daily and pretip wrappers now call the quarter command automatically.
+For an immediate Windows refresh, run `scripts/pretip.ps1`, then export and
+push. New quarter data needs a first download, but no full-game model retrain.

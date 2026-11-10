@@ -39,3 +39,19 @@ func TestExportCarriesQuoteProvenanceAndBreakEven(t *testing.T) {
 		t.Fatalf("missing quote facts %+v", p)
 	}
 }
+
+func TestPartialGameCannotEnterPublishedFullGameBoard(t *testing.T) {
+	partial := picklog.Entry{Date: "2026-11-10", GameID: 9, PlayerID: 7, Stat: "points", Period: "1q", Side: "OVER", Line: 3.5, Tier: "PICK"}
+	snapshot := &boardstate.Snapshot{Date: partial.Date, Plays: []picklog.Entry{partial}}
+	got := currentBoard(snapshot, partial.Date, nil, nil)
+	if got.Plays != 0 {
+		t.Fatal("quarter pick leaked into full-game board")
+	}
+	full := partial
+	full.Period = "game"
+	full.Line = 24.5
+	p := makePlay(full, full.Date, nil, 0, nil)
+	if p.Period != "game" {
+		t.Fatal("period lost in export")
+	}
+}

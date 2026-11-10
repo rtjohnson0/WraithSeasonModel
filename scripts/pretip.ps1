@@ -15,3 +15,5 @@ Run "snapshot lines and injuries"  { go run ./cmd/pull snapshot }
 Run "extra books (SportsGameOdds)" { go run ./cmd/sgo snapshot } -Optional
 Run "player props"                 { go run ./cmd/predict }
 Run "game lines"                   { go run ./cmd/games } -Optional
+
+Run "first-quarter points comparisons" { go run ./cmd/quarter } -Optional

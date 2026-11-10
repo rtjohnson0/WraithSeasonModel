@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Seg } from './Board.jsx'
 import { ResultList, Table } from './Record.jsx'
-import { oddsText, pct, prettyDate, shortDate, statLabel } from './format.js'
+import { marketLabel, oddsText, pct, prettyDate, shortDate, statLabel } from './format.js'
 import { tipState, useNow } from './time.js'
 import QuoteDetails from './QuoteDetails.jsx'
 
@@ -27,7 +27,7 @@ function ComboCard({ c, now }) {
       <div className="ov-head">
         <b>{c.player}</b>
         <span className="ov-bet">
-          {c.side === 'OVER' ? 'Over' : 'Under'} {c.line} {statLabel[c.stat] || c.stat}
+          {c.side === 'OVER' ? 'Over' : 'Under'} {c.line} {marketLabel(c)}
         </span>
         <span className="ov-price">
           {oddsText(c.odds)} <small>{c.book}</small>

@@ -151,6 +151,7 @@ jobs:
             data/*settled.jsonl
             data/runs.jsonl
             data/lines
+            data/quarter_games
             data/snapshots
             data/replay
             data/*audit*.json

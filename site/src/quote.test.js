@@ -19,3 +19,18 @@ test('book names do not mix provider IDs with physical books', () => {
   assert.equal(bookName('sgo/fanduel'), 'FanDuel')
   assert.equal(bookName('draftkings'), 'DraftKings')
 })
+
+import { marketLabel } from './format.js'
+test('period labels distinguish full game, quarter, and unknown legacy entries', () => {
+ assert.equal(marketLabel({stat:'points',period:'game'}), 'Full game · Points')
+ assert.equal(marketLabel({stat:'points',period:'1q'}), '1Q · Points')
+ assert.equal(marketLabel({stat:'points'}), 'Period unverified · Points')
+ assert.equal(quoteState({...recent,period:'1q'},now).usable,false)
+})
+
+test('1Q quotes require the quarter context and cannot enter the full-game board', () => {
+ const q = {...recent,period:'1q'}
+ assert.equal(quoteState(q,now).usable,false)
+ assert.equal(quoteState(q,now,'1q').usable,true)
+ assert.equal(quoteState({...q,period:'game'},now,'1q').usable,false)
+})

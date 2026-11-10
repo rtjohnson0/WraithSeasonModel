@@ -4,10 +4,11 @@ import Icon from './Icons.jsx'
 import QuoteDetails from './QuoteDetails.jsx'
 import RunStatus from './RunStatus.jsx'
 import GameMarkets from './GameMarkets.jsx'
+import QuarterBoard from './QuarterBoard.jsx'
 import { quoteState } from './quote.js'
 import { DaySummary, ResultList } from './Record.jsx'
 import { tipState, useNow } from './time.js'
-import { LABELS, gradeTone, labelInfo, oddsText, pct, prettyDate, statLabel } from './format.js'
+import { LABELS, marketLabel, gradeTone, labelInfo, oddsText, pct, prettyDate, statLabel } from './format.js'
 
 const STATS = ['points', 'rebounds', 'assists', 'threes']
 
@@ -123,7 +124,7 @@ function TopPlays({ games, now, onPick }) {
               <span className="tp-main">
                 <b>{p.player}</b>
                 <span>
-                  <i className={p.side === 'OVER' ? 'over' : 'under'}>{p.side === 'OVER' ? 'Over' : 'Under'}</i> {p.line} {statLabel[p.stat] || p.stat}
+                  <i className={p.side === 'OVER' ? 'over' : 'under'}>{p.side === 'OVER' ? 'Over' : 'Under'}</i> {p.line} {marketLabel(p)}
                 </span>
               </span>
               <span className="tp-side">
@@ -163,7 +164,7 @@ function OversWatch({ overs, now }) {
               <div className="ov-head">
                 <b>{o.player}</b>
                 <span className="ov-bet">
-                  Over {o.line} {statLabel[o.stat] || o.stat}
+                  Over {o.line} {marketLabel(o)}
                 </span>
                 <span className="ov-price">
                   {oddsText(o.odds)} <small>{o.book}</small>
@@ -298,7 +299,7 @@ function PlayRow({ p, focus, started }) {
           </span>
           <span className="pick">
             <b className={p.side === 'OVER' ? 'over' : 'under'}>{p.side === 'OVER' ? 'Over' : 'Under'}</b> {p.line}{' '}
-            {statLabel[p.stat] || p.stat}
+            {marketLabel(p)}
           </span>
           {p.defense && (
             <span className={`defense ${p.defense.helps ? 'helps' : 'hurts'}`} title={p.defense.early ? 'Early in the season: this ranking still leans on last season' : undefined}>
@@ -637,6 +638,8 @@ export default function Board({ site }) {
 
       <RunStatus site={site} />
       <GameMarkets data={site.gameMarkets} />
+      <QuarterBoard data={site.quarter} />
+      <h2>Full-game player props</h2>
       <p className="small quote-disclaimer">Lines are specific to the named book and price. A current sportsbook screen takes precedence over an API snapshot.</p>
       <label className="inactive-toggle"><input type="checkbox" checked={showInactive} onChange={(e) => setShowInactive(e.target.checked)} /> Show expired or unconfirmed snapshots</label>
       <TopPlays games={board.games || []} now={now} onPick={(p) => { setStat('all'); setLabel('all'); setSide('ALL'); setQ(''); setRepeatsOnly(false); setFocus({ id: playId(p), n: Date.now() }) }} />

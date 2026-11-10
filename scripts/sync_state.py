@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 STATE_FILES = [
-    'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
+    'quarterboard.json', 'quarterlog.jsonl', 'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
     'biasfix.json', 'minfix.json', 'wofix.json', 'runs.jsonl', 'more.json',
     'projlog.jsonl', 'model.json', 'combolog.jsonl', 'combosettled.jsonl',
     'combocorr.json', 'v2log.jsonl', 'v2settled.jsonl', 'v2.json', 'model_v2.json',
@@ -97,12 +97,14 @@ def merge_jsonl(name, base, ours, theirs):
 def state_paths():
     names = {'data/' + x for x in STATE_FILES}
     names.update(str(p).replace(os.sep, '/') for p in Path('data/lines').glob('*.jsonl'))
+    names.update(str(p).replace(os.sep, '/') for p in Path('data/quarter_games').glob('*.json'))
     return sorted(names)
 
 
 def is_state(name):
     return name in {'data/' + x for x in STATE_FILES} or (
-        name.startswith('data/lines/') and name.endswith('.jsonl'))
+        name.startswith('data/lines/') and name.endswith('.jsonl')) or (
+        name.startswith('data/quarter_games/') and name.endswith('.json'))
 
 
 def save_initial(message):
@@ -157,7 +159,7 @@ def sync(branch, message, attempts=5, delay=2):
                 else:
                     # Remote explicitly changed configuration; keep that change.
                     content = upstream
-                    if name in {'data/gameboard.json', 'data/board.json', 'data/more.json', 'data/v2.json'} and local and upstream:
+                    if (name.startswith('data/quarter_games/') or name in {'data/quarterboard.json', 'data/gameboard.json', 'data/board.json', 'data/more.json', 'data/v2.json'}) and local and upstream:
                         a, b = json.loads(local), json.loads(upstream)
                         if a.get('at', '') > b.get('at', ''):
                             content = local

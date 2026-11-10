@@ -1,5 +1,6 @@
 // A recent API snapshot is not a guarantee that a sportsbook still offers the bet.
-export function quoteState(p, now = Date.now()) {
+export function quoteState(p, now = Date.now(), expectedPeriod = 'game') {
+  if (p.period && p.period !== expectedPeriod && !(expectedPeriod === 'game' && p.period === 'full_game')) return { key: 'unknown', label: 'Market period does not match this comparison', usable: false }
   const tip = Date.parse(p.tip || '')
   if (Number.isFinite(tip) && now >= tip) return { key: 'closed', label: 'Started · quote closed', usable: false }
   const captured = Date.parse(p.quoteAt || '')

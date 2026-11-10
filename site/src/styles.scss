@@ -425,3 +425,7 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
 .projection-summary b { display: block; font-size: 18px; color: #f1f5fc; margin-top: 5px; }
 .game-market { margin: 16px 0; }
 .game-market .booktable { overflow-x: auto; }
+.quarter-history { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0 16px; }
+.quarter-history span { background: #202633; border-radius: 6px; padding: 10px; min-width: 90px; }
+.quarter-history b, .quarter-history small { display: block; }
+.quarter-history small { color: #acb6c9; margin-top: 5px; font-size: 11px; }

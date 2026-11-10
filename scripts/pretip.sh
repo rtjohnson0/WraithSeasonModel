@@ -5,3 +5,5 @@ go run ./cmd/pull snapshot
 go run ./cmd/sgo snapshot || echo "sgo snapshot skipped"
 go run ./cmd/predict
 go run ./cmd/games || echo "game lines skipped"
+
+go run ./cmd/quarter || echo "quarter comparisons unavailable; full-game data was not substituted"

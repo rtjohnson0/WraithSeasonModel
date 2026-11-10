@@ -39,3 +39,5 @@ echo "== player props =="
 go run ./cmd/predict
 echo "== game lines =="
 go run ./cmd/games || echo "game lines skipped"
+
+go run ./cmd/quarter || echo "quarter comparisons unavailable; full-game data was not substituted"
