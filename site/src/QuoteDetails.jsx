@@ -18,15 +18,7 @@ export default function QuoteDetails({ p, compact = false }) {
       </p>
       {!compact && <>
         <p className="quote-caption">Model {pct(p.prob, 1)} · Break-even {pct(p.breakEven || implied(p.odds), 1)}. This probability applies only to this line and price.</p>
-        <details>
-          <summary>Compare book quotes and timestamps</summary>
-          <p className="small">Snapshot {clock(p.quoteAt)}. Source price updated {clock(p.sourceUpdatedAt)}. Market median {p.marketMedian ?? '—'} across {p.bookCount || 0} distinct books.</p>
-          <div className="scroll"><table className="book-quotes"><thead><tr><th>Book</th><th>Line</th><th>Over</th><th>Under</th><th>Feed</th><th>Captured</th></tr></thead>
-            <tbody>{(p.bookQuotes || []).map((q) => <tr key={`${q.book}-${q.source}`} className={q.book === p.book?.replace(/^sgo\//, '') ? 'selected-quote' : ''}>
-              <th>{bookName(q.book)}</th><td>{q.line}</td><td>{oddsText(q.overOdds)}</td><td>{oddsText(q.underOdds)}</td><td>{q.source}</td><td>{clock(q.capturedAt)}</td>
-            </tr>)}</tbody></table></div>
-          <p className="small">These are provider snapshots, not direct sportsbook confirmation. If your book shows a different line or price, this pick does not apply. Reloading the page checks for a newer publication; it does not query the sportsbook.</p>
-        </details>
+        {!status.usable && <p className="small">Pregame snapshot. Confirm the current line and price before betting.</p>}
       </>}
     </div>
   )

@@ -27,3 +27,15 @@ func TestExplainUsesFittedDefenseInputsWithoutChangingModel(t *testing.T) {
 		t.Fatal("missing feature not identified")
 	}
 }
+
+func TestDisabledInjuryInputsAreNotPresentedAsLearnedAdjustments(t *testing.T) {
+	var row feat.Row
+	row.X = make([]float64, len(feat.CommonSpecs))
+	row.S[0] = make([]float64, len(feat.StatSpecs[0]))
+	m := &Model{Disabled: []string{feat.GroupTeammates, feat.GroupOppOut}}
+	m.Stat[0] = &glm.Model{}
+	note := m.ExplainContext(&row, data.Points)
+	if !strings.Contains(note, "injury feature policy") || !strings.Contains(note, "not a learned absence adjustment") {
+		t.Fatal("disabled injury features not disclosed")
+	}
+}

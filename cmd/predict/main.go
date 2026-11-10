@@ -126,7 +126,7 @@ func main() {
 	v2Keep := flag.Bool("v2keep", true, "V2: a play the real model opposes at 53%+ is a Lean (never Strong) instead of being dropped. V2's level anchor lifts projections the real model leaves low, so dropping them removes the Overs the anchor creates; -v2keep=false drops them")
 	v2Edge := flag.Float64("v2edge", 0.04, "V2: a play also qualifies on edge alone at this size when V2 gives its side 50%+, so a plus-money Over with a real edge is not shut out by the 55% bar (0 turns it off)")
 	v2Juice := flag.Int("v2juice", 160, "V2: plays priced worse than -this are left out: a -190 favourite needs 65.5% to break even, so a 67% number there is almost all price (0 turns it off)")
-	v2Weight := flag.Float64("v2weight", 0.5, "V2: the model's share of the probability (the rest is the book's devigged price). The real model's calibration gives points 3% and rebounds 24%")
+	v2Weight := flag.Float64("v2weight", 0.5, "V2: explicit linear model/book blend; the primary model instead uses fitted logit calibration")
 	comboBar := flag.Float64("combobar", 0.53, "a combo is tracked at this probability (53% Over or 47% Under by default), looser than the 55% posting bar because combos are never staked and need a graded sample; the printout says how many reach 55%")
 	comboPer := flag.Int("comboperplayer", 1, "most combo plays to track per player (PRA and PR on the same player are one idea, not two)")
 	comboMax := flag.Int("combomax", 30, "most combo plays to track per run")
@@ -608,7 +608,7 @@ func main() {
 						}
 					}
 					replayRows[mk] = replay.Record{Date: *date, At: runAt.Format(time.RFC3339), Tip: g.Start,
-						Row: replay.Capture(row), Policy: policy, Cal: rule, Stat: l.Stat, Line: l.Line, Book: l.Vendor,
+						Row: decisionIdentity(row, l.GameID, *date), Policy: policy, Cal: rule, Stat: l.Stat, Line: l.Line, Book: l.Vendor,
 						QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds,
 						Market: bets.MarketOver(l.OverOdds, l.UnderOdds), P1: pOver}
 
@@ -838,6 +838,10 @@ func main() {
 		return picks[i].Prob > picks[j].Prob
 	})
 
+	if guarded, reason := guardSelectedSides(picks, *skewMax); reason != "" {
+		picks = guarded
+		fmt.Println("SELECTED-BOARD CHECK:", reason)
+	}
 	nFirm := 0
 	for _, s := range picks {
 		if s.Tier == "PICK" {

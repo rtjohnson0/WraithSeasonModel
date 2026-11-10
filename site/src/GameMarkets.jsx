@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { quoteState, bookName, clock } from './quote.js'
+import { visibleQuote, quoteState, bookName, clock } from './quote.js'
 import { useNow } from './time.js'
 import { explainGame } from './explain.js'
 import { oddsText } from './format.js'
@@ -7,7 +7,7 @@ import { oddsText } from './format.js'
 const pc = (p) => `${(p * 100).toFixed(1)}%`
 const signed = (n) => `${n >= 0 ? '+' : ''}${n.toFixed(1)}`
 function Market({ game, market, now }) {
-  const quotes = game.quotes.filter((q) => q.market === market && quoteState(q, now).usable)
+  const quotes = game.quotes.filter((q) => q.market === market && visibleQuote(q))
   const [book, setBook] = useState('')
   const q = quotes.find((q) => q.book === book) || quotes[0]
   if (!q) return <p className="small">No current {market === 'total' ? 'total' : 'moneyline'} quote passed freshness and book checks.</p>
@@ -22,13 +22,13 @@ function Market({ game, market, now }) {
       {q.sides.map((s) => <tr key={s.label}><td><b>{s.label}{market === 'total' ? ` ${q.line}` : ''}</b> {oddsText(s.odds)}</td><td>{pc(s.conditional)}</td><td>{pc(s.breakEven)}</td><td>{pc(s.market)}</td><td>{signed(s.edge * 100)} pp</td><td>{signed(s.ev * 100)}%</td></tr>)}
     </tbody></table></div>
     {q.sides[0].push > 0 && <p className="small">Estimated push chance: {pc(q.sides[0].push)}. Model and edge columns exclude pushes; model ROI includes refunds.</p>}
-    <p className="small">Captured {clock(q.quoteAt)} · source updated {clock(q.sourceUpdatedAt)} · {q.bookCount} books.</p>
+    <p className="small">{quoteState(q, now).label} · Checked {clock(q.quoteAt)} · source updated {clock(q.sourceUpdatedAt)} · {q.bookCount} books.</p>
   </div>
 }
 export default function GameMarkets({ data }) {
   const now = useNow()
   if (!data) return <section className="game-markets"><h2>Moneyline & game totals</h2><p>Run the game model to publish score projections and book-specific moneyline / Over–Under comparisons.</p></section>
-  const games = (data.games || []).filter((g) => Date.parse(g.tip) > now)
+  const games = (data.games || [])
   return <section className="game-markets">
     <div className="game-market-heading"><h2>Moneyline & game totals</h2><span className="quote-badge">Paper tracking</span></div>
     <p className="small">Game model run: {clock(data.at)}. These estimates blend team ratings with market lines. They do not include confirmed lineups. A positive model edge alone does not establish a profitable strategy.</p>

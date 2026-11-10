@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { DayGrid, HitRateBars, UnitsChart } from './Charts.jsx'
 import Lines from './Lines.jsx'
-import ResultAudit from './ResultAudit.jsx'
 import { pct, prettyDate, shortDate, statLabel } from './format.js'
 
 export function Table({ rows, unitsNote }) {
@@ -80,7 +79,7 @@ export default function Record({ site }) {
   const [archived, setArchived] = useState(false)
   const toggle = site.archive && <div className="archive-switch"><label><input type="checkbox" checked={archived} onChange={(e) => setArchived(e.target.checked)} /> Inspect historical unverified results</label></div>
   const view = archived && site.archive ? { ...site, record: site.archive.record } : site
-  return <><ResultAudit reports={site.resultAudits} />{toggle}{archived && <p className="notice">Historical audit view. These results are not included in verified performance.</p>}<RecordBody site={view} />
+  return <>{toggle}{archived && <p className="notice">Historical audit view. These results are not included in verified performance.</p>}<RecordBody site={view} />
     {site.archive?.excluded?.length > 0 && <details className="exclusion-registry"><summary>{site.archive.excluded.length} explicitly excluded quote records</summary><ul>{site.archive.excluded.map((r) => <li key={r.id}><code>{r.id}</code><p>{r.reason}</p></li>)}</ul></details>}
   </>
 }

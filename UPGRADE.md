@@ -472,3 +472,56 @@ their provider-download times: a concurrent older WIN cannot replace a newer
 verified LOSS, and newer evidence requiring REVIEW withholds the result.
 The full-season audit wrapper backs up the original stats file before download,
 so the pre-refresh source remains available for investigating an incorrect row.
+
+## Findings from the supplied production data
+
+The supplied `data.zip` was audited against its cached final stats. All 7,425
+saved individual/combo/V2 grade rows were checked. The report, searchable HTML,
+CSV evidence, recovery stats and proposed corrected snapshots are bundled in
+`audit_findings/`. The folder is ignored by Git so a normal source push does not
+publish the supplied audit evidence and recovery files.
+
+Naz Reid game 21718067 / player 667378 has 13 final rebounds (1 offensive and
+12 defensive). The Under 9.5 saved WIN at actual 1 becomes LOSS. Its settlement
+was only 34 minutes after the recorded tip. Of 273 differing individual-prop
+actuals, 270 were too low; 98 saved individual-prop wins change to losses.
+These are quote-row counts, not independent tickets. Other logs and detailed
+limits are documented in `audit_findings/README.md`. Known after-tip entries
+are separately excluded from pregame performance; unknown quote periods,
+availability and API download times are not invented.
+
+`repair_results.ps1` applies a cache audit to the files currently in a checkout,
+with backups, rather than copying possibly older proposed logs over newer work.
+It can restore the supplied stats recovery copy only if the active current-year
+file is missing/empty. `-Refresh` fetches current provider stats before strict
+settlement. The stats downloader now stages a whole refresh separately, copies
+existing inputs when appending, rejects empty full downloads and only replaces
+the active file on success. Failure leaves the previous active file intact.
+
+All 287 supplied saved predictions were reproduced exactly. Their replay game
+IDs were all zero, preventing meaningful future joins to actuals. New captures
+bind the quote game ID. Existing missing IDs can be repaired only when the
+saved player/stat market ID and snapshot tip uniquely agree; numeric features
+and probabilities are preserved. The supplied repaired captures still reproduce
+all 287 predictions exactly. `cmd/diagnose` exposes raw/calibrated side counts
+and explicitly labeled no-intercept/typical-minutes sensitivities without
+modifying model coefficients or generating trades.
+
+A selected-board concentration check now applies the existing skew limit to
+unique selected markets, as well as the original scored-pool check. A highly
+one-sided selection can arise even when the larger input pool is less skewed.
+Dominant-side staked picks are held as CHECK when the limit is exceeded, not
+converted to artificial Overs. At least ten unique selected markets are needed.
+
+The fitted model in the upload disables teammate-absence and opponent-absence
+feature groups. Model explanations now distinguish displayed injury context
+from a learned absence adjustment. Learned opponent-defense inputs remain
+active for points. No arbitrary minutes boost or zeroed calibration intercept
+was deployed merely to make the Over/Under counts look balanced.
+
+## Board persistence and public cleanup
+Published plays remain visible for their slate after their price expires or the game starts. Each card keeps its original line and quote time; older prices are marked for confirmation. Freshness does not remove plays or reset filter counts. Successful new model runs can still replace the slate, including a genuinely empty run.
+
+Source-only pushes preserve saved board state. If an older checkout has no board snapshot, the workflow runs pretip once to create one before deploying. Missing state cannot silently overwrite the site with an empty export. Synchronization selects board/more/v2 as a single run bundle. Audits and detailed diagnostics remain offline in audit_findings and workflow artifacts, rather than public pages.
+
+After installing this update, run the GitHub workflow in pretip mode once to refresh the saved slate and prices. No retraining is needed for these display and publishing fixes.

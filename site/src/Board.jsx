@@ -5,9 +5,8 @@ import QuoteDetails from './QuoteDetails.jsx'
 import RunStatus from './RunStatus.jsx'
 import GameMarkets from './GameMarkets.jsx'
 import QuarterBoard from './QuarterBoard.jsx'
-import SideAudit from './SideAudit.jsx'
 import PickReason from './PickReason.jsx'
-import { quoteState } from './quote.js'
+import { visibleQuote, quoteState } from './quote.js'
 import { DaySummary, ResultList } from './Record.jsx'
 import { tipState, useNow } from './time.js'
 import { LABELS, marketLabel, gradeTone, labelInfo, oddsText, pct, prettyDate, statLabel } from './format.js'
@@ -109,7 +108,7 @@ function TopPlays({ games, now, onPick }) {
     const ts = tipState(g.tip, now)
     if (ts.state === 'live' || ts.state === 'done') return
     ;(g.plays || []).forEach((p) => {
-      if (p.label !== 'Lean' && quoteState(p, now).usable) open.push({ p, g, ts })
+      if (p.label !== 'Lean' && visibleQuote(p)) open.push({ p, g, ts })
     })
   })
   open.sort((a, b) => b.p.prob - a.p.prob)
@@ -571,11 +570,10 @@ export default function Board({ site }) {
   const [q, setQ] = useState('')
   const [repeatsOnly, setRepeatsOnly] = useState(false)
   const [focus, setFocus] = useState(null)
-  const [showInactive, setShowInactive] = useState(false)
   const now = useNow()
 
   const all = useMemo(() => (board.games || []).flatMap((g) => g.plays || []), [board])
-  const current = all.filter((p) => quoteState(p, now).usable)
+  const current = all.filter((p) => visibleQuote(p))
   const currentStaked = current.filter((p) => p.tier === 'PICK' && p.units > 0).length
   const count = (f) => current.filter(f).length
 
@@ -586,7 +584,7 @@ export default function Board({ site }) {
           ...g,
           plays: (g.plays || []).filter(
             (p) =>
-              (showInactive || quoteState(p, now).usable) &&
+              visibleQuote(p) &&
               (stat === 'all' || p.stat === stat) &&
               (label === 'all' || p.label === label) &&
               (side === 'ALL' || p.side === side) &&
@@ -596,14 +594,14 @@ export default function Board({ site }) {
           // The extras ignore the play-type and repeat filters (they are all lean plays) but follow stat, side and search.
           more: (g.more || []).filter(
             (p) =>
-              (showInactive || quoteState(p, now).usable) &&
+              visibleQuote(p) &&
               (stat === 'all' || p.stat === stat) &&
               (side === 'ALL' || p.side === side) &&
               (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
           ),
         }))
         .filter((g) => !q || g.plays.length || g.more.length),
-    [board, stat, label, side, q, repeatsOnly, showInactive, now],
+    [board, stat, label, side, q, repeatsOnly, now],
   )
   const shown = games.reduce((n, g) => n + g.plays.length, 0)
 
@@ -643,13 +641,11 @@ export default function Board({ site }) {
       <GameMarkets data={site.gameMarkets} />
       <QuarterBoard data={site.quarter} />
       <h2>Full-game player props</h2>
-      <SideAudit data={site.sideAudit} />
       <p className="small quote-disclaimer">Lines are specific to the named book and price. A current sportsbook screen takes precedence over an API snapshot.</p>
-      <label className="inactive-toggle"><input type="checkbox" checked={showInactive} onChange={(e) => setShowInactive(e.target.checked)} /> Show expired or unconfirmed snapshots</label>
       <TopPlays games={board.games || []} now={now} onPick={(p) => { setStat('all'); setLabel('all'); setSide('ALL'); setQ(''); setRepeatsOnly(false); setFocus({ id: playId(p), n: Date.now() }) }} />
       <details className="exploratory-watch"><summary>Exploratory overs watch · not current picks</summary><p className="small">Historical watch quotes need a fresh check at the named book.</p><OversWatch overs={board.overs} now={now} /></details>
       <LastResults record={site.record} date={board.date} />
-      <RunChanges runs={board.runsToday} />
+
       {/* Historical quotes belong in run changes, never in the current-pick list. */}
 
       <section className="filters" aria-label="Filters">
@@ -657,7 +653,7 @@ export default function Board({ site }) {
           label="Stat"
           value={stat}
           onChange={setStat}
-          options={[['all', 'All', all.length], ...STATS.map((s) => [s, statLabel[s], count((p) => p.stat === s)])]}
+          options={[['all', 'All', current.length], ...STATS.map((s) => [s, statLabel[s], count((p) => p.stat === s)])]}
         />
         <Seg
           label="Side"
@@ -689,7 +685,7 @@ export default function Board({ site }) {
         <p className="notice">
           {board.games.length === 0
             ? 'No qualifying plays in the latest run. A new odds refresh is required to publish new quotes.'
-            : 'No recent qualifying quotes match these filters. Earlier snapshots may be expired; no replacement plays are forced.'}
+            : 'No plays match these filters.'}
         </p>
       )}
 
@@ -721,7 +717,7 @@ export default function Board({ site }) {
               {g.ctx && <GameContext c={g.ctx} />}
               {g.news?.length > 0 && <LineupNews news={g.news} />}
               {started && <p className="startednote">This game has started or is over, so these lines are closed. The plays are kept for the record.</p>}
-              {g.plays.length === 0 && <p className="no-qualifying">No qualifying recent plays for this game.</p>}
+              {g.plays.length === 0 && <p className="no-qualifying">No published plays for this game.</p>}
               <ul>
                 {g.plays.map((p) => (
                   <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} focus={focus} started={started} />

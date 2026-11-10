@@ -134,3 +134,12 @@ func TestUTF8BOMDoesNotPreventResultAudit(t *testing.T) {
 		t.Fatalf("BOM audit failed %+v %v", r, e)
 	}
 }
+
+func TestOnlyExactReversibleNameEncodingRepairIsAllowed(t *testing.T) {
+	if !sameName("Kasparas JakuÄ\u008dionis", "Kasparas Jakučionis") {
+		t.Fatal("known reversible UTF-8 corruption was not recognized")
+	}
+	if sameName("Naz Reid", "Nathan Reid") {
+		t.Fatal("fuzzy identity matching admitted another player")
+	}
+}

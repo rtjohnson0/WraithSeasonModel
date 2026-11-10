@@ -18,6 +18,7 @@ import (
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 )
 
 type raw struct {
@@ -149,7 +150,7 @@ func (ix *Index) Grade(e picklog.Entry, close float64) picklog.Settled {
 	if data.NormalizeDate(r.Game.Date) != e.Date {
 		return review("game date mismatch")
 	}
-	if e.Player == "" || norm(e.Player) != norm(r.Player.First+" "+r.Player.Last) {
+	if e.Player == "" || !sameName(e.Player, r.Player.First+" "+r.Player.Last) {
 		return review(fmt.Sprintf("player ID %d names %s %s in the final row, not logged name %s", e.PlayerID, r.Player.First, r.Player.Last, e.Player))
 	}
 	if r.Team.ID == 0 || r.Game.Home == 0 || r.Game.Away == 0 || (r.Team.ID != r.Game.Home && r.Team.ID != r.Game.Away) {
@@ -364,4 +365,20 @@ func (ix *Index) Actual(gameID, playerID int) (data.PlayerGame, bool) {
 		}
 	}
 	return data.PlayerGame{PlayerID: playerID, Name: e.Player, TeamID: r.Team.ID, TeamAbbr: r.Team.Abbr, GameID: gameID, Date: e.Date, Minutes: data.ParseMinutes(r.Min), Pts: *r.Pts, Reb: *r.Reb, Ast: *r.Ast, Fg3m: *r.Fg3m, HomeTeamID: r.Game.Home, VisitorTeamID: r.Game.Away}, true
+}
+
+// Allow only a reversible UTF-8-as-Latin-1 encoding error, confirmed against
+// the exact player/game row. This is not fuzzy player-name matching.
+func sameName(logged, source string) bool {
+	if norm(logged) == norm(source) {
+		return true
+	}
+	bytes := []byte{}
+	for _, r := range logged {
+		if r > 255 {
+			return false
+		}
+		bytes = append(bytes, byte(r))
+	}
+	return utf8.Valid(bytes) && norm(string(bytes)) == norm(source)
 }

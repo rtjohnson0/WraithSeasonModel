@@ -184,10 +184,11 @@ func runStats(c *bdl.Client, args []string) error {
 				start = backDays(d, 2) // overlap a little; duplicates are removed when the files load
 			}
 		}
-		out, err := create(name, start != "")
+		out, err := beginStatsDownload(dataDir, name, start != "")
 		if err != nil {
 			return err
 		}
+		defer out.Abort()
 		n := 0
 		types := []string{"regular", "playoffs", "playin", "ist"}
 		if start != "" {
@@ -217,12 +218,16 @@ func runStats(c *bdl.Client, args []string) error {
 				return out.writeRow(stamped)
 			})
 			if err != nil {
-				out.Close()
+				out.Abort()
 				return err
 			}
 			fmt.Printf("season %d %s: %d rows so far\n", s, strings.TrimSpace(st+" "), n)
 		}
-		if err := out.Close(); err != nil {
+		if n == 0 && start == "" {
+			out.Abort()
+			return fmt.Errorf("season %d returned no stats; previous file was preserved", s)
+		}
+		if err := out.Commit(); err != nil {
 			return err
 		}
 		if start != "" {

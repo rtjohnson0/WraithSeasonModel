@@ -227,6 +227,19 @@ def sync(branch, message, attempts=5, delay=2):
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.write_text(content, encoding='utf-8')
                     git('add', '-f', '--', name)
+            board_path = 'data/board.json'
+            candidates = [(ref, blob(ref, board_path)) for ref in (head, remote)]
+            candidates = [(ref, json.loads(raw)) for ref, raw in candidates if raw]
+            if candidates:
+                winner, board = max(candidates, key=lambda item: item[1].get('at', ''))
+                for name in ('data/board.json', 'data/more.json', 'data/v2.json'):
+                    content = blob(winner, name)
+                    if content is not None:
+                        Path(name).parent.mkdir(parents=True, exist_ok=True)
+                        Path(name).write_text(content, encoding='utf-8')
+                        git('add', '-f', '--', name)
+                    elif Path(name).exists():
+                        git('rm', '-f', '--ignore-unmatch', '--', name)
             # Preserve a coherent trained bundle if a user retrained while this run worked.
             if any(blob(base, p) != blob(remote, p) for p in MODEL_BUNDLE):
                 for name in MODEL_BUNDLE:

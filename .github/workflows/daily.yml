@@ -138,6 +138,17 @@ jobs:
           SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
         run: bash scripts/pretip.sh
 
+      - name: Restore missing published board on source-only pushes
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'site'
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
+        run: |
+          if [ ! -s data/board.json ]; then
+            echo "Saved board is missing; generating a fresh slate before publication."
+            bash scripts/pretip.sh
+          fi
+
       # Runs even after a failed model step/push. These are actual recoverable run
       # outputs, including quote evidence; a failed push must never lose the logs.
       - name: Retain run evidence and generated state

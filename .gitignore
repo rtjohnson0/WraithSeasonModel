@@ -44,3 +44,5 @@ __pycache__/
 !data/combosettled_audit.json
 !data/v2settled_audit.json
 !data/side_audit.json
+# Local audit evidence and recovery bundle; keep it out of source pushes.
+audit_findings/

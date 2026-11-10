@@ -5,21 +5,10 @@ import { marketLabel, oddsText, pct, prettyDate, shortDate, statLabel } from './
 import { tipState, useNow } from './time.js'
 import QuoteDetails from './QuoteDetails.jsx'
 import PickReason from './PickReason.jsx'
-import { quoteState } from './quote.js'
+import { visibleQuote, quoteState } from './quote.js'
 
 const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
 
-function Status({ info, date }) {
-  if (!info) {
-    return <p className="notice">No combo lines have been priced for {prettyDate(date)} yet. They appear after the daily run.</p>
-  }
-  return (
-    <p className="counts">
-      {prettyDate(date)}: {info.loaded ?? '?'} pregame quotes loaded → {info.fresh ?? '?'} fresh → {info.usable ?? '?'} after book checks → {info.priced} combo lines priced, {info.over} lean Over and {info.under} lean Under. {info.cleared} reach the 55% / 45% bar, and{' '}
-      {info.tracked} {info.tracked === 1 ? 'play is' : 'plays are'} tracked at {pct(info.bar)} / {pct(1 - info.bar)}.
-    </p>
-  )
-}
 
 function ComboCard({ c, now }) {
   const ts = tipState(c.tip, now)
@@ -69,7 +58,7 @@ export default function Combos({ site }) {
   const [stat, setStat] = useState('all')
   const [side, setSide] = useState('ALL')
   const [all, setAll] = useState(false)
-  const plays = (board.combos || []).filter((p) => quoteState(p,now).usable)
+  const plays = (board.combos || []).filter((p) => visibleQuote(p))
   const list = plays.filter((c) => (stat === 'all' || c.stat === stat) && (side === 'ALL' || c.side === side))
   const shown = all ? list : list.slice(0, 12)
   const rows = (rec.rows || []).map((r) => ({ ...r, name: r.name === 'OVER' ? 'Overs' : r.name === 'UNDER' ? 'Unders' : statLabel[r.name] || r.name }))
@@ -82,9 +71,9 @@ export default function Combos({ site }) {
           Points + rebounds + assists, points + rebounds, points + assists and rebounds + assists. These are tracked, not staked, and they have their own record
           below, apart from the picks. Combo probabilities require their own time-valid calibration; they do not borrow confidence from single stats. Available comparisons are shown even when no line qualifies. Only qualified tracked combos enter the separate paper log.
         </p>
-        <Status info={board.comboInfo} date={board.date} />
-        {board.comboInfo?.basis && <p className="small">Probability basis: {board.comboInfo.basis}</p>}
-        {!plays.length && <p className="notice">No current combo quotes survived feed, timing, book-consensus, history or availability checks. Refresh the pretip pipeline; comparisons are never built from unrelated single-stat lines.</p>}
+
+
+        {!plays.length && <p className="notice">No combo picks have been published for this slate yet.</p>}
       </section>
 
       {plays.length > 0 && (
@@ -117,12 +106,7 @@ export default function Combos({ site }) {
           )}
         </section>
       )}
-      {board.comboInfo && plays.length === 0 && (
-        <p className="notice">
-          No combo line clears the tracking bar right now. That is normal when the books&apos; combo prices already match the model: a combo only shows up here when
-          a line is off.
-        </p>
-      )}
+
 
       <section className="record" aria-label="Combo record">
         <h2>Combo record</h2>

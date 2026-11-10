@@ -2,7 +2,7 @@
 export function quoteState(p, now = Date.now(), expectedPeriod = 'game') {
   if (p.period && p.period !== expectedPeriod && !(expectedPeriod === 'game' && p.period === 'full_game')) return { key: 'unknown', label: 'Market period does not match this comparison', usable: false }
   const tip = Date.parse(p.tip || '')
-  if (Number.isFinite(tip) && now >= tip) return { key: 'closed', label: 'Started · quote closed', usable: false }
+  if (Number.isFinite(tip) && now >= tip) return { key: 'closed', label: 'Game started · pregame pick', usable: false }
   const captured = Date.parse(p.quoteAt || '')
   const updated = Date.parse(p.sourceUpdatedAt || '')
   if (!Number.isFinite(captured) || !Number.isFinite(updated) || !Number.isFinite(tip)) {
@@ -12,10 +12,10 @@ export function quoteState(p, now = Date.now(), expectedPeriod = 'game') {
   const priceAge = (now - updated) / 1000
   if (captureAge < -5 || priceAge < -5) return { key: 'unknown', label: 'Quote time unavailable', usable: false }
   if (captureAge > (p.captureMaxAgeSeconds || 1800) || priceAge > (p.priceMaxAgeSeconds || 21600)) {
-    return { key: 'stale', label: 'Stale snapshot · refresh required', usable: false }
+    return { key: 'stale', label: 'Earlier quote · check current price', usable: false }
   }
   if ((p.bookCount || 0) < 3) return { key: 'unknown', label: 'Thin market · confirm line', usable: false }
-  return { key: 'recent', label: 'Recent feed quote', usable: true }
+  return { key: 'recent', label: 'Recently checked', usable: true }
 }
 
 export function bookName(book = '') {
@@ -34,4 +34,9 @@ export function ageText(iso, now = Date.now()) {
   if (!Number.isFinite(date)) return 'unknown age'
   const minutes = Math.max(0, Math.floor((now - date) / 60000))
   return minutes < 1 ? 'less than 1 min ago' : minutes < 60 ? `${minutes} min ago` : `${Math.floor(minutes / 60)}h ${minutes % 60}m ago`
+}
+
+// Visibility belongs to the published board, not the lifetime of its price.
+export function visibleQuote(p, expectedPeriod = 'game') {
+  return !p.period || p.period === expectedPeriod || (expectedPeriod === 'game' && p.period === 'full_game')
 }

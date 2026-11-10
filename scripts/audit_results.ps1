@@ -11,6 +11,11 @@ if ($Season -eq 0) {
     $now = Get-Date
     $Season = if ($now.Month -ge 8) { $now.Year } else { $now.Year - 1 }
 }
+$statsPath = "data/stats_$Season.jsonl"
+if (-not (Test-Path $statsPath)) {
+    $prior = Get-ChildItem -Path data -Filter "stats_$Season.jsonl.before-result-refresh-*" -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 1
+    if ($prior) { Copy-Item -LiteralPath $prior.FullName -Destination $statsPath }
+}
 if (-not $SkipRefresh) {
     $statsPath = "data/stats_$Season.jsonl"
     if (Test-Path $statsPath) {

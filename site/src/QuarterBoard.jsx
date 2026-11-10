@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNow } from './time.js'
-import { quoteState, bookName, clock } from './quote.js'
+import { visibleQuote, quoteState, bookName, clock } from './quote.js'
 import { oddsText } from './format.js'
 
 const pct = (n) => `${(n * 100).toFixed(1)}%`
@@ -18,7 +18,7 @@ function QuarterCard({ cards, now }) {
     <p className="small">Last {Math.min(5, c.history.length)} verified 1Q performances, newest first:</p>
     {c.history.length ? <div className="quarter-history">{c.history.slice(0, 5).map((h) => <span key={h.gameId}><b>{h.points} pts</b><small>{h.date} · 1Q</small></span>)}</div> : <p>1Q history unavailable.</p>}
     {p.estimate != null ? <p className="small"><b>Paper estimate: {p.side === 'UNDER' ? 'Under' : 'Over'} {p.line}</b> · smoothed historical rate {pct(p.estimate)} · break-even {pct(p.breakEven)}. Observed: {counts} of {c.n - c.push} non-push 1Q appearances. This is a small-sample history estimate, not the calibrated full-game model.</p> : <p className="small">No probability estimate: at least eight verified 1Q appearances and complete recent-game coverage are required.</p>}
-    <p className="small">Captured {clock(p.quoteAt)} · price updated {clock(p.sourceUpdatedAt)} · {p.bookCount} books.</p>
+    <p className="small">{quoteState(p, now, '1q').label} · Checked {clock(p.quoteAt)} · price updated {clock(p.sourceUpdatedAt)} · {p.bookCount} books.</p>
   </article>
 }
 export default function QuarterBoard({ data }) {
@@ -26,7 +26,7 @@ export default function QuarterBoard({ data }) {
   if (!data) return <section className="game-markets"><h2>1Q points</h2><p>First-quarter comparisons appear after the quarter-data refresh. They use actual 1Q scoring and a separate paper record.</p></section>
   const groups = new Map()
   for (const p of data.cards || []) {
-    if (p.period !== '1q' || !quoteState(p, now, '1q').usable) continue
+    if (p.period !== '1q' || !visibleQuote(p, '1q')) continue
     const k = `${p.gameId}/${p.playerId}`
     if (!groups.has(k)) groups.set(k, [])
     groups.get(k).push(p)
@@ -40,7 +40,6 @@ export default function QuarterBoard({ data }) {
     <details><summary>1Q paper record & data coverage</summary>
       <p className="small">Quarter quote outcomes: {r.wins || 0} wins · {r.losses || 0} losses · {r.pushes || 0} pushes · {r.review || 0} need participation review · {r.pending || 0} pending. Multiple books and refreshes can describe the same player performance, so this is quote tracking, not independent bets. It does not enter the full-game record.</p>
       <p className="small">Each quarter is accepted only when attributed scoring reconciles with both official Q1 team totals. Missing data stays unavailable. A zero is retained for confirmed quarter participants. Paper grading requires confirmed Q1 participation; sportsbook void rules can differ.</p>
-      {(data.errors || []).map((e, i) => <p className="small" key={i}>{e}</p>)}
       {(data.recent || []).slice(0, 10).map((e, i) => <p className="small" key={i}>{e.date} · {e.player} · 1Q points · {e.side} {e.line} · {e.result}{e.actual != null ? ` (${e.actual} Q1 points)` : ''}</p>)}
     </details>
   </section>

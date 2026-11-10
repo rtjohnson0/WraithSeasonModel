@@ -93,7 +93,7 @@ func buildComboRecord(settled []picklog.Settled, recentN int) ComboRecord {
 		sorted = sorted[:recentN]
 	}
 	for _, r := range sorted {
-		res := Result{Date: r.Date, Player: r.Player, Team: r.Team, Matchup: matchupOf(r.Entry), Stat: r.Stat, Side: r.Side,
+		res := Result{Date: r.Date, Player: settledPlayerName(r), Team: r.Team, Matchup: matchupOf(r.Entry), Stat: r.Stat, Side: r.Side,
 			Line: r.Line, Result: r.Result, Tier: "COMBO", Prob: r.Prob, Label: "Tracking", Proj: r.ProjMean}
 		if r.Result != "VOID" && !math.IsNaN(r.Actual) {
 			res.Actual = r.Actual

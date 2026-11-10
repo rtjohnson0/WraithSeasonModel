@@ -29,6 +29,18 @@ func (m *Model) ExplainContext(r *feat.Row, st data.Stat) string {
 		}
 	}
 	notes := []string{}
+	disabled := disabledSet(m.Disabled)
+	if disabled[feat.GroupTeammates] || disabled[feat.GroupOppOut] {
+		groups := []string{}
+		if disabled[feat.GroupTeammates] {
+			groups = append(groups, "teammate absences")
+		}
+		if disabled[feat.GroupOppOut] {
+			groups = append(groups, "opponent absences")
+		}
+		notes = append(notes, "injury feature policy: "+strings.Join(groups, " and ")+" are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment")
+	}
+
 	if len(used) > 0 {
 		a, b := g.Rate(x), g.Rate(neutral)
 		if b > 0 && !math.IsNaN(a) {

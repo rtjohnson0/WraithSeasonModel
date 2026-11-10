@@ -105,19 +105,6 @@ func main() {
 		Combos:      buildComboRecord(comboSettled, 120),
 		Lines:       buildLinesRecord(*dir),
 	}
-	for _, name := range []string{"settled_audit.json", "combosettled_audit.json", "v2settled_audit.json"} {
-		if b, e := os.ReadFile(filepath.Join(*dir, name)); e == nil && json.Valid(b) {
-			site.ResultAudits = append(site.ResultAudits, json.RawMessage(b))
-		}
-	}
-	if b, e := os.ReadFile(filepath.Join(*dir, "side_audit.json")); e == nil {
-		var a struct {
-			Date string `json:"date"`
-		}
-		if json.Unmarshal(b, &a) == nil && a.Date == *date {
-			site.SideAudit = json.RawMessage(b)
-		}
-	}
 	site.Quarter, err = quarter.LoadBoard(*dir, *date)
 	if err != nil {
 		fatal(err)
@@ -155,6 +142,20 @@ func main() {
 	site.V2 = buildV2(*dir, form)
 	if site.V2 != nil && (snapshot == nil || site.V2.At != snapshot.At) {
 		site.V2 = nil
+	}
+	// Source-only deployments must not replace a published slate with missing state.
+	// Use only the exact previously published board, never a best historical line.
+	if snapshot == nil {
+		var previous Site
+		if raw, e := os.ReadFile(*out); e == nil && json.Unmarshal(raw, &previous) == nil && len(previous.Board.Games) > 0 && (*date == "" || previous.Board.Date == *date) {
+			site.Board = previous.Board
+			site.Status = previous.Status
+			site.Quarter = previous.Quarter
+			site.GameMarkets = previous.GameMarkets
+			site.V2 = previous.V2
+		} else {
+			fatal(fmt.Errorf("no saved board or matching published slate; run pretip before publishing"))
+		}
 	}
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		fatal(err)

@@ -6,6 +6,8 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"propsmodel/internal/feat"
+	"propsmodel/internal/replay"
 	"time"
 )
 
@@ -132,4 +134,62 @@ func saveSideAudit(dir, date string, all, picks []scored, hi, minEdge float64) e
 		return e
 	}
 	return os.WriteFile(filepath.Join(dir, "side_audit.json"), b, 0644)
+}
+
+// A forecast row is a hypothetical player/date, so it may lack a game ID.
+// Bind the quote's real game before recording an auditable decision.
+func decisionIdentity(r *feat.Row, gameID int, date string) replay.Row {
+	captured := replay.Capture(r)
+	captured.G.GameID = gameID
+	captured.G.Date = date
+	return captured
+}
+
+// The scored pool can be balanced while price selection leaves a one-sided
+// board. Apply the existing skew limit to unique selected markets as well.
+func guardSelectedSides(picks []scored, limit float64) ([]scored, string) {
+	if limit <= 0 {
+		return picks, ""
+	}
+	type market struct {
+		game, player int
+		stat         string
+	}
+	choices := map[market]scored{}
+	for _, s := range picks {
+		if s.Tier == "LEAN" {
+			continue
+		}
+		k := market{s.GameID, s.PlayerID, string(s.Stat)}
+		if old, ok := choices[k]; !ok || s.Edge > old.Edge {
+			choices[k] = s
+		}
+	}
+	if len(choices) < 10 {
+		return picks, ""
+	}
+	under := 0
+	for _, s := range choices {
+		if s.Side == "UNDER" {
+			under++
+		}
+	}
+	side, share := "UNDER", float64(under)/float64(len(choices))
+	if 1-share > share {
+		side, share = "OVER", 1-share
+	}
+	if share <= limit {
+		return picks, ""
+	}
+	reason := fmt.Sprintf("%.0f%% of %d selected markets lean %s: concentrated side, not independent opportunities; verify model/calibration before staking", share*100, len(choices), side)
+	for i := range picks {
+		if picks[i].Side == side {
+			picks[i].Why = addWhy(picks[i].Why, reason)
+			if picks[i].Tier == "PICK" {
+				picks[i].Tier = "CHECK"
+				picks[i].Units = 0
+			}
+		}
+	}
+	return picks, reason
 }

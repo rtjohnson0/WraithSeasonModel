@@ -34,3 +34,13 @@ test('1Q quotes require the quarter context and cannot enter the full-game board
  assert.equal(quoteState(q,now,'1q').usable,true)
  assert.equal(quoteState({...q,period:'game'},now,'1q').usable,false)
 })
+
+test('published plays remain visible after price expiry and tip, with freshness separate', async () => {
+  const { visibleQuote } = await import('./quote.js')
+  assert.equal(visibleQuote(recent), true)
+  assert.equal(visibleQuote({ ...recent, quoteAt: '2026-11-10T12:00:00Z' }), true)
+  assert.equal(visibleQuote({ ...recent, period: '1q' }), false)
+  assert.equal(visibleQuote({ ...recent, period: '1q' }, '1q'), true)
+  assert.equal(quoteState(recent, Date.parse(recent.tip) + 1000).usable, false)
+  assert.equal(visibleQuote(recent), true)
+})

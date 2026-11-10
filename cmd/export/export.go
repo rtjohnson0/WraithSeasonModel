@@ -785,7 +785,7 @@ func buildRecord(settled []picklog.Settled, recentN int) Record {
 		if r.Result == "VOID" {
 			actual = math.NaN()
 		}
-		res := Result{Date: r.Date, Player: r.Player, Team: r.Team, Matchup: matchupOf(r.Entry), Stat: r.Stat, Side: r.Side,
+		res := Result{Date: r.Date, Player: settledPlayerName(r), Team: r.Team, Matchup: matchupOf(r.Entry), Stat: r.Stat, Side: r.Side,
 			Line: r.Line, Result: r.Result, Tier: t, Prob: r.Prob, Grade: grade(r.Prob, t), Label: label(t, r.Prob), Proj: r.ProjMean}
 		if !math.IsNaN(actual) {
 			res.Actual = actual
@@ -852,4 +852,11 @@ func markShort(gs []Game5) float64 {
 		}
 	}
 	return med(keep)
+}
+
+func settledPlayerName(r picklog.Settled) string {
+	if r.SettlementVersion >= 1 && r.SourcePlayerID == r.PlayerID && r.SourceGameID == r.GameID && r.SourcePlayer != "" {
+		return r.SourcePlayer
+	}
+	return r.Player
 }
