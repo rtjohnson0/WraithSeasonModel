@@ -36,6 +36,7 @@ import (
 	"propsmodel/internal/bdl"
 	"propsmodel/internal/data"
 	"propsmodel/internal/envfile"
+	"propsmodel/internal/props"
 )
 
 const dataDir = "data"
@@ -658,9 +659,16 @@ func snapshotOnce(c *bdl.Client, date string) error {
 	if err != nil {
 		return err
 	}
+	if err := props.SaveSchedule(filepath.Join(dataDir, "snapshots"), date, captured, games); err != nil {
+		return err
+	}
 	fmt.Printf("%s: %d games on %s\n", captured, len(ids), date)
 	if len(ids) == 0 {
-		return nil
+		empty, err := create(fmt.Sprintf("snapshots/props_%s.jsonl", date), true)
+		if err != nil {
+			return err
+		}
+		return empty.Close()
 	}
 
 	// 2. Live player props, one call per game.

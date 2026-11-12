@@ -229,7 +229,7 @@ func main() {
 		fatal(fmt.Errorf("%w (run: go run ./cmd/pull snapshot)", err))
 	}
 	moves, _ := props.LineMoves(propsPath)
-	games, err := props.LoadGames(propsPath)
+	games, scheduleComplete, scheduleCapturedAt, err := props.LoadSlateGames(propsPath, *date, runAt)
 	if err != nil {
 		fatal(err)
 	}
@@ -1063,7 +1063,7 @@ func main() {
 			current = append(current, boardEntry(*date, s, now))
 		}
 		snapshot := boardstate.Snapshot{Date: *date, At: runAt.Format(time.RFC3339Nano), Plays: current,
-			Status: boardstate.Status{ScoredAt: runAt.Format(time.RFC3339), QuotesRead: beforeFilter, UsableQuotes: len(lines), UnsafeOrDuplicate: unsafeOrDuplicate, ConflictingBooks: conflictingBooks, OffConsensus: offConsensus, CaptureMaxAgeSeconds: int(maxCaptureAge.Seconds()), PriceMaxAgeSeconds: int(maxQuoteAge.Seconds()), MinBooks: *minMarketBooks, MaxMarketGap: *maxMarketGap}}
+			Status: boardstate.Status{ScheduleComplete: scheduleComplete, ScheduleCapturedAt: scheduleCapturedAt, ScheduleGames: len(games), ScoredAt: runAt.Format(time.RFC3339), QuotesRead: beforeFilter, UsableQuotes: len(lines), UnsafeOrDuplicate: unsafeOrDuplicate, ConflictingBooks: conflictingBooks, OffConsensus: offConsensus, CaptureMaxAgeSeconds: int(maxCaptureAge.Seconds()), PriceMaxAgeSeconds: int(maxQuoteAge.Seconds()), MinBooks: *minMarketBooks, MaxMarketGap: *maxMarketGap}}
 		feedCount := map[string]int{}
 		for _, l := range lines {
 			source := "BALLDONTLIE"
@@ -1075,16 +1075,12 @@ func main() {
 		for _, source := range []string{"BALLDONTLIE", "SportsGameOdds"} {
 			snapshot.Status.Feeds = append(snapshot.Status.Feeds, boardstate.Feed{Name: source, Quotes: feedCount[source]})
 		}
-		for _, g := range games {
-			if props.BeforeTip(g.Start, now) {
-				match := g.VisitorAbbr + " @ " + g.HomeAbbr
-				if g.HomeAbbr == "" || g.VisitorAbbr == "" {
-					match = fmt.Sprintf("Game %d", g.ID)
-				}
-				snapshot.Games = append(snapshot.Games, boardstate.Game{ID: g.ID, Matchup: match, Tip: g.Start})
-			}
+		snapshot.Games = slateGames(games)
+		previous, loadErr := boardstate.Load(*dir)
+		if loadErr == nil {
+			snapshot = boardstate.PreserveStarted(snapshot, previous, now)
 		}
-		sort.Slice(snapshot.Games, func(i, j int) bool { return snapshot.Games[i].Tip < snapshot.Games[j].Tip })
+
 		if err := boardstate.Save(*dir, snapshot); err != nil {
 			fatal(err)
 		}

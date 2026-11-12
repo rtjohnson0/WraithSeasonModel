@@ -64,3 +64,11 @@ func TestCurrentSnapshotDisplaysLeansEvenWhenRunLogOnlyTracksPicks(t *testing.T)
 		t.Fatalf("lean lost from snapshot %+v", board)
 	}
 }
+
+func TestFullSlateExportKeepsGamesWithNoQualifyingProps(t *testing.T) {
+	s := &boardstate.Snapshot{Date: "2026-11-12", Games: []boardstate.Game{{ID: 1, Matchup: "A @ B", Tip: "2026-11-13T00:00:00Z"}, {ID: 2, Matchup: "C @ D", Tip: "2026-11-13T00:00:00Z"}, {ID: 3, Matchup: "E @ F"}, {ID: 4, Matchup: "G @ H", Tip: "2026-11-12T15:00:00Z"}}}
+	got := currentBoard(s, s.Date, nil, nil)
+	if len(got.Games) != 4 || got.Plays != 0 {
+		t.Fatalf("schedule count changed with prop eligibility: %+v", got)
+	}
+}

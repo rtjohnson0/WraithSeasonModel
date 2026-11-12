@@ -19,6 +19,9 @@ type Feed struct {
 	Quotes int    `json:"quotes"`
 }
 type Status struct {
+	ScheduleComplete     bool    `json:"scheduleComplete"`
+	ScheduleCapturedAt   string  `json:"scheduleCapturedAt,omitempty"`
+	ScheduleGames        int     `json:"scheduleGames"`
 	ScoredAt             string  `json:"scoredAt"`
 	QuotesRead           int     `json:"quotesRead"`
 	UsableQuotes         int     `json:"usableQuotes"`

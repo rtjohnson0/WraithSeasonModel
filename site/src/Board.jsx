@@ -632,7 +632,7 @@ export default function Board({ site }) {
             </div>
             <div><dt>Extra leans</dt><dd>{extras.length}</dd></div>
             <div>
-              <dt>Games</dt>
+              <dt>{site.status?.scheduleComplete ? 'Scheduled games' : 'Games with data'}</dt>
               <dd>{board.games.length}</dd>
             </div>
             {site.generatedAt && (
@@ -721,7 +721,7 @@ export default function Board({ site }) {
                   )}
                 </h2>
                 <span>
-                  {g.tip && <b className="tip">{tipText(g.tip)}</b>}
+                  {g.tip ? <b className="tip">{tipText(g.tip)}</b> : <em className="countdown">Tip time pending</em>}
                   {ts.label && <em className={`countdown ${ts.state}`}>{ts.label}</em>}
                   {g.plays.length} {g.plays.length === 1 ? 'play' : 'plays'}
                 </span>
@@ -729,7 +729,7 @@ export default function Board({ site }) {
               {g.ctx && <GameContext c={g.ctx} />}
               {g.news?.length > 0 && <LineupNews news={g.news} />}
               {started && <p className="startednote">This game has started or is over, so these lines are closed. The plays are kept for the record.</p>}
-              {g.plays.length === 0 && <p className="no-qualifying">No props cleared the main selection rules for this game.</p>}
+              {g.plays.length === 0 && <p className="no-qualifying">{g.more.length ? 'Available leans appear below; none cleared the main pick rules.' : 'No qualifying props are available for this scheduled game yet.'}</p>}
               <ul>
                 {g.plays.map((p) => (
                   <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} focus={focus} started={started} />

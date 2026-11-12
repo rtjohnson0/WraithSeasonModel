@@ -347,11 +347,11 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 		fatal(err)
 	}
 	snap := filepath.Join(dir, "snapshots")
-	gm, err := props.LoadGames(filepath.Join(snap, fmt.Sprintf("props_%s.jsonl", date)))
+	asOf := time.Now().UTC()
+	gm, _, _, err := props.LoadSlateGames(filepath.Join(snap, fmt.Sprintf("props_%s.jsonl", date)), date, asOf)
 	if err != nil {
 		fatal(fmt.Errorf("%w (run: go run ./cmd/pull snapshot)", err))
 	}
-	asOf := time.Now().UTC()
 	board := gameboard.Snapshot{Date: date, At: asOf.Format(time.RFC3339Nano), Z: cal.Z}
 	odds, err := team.LoadPregameOdds(filepath.Join(snap, fmt.Sprintf("odds_%s.jsonl", date)), gm, asOf, 6*time.Hour)
 	if err != nil {

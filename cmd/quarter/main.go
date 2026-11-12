@@ -44,7 +44,7 @@ func run(dir, date string, now time.Time, offline bool) error {
 		return e
 	}
 	path := filepath.Join(dir, "snapshots", "props_"+date+".jsonl")
-	gm, e := props.LoadGames(path)
+	gm, _, _, e := props.LoadSlateGames(path, date, now)
 	if e != nil {
 		return e
 	}
