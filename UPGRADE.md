@@ -540,3 +540,17 @@ Combo comparison rows now display the raw simulation probability to one decimal,
 Default per-game coverage is two positive-edge leans when stronger props are unavailable. Bad lines and uncertain player status are excluded from these additions; no negative/zero-edge line is forced. Leans remain visible in the exact board snapshot but are not added to the permanent primary pick log. On existing publications, a game with no main picks automatically shows its available extra leans. Qualified picks keep the existing thresholds.
 
 Click targets show a View analysis label, chevron and hover/focus styling. Full analysis and graphs remain inside the dropdown. See audit_findings/under_selection_findings.md for the limits of the under-bias diagnosis from the supplied saved data; no validated numerical repair of the model's under bias is claimed.
+
+## Reproducible model comparison
+Run scripts/compare.ps1 to freeze current production files and screen fixed minutes/dispersion challenger policies with monthly walk-forward training and separate calibration-fit, validation and final-test periods. The first supplied-cache report is included under audit_findings/model_comparison. It did not justify a production replacement. See MODEL_COMPARISON.md for commands, limitations and next steps.
+
+Comparison-only combo headlines now show projected stat totals. Raw uncalibrated simulation percentages remain inside analysis, with their limitation; they are not presented as established hit rates.
+
+## Uploaded-data forecast audit
+The latest uploaded archive was audited against its exact cached final identities. Findings and CSVs are in audit_findings/latest_upload. This is an offline diagnostic, not a promoted model change. scripts/audit_forecasts.py reproduces the report without altering source data or results. The GitHub run artifact now also retains current-season stat inputs and coverage metadata through scripts/stage_run_evidence.py, so an ignored local stats file is not the only source of actuals for debugging.
+
+
+## Price-aware selection and launch model review
+The earlier probability-first slot ranking has been corrected. Qualified candidate selection, exact-book choice, game/player caps, main row order, extra-lean order, CSV order and top-play display now prioritize forecast return at the listed price, then edge and probability. Invalid prices cannot rank as attractive. Probability estimates, eligibility bars, model weights and calibration are unchanged. The top strip shows odds and edge beside confidence. This selection-policy change is not established as a profitability improvement and has not earned a commercial performance claim.
+
+See audit_findings/launch_model_review for the per-pick price audit, selected-distribution diagnostics and limitations. The saved board remains 12 raw-model Under leans, heavily concentrated in threes/rebounds; a new rank order does not repair or balance that model behavior. No Over quota or artificial probability cap is added.

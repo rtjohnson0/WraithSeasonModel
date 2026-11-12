@@ -46,14 +46,18 @@ const (
 
 // Model is a trained predictor. It serialises to JSON.
 type Model struct {
-	Version       int         `json:"version"`
-	Disabled      []string    `json:"disabled"`
-	TrainedBefore string      `json:"trained_before"`
-	Rows          int         `json:"rows"`
-	Minutes       *glm.Linear `json:"minutes"`
-	Edges         []float64   `json:"edges"`
-	Quant         [][]float64 `json:"quant"` // residual quantiles of minutes, per predicted-minutes bucket
-	BucketSD      []float64   `json:"bucket_sd"`
+	MinuteWeights [][]float64            `json:"minute_weights,omitempty"`
+	ExitMinutes   []float64              `json:"exit_minutes,omitempty"`
+	AlphaBuckets  [data.NStats][]float64 `json:"alpha_buckets,omitempty"`
+	TailFitAfter  string                 `json:"tail_fit_after,omitempty"`
+	Version       int                    `json:"version"`
+	Disabled      []string               `json:"disabled"`
+	TrainedBefore string                 `json:"trained_before"`
+	Rows          int                    `json:"rows"`
+	Minutes       *glm.Linear            `json:"minutes"`
+	Edges         []float64              `json:"edges"`
+	Quant         [][]float64            `json:"quant"` // residual quantiles of minutes, per predicted-minutes bucket
+	BucketSD      []float64              `json:"bucket_sd"`
 	// Vol scales the minutes spread for one player: above 1 for players whose minutes swing more
 	// than others at the same projected level, below 1 for steady ones. It is shrunk hard toward
 	// 1 (see volShrink), so a handful of games cannot make anyone look unusually safe or wild.
@@ -257,10 +261,11 @@ func Train(rows []feat.Row, disabledGroups []string) (*Model, error) {
 
 // Pred is the model's view of one player-game.
 type Pred struct {
-	Minutes  float64 // average of the minutes distribution
-	MinNodes [Nodes]float64
-	Rate     [data.NStats]float64 // per-minute mean for points, rebounds, assists, threes
-	Alpha    [data.NStats]float64
+	MinWeights [Nodes]float64
+	Minutes    float64 // average of the minutes distribution
+	MinNodes   [Nodes]float64
+	Rate       [data.NStats]float64 // per-minute mean for points, rebounds, assists, threes
+	Alpha      [data.NStats]float64
 }
 
 // Predict applies the model to a feature row.
@@ -274,16 +279,28 @@ func (m *Model) Predict(r *feat.Row) Pred {
 	if v, ok := m.Vol[r.G.PlayerID]; ok && UseVolatility {
 		vol = v
 	}
+	bucket := bucketOf(pred)
+	weighted := len(m.MinuteWeights) > bucket && len(m.MinuteWeights[bucket]) == Nodes
 	for k := 0; k < Nodes; k++ {
 		p.MinNodes[k] = math.Min(math.Max(pred+vol*q[k], 1), 48)
-		p.Minutes += p.MinNodes[k] / Nodes
+		if weighted {
+			p.MinWeights[k] = m.MinuteWeights[bucket][k]
+			if k == 0 {
+				p.MinNodes[k] = m.ExitMinutes[bucket]
+			}
+		}
+	}
+	for k := range p.MinNodes {
+		p.Minutes += p.MinNodes[k] * p.NodeWeight(k)
 	}
 	for _, s := range data.Stats {
 		k := data.StatIndex(s)
 		g := m.Stat[k]
 		p.Rate[k] = g.Rate(r.Vec(s, feat.StatNames(s, disabled)))
 		p.Alpha[k] = g.Alpha
-		if a, ok := m.PlayerAlpha[k][r.G.PlayerID]; ok {
+		if len(m.AlphaBuckets[k]) == len(alphaMeanEdges)+1 {
+			p.Alpha[k] = m.AlphaBuckets[k][meanBucket(p.Minutes*p.Rate[k])]
+		} else if a, ok := m.PlayerAlpha[k][r.G.PlayerID]; ok {
 			p.Alpha[k] = a
 		}
 	}
@@ -304,7 +321,7 @@ func (p Pred) WithMinutes(target float64) Pred {
 	p.Minutes = 0
 	for k := range p.MinNodes {
 		p.MinNodes[k] = math.Min(math.Max(p.MinNodes[k]+d, 1), 48)
-		p.Minutes += p.MinNodes[k] / Nodes
+		p.Minutes += p.MinNodes[k] * p.NodeWeight(k)
 	}
 	return p
 }
@@ -325,11 +342,14 @@ func (p Pred) Mean(s data.Stat) float64 { return p.Minutes * p.Rate[data.StatInd
 func (p Pred) Dist(s data.Stat, maxK int) []float64 {
 	k := data.StatIndex(s)
 	out := make([]float64, maxK+1)
-	for _, mins := range p.MinNodes {
+	for node, mins := range p.MinNodes {
+		if p.NodeWeight(node) == 0 {
+			continue
+		}
 		mean := mins * p.Rate[k]
 		pm := model.PMF(mean, mean*(1+p.Alpha[k]*mean), maxK)
 		for i, v := range pm {
-			out[i] += v / Nodes
+			out[i] += v * p.NodeWeight(node)
 		}
 	}
 	end := len(out)
@@ -347,21 +367,24 @@ func (p Pred) Dist(s data.Stat, maxK int) []float64 {
 func (p Pred) ProbOver(s data.Stat, line float64) (model.Probs, error) {
 	k := data.StatIndex(s)
 	var over, under, push float64
-	for _, mins := range p.MinNodes {
+	for node, mins := range p.MinNodes {
+		if p.NodeWeight(node) == 0 {
+			continue
+		}
 		mean := mins * p.Rate[k]
 		pr, err := model.ProbOver(mean, mean*(1+p.Alpha[k]*mean), line)
 		if err != nil {
 			return model.Probs{}, err
 		}
-		over += pr.Over * (1 - pr.Push)
-		under += pr.Under * (1 - pr.Push)
-		push += pr.Push
+		over += p.NodeWeight(node) * pr.Over * (1 - pr.Push)
+		under += p.NodeWeight(node) * pr.Under * (1 - pr.Push)
+		push += p.NodeWeight(node) * pr.Push
 	}
 	denom := over + under
 	if denom <= 0 {
 		return model.Probs{}, errors.New("predictor: degenerate distribution")
 	}
-	return model.Probs{Over: over / denom, Under: under / denom, Push: push / Nodes}, nil
+	return model.Probs{Over: over / denom, Under: under / denom, Push: push}, nil
 }
 
 // Save writes the model as JSON.
@@ -383,8 +406,41 @@ func Load(path string) (*Model, error) {
 	if err := json.Unmarshal(b, &m); err != nil {
 		return nil, err
 	}
-	if m.Minutes == nil || m.Stat[0] == nil || m.Stat[1] == nil || m.Stat[2] == nil || m.Stat[3] == nil || (m.Version != modelVersion && m.Version != 3) {
+	if m.Minutes == nil || m.Stat[0] == nil || m.Stat[1] == nil || m.Stat[2] == nil || m.Stat[3] == nil || (m.Version != modelVersion && m.Version != 3 && m.Version != TailVersion) {
 		return nil, errors.New("predictor: model file is incomplete or from another version; retrain with go run ./cmd/train")
+	}
+	if m.Version == TailVersion {
+		if len(m.MinuteWeights) != len(bucketEdges)+1 || len(m.ExitMinutes) != len(bucketEdges)+1 {
+			return nil, errors.New("tail model uncertainty fields are missing")
+		}
+		for i, w := range m.MinuteWeights {
+			if len(w) == 0 {
+				continue
+			}
+			if len(w) != Nodes {
+				return nil, errors.New("invalid minute weights")
+			}
+			sum := 0.
+			for _, x := range w {
+				if math.IsNaN(x) || math.IsInf(x, 0) || x < 0 {
+					return nil, errors.New("invalid minute weight")
+				}
+				sum += x
+			}
+			if math.Abs(sum-1) > 1e-6 || m.ExitMinutes[i] < 1 || m.ExitMinutes[i] > 8 {
+				return nil, errors.New("invalid early-exit distribution")
+			}
+		}
+		for _, a := range m.AlphaBuckets {
+			if len(a) != len(alphaMeanEdges)+1 {
+				return nil, errors.New("missing role dispersion")
+			}
+			for _, x := range a {
+				if x <= 0 || math.IsNaN(x) || math.IsInf(x, 0) {
+					return nil, errors.New("invalid role dispersion")
+				}
+			}
+		}
 	}
 	// A model trained before the opt-in misses group existed does not list it as disabled, but it was
 	// fitted without it: record that, so the model predicts from the features it was fitted on.

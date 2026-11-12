@@ -48,3 +48,12 @@ __pycache__/
 audit_findings/
 
 !data/accuracy.json
+
+# Isolated comparison runs and frozen experimental bundles.
+research/
+
+run_evidence/
+forecast_audit/
+
+!data/model_tail.json
+!data/calibration_tail.json

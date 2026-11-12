@@ -132,8 +132,8 @@ func inv(cdf []float64, u float64) int {
 
 func phi(z float64) float64 { return 0.5 * (1 + math.Erf(z/math.Sqrt2)) }
 
-// Simulate draws perNode outcomes at each of the prediction's minutes nodes (every node is equally
-// likely) and builds the distribution of every combined stat. seed makes it repeatable.
+// Simulate allocates perNode * Nodes draws in proportion to the shared minutes
+// weights and builds each combined distribution. seed makes it repeatable.
 func Simulate(p predictor.Pred, c Corr, perNode int, seed int64) *Dist {
 	if perNode < 100 {
 		perNode = 100
@@ -147,13 +147,17 @@ func Simulate(p predictor.Pred, c Corr, perNode int, seed int64) *Dist {
 		counts[s] = make([]float64, size)
 	}
 	total := 0
-	for _, mins := range p.MinNodes {
+	for node, mins := range p.MinNodes {
+		if p.NodeWeight(node) == 0 {
+			continue
+		}
 		var cdf [3][]float64
 		for j, k := range [3]int{pi, ri, ai} {
 			mean := mins * p.Rate[k]
 			cdf[j] = nbCDF(mean, mean*(1+p.Alpha[k]*mean))
 		}
-		for i := 0; i < perNode; i++ {
+		draws := int(math.Round(float64(perNode*predictor.Nodes) * p.NodeWeight(node)))
+		for i := 0; i < draws; i++ {
 			n0, n1, n2 := rng.NormFloat64(), rng.NormFloat64(), rng.NormFloat64()
 			z0 := l[0][0] * n0
 			z1 := l[1][0]*n0 + l[1][1]*n1

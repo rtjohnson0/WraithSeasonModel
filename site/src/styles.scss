@@ -492,3 +492,20 @@ table { width: 100%; border-collapse: collapse; background: linear-gradient(180d
 .market-play[open] > summary { border-color: #9367ce; }
 .market-play[open] .expand-hint > span { transform: rotate(180deg); }
 .game-leans > .small { padding: 8px 18px; margin: 0; }
+
+// Product usability: preserve the expandable rows and all performance graphs.
+button, a, input, select, summary { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #b69aff; outline-offset: 4px; }
+button:disabled { opacity: .65; cursor: wait; }
+.playbtn { cursor: pointer; transition: background .15s; }
+.playbtn:hover, .playbtn[aria-expanded="true"] { background: rgba(155,115,255,.065); }
+.play .why { max-width: none; padding: 18px 24px; }
+.play .why .charts { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+.play .why figure, .play .who, .play .meta { min-width: 0; }
+.filter-summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); margin: 0 0 20px; font-size: .9rem; }
+.filter-summary button, .reload-board, .seg button { min-height: 44px; }
+.filter-summary button { background: transparent; color: #c8b5ff; border: 1px solid #534374; padding: 8px 14px; cursor: pointer; }
+.board-loading { padding: 28px 0; color: var(--muted); }
+.board-loading > div { height: 110px; margin: 16px 0; background: #15101f; border: 1px solid #30233e; border-radius: 8px; }
+@media (max-width: 700px) { .play .why { padding: 16px; } .play .why .charts { grid-template-columns: minmax(0,1fr); } .reload-board { margin-left: auto; } .filter-summary { align-items: flex-start; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }

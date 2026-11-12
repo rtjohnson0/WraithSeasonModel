@@ -9,7 +9,7 @@ import PickReason from './PickReason.jsx'
 import { visibleQuote, quoteState } from './quote.js'
 import { DaySummary, ResultList } from './Record.jsx'
 import { tipState, useNow } from './time.js'
-import { LABELS, marketLabel, gradeTone, labelInfo, oddsText, pct, prettyDate, statLabel } from './format.js'
+import { LABELS, comparePlayValue, marketLabel, gradeTone, labelInfo, oddsText, pct, prettyDate, statLabel } from './format.js'
 
 const STATS = ['points', 'rebounds', 'assists', 'threes']
 
@@ -35,7 +35,7 @@ function reasons(p) {
     .filter(Boolean)
     .filter((x) => !x.startsWith('defense vs '))
     .forEach((x) => out.push(x.charAt(0).toUpperCase() + x.slice(1) + '.'))
-  if (p.defense) out.push(`${p.defense.helps ? 'Supports this side: ' : 'Against this side: '}{p.defense.text}, out of ${p.defense.of} teams.`)
+  if (p.defense) out.push(`${p.defense.helps ? 'Supports this side: ' : 'Against this side: '}${p.defense.text}, out of ${p.defense.of} teams.`)
   return out
 }
 
@@ -111,7 +111,7 @@ function TopPlays({ games, now, onPick }) {
       if (p.label !== 'Lean' && visibleQuote(p)) open.push({ p, g, ts })
     })
   })
-  open.sort((a, b) => b.p.prob - a.p.prob)
+  open.sort((a,b)=>comparePlayValue(a.p,b.p))
   const top = open.slice(0, 5)
   if (top.length === 0) return null
   return (
@@ -130,6 +130,7 @@ function TopPlays({ games, now, onPick }) {
               </span>
               <span className="tp-side">
                 <b>{pct(p.prob, 1)}</b>
+                <small>{oddsText(p.odds)} · {(100*p.edge).toFixed(1)} pp edge</small>
                 <small>{ts.label || g.matchup}</small>
               </span>
             </button>
@@ -441,7 +442,7 @@ function LastResults({ record, date }) {
   const day = rows.reduce((d, r) => (r.date > d ? r.date : d), '')
   const dayRows = rows.filter((r) => r.date === day)
   return (
-    <details className="lastres">
+    <details className="lastres" open>
       <summary>
         Results from {prettyDate(day)}: <DaySummary rows={dayRows} />
       </summary>
@@ -592,16 +593,18 @@ export default function Board({ site }) {
               (!repeatsOnly || p.multi) &&
               (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
           ),
-          // The extras ignore the play-type and repeat filters (they are all lean plays) but follow stat, side and search.
+          // Every visible row follows the selected filters.
           more: (g.more || []).filter(
             (p) =>
               visibleQuote(p) &&
+              (label === 'all' || p.label === label) &&
+              (!repeatsOnly || p.multi) &&
               (stat === 'all' || p.stat === stat) &&
               (side === 'ALL' || p.side === side) &&
               (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
           ),
         }))
-        .filter((g) => !q || g.plays.length || g.more.length),
+        .filter((g) => (stat === 'all' && label === 'all' && side === 'ALL' && !q && !repeatsOnly) || g.plays.length || g.more.length),
     [board, stat, label, side, q, repeatsOnly, now],
   )
   const shown = games.reduce((n, g) => n + g.plays.length, 0)
@@ -682,6 +685,10 @@ export default function Board({ site }) {
         </label>
       </section>
 
+      <div className="filter-summary" aria-live="polite">
+        <span>{shown} main {shown === 1 ? 'play' : 'plays'} · {games.reduce((n,g)=>n+g.more.length,0)} available leans</span>
+        {(stat !== 'all' || label !== 'all' || side !== 'ALL' || q || repeatsOnly) && <button type="button" onClick={()=>{setStat('all');setLabel('all');setSide('ALL');setQ('');setRepeatsOnly(false)}}>Clear filters</button>}
+      </div>
       {shown === 0 && (
         <p className="notice">
           {board.games.length === 0

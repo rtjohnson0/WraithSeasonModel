@@ -67,6 +67,7 @@ func (r Row) Features() *feat.Row {
 }
 
 type Record struct {
+	SelectionPolicy   string                `json:"selection_policy,omitempty"`
 	Period            string                `json:"period,omitempty"`
 	BookCount         int                   `json:"book_count,omitempty"`
 	CalibrationBefore string                `json:"calibration_before,omitempty"`

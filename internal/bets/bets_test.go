@@ -39,3 +39,22 @@ func TestMarketOver(t *testing.T) {
 		t.Errorf("over -150 / under +120 should imply about 57%% over, got %v", p)
 	}
 }
+
+func TestExpectedReturnUsesExactPrice(t *testing.T) {
+	if ExpectedReturn(.552, -105) <= ExpectedReturn(.67, -188) {
+		t.Fatal("favorite ranked above better expected price")
+	}
+	if !math.IsInf(ExpectedReturn(.8, 0), -1) {
+		t.Fatal("invalid odds cannot create a forecast edge")
+	}
+}
+
+func TestValueSideCanChooseLessLikelyOverAtBetterPrice(t *testing.T) {
+	side, p, odds := ValueSide(.45, 150, -170)
+	if side != "OVER" || p != .45 || odds != 150 {
+		t.Fatalf("value selection changed probability or ignored payout: %s %v %d", side, p, odds)
+	}
+	if ExpectedReturn(p, odds) <= 0 {
+		t.Fatal("wrong test price")
+	}
+}

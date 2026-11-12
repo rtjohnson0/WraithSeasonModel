@@ -95,9 +95,18 @@ jobs:
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
         uses: actions/cache/restore@v4
         with:
-          path: data/replay
-          key: decisions-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: decisions-v1-${{ github.ref_name }}-
+          path: |
+            data/replay
+            data/tail_shadow/replay
+            data/tail_shadow/picklog.jsonl
+            data/tail_shadow/settled.jsonl
+            data/value_shadow/replay
+            data/value_shadow/picklog.jsonl
+            data/value_shadow/settled.jsonl
+          key: decisions-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            decisions-v2-${{ github.ref_name }}-
+            decisions-v1-${{ github.ref_name }}-
 
       - name: Check API keys and trained files
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
@@ -159,12 +168,18 @@ jobs:
 
       # Runs even after a failed model step/push. These are actual recoverable run
       # outputs, including quote evidence; a failed push must never lose the logs.
+      - name: Retain current-season final stat inputs
+        if: always() && steps.mode.outputs.active == 'true'
+        continue-on-error: true
+        run: python3 scripts/stage_run_evidence.py
+
       - name: Retain run evidence and generated state
         if: always() && steps.mode.outputs.active == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: model-run-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
+            run_evidence
             data/*.json
             data/*log.jsonl
             data/*settled.jsonl
@@ -178,6 +193,14 @@ jobs:
             data/exclusions.jsonl
             data/*.csv
             data/accuracy_report.html
+            data/tail_shadow/replay
+            data/tail_shadow/*log.jsonl
+            data/tail_shadow/settled.jsonl
+            data/tail_shadow/board.json
+            data/value_shadow/replay
+            data/value_shadow/*log.jsonl
+            data/value_shadow/settled.jsonl
+            data/value_shadow/board.json
           retention-days: 90
           if-no-files-found: ignore
 
@@ -185,8 +208,15 @@ jobs:
         if: always() && steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
         uses: actions/cache/save@v4
         with:
-          path: data/replay
-          key: decisions-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            data/replay
+            data/tail_shadow/replay
+            data/tail_shadow/picklog.jsonl
+            data/tail_shadow/settled.jsonl
+            data/value_shadow/replay
+            data/value_shadow/picklog.jsonl
+            data/value_shadow/settled.jsonl
+          key: decisions-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Save downloaded inputs
         if: always() && steps.mode.outputs.active == 'true'

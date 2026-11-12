@@ -3,6 +3,7 @@ package main
 import (
 	"math"
 	"propsmodel/internal/accuracy"
+	"propsmodel/internal/bets"
 	"propsmodel/internal/data"
 	"propsmodel/internal/eval"
 	"propsmodel/internal/predictor"
@@ -47,4 +48,32 @@ func evidenceGate(picks []scored, report accuracy.Report, date, config string, v
 		}
 	}
 	return picks
+}
+
+// valueBefore ranks qualified questions by their offered price, never confidence
+// alone. It does not alter probabilities, qualify a new side, or balance sides.
+func valueBefore(a, b scored) bool {
+	av, bv := bets.ExpectedReturn(a.Prob, a.Odds), bets.ExpectedReturn(b.Prob, b.Odds)
+	if av != bv {
+		return av > bv
+	}
+	if a.Edge != b.Edge {
+		return a.Edge > b.Edge
+	}
+	if a.Prob != b.Prob {
+		return a.Prob > b.Prob
+	}
+	if a.GameID != b.GameID {
+		return a.GameID < b.GameID
+	}
+	if a.PlayerID != b.PlayerID {
+		return a.PlayerID < b.PlayerID
+	}
+	if a.Stat != b.Stat {
+		return a.Stat < b.Stat
+	}
+	if a.Vendor != b.Vendor {
+		return a.Vendor < b.Vendor
+	}
+	return a.Line < b.Line
 }

@@ -136,8 +136,14 @@ func main() {
 	maxCaptureAge := flag.Duration("maxcaptureage", 30*time.Minute, "reject snapshots older than this")
 	minMarketBooks := flag.Int("minmarketbooks", 3, "minimum distinct physical books for posting")
 	maxMarketGap := flag.Float64("maxmarketgap", 0.5, "maximum distance from the market median in stat units; outliers require confirmation")
+	selectionPolicy := flag.String("selectionpolicy", "confidence", "confidence (existing board) or value (paper-only research; compare both offered prices)")
+	valueMinProb := flag.Float64("valueminprob", .40, "value research: minimum actual model probability; never inflated to 50 percent")
+	valueMinROI := flag.Float64("valueminroi", .04, "value research: minimum forecast return conditional on no push")
 	launchGate := flag.Bool("evidencegate", true, "require recent verified forward evidence for a staked PICK; unproven plays remain visible as PAPER")
 	flag.Parse()
+	if *selectionPolicy != "confidence" && *selectionPolicy != "value" {
+		fatal(fmt.Errorf("unknown selection policy"))
+	}
 	runAt := time.Now().UTC()
 
 	if *date == "" {
@@ -609,7 +615,7 @@ func main() {
 							rule = c
 						}
 					}
-					replayRows[mk] = replay.Record{Period: "game", BookCount: marketViews[props.MarketKey{Game: l.GameID, Player: l.PlayerID, Stat: string(l.Stat)}].Books, CalibrationBefore: cal.TrainedBefore, Date: *date, At: runAt.Format(time.RFC3339), Tip: g.Start,
+					replayRows[mk] = replay.Record{SelectionPolicy: *selectionPolicy, Period: "game", BookCount: marketViews[props.MarketKey{Game: l.GameID, Player: l.PlayerID, Stat: string(l.Stat)}].Books, CalibrationBefore: cal.TrainedBefore, Date: *date, At: runAt.Format(time.RFC3339), Tip: g.Start,
 						Row: decisionIdentity(row, l.GameID, *date), Policy: policy, Cal: rule, Stat: l.Stat, Line: l.Line, Book: l.Vendor,
 						QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds,
 						Market: bets.MarketOver(l.OverOdds, l.UnderOdds), P1: pOver}
@@ -620,6 +626,13 @@ func main() {
 		side, prob, raw, odds := "OVER", pOver, pr.Over, l.OverOdds
 		if pOver < 0.5 {
 			side, prob, raw, odds = "UNDER", 1-pOver, 1-pr.Over, l.UnderOdds
+		}
+		if *selectionPolicy == "value" {
+			side, prob, odds = bets.ValueSide(pOver, l.OverOdds, l.UnderOdds)
+			raw = pr.Over
+			if side == "UNDER" {
+				raw = 1 - pr.Over
+			}
 		}
 		view := marketViews[props.MarketKey{Game: l.GameID, Player: l.PlayerID, Stat: string(l.Stat)}]
 		s := scored{
@@ -700,7 +713,11 @@ func main() {
 				}
 			}
 		}
-		if (pOver >= *hi || pOver <= 1-*hi) && s.Edge >= *minEdge {
+		qualifies := (pOver >= *hi || pOver <= 1-*hi) && s.Edge >= *minEdge
+		if *selectionPolicy == "value" {
+			qualifies = s.Prob >= *valueMinProb && s.Edge >= *minEdge && bets.ExpectedReturn(s.Prob, s.Odds) >= *valueMinROI
+		}
+		if qualifies {
 			s.Tier = "PICK"
 			if early {
 				s.Tier, s.Units = "PAPER", 0
@@ -731,6 +748,10 @@ func main() {
 			if floor < .5 {
 				s.Tier, s.Units = "CHECK", 0
 				s.Why = addWhy(s.Why, fmt.Sprintf("Minutes-sensitive: the %s lean reverses within a ±4-minute scenario; confirm rotation before betting", strings.ToLower(s.Side)))
+			}
+			if *selectionPolicy == "value" {
+				s.Tier, s.Units = "PAPER", 0
+				s.Why = addWhy(s.Why, "price-based research: a lower hit probability can still have forecast value; not validated for staking")
 			}
 			picks = append(picks, s)
 		}
@@ -853,7 +874,7 @@ func main() {
 		if picks[i].Tier != picks[j].Tier {
 			return tierRank(picks[i].Tier) < tierRank(picks[j].Tier)
 		}
-		return picks[i].Prob > picks[j].Prob
+		return valueBefore(picks[i], picks[j])
 	})
 
 	if guarded, reason := guardSelectedSides(picks, *skewMax); reason != "" {
@@ -1371,7 +1392,7 @@ func bestLinePerPick(picks []scored) []scored {
 		if !ok {
 			order = append(order, k)
 		}
-		if !ok || s.Edge > cur.Edge {
+		if !ok || valueBefore(s, cur) {
 			best[k] = s
 		}
 	}
@@ -1387,7 +1408,7 @@ func bestLinePerPick(picks []scored) []scored {
 // weaker than real picks, so they get 0 units and are labelled LEAN.
 func fillLeans(picks, all []scored, games map[int]props.GameInfo, min, perPlayer int) []scored {
 	cands := bestLinePerPick(all)
-	sort.Slice(cands, func(i, j int) bool { return cands[i].Edge > cands[j].Edge })
+	sort.SliceStable(cands, func(i, j int) bool { return valueBefore(cands[i], cands[j]) })
 	perGame, perPlr := map[int]int{}, map[int]int{}
 	used := map[[2]int]bool{}
 	for _, s := range picks {
@@ -1417,25 +1438,11 @@ func fillLeans(picks, all []scored, games map[int]props.GameInfo, min, perPlayer
 	return picks
 }
 
-// capCorrelated limits picks per game and per player, keeping higher win probabilities, then edges. Picks in the
+// capCorrelated limits picks per game and per player, keeping larger model returns at the offered price. Picks in the
 // same game or on the same player tend to win and lose together, so posting everything
 // concentrates risk.
 func capCorrelated(picks []scored, perGame, perPlayer int) []scored {
-	sort.SliceStable(picks, func(i, j int) bool {
-		if picks[i].Prob != picks[j].Prob {
-			return picks[i].Prob > picks[j].Prob
-		}
-		if picks[i].Edge != picks[j].Edge {
-			return picks[i].Edge > picks[j].Edge
-		}
-		if picks[i].GameID != picks[j].GameID {
-			return picks[i].GameID < picks[j].GameID
-		}
-		if picks[i].PlayerID != picks[j].PlayerID {
-			return picks[i].PlayerID < picks[j].PlayerID
-		}
-		return picks[i].Stat < picks[j].Stat
-	})
+	sort.SliceStable(picks, func(i, j int) bool { return valueBefore(picks[i], picks[j]) })
 	games, players := map[int]int{}, map[int]int{}
 	var out []scored
 	for _, s := range picks {
@@ -1459,11 +1466,11 @@ func oddsStr(o int) string {
 	return fmt.Sprintf("%d", o)
 }
 
-// writeCSV saves the board for a spreadsheet: strongest probability first, with percentages as
+// writeCSV saves the board for a spreadsheet: forecast value first, with percentages as
 // plain numbers (62.3 means 62.3%) so Excel can sort and filter them.
 func writeCSV(path string, in []scored) error {
 	picks := append([]scored(nil), in...)
-	sort.SliceStable(picks, func(i, j int) bool { return picks[i].Prob > picks[j].Prob })
+	sort.SliceStable(picks, func(i, j int) bool { return valueBefore(picks[i], picks[j]) })
 	f, err := os.Create(path)
 	if err != nil {
 		return err

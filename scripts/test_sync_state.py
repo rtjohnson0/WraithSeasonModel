@@ -94,6 +94,8 @@ class MergeTests(unittest.TestCase):
                 run(repo,'config','user.email','test@example.invalid');run(repo,'config','user.name','Test')
             (bot/'data').mkdir();(bot/'README.md').write_text('base\n')
             (bot/'data/picklog.jsonl').write_text(line(1))
+            (bot/'data/model_tail.json').write_text('{"version":5,"bundle":"base"}\n')
+            (bot/'data/calibration_tail.json').write_text('{"config":"tail-base"}\n')
             (bot/'data/model.json').write_text('{"version":3}\n')
             (bot/'data/calibration.json').write_text('{"config":"old"}\n')
             stat = lambda pid, pts: json.dumps(dict(player={'id':pid}, game={'id':9}, pts=pts))+'\n'
@@ -107,6 +109,7 @@ class MergeTests(unittest.TestCase):
             (user/'README.md').write_text('new source\n')
             (user/'data/more.json').write_text(json.dumps(dict(at='2026-11-10T17:30:00Z')))
             (user/'data/stats_2026.jsonl').write_text(stat(1,12)+stat(3,30))
+            (user/'data/model_tail.json').write_text('{"version":5,"bundle":"new"}\n')
             (user/'data/model.json').write_text('{"version":4}\n')
             (user/'data/calibration.json').write_text('{"config":"new"}\n')
             run(user,'add','.');run(user,'commit','-m','upstream');run(user,'push')
@@ -114,6 +117,7 @@ class MergeTests(unittest.TestCase):
             (bot/'data/board.json').write_text(json.dumps(dict(at='2026-11-10T18:00:00Z', plays=[dict(player='Saved pick')])))
             (bot/'data/more.json').write_text(json.dumps(dict(at='2026-11-10T18:00:00Z', combos=[dict(player='Saved combo')])))
             (bot/'data/calibration.json').write_text('{"config":"concurrent-old-model"}\n')
+            (bot/'data/calibration_tail.json').write_text('{"config":"concurrent-tail"}\n')
             (bot/'data/stats_2026.jsonl').write_text(stat(1,11)+stat(2,20))
             (bot/'data/stats_2027.jsonl').write_text(stat(4,40))
             # Reject once, as a protected branch race/transient push failure would.
@@ -132,6 +136,8 @@ class MergeTests(unittest.TestCase):
             records=[json.loads(x) for x in (bot/'data/picklog.jsonl').read_text().splitlines()]
             self.assertEqual({r['player_id'] for r in records},{1,2,3})
             self.assertEqual(json.loads((bot/'data/calibration.json').read_text())['config'],'new')
+            self.assertEqual(json.loads((bot/'data/model_tail.json').read_text())['bundle'],'new')
+            self.assertEqual(json.loads((bot/'data/calibration_tail.json').read_text())['config'],'tail-base')
             stats=[json.loads(x) for x in (bot/'data/stats_2026.jsonl').read_text().splitlines()]
             self.assertEqual({r['player']['id']:r['pts'] for r in stats},{1:12,2:20,3:30})
             self.assertEqual(run(bot,'diff','--name-only'),'')

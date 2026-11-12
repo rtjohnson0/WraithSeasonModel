@@ -13,8 +13,8 @@ func TestEvidenceGateKeepsVisibleResearchPicks(t *testing.T) {
 		t.Fatal(out)
 	}
 }
-func TestAccuracyRankingIsNotLargestPriceEdge(t *testing.T) {
-	p := []scored{{PlayerID: 1, GameID: 1, Prob: .56, Edge: .1}, {PlayerID: 2, GameID: 1, Prob: .65, Edge: .03}}
+func TestPriceRankingDoesNotMistakeFavoriteForBestValue(t *testing.T) {
+	p := []scored{{PlayerID: 1, GameID: 1, Prob: .67, Odds: -188, Edge: .017}, {PlayerID: 2, GameID: 1, Prob: .552, Odds: -105, Edge: .04}}
 	p = capCorrelated(p, 1, 1)
 	if len(p) != 1 || p[0].PlayerID != 2 {
 		t.Fatal(p)

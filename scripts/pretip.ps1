@@ -19,3 +19,5 @@ Run "player props"                 { go run ./cmd/predict }
 Run "game lines"                   { go run ./cmd/games } -Optional
 
 Run "first-quarter points comparisons" { go run ./cmd/quarter } -Optional
+
+Run "uncertainty shadow (separate experimental record)" { python scripts/run_tail_shadow.py } -Optional

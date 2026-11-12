@@ -18,12 +18,13 @@ STATE_FILES = [
     'biasfix.json', 'minfix.json', 'wofix.json', 'runs.jsonl', 'more.json',
     'projlog.jsonl', 'model.json', 'combolog.jsonl', 'combosettled.jsonl',
     'combocorr.json', 'v2log.jsonl', 'v2settled.jsonl', 'v2.json', 'model_v2.json',
-    'combocalibration.json', 'exclusions.jsonl',
+    'combocalibration.json', 'exclusions.jsonl', 'model_tail.json', 'calibration_tail.json',
 ]
 MODEL_BUNDLE = ['data/' + x for x in ('model.json', 'model_v2.json', 'calibration.json',
                 'combocalibration.json', 'gamecal.json', 'biasfix.json', 'minfix.json',
                 'wofix.json', 'combocorr.json')]
 
+TAIL_BUNDLE = ['data/model_tail.json', 'data/calibration_tail.json']
 
 def git(*args, check=True):
     result = subprocess.run(['git', *args], text=True, encoding='utf-8', capture_output=True)
@@ -241,15 +242,16 @@ def sync(branch, message, attempts=5, delay=2):
                     elif Path(name).exists():
                         git('rm', '-f', '--ignore-unmatch', '--', name)
             # Preserve a coherent trained bundle if a user retrained while this run worked.
-            if any(blob(base, p) != blob(remote, p) for p in MODEL_BUNDLE):
-                for name in MODEL_BUNDLE:
-                    content = blob(remote, name)
-                    if content is not None:
-                        Path(name).parent.mkdir(parents=True, exist_ok=True)
-                        Path(name).write_text(content, encoding='utf-8')
-                        git('add', '-f', '--', name)
-                    elif blob(base, name) is not None:
-                        git('rm', '-f', '--ignore-unmatch', '--', name)
+            for bundle in (MODEL_BUNDLE, TAIL_BUNDLE):
+                if any(blob(base, p) != blob(remote, p) for p in bundle):
+                    for name in bundle:
+                        content = blob(remote, name)
+                        if content is not None:
+                            Path(name).parent.mkdir(parents=True, exist_ok=True)
+                            Path(name).write_text(content, encoding='utf-8')
+                            git('add', '-f', '--', name)
+                        elif blob(base, name) is not None:
+                            git('rm', '-f', '--ignore-unmatch', '--', name)
             if merge_head.exists():
                 git('commit', '-m', 'Merge upstream state and source updates' + (' [skip ci]' if '[skip ci]' in message else ''))
         except Exception:

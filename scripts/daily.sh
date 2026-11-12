@@ -43,3 +43,5 @@ echo "== game lines =="
 go run ./cmd/games || echo "game lines skipped"
 
 go run ./cmd/quarter || echo "quarter comparisons unavailable; full-game data was not substituted"
+
+python3 scripts/run_tail_shadow.py || echo "Experimental shadow unavailable; primary board retained"

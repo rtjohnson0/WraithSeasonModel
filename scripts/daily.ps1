@@ -61,3 +61,5 @@ Write-Host ""
 Write-Host "Done. Props: data\picks_<date>.csv   Game lines: data\gamepicks_<date>.csv"
 
 Run "first-quarter points comparisons" { go run ./cmd/quarter } -Optional
+
+Run "uncertainty shadow (separate experimental record)" { python scripts/run_tail_shadow.py } -Optional

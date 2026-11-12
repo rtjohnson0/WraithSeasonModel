@@ -109,7 +109,7 @@ func moreCandidates(picks, all []scored, perGame, perPlayer int) []scored {
 		posted[[3]string{strconv.Itoa(s.PlayerID), string(s.Stat), s.Side}] = true
 	}
 	cands := bestLinePerPick(all)
-	sort.SliceStable(cands, func(i, j int) bool { return cands[i].Edge > cands[j].Edge })
+	sort.SliceStable(cands, func(i, j int) bool { return valueBefore(cands[i], cands[j]) })
 	perG, perP := map[int]int{}, map[int]int{}
 	var out []scored
 	for _, c := range cands {

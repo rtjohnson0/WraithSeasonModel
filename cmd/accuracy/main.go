@@ -60,6 +60,10 @@ func main() {
 				fatal(e)
 			}
 			skip := func(s string) { report.Excluded[s]++ }
+			if r.SelectionPolicy == "value" {
+				skip("price_policy_needs_its_own_forward_evaluation")
+				continue
+			}
 			if r.Date >= *before {
 				skip("not_completed_date")
 				continue

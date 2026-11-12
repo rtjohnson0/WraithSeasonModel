@@ -23,9 +23,10 @@ export default function App() {
   const [site, setSite] = useState(null)
   const [error, setError] = useState('')
   const [refreshTick, setRefreshTick] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const onHash = () => setPage(pageFromHash())
+    const onHash = () => { setPage(pageFromHash()); window.scrollTo({ top: 0 }) }
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
@@ -37,6 +38,7 @@ export default function App() {
     const load = async () => {
       if (pending) return
       pending = true
+      setLoading(true)
       try {
         const url = new URL('data/picks.json', document.baseURI)
         url.searchParams.set('t', Date.now())
@@ -48,8 +50,8 @@ export default function App() {
           setError('')
         }
       } catch (e) {
-        if (active && e.name !== 'AbortError') setError(`Could not check for a newer publication: ${e.message}`)
-      } finally { pending = false }
+        if (active && e.name !== 'AbortError') setError('Could not refresh the board. Your last loaded plays are still shown. Use Refresh board to try again.')
+      } finally { pending = false; if (active) setLoading(false) }
     }
     load()
     const timer = setInterval(load, 60000)
@@ -77,7 +79,7 @@ export default function App() {
             </a>
           ))}
         </nav>
-        <button type="button" className="reload-board" onClick={() => setRefreshTick((x) => x + 1)}>Reload published board</button>
+        <button type="button" className="reload-board" disabled={loading} onClick={() => setRefreshTick((x) => x + 1)}>{loading ? 'Refreshing…' : 'Refresh board'}</button>
       </header>
 
       {site?.sample && (
@@ -87,8 +89,8 @@ export default function App() {
       )}
 
       <main>
-        {error && <p className="notice">{error} Try again in a minute.</p>}
-        {!site && !error && <p className="notice">Loading the board</p>}
+        {error && <p className="notice">{error}</p>}
+        {!site && !error && <div className="board-loading" role="status"><p>Loading today’s board…</p><div /><div /><div /></div>}
         {site && page === 'board' && <Board site={site} />}
         {site && page === 'combos' && <Combos site={site} />}
         {site && page === 'record' && <Record site={site} />}

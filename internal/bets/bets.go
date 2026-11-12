@@ -60,3 +60,26 @@ func MarketOver(overOdds, underOdds int) float64 {
 	}
 	return po / (po + pu)
 }
+
+// ExpectedReturn is forecast profit per unit at the exact offered odds,
+// conditional on no push (as are the calibrated probabilities). Invalid inputs
+// cannot rank as attractive bets. This is not evidence of realized returns.
+func ExpectedReturn(p float64, odds int) float64 {
+	if math.IsNaN(p) || math.IsInf(p, 0) || p < 0 || p > 1 || (odds < 100 && odds > -100) {
+		return math.Inf(-1)
+	}
+	payout := float64(odds) / 100
+	if odds < 0 {
+		payout = 100 / float64(-odds)
+	}
+	return p*payout - (1 - p)
+}
+
+// ValueSide compares both exact prices. A less likely side can have better
+// forecast value at a sufficiently larger payout. It does not raise confidence.
+func ValueSide(pOver float64, overOdds, underOdds int) (side string, p float64, odds int) {
+	if ExpectedReturn(1-pOver, underOdds) > ExpectedReturn(pOver, overOdds) {
+		return "UNDER", 1 - pOver, underOdds
+	}
+	return "OVER", pOver, overOdds
+}

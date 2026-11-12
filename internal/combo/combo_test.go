@@ -101,3 +101,15 @@ func TestCholNotPositiveDefinite(t *testing.T) {
 		}
 	}
 }
+
+func TestWeightedMinutesAreSharedByCombos(t *testing.T) {
+	p := pred(30)
+	p.MinNodes[0], p.MinNodes[1] = 2, 32
+	p.MinWeights[0], p.MinWeights[1] = .1, .9
+	p.Minutes = 29
+	d := Simulate(p, Corr{}, 3000, 77)
+	want := p.Minutes * (p.Rate[0] + p.Rate[1] + p.Rate[2])
+	if math.Abs(d.Mean(data.PRA)-want) > .2 {
+		t.Fatalf("combo ignored weights: got %g want %g", d.Mean(data.PRA), want)
+	}
+}

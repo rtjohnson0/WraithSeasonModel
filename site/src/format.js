@@ -48,3 +48,16 @@ export function marketLabel(p) {
   const labels = { game: 'Full game', full_game: 'Full game', '1q': '1Q', '2q': '2Q', '3q': '3Q', '4q': '4Q', '1h': '1H', '2h': '2H' }
   return `${labels[period] || (period ? period.toUpperCase() : 'Market')} · ${name}`
 }
+
+// Forecast return conditional on a non-push result, at the exact named price.
+export function modelReturn(p) {
+ const prob=Number(p.prob),odds=Number(p.odds)
+ if(!Number.isFinite(prob)||prob<0||prob>1||!Number.isFinite(odds)||Math.abs(odds)<100)return -Infinity
+ return prob*(odds>0?odds/100:100/-odds)-(1-prob)
+}
+export function comparePlayValue(a,b) {
+ const av=modelReturn(a),bv=modelReturn(b)
+ if(av!==bv)return bv-av
+ if((a.edge||0)!==(b.edge||0))return (b.edge||0)-(a.edge||0)
+ return (b.prob||0)-(a.prob||0)
+}
