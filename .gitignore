@@ -50,7 +50,7 @@ audit_findings/
 !data/accuracy.json
 
 # Isolated comparison runs and frozen experimental bundles.
-research/
+/research/
 
 run_evidence/
 forecast_audit/
