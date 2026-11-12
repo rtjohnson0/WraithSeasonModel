@@ -1,6 +1,6 @@
 {
  "date": "2026-11-12",
- "at": "2026-11-12T14:05:30.429853168Z",
+ "at": "2026-11-12T15:23:41.763670494Z",
  "plays": [
   {
    "market_median": 3.5,
@@ -12,26 +12,26 @@
      "line": 3.5,
      "overOdds": 120,
      "underOdds": -160,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:17.506Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:23:22.009Z"
     },
     {
      "book": "betparx",
      "source": "BALLDONTLIE",
      "line": 3.5,
-     "overOdds": 132,
-     "underOdds": -180,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T14:03:52.670Z"
+     "overOdds": 133,
+     "underOdds": -182,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:21:52.333Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
      "line": 3.5,
-     "overOdds": 132,
-     "underOdds": -180,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T13:46:13.662Z"
+     "overOdds": 133,
+     "underOdds": -182,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:19:14.008Z"
     },
     {
      "book": "bovada",
@@ -39,26 +39,26 @@
      "line": 3.5,
      "overOdds": 130,
      "underOdds": -170,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:02:21.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:18:58.000Z"
     },
     {
      "book": "caesars",
-     "source": "SportsGameOdds",
+     "source": "BALLDONTLIE",
      "line": 3.5,
      "overOdds": 127,
      "underOdds": -170,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:02:17.000Z"
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:19:11.792Z"
     },
     {
      "book": "draftkings",
      "source": "SportsGameOdds",
      "line": 3.5,
-     "overOdds": 130,
-     "underOdds": -171,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:20.320Z"
+     "overOdds": 132,
+     "underOdds": -175,
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:23:24.537Z"
     },
     {
      "book": "espnbet",
@@ -66,26 +66,26 @@
      "line": 3.5,
      "overOdds": 130,
      "underOdds": -170,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:02:15.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:19:13.000Z"
     },
     {
      "book": "fanduel",
-     "source": "SportsGameOdds",
+     "source": "BALLDONTLIE",
      "line": 3.5,
-     "overOdds": 140,
-     "underOdds": -188,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:13.089Z"
+     "overOdds": 144,
+     "underOdds": -194,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:22:24.314Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-12T14:05:22Z",
-   "source_updated_at": "2026-11-12T14:05:17.506Z",
+   "quote_at": "2026-11-12T15:23:33Z",
+   "source_updated_at": "2026-11-12T15:23:22.009Z",
    "period": "game",
-   "logged_at": "2026-11-12T14:05:35Z",
+   "logged_at": "2026-11-12T15:23:46Z",
    "date": "2026-11-12",
    "game_id": 21718093,
    "player_id": 228,
@@ -96,23 +96,23 @@
    "line": 3.5,
    "odds": -160,
    "book": "sgo/betmgm",
-   "prob": 0.6369323966286448,
-   "prob_raw": 0.7277707204291587,
-   "proj_mean": 2.5998362202273553,
-   "proj_min": 30.619204976271355,
+   "prob": 0.6380633551647557,
+   "prob_raw": 0.7307386935789155,
+   "proj_mean": 2.584840828112168,
+   "proj_min": 30.621377072543716,
    "units": 0,
    "tier": "PAPER",
    "why": "minutes -6 vs his normal; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity +0.0% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: past blowout cuts -3.7 min, recent minutes trend +3.6 min, longer-run minutes +2.5 min (before residual mixing and post-fit adjustments)",
    "matchup": "DAL @ MIN",
    "tip": "2026-11-13T01:00:00Z",
-   "edge": 0.02154778124402934,
+   "edge": 0.022678739780140234,
    "dist": [
-    0.099,
-    0.205,
+    0.1,
+    0.206,
     0.233,
     0.192,
-    0.129,
-    0.074,
+    0.128,
+    0.073,
     0.038,
     0.018,
     0.008,
@@ -128,46 +128,46 @@
      "book": "betparx",
      "source": "BALLDONTLIE",
      "line": 3.5,
-     "overOdds": -134,
-     "underOdds": -103,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T14:03:52.670Z"
+     "overOdds": -137,
+     "underOdds": 102,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:21:52.333Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
      "line": 3.5,
-     "overOdds": -134,
-     "underOdds": -103,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T13:46:13.662Z"
+     "overOdds": -137,
+     "underOdds": 102,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:19:14.008Z"
     },
     {
      "book": "bovada",
      "source": "SportsGameOdds",
      "line": 3.5,
-     "overOdds": -125,
-     "underOdds": -105,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:02:21.000Z"
+     "overOdds": -130,
+     "underOdds": 100,
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:18:58.000Z"
     },
     {
      "book": "caesars",
-     "source": "SportsGameOdds",
+     "source": "BALLDONTLIE",
      "line": 3.5,
      "overOdds": -125,
      "underOdds": -107,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:02:17.000Z"
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:19:11.792Z"
     },
     {
      "book": "draftkings",
      "source": "SportsGameOdds",
      "line": 3.5,
-     "overOdds": -127,
-     "underOdds": -104,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:20.320Z"
+     "overOdds": -130,
+     "underOdds": -101,
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:23:24.537Z"
     },
     {
      "book": "espnbet",
@@ -175,26 +175,26 @@
      "line": 3.5,
      "overOdds": -120,
      "underOdds": -110,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:02:15.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:19:13.000Z"
     },
     {
      "book": "fanduel",
-     "source": "SportsGameOdds",
+     "source": "BALLDONTLIE",
      "line": 3.5,
-     "overOdds": -122,
-     "underOdds": -108,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:13.089Z"
+     "overOdds": -128,
+     "underOdds": -104,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:22:24.314Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-12T14:05:22Z",
-   "source_updated_at": "2026-11-12T14:02:15.000Z",
+   "quote_at": "2026-11-12T15:23:33Z",
+   "source_updated_at": "2026-11-12T15:19:13.000Z",
    "period": "game",
-   "logged_at": "2026-11-12T14:05:35Z",
+   "logged_at": "2026-11-12T15:23:46Z",
    "date": "2026-11-12",
    "game_id": 21718093,
    "player_id": 17896067,
@@ -205,27 +205,27 @@
    "line": 3.5,
    "odds": -120,
    "book": "sgo/espnbet",
-   "prob": 0.5594327854415038,
-   "prob_raw": 0.7360356772676268,
-   "proj_mean": 5.377396316010216,
-   "proj_min": 22.780983223223398,
+   "prob": 0.5589671409241114,
+   "prob_raw": 0.7345162135153359,
+   "proj_mean": 5.3633739039149075,
+   "proj_min": 22.783155319495762,
    "units": 0,
    "tier": "PAPER",
    "why": "minutes -5 vs his normal; defense vs forwards: 3rd-fewest rebounds allowed (-8%, of 30 teams); injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -0.1% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: last-game minutes -1.5 min, past blowout cuts -0.7 min, longer-run minutes +0.5 min (before residual mixing and post-fit adjustments); posted, not staked: under the 60% staking bar",
    "matchup": "DAL @ MIN",
    "tip": "2026-11-13T01:00:00Z",
-   "edge": 0.013978239986958352,
+   "edge": 0.013512595469565958,
    "dist": [
     0.012,
     0.043,
-    0.085,
+    0.086,
     0.124,
     0.146,
     0.147,
     0.131,
     0.105,
     0.077,
-    0.053,
+    0.052,
     0.033,
     0.02,
     0.011,
@@ -243,10 +243,10 @@
      "book": "betmgm",
      "source": "SportsGameOdds",
      "line": 3.5,
-     "overOdds": -110,
-     "underOdds": -120,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:17.506Z"
+     "overOdds": -111,
+     "underOdds": -118,
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:23:22.009Z"
     },
     {
      "book": "betparx",
@@ -254,17 +254,17 @@
      "line": 3.5,
      "overOdds": -103,
      "underOdds": -132,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T14:03:52.670Z"
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:21:52.333Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
      "line": 3.5,
-     "overOdds": 100,
-     "underOdds": -134,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T13:46:16.603Z"
+     "overOdds": -103,
+     "underOdds": -132,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:19:16.983Z"
     },
     {
      "book": "bovada",
@@ -272,8 +272,8 @@
      "line": 3.5,
      "overOdds": 105,
      "underOdds": -135,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:01:41.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:17:45.000Z"
     },
     {
      "book": "caesars",
@@ -281,8 +281,8 @@
      "line": 3.5,
      "overOdds": -102,
      "underOdds": -132,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:03:02.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:19:40.000Z"
     },
     {
      "book": "draftkings",
@@ -290,8 +290,8 @@
      "line": 3.5,
      "overOdds": 103,
      "underOdds": -136,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:18.794Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:23:24.537Z"
     },
     {
      "book": "espnbet",
@@ -299,26 +299,26 @@
      "line": 3.5,
      "overOdds": 100,
      "underOdds": -130,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:02:07.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:17:57.000Z"
     },
     {
      "book": "fanduel",
-     "source": "SportsGameOdds",
+     "source": "BALLDONTLIE",
      "line": 3.5,
      "overOdds": 108,
      "underOdds": -144,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:13.089Z"
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:22:24.302Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-12T14:05:22Z",
-   "source_updated_at": "2026-11-12T14:05:17.506Z",
+   "quote_at": "2026-11-12T15:23:33Z",
+   "source_updated_at": "2026-11-12T15:23:22.009Z",
    "period": "game",
-   "logged_at": "2026-11-12T14:05:35Z",
+   "logged_at": "2026-11-12T15:23:46Z",
    "date": "2026-11-12",
    "game_id": 21718094,
    "player_id": 8,
@@ -327,22 +327,22 @@
    "stat": "threes",
    "side": "UNDER",
    "line": 3.5,
-   "odds": -120,
+   "odds": -118,
    "book": "sgo/betmgm",
-   "prob": 0.5910200210869213,
-   "prob_raw": 0.7162678434857834,
-   "proj_mean": 2.659839361301331,
-   "proj_min": 26.869828900837767,
+   "prob": 0.5884868537837197,
+   "prob_raw": 0.7147198718462362,
+   "proj_mean": 2.6675302358278774,
+   "proj_min": 26.868742852701583,
    "units": 0,
    "tier": "PAPER",
    "why": "out: Dennis Schroder, Brandon Miller; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity +0.0% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: last-game minutes +1.4 min, recent minutes trend +0.9 min, past blowout cuts -0.8 min (before residual mixing and post-fit adjustments)",
    "matchup": "CHA @ PHX",
    "tip": "2026-11-13T02:00:00Z",
-   "edge": 0.045565475632375896,
+   "edge": 0.04720245011399493,
    "dist": [
     0.091,
-    0.197,
-    0.232,
+    0.196,
+    0.231,
     0.196,
     0.134,
     0.078,
@@ -361,28 +361,28 @@
      "book": "betmgm",
      "source": "SportsGameOdds",
      "line": 2.5,
-     "overOdds": -105,
-     "underOdds": -125,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:17.506Z"
+     "overOdds": -110,
+     "underOdds": -120,
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:23:22.009Z"
     },
     {
      "book": "betparx",
      "source": "BALLDONTLIE",
      "line": 2.5,
-     "overOdds": -113,
-     "underOdds": -120,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T14:03:52.670Z"
+     "overOdds": -117,
+     "underOdds": -115,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:21:52.333Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
      "line": 2.5,
-     "overOdds": -110,
-     "underOdds": -122,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T13:46:16.603Z"
+     "overOdds": -117,
+     "underOdds": -115,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:19:16.983Z"
     },
     {
      "book": "bovada",
@@ -390,8 +390,8 @@
      "line": 2.5,
      "overOdds": -105,
      "underOdds": -125,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:01:41.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:17:45.000Z"
     },
     {
      "book": "caesars",
@@ -399,8 +399,8 @@
      "line": 2.5,
      "overOdds": -118,
      "underOdds": -113,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:03:02.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:19:40.000Z"
     },
     {
      "book": "draftkings",
@@ -408,8 +408,8 @@
      "line": 2.5,
      "overOdds": -105,
      "underOdds": -125,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:18.794Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:23:24.537Z"
     },
     {
      "book": "espnbet",
@@ -417,26 +417,26 @@
      "line": 2.5,
      "overOdds": -120,
      "underOdds": -110,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:02:07.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:17:57.000Z"
     },
     {
      "book": "fanduel",
-     "source": "SportsGameOdds",
+     "source": "BALLDONTLIE",
      "line": 2.5,
      "overOdds": -118,
      "underOdds": -112,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:13.089Z"
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:22:24.302Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-12T14:05:22Z",
-   "source_updated_at": "2026-11-12T14:02:07.000Z",
+   "quote_at": "2026-11-12T15:23:33Z",
+   "source_updated_at": "2026-11-12T15:17:57.000Z",
    "period": "game",
-   "logged_at": "2026-11-12T14:05:35Z",
+   "logged_at": "2026-11-12T15:23:46Z",
    "date": "2026-11-12",
    "game_id": 21718094,
    "player_id": 667378,
@@ -447,22 +447,22 @@
    "line": 2.5,
    "odds": -110,
    "book": "sgo/espnbet",
-   "prob": 0.5561161024754111,
-   "prob_raw": 0.6578139144616806,
-   "proj_mean": 2.071531423310151,
-   "proj_min": 29.67406506359773,
+   "prob": 0.5555595935853775,
+   "prob_raw": 0.656253692258306,
+   "proj_mean": 2.077529152402086,
+   "proj_min": 29.67297901546155,
    "units": 0,
    "tier": "PAPER",
    "why": "out: Dennis Schroder, Brandon Miller; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity +0.0% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +2.1 min, last-game minutes +1.2 min, last-five minutes +1.0 min (before residual mixing and post-fit adjustments)",
    "matchup": "CHA @ PHX",
    "tip": "2026-11-13T02:00:00Z",
-   "edge": 0.032306578665887264,
+   "edge": 0.031750069775853706,
    "dist": [
     0.136,
-    0.261,
+    0.26,
     0.26,
     0.18,
-    0.096,
+    0.097,
     0.043,
     0.016,
     0.005,
@@ -477,10 +477,10 @@
      "book": "betmgm",
      "source": "SportsGameOdds",
      "line": 1.5,
-     "overOdds": -120,
-     "underOdds": -110,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:17.506Z"
+     "overOdds": -110,
+     "underOdds": -120,
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:23:22.009Z"
     },
     {
      "book": "betparx",
@@ -488,17 +488,17 @@
      "line": 1.5,
      "overOdds": 100,
      "underOdds": -134,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T14:03:52.670Z"
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:21:52.333Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
      "line": 1.5,
-     "overOdds": -103,
-     "underOdds": -132,
-     "capturedAt": "2026-11-12T14:04:03Z",
-     "updatedAt": "2026-11-12T13:46:16.603Z"
+     "overOdds": 100,
+     "underOdds": -136,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:19:16.983Z"
     },
     {
      "book": "bovada",
@@ -506,8 +506,8 @@
      "line": 1.5,
      "overOdds": -110,
      "underOdds": -120,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:01:41.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:17:45.000Z"
     },
     {
      "book": "caesars",
@@ -515,8 +515,8 @@
      "line": 1.5,
      "overOdds": -107,
      "underOdds": -124,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:03:02.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:19:40.000Z"
     },
     {
      "book": "draftkings",
@@ -524,8 +524,8 @@
      "line": 1.5,
      "overOdds": -108,
      "underOdds": -122,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:18.794Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:23:24.537Z"
     },
     {
      "book": "espnbet",
@@ -533,26 +533,26 @@
      "line": 1.5,
      "overOdds": -105,
      "underOdds": -125,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:02:07.000Z"
+     "capturedAt": "2026-11-12T15:23:33Z",
+     "updatedAt": "2026-11-12T15:17:57.000Z"
     },
     {
      "book": "fanduel",
-     "source": "SportsGameOdds",
+     "source": "BALLDONTLIE",
      "line": 1.5,
-     "overOdds": -102,
-     "underOdds": -130,
-     "capturedAt": "2026-11-12T14:05:22Z",
-     "updatedAt": "2026-11-12T14:05:13.089Z"
+     "overOdds": -104,
+     "underOdds": -128,
+     "capturedAt": "2026-11-12T15:22:13Z",
+     "updatedAt": "2026-11-12T15:22:24.302Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-12T14:05:22Z",
-   "source_updated_at": "2026-11-12T14:05:17.506Z",
+   "quote_at": "2026-11-12T15:23:33Z",
+   "source_updated_at": "2026-11-12T15:23:22.009Z",
    "period": "game",
-   "logged_at": "2026-11-12T14:05:35Z",
+   "logged_at": "2026-11-12T15:23:46Z",
    "date": "2026-11-12",
    "game_id": 21718094,
    "player_id": 1057384156,
@@ -561,26 +561,27 @@
    "stat": "threes",
    "side": "UNDER",
    "line": 1.5,
-   "odds": -110,
+   "odds": -120,
    "book": "sgo/betmgm",
-   "prob": 0.5503376424967332,
-   "prob_raw": 0.6414713964274232,
-   "proj_mean": 1.2665319455484039,
-   "proj_min": 25.40787968055636,
+   "prob": 0.5632395883174796,
+   "prob_raw": 0.6402109988139165,
+   "proj_mean": 1.270191144219362,
+   "proj_min": 25.406793632420175,
    "units": 0,
    "tier": "PAPER",
    "why": "out: Dennis Schroder, Brandon Miller; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity +0.0% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: last-game minutes +1.3 min, longer-run minutes -0.9 min, past blowout cuts +0.6 min (before residual mixing and post-fit adjustments)",
    "matchup": "CHA @ PHX",
    "tip": "2026-11-13T02:00:00Z",
-   "edge": 0.02652811868720939,
+   "edge": 0.01778504286293414,
    "dist": [
-    0.293,
-    0.349,
-    0.218,
-    0.095,
+    0.292,
+    0.348,
+    0.219,
+    0.096,
     0.033,
     0.009,
-    0.002
+    0.002,
+    0.001
    ]
   }
  ],
@@ -597,12 +598,12 @@
   }
  ],
  "status": {
-  "scoredAt": "2026-11-12T14:05:30Z",
-  "quotesRead": 1088,
-  "usableQuotes": 668,
-  "unsafeOrDuplicate": 14,
+  "scoredAt": "2026-11-12T15:23:41Z",
+  "quotesRead": 1077,
+  "usableQuotes": 652,
+  "unsafeOrDuplicate": 0,
   "conflictingBooks": 2,
-  "offConsensus": 64,
+  "offConsensus": 84,
   "captureMaxAgeSeconds": 1800,
   "priceMaxAgeSeconds": 21600,
   "minBooks": 3,
@@ -610,11 +611,11 @@
   "feeds": [
    {
     "name": "BALLDONTLIE",
-    "quotes": 176
+    "quotes": 288
    },
    {
     "name": "SportsGameOdds",
-    "quotes": 492
+    "quotes": 364
    }
   ]
  }
