@@ -36760,7 +36760,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source c0911cc81333, fetched 2026-11-12T13:48:08.639147465Z"
+      "reason": "identity-checked final player/game/stat; source fd20fc71c89c, fetched 2026-11-12T15:06:25.074104872Z"
     },
     {
       "id": "2026-11-09|17896078|rebounds|UNDER|fanduel|3.5",
@@ -36775,7 +36775,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source c0911cc81333, fetched 2026-11-12T13:48:08.639147465Z"
+      "reason": "identity-checked final player/game/stat; source fd20fc71c89c, fetched 2026-11-12T15:06:25.074104872Z"
     },
     {
       "id": "2026-11-09|666541|threes|UNDER|fanduel|1.5",
@@ -36790,7 +36790,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 0b590ebecfe9, fetched 2026-11-12T13:48:08.638897952Z"
+      "reason": "identity-checked final player/game/stat; source 6c7e3e32d91d, fetched 2026-11-12T15:06:25.073845681Z"
     },
     {
       "id": "2026-11-09|397|threes|UNDER|draftkings|3.5",
@@ -36805,7 +36805,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source ace0dc26f6c5, fetched 2026-11-12T13:48:08.639797419Z"
+      "reason": "identity-checked final player/game/stat; source 82bfa674da51, fetched 2026-11-12T15:06:25.074807138Z"
     },
     {
       "id": "2026-11-09|490|threes|UNDER|sgo/draftkings|2.5",
@@ -36820,7 +36820,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source e3466b2beb7a, fetched 2026-11-12T13:48:08.640427005Z"
+      "reason": "identity-checked final player/game/stat; source aced04441f8c, fetched 2026-11-12T15:06:25.075558674Z"
     },
     {
       "id": "2026-11-09|17896075|assists|UNDER|sgo/draftkings|9.5",
@@ -36835,7 +36835,7 @@
       "oldActual": 7,
       "newResult": "WIN",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source cf093d633f1f, fetched 2026-11-12T13:48:08.63990977Z"
+      "reason": "identity-checked final player/game/stat; source d15ea890bba4, fetched 2026-11-12T15:06:25.074936648Z"
     },
     {
       "id": "2026-11-09|1028028405|assists|UNDER|sgo/draftkings|2.5",
@@ -36850,7 +36850,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 9ac0444a833e, fetched 2026-11-12T13:48:08.640353079Z"
+      "reason": "identity-checked final player/game/stat; source c13533100509, fetched 2026-11-12T15:06:25.075476271Z"
     },
     {
       "id": "2026-11-09|56677826|points|UNDER|sgo/draftkings|11.5",
@@ -36865,7 +36865,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 16015c89f889, fetched 2026-11-12T13:48:08.639741584Z"
+      "reason": "identity-checked final player/game/stat; source bbf33a7d622c, fetched 2026-11-12T15:06:25.074764148Z"
     },
     {
       "id": "2026-11-09|8|threes|UNDER|sgo/espnbet|3.5",
@@ -36880,7 +36880,7 @@
       "oldActual": 6,
       "newResult": "LOSS",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 4ce99b574a48, fetched 2026-11-12T13:48:08.354760558Z"
+      "reason": "identity-checked final player/game/stat; source 24e12d4548c0, fetched 2026-11-12T15:06:25.072626805Z"
     },
     {
       "id": "2026-11-09|1057384362|rebounds|UNDER|draftkings|6.5",
@@ -36895,7 +36895,7 @@
       "oldActual": 15,
       "newResult": "LOSS",
       "newActual": 15,
-      "reason": "identity-checked final player/game/stat; source 87590eaf15d7, fetched 2026-11-12T13:48:08.354723892Z"
+      "reason": "identity-checked final player/game/stat; source 0ce6cc86911b, fetched 2026-11-12T15:06:25.072577243Z"
     },
     {
       "id": "2026-11-09|667378|threes|UNDER|fanduel|2.5",
@@ -36910,7 +36910,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 2f1c743dcdf6, fetched 2026-11-12T13:48:08.354686219Z"
+      "reason": "identity-checked final player/game/stat; source 9e5c37b7bd60, fetched 2026-11-12T15:06:25.07252701Z"
     },
     {
       "id": "2026-11-09|667378|rebounds|UNDER|betparx|8.5",
@@ -36925,7 +36925,7 @@
       "oldActual": 13,
       "newResult": "LOSS",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source 2f1c743dcdf6, fetched 2026-11-12T13:48:08.354686219Z"
+      "reason": "identity-checked final player/game/stat; source 9e5c37b7bd60, fetched 2026-11-12T15:06:25.07252701Z"
     },
     {
       "id": "2026-11-09|1028026060|rebounds|UNDER|sgo/draftkings|5.5",
@@ -36940,7 +36940,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source df5fafa2bd2f, fetched 2026-11-12T13:48:08.64031611Z"
+      "reason": "identity-checked final player/game/stat; source eaf6d5180bd2, fetched 2026-11-12T15:06:25.0754324Z"
     },
     {
       "id": "2026-11-09|1028026060|threes|UNDER|sgo/bovada|2.5",
@@ -36955,7 +36955,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source df5fafa2bd2f, fetched 2026-11-12T13:48:08.64031611Z"
+      "reason": "identity-checked final player/game/stat; source eaf6d5180bd2, fetched 2026-11-12T15:06:25.0754324Z"
     },
     {
       "id": "2026-11-09|38017728|points|UNDER|sgo/draftkings|7.5",
@@ -36970,7 +36970,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source cf0eb6f5c510, fetched 2026-11-12T13:48:08.639229155Z"
+      "reason": "identity-checked final player/game/stat; source 90d40d14b9c7, fetched 2026-11-12T15:06:25.074202404Z"
     },
     {
       "id": "2026-11-09|667378|rebounds|UNDER|sgo/betmgm|9.5",
@@ -36985,7 +36985,7 @@
       "oldActual": 13,
       "newResult": "LOSS",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source 2f1c743dcdf6, fetched 2026-11-12T13:48:08.354686219Z"
+      "reason": "identity-checked final player/game/stat; source 9e5c37b7bd60, fetched 2026-11-12T15:06:25.07252701Z"
     },
     {
       "id": "2026-11-09|351|points|UNDER|sgo/draftkings|9.5",
@@ -37000,7 +37000,7 @@
       "oldActual": 10,
       "newResult": "LOSS",
       "newActual": 10,
-      "reason": "identity-checked final player/game/stat; source ef2c95c7f9a6, fetched 2026-11-12T13:48:08.354994857Z"
+      "reason": "identity-checked final player/game/stat; source b3ad299ee210, fetched 2026-11-12T15:06:25.072933555Z"
     },
     {
       "id": "2026-11-09|117|assists|UNDER|sgo/draftkings|2.5",
@@ -37015,7 +37015,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source b942f2f78d69, fetched 2026-11-12T13:48:08.640276672Z"
+      "reason": "identity-checked final player/game/stat; source 6136a647d21a, fetched 2026-11-12T15:06:25.075390692Z"
     },
     {
       "id": "2026-11-09|1057268940|threes|UNDER|draftkings|0.5",
@@ -37044,7 +37044,7 @@
       "oldActual": 14,
       "newResult": "LOSS",
       "newActual": 14,
-      "reason": "identity-checked final player/game/stat; source 25240336e633, fetched 2026-11-12T13:48:08.641250034Z"
+      "reason": "identity-checked final player/game/stat; source a86f9947dc19, fetched 2026-11-12T15:06:25.076476901Z"
     },
     {
       "id": "2026-11-09|3547269|points|UNDER|sgo/caesars|18.5",
@@ -37073,7 +37073,7 @@
       "oldActual": 6,
       "newResult": "WIN",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source f960c558d707, fetched 2026-11-12T13:48:08.641884384Z"
+      "reason": "identity-checked final player/game/stat; source 0c90c80220fe, fetched 2026-11-12T15:06:25.360019053Z"
     },
     {
       "id": "2026-11-09|666950|points|UNDER|fanduel|14.5",
@@ -37088,7 +37088,7 @@
       "oldActual": 13,
       "newResult": "WIN",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source b7be667ca59e, fetched 2026-11-12T13:48:08.641792329Z"
+      "reason": "identity-checked final player/game/stat; source ca5a9d418e2d, fetched 2026-11-12T15:06:25.359909901Z"
     },
     {
       "id": "2026-11-09|1057262088|threes|UNDER|fanduel|1.5",
@@ -37103,7 +37103,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source f960c558d707, fetched 2026-11-12T13:48:08.641884384Z"
+      "reason": "identity-checked final player/game/stat; source 0c90c80220fe, fetched 2026-11-12T15:06:25.360019053Z"
     },
     {
       "id": "2026-11-09|335|assists|UNDER|fanduel|6.5",
@@ -37118,7 +37118,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 0f20303c0657, fetched 2026-11-12T13:48:08.905910853Z"
+      "reason": "identity-checked final player/game/stat; source 033436e9a002, fetched 2026-11-12T15:06:25.362230985Z"
     },
     {
       "id": "2026-11-09|458|rebounds|UNDER|sgo/draftkings|3.5",
@@ -37133,7 +37133,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 8fe9b814f21f, fetched 2026-11-12T13:48:08.905278244Z"
+      "reason": "identity-checked final player/game/stat; source 51011e38983a, fetched 2026-11-12T15:06:25.361484608Z"
     },
     {
       "id": "2026-11-09|17896062|assists|UNDER|sgo/bovada|6.5",
@@ -37148,7 +37148,7 @@
       "oldActual": 8,
       "newResult": "LOSS",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source b57aea2acd0a, fetched 2026-11-12T13:48:08.905184818Z"
+      "reason": "identity-checked final player/game/stat; source 2324b25f6587, fetched 2026-11-12T15:06:25.361386235Z"
     },
     {
       "id": "2026-11-09|1028036515|points|UNDER|draftkings|6.5",
@@ -37163,7 +37163,7 @@
       "oldActual": 7,
       "newResult": "LOSS",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source 9b86a229da9f, fetched 2026-11-12T13:48:08.906449979Z"
+      "reason": "identity-checked final player/game/stat; source b5e08decbd7b, fetched 2026-11-12T15:06:25.362732517Z"
     },
     {
       "id": "2026-11-09|1028036515|assists|UNDER|sgo/draftkings|3.5",
@@ -37178,7 +37178,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 9b86a229da9f, fetched 2026-11-12T13:48:08.906449979Z"
+      "reason": "identity-checked final player/game/stat; source b5e08decbd7b, fetched 2026-11-12T15:06:25.362732517Z"
     },
     {
       "id": "2026-11-09|3547246|points|UNDER|sgo/bovada|11.5",
@@ -37207,7 +37207,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 4344b2e4a806, fetched 2026-11-12T13:48:08.907591537Z"
+      "reason": "identity-checked final player/game/stat; source e887f9a8c95c, fetched 2026-11-12T15:06:25.363926166Z"
     },
     {
       "id": "2026-11-09|313|points|UNDER|fanduel|9.5",
@@ -37222,7 +37222,7 @@
       "oldActual": 16,
       "newResult": "LOSS",
       "newActual": 16,
-      "reason": "identity-checked final player/game/stat; source 71d75d7166e2, fetched 2026-11-12T13:48:08.907819458Z"
+      "reason": "identity-checked final player/game/stat; source 05e1ba3eb288, fetched 2026-11-12T15:06:25.364186539Z"
     },
     {
       "id": "2026-11-09|334|points|UNDER|fanduel|16.5",
@@ -37237,7 +37237,7 @@
       "oldActual": 12,
       "newResult": "WIN",
       "newActual": 12,
-      "reason": "identity-checked final player/game/stat; source 31ae723511ad, fetched 2026-11-12T13:48:08.908097202Z"
+      "reason": "identity-checked final player/game/stat; source 666d938595c2, fetched 2026-11-12T15:06:26.103753285Z"
     },
     {
       "id": "2026-11-09|1028025754|points|OVER|ballybet|1.5",
@@ -37252,7 +37252,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source ff036ba1783c, fetched 2026-11-12T13:48:08.641323345Z"
+      "reason": "identity-checked final player/game/stat; source 4500cfcbdde6, fetched 2026-11-12T15:06:25.076561939Z"
     },
     {
       "id": "2026-11-09|1057268940|threes|UNDER|sgo/espnbet|0.5",
@@ -37281,7 +37281,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 01a0aa2c971b, fetched 2026-11-12T13:48:08.640944109Z"
+      "reason": "identity-checked final player/game/stat; source fe1b65012615, fetched 2026-11-12T15:06:25.076114227Z"
     },
     {
       "id": "2026-11-09|1057266649|points|OVER|ballybet|2.5",
@@ -37296,7 +37296,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 2404a9389550, fetched 2026-11-12T13:48:08.641360594Z"
+      "reason": "identity-checked final player/game/stat; source a84bfe7d8a5a, fetched 2026-11-12T15:06:25.076604318Z"
     },
     {
       "id": "2026-11-09|1028038426|rebounds|UNDER|sgo/fanduel|2.5",
@@ -37311,7 +37311,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 01a0aa2c971b, fetched 2026-11-12T13:48:08.640944109Z"
+      "reason": "identity-checked final player/game/stat; source fe1b65012615, fetched 2026-11-12T15:06:25.076114227Z"
     },
     {
       "id": "2026-11-09|17896067|threes|OVER|sgo/bovada|0.5",
@@ -37326,7 +37326,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 0f3bd4238a39, fetched 2026-11-12T13:48:08.641960503Z"
+      "reason": "identity-checked final player/game/stat; source 48397271a070, fetched 2026-11-12T15:06:25.360118969Z"
     },
     {
       "id": "2026-11-09|17896067|rebounds|OVER|sgo/bovada|3.5",
@@ -37341,7 +37341,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 0f3bd4238a39, fetched 2026-11-12T13:48:08.641960503Z"
+      "reason": "identity-checked final player/game/stat; source 48397271a070, fetched 2026-11-12T15:06:25.360118969Z"
     },
     {
       "id": "2026-11-09|666950|points|OVER|ballybet|2.5",
@@ -37356,7 +37356,7 @@
       "oldActual": 13,
       "newResult": "WIN",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source b7be667ca59e, fetched 2026-11-12T13:48:08.641792329Z"
+      "reason": "identity-checked final player/game/stat; source ca5a9d418e2d, fetched 2026-11-12T15:06:25.359909901Z"
     },
     {
       "id": "2026-11-09|360|rebounds|OVER|draftkings|2.5",
@@ -37371,7 +37371,7 @@
       "oldActual": 2,
       "newResult": "LOSS",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 7fa257ba010b, fetched 2026-11-12T13:48:08.904917482Z"
+      "reason": "identity-checked final player/game/stat; source d0b0fce22c0e, fetched 2026-11-12T15:06:25.361067512Z"
     },
     {
       "id": "2026-11-09|493|rebounds|UNDER|fanduel|9.5",
@@ -37386,7 +37386,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source bc740a3433da, fetched 2026-11-12T13:48:08.904601935Z"
+      "reason": "identity-checked final player/game/stat; source 98045aa27824, fetched 2026-11-12T15:06:25.360711811Z"
     },
     {
       "id": "2026-11-09|177|points|OVER|ballybet|1.5",
@@ -37401,7 +37401,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 243b7a78fe2a, fetched 2026-11-12T13:48:08.905789814Z"
+      "reason": "identity-checked final player/game/stat; source 4be6d371a27a, fetched 2026-11-12T15:06:25.362059145Z"
     },
     {
       "id": "2026-11-09|335|assists|UNDER|sgo/draftkings|6.5",
@@ -37416,7 +37416,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 0f20303c0657, fetched 2026-11-12T13:48:08.905910853Z"
+      "reason": "identity-checked final player/game/stat; source 033436e9a002, fetched 2026-11-12T15:06:25.362230985Z"
     },
     {
       "id": "2026-11-09|458|points|OVER|ballybet|2.5",
@@ -37431,7 +37431,7 @@
       "oldActual": 12,
       "newResult": "WIN",
       "newActual": 12,
-      "reason": "identity-checked final player/game/stat; source 8fe9b814f21f, fetched 2026-11-12T13:48:08.905278244Z"
+      "reason": "identity-checked final player/game/stat; source 51011e38983a, fetched 2026-11-12T15:06:25.361484608Z"
     },
     {
       "id": "2026-11-09|666679|assists|UNDER|sgo/draftkings|2.5",
@@ -37446,7 +37446,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 02736c686191, fetched 2026-11-12T13:48:08.905739272Z"
+      "reason": "identity-checked final player/game/stat; source 43b8397d280b, fetched 2026-11-12T15:06:25.362001889Z"
     },
     {
       "id": "2026-11-09|335|points|OVER|ballybet|4.5",
@@ -37461,7 +37461,7 @@
       "oldActual": 38,
       "newResult": "WIN",
       "newActual": 38,
-      "reason": "identity-checked final player/game/stat; source 0f20303c0657, fetched 2026-11-12T13:48:08.905910853Z"
+      "reason": "identity-checked final player/game/stat; source 033436e9a002, fetched 2026-11-12T15:06:25.362230985Z"
     },
     {
       "id": "2026-11-09|56677822|threes|UNDER|sgo/betmgm|2.5",
@@ -37476,7 +37476,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source b56d31fcdb71, fetched 2026-11-12T13:48:08.907032363Z"
+      "reason": "identity-checked final player/game/stat; source 08920efc8fa5, fetched 2026-11-12T15:06:25.363339225Z"
     },
     {
       "id": "2026-11-09|38017727|points|UNDER|sgo/betmgm|9.5",
@@ -37491,7 +37491,7 @@
       "oldActual": 6,
       "newResult": "WIN",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source cb492e68210e, fetched 2026-11-12T13:48:08.906719099Z"
+      "reason": "identity-checked final player/game/stat; source 8ab23a27f549, fetched 2026-11-12T15:06:25.362980297Z"
     },
     {
       "id": "2026-11-09|62|assists|UNDER|sgo/draftkings|3.5",
@@ -37506,7 +37506,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source ae42f4f1a03f, fetched 2026-11-12T13:48:08.906409306Z"
+      "reason": "identity-checked final player/game/stat; source 9f049adedaf6, fetched 2026-11-12T15:06:25.362692462Z"
     },
     {
       "id": "2026-11-09|3547256|rebounds|UNDER|sgo/draftkings|6.5",
@@ -37521,7 +37521,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 1f963127a890, fetched 2026-11-12T13:48:08.908015329Z"
+      "reason": "identity-checked final player/game/stat; source baa6af55d319, fetched 2026-11-12T15:06:25.364399816Z"
     },
     {
       "id": "2026-11-09|1057274415|points|OVER|ballybet|1.5",
@@ -37536,7 +37536,7 @@
       "oldActual": 16,
       "newResult": "WIN",
       "newActual": 16,
-      "reason": "identity-checked final player/game/stat; source 33d58b9cbd56, fetched 2026-11-12T13:48:08.908363022Z"
+      "reason": "identity-checked final player/game/stat; source cba093b69b6c, fetched 2026-11-12T15:06:26.104108445Z"
     },
     {
       "id": "2026-11-09|17896024|rebounds|UNDER|fanduel|3.5",
@@ -37551,7 +37551,7 @@
       "oldActual": 6,
       "newResult": "LOSS",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 8566e84c93ee, fetched 2026-11-12T13:48:08.907969439Z"
+      "reason": "identity-checked final player/game/stat; source 98ae401ab107, fetched 2026-11-12T15:06:25.36435893Z"
     },
     {
       "id": "2026-11-09|1028025754|assists|UNDER|sgo/espnbet|1.5",
@@ -37566,7 +37566,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source ff036ba1783c, fetched 2026-11-12T13:48:08.641323345Z"
+      "reason": "identity-checked final player/game/stat; source 4500cfcbdde6, fetched 2026-11-12T15:06:25.076561939Z"
     },
     {
       "id": "2026-11-09|1028038426|assists|UNDER|sgo/draftkings|9.5",
@@ -37581,7 +37581,7 @@
       "oldActual": 11,
       "newResult": "LOSS",
       "newActual": 11,
-      "reason": "identity-checked final player/game/stat; source 01a0aa2c971b, fetched 2026-11-12T13:48:08.640944109Z"
+      "reason": "identity-checked final player/game/stat; source fe1b65012615, fetched 2026-11-12T15:06:25.076114227Z"
     },
     {
       "id": "2026-11-09|1028038426|threes|UNDER|sgo/draftkings|1.5",
@@ -37596,7 +37596,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 01a0aa2c971b, fetched 2026-11-12T13:48:08.640944109Z"
+      "reason": "identity-checked final player/game/stat; source fe1b65012615, fetched 2026-11-12T15:06:25.076114227Z"
     },
     {
       "id": "2026-11-09|666676|rebounds|UNDER|sgo/draftkings|3.5",
@@ -37611,7 +37611,7 @@
       "oldActual": 6,
       "newResult": "LOSS",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 7d69a3dd0f14, fetched 2026-11-12T13:48:08.641398631Z"
+      "reason": "identity-checked final player/game/stat; source b9b03803a010, fetched 2026-11-12T15:06:25.076645254Z"
     },
     {
       "id": "2026-11-09|666682|threes|UNDER|sgo/draftkings|1.5",
@@ -37626,7 +37626,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 9906dbb071e3, fetched 2026-11-12T13:48:08.907222904Z"
+      "reason": "identity-checked final player/game/stat; source af0192f106e5, fetched 2026-11-12T15:06:25.363548814Z"
     },
     {
       "id": "2026-11-09|161|points|OVER|ballybet|3.5",
@@ -37641,7 +37641,7 @@
       "oldActual": 15,
       "newResult": "WIN",
       "newActual": 15,
-      "reason": "identity-checked final player/game/stat; source 72b55047ba9b, fetched 2026-11-12T13:48:08.907105767Z"
+      "reason": "identity-checked final player/game/stat; source f734e97063d7, fetched 2026-11-12T15:06:25.363424173Z"
     },
     {
       "id": "2026-11-09|666400|rebounds|UNDER|fanatics|4.5",
@@ -37656,7 +37656,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 71e57da1fb49, fetched 2026-11-12T13:48:08.638803609Z"
+      "reason": "identity-checked final player/game/stat; source dac056a2a143, fetched 2026-11-12T15:06:25.073760071Z"
     },
     {
       "id": "2026-11-09|666541|rebounds|UNDER|sgo/draftkings|4.5",
@@ -37671,7 +37671,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 0b590ebecfe9, fetched 2026-11-12T13:48:08.638897952Z"
+      "reason": "identity-checked final player/game/stat; source 6c7e3e32d91d, fetched 2026-11-12T15:06:25.073845681Z"
     },
     {
       "id": "2026-11-09|3547244|threes|UNDER|caesars|3.5",
@@ -37686,7 +37686,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 3c7d51ecd3cf, fetched 2026-11-12T13:48:08.638757552Z"
+      "reason": "identity-checked final player/game/stat; source 12d084621892, fetched 2026-11-12T15:06:25.073718434Z"
     },
     {
       "id": "2026-11-09|17896027|threes|UNDER|sgo/draftkings|2.5",
@@ -37701,7 +37701,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 826c8dde1f5c, fetched 2026-11-12T13:48:08.639192714Z"
+      "reason": "identity-checked final player/game/stat; source 17d85221c71c, fetched 2026-11-12T15:06:25.074148073Z"
     },
     {
       "id": "2026-11-09|666400|threes|UNDER|sgo/espnbet|3.5",
@@ -37716,7 +37716,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 71e57da1fb49, fetched 2026-11-12T13:48:08.638803609Z"
+      "reason": "identity-checked final player/game/stat; source dac056a2a143, fetched 2026-11-12T15:06:25.073760071Z"
     },
     {
       "id": "2026-11-09|17896040|threes|UNDER|sgo/espnbet|1.5",
@@ -37731,7 +37731,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 825d424df9eb, fetched 2026-11-12T13:48:08.638715428Z"
+      "reason": "identity-checked final player/game/stat; source 025ff744e10f, fetched 2026-11-12T15:06:25.073676927Z"
     },
     {
       "id": "2026-11-09|8|rebounds|UNDER|draftkings|4.5",
@@ -37746,7 +37746,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 4ce99b574a48, fetched 2026-11-12T13:48:08.354760558Z"
+      "reason": "identity-checked final player/game/stat; source 24e12d4548c0, fetched 2026-11-12T15:06:25.072626805Z"
     },
     {
       "id": "2026-11-09|1057384156|rebounds|UNDER|sgo/caesars|3.5",
@@ -37761,7 +37761,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 10ecff0a5842, fetched 2026-11-12T13:48:08.354647232Z"
+      "reason": "identity-checked final player/game/stat; source cb0be53ec9be, fetched 2026-11-12T15:06:25.072445488Z"
     },
     {
       "id": "2026-11-09|666956|threes|UNDER|sgo/espnbet|2.5",
@@ -37776,7 +37776,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source db1c990f47ee, fetched 2026-11-12T13:48:08.354800226Z"
+      "reason": "identity-checked final player/game/stat; source 3eaac20a2612, fetched 2026-11-12T15:06:25.072674624Z"
     },
     {
       "id": "2026-11-09|8|threes|UNDER|sgo/caesars|4.5",
@@ -37791,7 +37791,7 @@
       "oldActual": 6,
       "newResult": "LOSS",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 4ce99b574a48, fetched 2026-11-12T13:48:08.354760558Z"
+      "reason": "identity-checked final player/game/stat; source 24e12d4548c0, fetched 2026-11-12T15:06:25.072626805Z"
     },
     {
       "id": "2026-11-09|667378|threes|UNDER|fanduel|4.5",
@@ -37806,7 +37806,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 2f1c743dcdf6, fetched 2026-11-12T13:48:08.354686219Z"
+      "reason": "identity-checked final player/game/stat; source 9e5c37b7bd60, fetched 2026-11-12T15:06:25.07252701Z"
     },
     {
       "id": "2026-11-09|192|assists|UNDER|draftkings|8.5",
@@ -37821,7 +37821,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source e490a6121e31, fetched 2026-11-12T13:48:08.638273897Z"
+      "reason": "identity-checked final player/game/stat; source 860a34eccf11, fetched 2026-11-12T15:06:25.073278527Z"
     },
     {
       "id": "2026-11-09|117|threes|UNDER|draftkings|1.5",
@@ -37836,7 +37836,7 @@
       "oldActual": 2,
       "newResult": "LOSS",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source b942f2f78d69, fetched 2026-11-12T13:48:08.640276672Z"
+      "reason": "identity-checked final player/game/stat; source 6136a647d21a, fetched 2026-11-12T15:06:25.075390692Z"
     },
     {
       "id": "2026-11-09|397|assists|UNDER|sgo/draftkings|2.5",
@@ -37851,7 +37851,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source ace0dc26f6c5, fetched 2026-11-12T13:48:08.639797419Z"
+      "reason": "identity-checked final player/game/stat; source 82bfa674da51, fetched 2026-11-12T15:06:25.074807138Z"
     },
     {
       "id": "2026-11-09|1028026060|threes|OVER|sgo/espnbet|1.5",
@@ -37866,7 +37866,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source df5fafa2bd2f, fetched 2026-11-12T13:48:08.64031611Z"
+      "reason": "identity-checked final player/game/stat; source eaf6d5180bd2, fetched 2026-11-12T15:06:25.0754324Z"
     },
     {
       "id": "2026-11-09|1028039105|rebounds|UNDER|sgo/draftkings|3.5",
@@ -37909,7 +37909,7 @@
       "oldActual": 6,
       "newResult": "WIN",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source f960c558d707, fetched 2026-11-12T13:48:08.641884384Z"
+      "reason": "identity-checked final player/game/stat; source 0c90c80220fe, fetched 2026-11-12T15:06:25.360019053Z"
     },
     {
       "id": "2026-11-09|62|points|OVER|ballybet|3.5",
@@ -37924,7 +37924,7 @@
       "oldActual": 7,
       "newResult": "WIN",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source ae42f4f1a03f, fetched 2026-11-12T13:48:08.906409306Z"
+      "reason": "identity-checked final player/game/stat; source 9f049adedaf6, fetched 2026-11-12T15:06:25.362692462Z"
     },
     {
       "id": "2026-11-09|1057262518|threes|UNDER|sgo/draftkings|1.5",
@@ -37939,7 +37939,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source eb6bbe35753b, fetched 2026-11-12T13:48:08.907069342Z"
+      "reason": "identity-checked final player/game/stat; source 718a64bb55e0, fetched 2026-11-12T15:06:25.363381574Z"
     },
     {
       "id": "2026-11-09|334|points|OVER|ballybet|3.5",
@@ -37954,7 +37954,7 @@
       "oldActual": 12,
       "newResult": "WIN",
       "newActual": 12,
-      "reason": "identity-checked final player/game/stat; source 31ae723511ad, fetched 2026-11-12T13:48:08.908097202Z"
+      "reason": "identity-checked final player/game/stat; source 666d938595c2, fetched 2026-11-12T15:06:26.103753285Z"
     },
     {
       "id": "2026-11-09|3547256|threes|UNDER|sgo/bovada|2.5",
@@ -37969,7 +37969,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 1f963127a890, fetched 2026-11-12T13:48:08.908015329Z"
+      "reason": "identity-checked final player/game/stat; source baa6af55d319, fetched 2026-11-12T15:06:25.364399816Z"
     },
     {
       "id": "2026-11-09|17896059|threes|UNDER|sgo/draftkings|5.5",
@@ -37984,7 +37984,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 952dad549535, fetched 2026-11-12T13:48:08.63958964Z"
+      "reason": "identity-checked final player/game/stat; source e7cda8f99428, fetched 2026-11-12T15:06:25.074590605Z"
     },
     {
       "id": "2026-11-09|38017705|points|UNDER|sgo/caesars|23.5",
@@ -37999,7 +37999,7 @@
       "oldActual": 21,
       "newResult": "WIN",
       "newActual": 21,
-      "reason": "identity-checked final player/game/stat; source 4c475a33cf98, fetched 2026-11-12T13:48:08.639267816Z"
+      "reason": "identity-checked final player/game/stat; source c8211dff89ed, fetched 2026-11-12T15:06:25.074246185Z"
     },
     {
       "id": "2026-11-09|666400|threes|UNDER|sgo/draftkings|4.5",
@@ -38014,7 +38014,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 71e57da1fb49, fetched 2026-11-12T13:48:08.638803609Z"
+      "reason": "identity-checked final player/game/stat; source dac056a2a143, fetched 2026-11-12T15:06:25.073760071Z"
     },
     {
       "id": "2026-11-09|17896076|rebounds|OVER|sgo/caesars|3.5",
@@ -38029,7 +38029,7 @@
       "oldActual": 2,
       "newResult": "LOSS",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source d5ea88c7a2e0, fetched 2026-11-12T13:48:08.638075712Z"
+      "reason": "identity-checked final player/game/stat; source 57410653c232, fetched 2026-11-12T15:06:25.073118289Z"
     },
     {
       "id": "2026-11-09|221|threes|UNDER|sgo/espnbet|1.5",
@@ -38044,7 +38044,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 4e8535145f1b, fetched 2026-11-12T13:48:08.640019938Z"
+      "reason": "identity-checked final player/game/stat; source 270172dbbf23, fetched 2026-11-12T15:06:25.075062733Z"
     },
     {
       "id": "2026-11-09|56677826|points|UNDER|sgo/caesars|10.5",
@@ -38059,7 +38059,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 16015c89f889, fetched 2026-11-12T13:48:08.639741584Z"
+      "reason": "identity-checked final player/game/stat; source bbf33a7d622c, fetched 2026-11-12T15:06:25.074764148Z"
     },
     {
       "id": "2026-11-09|22|points|UNDER|sgo/caesars|4.5",
@@ -38074,7 +38074,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source b5a81465e47a, fetched 2026-11-12T13:48:08.640471036Z"
+      "reason": "identity-checked final player/game/stat; source 45c82f85f159, fetched 2026-11-12T15:06:25.075603027Z"
     },
     {
       "id": "2026-11-09|1028028405|points|UNDER|sgo/caesars|8.5",
@@ -38089,7 +38089,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 9ac0444a833e, fetched 2026-11-12T13:48:08.640353079Z"
+      "reason": "identity-checked final player/game/stat; source c13533100509, fetched 2026-11-12T15:06:25.075476271Z"
     },
     {
       "id": "2026-11-09|221|points|UNDER|sgo/caesars|12.5",
@@ -38104,7 +38104,7 @@
       "oldActual": 12,
       "newResult": "WIN",
       "newActual": 12,
-      "reason": "identity-checked final player/game/stat; source 4e8535145f1b, fetched 2026-11-12T13:48:08.640019938Z"
+      "reason": "identity-checked final player/game/stat; source 270172dbbf23, fetched 2026-11-12T15:06:25.075062733Z"
     },
     {
       "id": "2026-11-09|1028029111|assists|UNDER|sgo/draftkings|2.5",
@@ -38315,7 +38315,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 42ffaf408865, fetched 2026-11-12T13:48:08.907933369Z"
+      "reason": "identity-checked final player/game/stat; source aadbd4f1242a, fetched 2026-11-12T15:06:25.36431604Z"
     },
     {
       "id": "2026-11-09|115|threes|UNDER|draftkings|4.5",
@@ -38330,7 +38330,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 4344b2e4a806, fetched 2026-11-12T13:48:08.907591537Z"
+      "reason": "identity-checked final player/game/stat; source e887f9a8c95c, fetched 2026-11-12T15:06:25.363926166Z"
     },
     {
       "id": "2026-11-09|413|assists|UNDER|sgo/draftkings|5.5",
@@ -38345,7 +38345,7 @@
       "oldActual": 6,
       "newResult": "LOSS",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 0b7b6882e605, fetched 2026-11-12T13:48:08.639628Z"
+      "reason": "identity-checked final player/game/stat; source dd4c24ee5103, fetched 2026-11-12T15:06:25.074635529Z"
     },
     {
       "id": "2026-11-09|1028025261|rebounds|UNDER|sgo/caesars|9.5",
@@ -38458,7 +38458,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 02c2203ebd22, fetched 2026-11-12T13:48:09.178036908Z"
+      "reason": "identity-checked final player/game/stat; source db3c6aabddfe, fetched 2026-11-12T15:06:26.104936123Z"
     },
     {
       "id": "2026-11-10|1091349754|threes|UNDER|betrivers|1.5",
@@ -38473,7 +38473,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 02c2203ebd22, fetched 2026-11-12T13:48:09.178036908Z"
+      "reason": "identity-checked final player/game/stat; source db3c6aabddfe, fetched 2026-11-12T15:06:26.104936123Z"
     },
     {
       "id": "2026-11-10|1091349754|threes|UNDER|draftkings|1.5",
@@ -38488,7 +38488,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 02c2203ebd22, fetched 2026-11-12T13:48:09.178036908Z"
+      "reason": "identity-checked final player/game/stat; source db3c6aabddfe, fetched 2026-11-12T15:06:26.104936123Z"
     },
     {
       "id": "2026-11-10|202|points|UNDER|sgo/draftkings|9.5",
@@ -38517,7 +38517,7 @@
       "oldActual": 5,
       "newResult": "LOSS",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 9a6164be65d2, fetched 2026-11-12T13:48:09.177943058Z"
+      "reason": "identity-checked final player/game/stat; source 9c78c50b1d4b, fetched 2026-11-12T15:06:26.104850214Z"
     },
     {
       "id": "2026-11-10|447|points|UNDER|sgo/bovada|21.5",
@@ -38532,7 +38532,7 @@
       "oldActual": 21,
       "newResult": "WIN",
       "newActual": 21,
-      "reason": "identity-checked final player/game/stat; source 896bafc2cb4e, fetched 2026-11-12T13:48:08.908512481Z"
+      "reason": "identity-checked final player/game/stat; source 97e35d89559f, fetched 2026-11-12T15:06:26.10429951Z"
     },
     {
       "id": "2026-11-10|447|rebounds|UNDER|draftkings|12.5",
@@ -38547,7 +38547,7 @@
       "oldActual": 16,
       "newResult": "LOSS",
       "newActual": 16,
-      "reason": "identity-checked final player/game/stat; source 896bafc2cb4e, fetched 2026-11-12T13:48:08.908512481Z"
+      "reason": "identity-checked final player/game/stat; source 97e35d89559f, fetched 2026-11-12T15:06:26.10429951Z"
     },
     {
       "id": "2026-11-10|447|rebounds|UNDER|draftkings|13.5",
@@ -38562,7 +38562,7 @@
       "oldActual": 16,
       "newResult": "LOSS",
       "newActual": 16,
-      "reason": "identity-checked final player/game/stat; source 896bafc2cb4e, fetched 2026-11-12T13:48:08.908512481Z"
+      "reason": "identity-checked final player/game/stat; source 97e35d89559f, fetched 2026-11-12T15:06:26.10429951Z"
     },
     {
       "id": "2026-11-10|447|rebounds|UNDER|sgo/draftkings|13.5",
@@ -38577,7 +38577,7 @@
       "oldActual": 16,
       "newResult": "LOSS",
       "newActual": 16,
-      "reason": "identity-checked final player/game/stat; source 896bafc2cb4e, fetched 2026-11-12T13:48:08.908512481Z"
+      "reason": "identity-checked final player/game/stat; source 97e35d89559f, fetched 2026-11-12T15:06:26.10429951Z"
     },
     {
       "id": "2026-11-10|1057261935|points|UNDER|sgo/betmgm|14.5",
@@ -38592,7 +38592,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source a80cd63ed90f, fetched 2026-11-12T13:48:09.17862236Z"
+      "reason": "identity-checked final player/game/stat; source 3a15f3ff9baa, fetched 2026-11-12T15:06:26.105538764Z"
     },
     {
       "id": "2026-11-10|145|assists|UNDER|sgo/betmgm|4.5",
@@ -38607,7 +38607,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 55e198104df6, fetched 2026-11-12T13:48:09.178584526Z"
+      "reason": "identity-checked final player/game/stat; source 0a62bcc3adab, fetched 2026-11-12T15:06:26.105497116Z"
     },
     {
       "id": "2026-11-10|172|assists|UNDER|sgo/betmgm|4.5",
@@ -38622,7 +38622,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 65ac80909740, fetched 2026-11-12T13:48:09.178975195Z"
+      "reason": "identity-checked final player/game/stat; source d66ab094be72, fetched 2026-11-12T15:06:26.105922286Z"
     },
     {
       "id": "2026-11-10|172|points|UNDER|sgo/betmgm|19.5",
@@ -38637,7 +38637,7 @@
       "oldActual": 36,
       "newResult": "LOSS",
       "newActual": 36,
-      "reason": "identity-checked final player/game/stat; source 65ac80909740, fetched 2026-11-12T13:48:09.178975195Z"
+      "reason": "identity-checked final player/game/stat; source d66ab094be72, fetched 2026-11-12T15:06:26.105922286Z"
     },
     {
       "id": "2026-11-10|17553967|rebounds|UNDER|sgo/draftkings|7.5",
@@ -38652,7 +38652,7 @@
       "oldActual": 6,
       "newResult": "WIN",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 189ffb80442c, fetched 2026-11-12T13:48:09.179050061Z"
+      "reason": "identity-checked final player/game/stat; source 12b6e6bc4050, fetched 2026-11-12T15:06:26.106007074Z"
     },
     {
       "id": "2026-11-10|237|points|OVER|ballybet|3.5",
@@ -38667,7 +38667,7 @@
       "oldActual": 11,
       "newResult": "WIN",
       "newActual": 11,
-      "reason": "identity-checked final player/game/stat; source 952ff0eb5337, fetched 2026-11-12T13:48:09.178546173Z"
+      "reason": "identity-checked final player/game/stat; source 72951ce50503, fetched 2026-11-12T15:06:26.105455278Z"
     },
     {
       "id": "2026-11-10|3547254|assists|UNDER|sgo/draftkings|6.5",
@@ -38682,7 +38682,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 143dc96d5919, fetched 2026-11-12T13:48:09.178659323Z"
+      "reason": "identity-checked final player/game/stat; source 5dd628983053, fetched 2026-11-12T15:06:26.105582775Z"
     },
     {
       "id": "2026-11-10|3547254|rebounds|UNDER|sgo/betmgm|4.5",
@@ -38697,7 +38697,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 143dc96d5919, fetched 2026-11-12T13:48:09.178659323Z"
+      "reason": "identity-checked final player/game/stat; source 5dd628983053, fetched 2026-11-12T15:06:26.105582775Z"
     },
     {
       "id": "2026-11-10|3547254|threes|UNDER|sgo/fanduel|2.5",
@@ -38712,7 +38712,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 143dc96d5919, fetched 2026-11-12T13:48:09.178659323Z"
+      "reason": "identity-checked final player/game/stat; source 5dd628983053, fetched 2026-11-12T15:06:26.105582775Z"
     },
     {
       "id": "2026-11-10|434|assists|UNDER|draftkings|7.5",
@@ -38727,7 +38727,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source dc9315c8e3b3, fetched 2026-11-12T13:48:09.179011985Z"
+      "reason": "identity-checked final player/game/stat; source 103d8d618c15, fetched 2026-11-12T15:06:26.105966058Z"
     },
     {
       "id": "2026-11-10|434|assists|UNDER|sgo/draftkings|7.5",
@@ -38742,7 +38742,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source dc9315c8e3b3, fetched 2026-11-12T13:48:09.179011985Z"
+      "reason": "identity-checked final player/game/stat; source 103d8d618c15, fetched 2026-11-12T15:06:26.105966058Z"
     },
     {
       "id": "2026-11-10|473|assists|UNDER|sgo/draftkings|4.5",
@@ -38757,7 +38757,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 47671fd75e6f, fetched 2026-11-12T13:48:09.179123998Z"
+      "reason": "identity-checked final player/game/stat; source 94953e6c6fd7, fetched 2026-11-12T15:06:26.106092643Z"
     },
     {
       "id": "2026-11-10|70|points|OVER|ballybet|5.5",
@@ -38772,7 +38772,7 @@
       "oldActual": 13,
       "newResult": "WIN",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source c3016d089ab7, fetched 2026-11-12T13:48:09.178489028Z"
+      "reason": "identity-checked final player/game/stat; source 58889b29af4d, fetched 2026-11-12T15:06:26.105411487Z"
     },
     {
       "id": "2026-11-10|1028036515|points|UNDER|sgo/betmgm|9.5",
@@ -38787,7 +38787,7 @@
       "oldActual": 6,
       "newResult": "WIN",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source d234246a4b11, fetched 2026-11-12T13:48:09.179653633Z"
+      "reason": "identity-checked final player/game/stat; source 7570e231ef43, fetched 2026-11-12T15:06:26.106654958Z"
     },
     {
       "id": "2026-11-10|139|points|OVER|ballybet|1.5",
@@ -38802,7 +38802,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source dd64da68e663, fetched 2026-11-12T13:48:09.180191332Z"
+      "reason": "identity-checked final player/game/stat; source e8817c49ef2a, fetched 2026-11-12T15:06:26.107262056Z"
     },
     {
       "id": "2026-11-10|139|points|UNDER|fanduel|7.5",
@@ -38817,7 +38817,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source dd64da68e663, fetched 2026-11-12T13:48:09.180191332Z"
+      "reason": "identity-checked final player/game/stat; source e8817c49ef2a, fetched 2026-11-12T15:06:26.107262056Z"
     },
     {
       "id": "2026-11-10|139|points|UNDER|sgo/betmgm|9.5",
@@ -38832,7 +38832,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source dd64da68e663, fetched 2026-11-12T13:48:09.180191332Z"
+      "reason": "identity-checked final player/game/stat; source e8817c49ef2a, fetched 2026-11-12T15:06:26.107262056Z"
     },
     {
       "id": "2026-11-10|139|rebounds|UNDER|sgo/betmgm|4.5",
@@ -38847,7 +38847,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source dd64da68e663, fetched 2026-11-12T13:48:09.180191332Z"
+      "reason": "identity-checked final player/game/stat; source e8817c49ef2a, fetched 2026-11-12T15:06:26.107262056Z"
     },
     {
       "id": "2026-11-10|247|points|OVER|ballybet|2.5",
@@ -38862,7 +38862,7 @@
       "oldActual": 11,
       "newResult": "WIN",
       "newActual": 11,
-      "reason": "identity-checked final player/game/stat; source d59842d70a8c, fetched 2026-11-12T13:48:09.180081106Z"
+      "reason": "identity-checked final player/game/stat; source 9e9e4b3184f5, fetched 2026-11-12T15:06:26.10712399Z"
     },
     {
       "id": "2026-11-10|247|points|UNDER|sgo/fanduel|11.5",
@@ -38877,7 +38877,7 @@
       "oldActual": 11,
       "newResult": "WIN",
       "newActual": 11,
-      "reason": "identity-checked final player/game/stat; source d59842d70a8c, fetched 2026-11-12T13:48:09.180081106Z"
+      "reason": "identity-checked final player/game/stat; source 9e9e4b3184f5, fetched 2026-11-12T15:06:26.10712399Z"
     },
     {
       "id": "2026-11-10|247|rebounds|UNDER|fanduel|4.5",
@@ -38892,7 +38892,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source d59842d70a8c, fetched 2026-11-12T13:48:09.180081106Z"
+      "reason": "identity-checked final player/game/stat; source 9e9e4b3184f5, fetched 2026-11-12T15:06:26.10712399Z"
     },
     {
       "id": "2026-11-10|283|assists|UNDER|sgo/betmgm|4.5",
@@ -38907,7 +38907,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 6aebc518ecfc, fetched 2026-11-12T13:48:09.180155535Z"
+      "reason": "identity-checked final player/game/stat; source cf69c8576d40, fetched 2026-11-12T15:06:26.107219217Z"
     },
     {
       "id": "2026-11-10|283|points|UNDER|sgo/betmgm|14.5",
@@ -38922,7 +38922,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 6aebc518ecfc, fetched 2026-11-12T13:48:09.180155535Z"
+      "reason": "identity-checked final player/game/stat; source cf69c8576d40, fetched 2026-11-12T15:06:26.107219217Z"
     },
     {
       "id": "2026-11-10|283|rebounds|UNDER|sgo/fanduel|5.5",
@@ -38937,7 +38937,7 @@
       "oldActual": 4,
       "newResult": "WIN",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 6aebc518ecfc, fetched 2026-11-12T13:48:09.180155535Z"
+      "reason": "identity-checked final player/game/stat; source cf69c8576d40, fetched 2026-11-12T15:06:26.107219217Z"
     },
     {
       "id": "2026-11-10|38017727|points|OVER|sgo/bovada|8.5",
@@ -38952,7 +38952,7 @@
       "oldActual": 12,
       "newResult": "WIN",
       "newActual": 12,
-      "reason": "identity-checked final player/game/stat; source f52cfd14a932, fetched 2026-11-12T13:48:09.179884357Z"
+      "reason": "identity-checked final player/game/stat; source 941919e28471, fetched 2026-11-12T15:06:26.106908499Z"
     },
     {
       "id": "2026-11-10|62|points|UNDER|sgo/draftkings|17.5",
@@ -38967,7 +38967,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source a8fe5ebc5b95, fetched 2026-11-12T13:48:09.179582176Z"
+      "reason": "identity-checked final player/game/stat; source 6bf7c1eed6a8, fetched 2026-11-12T15:06:26.106610686Z"
     },
     {
       "id": "2026-11-10|66|assists|UNDER|sgo/betmgm|4.5",
@@ -38982,7 +38982,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source f08b99a25541, fetched 2026-11-12T13:48:09.179543423Z"
+      "reason": "identity-checked final player/game/stat; source 497003d06625, fetched 2026-11-12T15:06:26.106569509Z"
     },
     {
       "id": "2026-11-10|666581|points|UNDER|sgo/betmgm|24.5",
@@ -38997,7 +38997,7 @@
       "oldActual": 13,
       "newResult": "WIN",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source 3f1c2f54d9b1, fetched 2026-11-12T13:48:09.18022654Z"
+      "reason": "identity-checked final player/game/stat; source cb3e0d7deda7, fetched 2026-11-12T15:06:26.107303063Z"
     },
     {
       "id": "2026-11-10|666609|rebounds|UNDER|betparx|5.5",
@@ -39012,7 +39012,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 00105f4d14d9, fetched 2026-11-12T13:48:09.180117546Z"
+      "reason": "identity-checked final player/game/stat; source 6f845aab945b, fetched 2026-11-12T15:06:26.107167821Z"
     },
     {
       "id": "2026-11-10|666609|rebounds|UNDER|fanduel|5.5",
@@ -39027,7 +39027,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 00105f4d14d9, fetched 2026-11-12T13:48:09.180117546Z"
+      "reason": "identity-checked final player/game/stat; source 6f845aab945b, fetched 2026-11-12T15:06:26.107167821Z"
     },
     {
       "id": "2026-11-10|666609|rebounds|UNDER|sgo/betmgm|6.5",
@@ -39042,7 +39042,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 00105f4d14d9, fetched 2026-11-12T13:48:09.180117546Z"
+      "reason": "identity-checked final player/game/stat; source 6f845aab945b, fetched 2026-11-12T15:06:26.107167821Z"
     },
     {
       "id": "2026-11-10|1028036986|threes|UNDER|draftkings|1.5",
@@ -39057,7 +39057,7 @@
       "oldActual": 2,
       "newResult": "LOSS",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source b2a607c5b15d, fetched 2026-11-12T13:48:09.181076497Z"
+      "reason": "identity-checked final player/game/stat; source 98abf8851faa, fetched 2026-11-12T15:06:26.39435625Z"
     },
     {
       "id": "2026-11-10|17553994|assists|UNDER|sgo/espnbet|8.5",
@@ -39072,7 +39072,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 3d5fa074dc93, fetched 2026-11-12T13:48:09.18122541Z"
+      "reason": "identity-checked final player/game/stat; source 287285bec62d, fetched 2026-11-12T15:06:26.394564437Z"
     },
     {
       "id": "2026-11-10|17553994|points|OVER|ballybet|2.5",
@@ -39087,7 +39087,7 @@
       "oldActual": 19,
       "newResult": "WIN",
       "newActual": 19,
-      "reason": "identity-checked final player/game/stat; source 3d5fa074dc93, fetched 2026-11-12T13:48:09.18122541Z"
+      "reason": "identity-checked final player/game/stat; source 287285bec62d, fetched 2026-11-12T15:06:26.394564437Z"
     },
     {
       "id": "2026-11-10|297|threes|UNDER|sgo/espnbet|3.5",
@@ -39116,7 +39116,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 4f8f07278e5b, fetched 2026-11-12T13:48:09.180567688Z"
+      "reason": "identity-checked final player/game/stat; source 219f66f05b0a, fetched 2026-11-12T15:06:26.10764602Z"
     },
     {
       "id": "2026-11-10|3547258|threes|UNDER|sgo/fanduel|1.5",
@@ -39131,7 +39131,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 4f8f07278e5b, fetched 2026-11-12T13:48:09.180567688Z"
+      "reason": "identity-checked final player/game/stat; source 219f66f05b0a, fetched 2026-11-12T15:06:26.10764602Z"
     },
     {
       "id": "2026-11-10|377|threes|UNDER|sgo/bovada|1.5",
@@ -39146,7 +39146,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 9144dea4842c, fetched 2026-11-12T13:49:08.576435841Z"
+      "reason": "identity-checked final player/game/stat; source a65523bc6e89, fetched 2026-11-12T15:06:26.394935567Z"
     },
     {
       "id": "2026-11-10|443|threes|UNDER|sgo/espnbet|3.5",
@@ -39161,7 +39161,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 5383fbd569af, fetched 2026-11-12T13:48:09.181189144Z"
+      "reason": "identity-checked final player/game/stat; source f882ac854591, fetched 2026-11-12T15:06:26.394521607Z"
     },
     {
       "id": "2026-11-10|1028025497|points|UNDER|draftkings|13.5",
@@ -39232,7 +39232,7 @@
       "oldActual": 6,
       "newResult": "WIN",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source f1551ad7c422, fetched 2026-11-12T13:49:08.578290758Z"
+      "reason": "identity-checked final player/game/stat; source 923b266c08c2, fetched 2026-11-12T15:06:26.396277371Z"
     },
     {
       "id": "2026-11-10|1057279571|threes|UNDER|sgo/betmgm|1.5",
@@ -39247,7 +39247,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source f1551ad7c422, fetched 2026-11-12T13:49:08.578290758Z"
+      "reason": "identity-checked final player/game/stat; source 923b266c08c2, fetched 2026-11-12T15:06:26.396277371Z"
     },
     {
       "id": "2026-11-10|17896026|assists|UNDER|sgo/bovada|8.5",
@@ -39262,7 +39262,7 @@
       "oldActual": 7,
       "newResult": "WIN",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source e61310a8bb1a, fetched 2026-11-12T13:49:08.577295631Z"
+      "reason": "identity-checked final player/game/stat; source a86cbc7adb79, fetched 2026-11-12T15:06:26.395825791Z"
     },
     {
       "id": "2026-11-10|268|rebounds|UNDER|sgo/draftkings|3.5",
@@ -39277,7 +39277,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source c24864c6a105, fetched 2026-11-12T13:49:08.576829118Z"
+      "reason": "identity-checked final player/game/stat; source 55d023ec48ad, fetched 2026-11-12T15:06:26.395311285Z"
     },
     {
       "id": "2026-11-10|3547249|points|OVER|sgo/bovada|8.5",
@@ -39292,7 +39292,7 @@
       "oldActual": 10,
       "newResult": "WIN",
       "newActual": 10,
-      "reason": "identity-checked final player/game/stat; source 68596f9326df, fetched 2026-11-12T13:49:08.576739478Z"
+      "reason": "identity-checked final player/game/stat; source c726c90fcecf, fetched 2026-11-12T15:06:26.395204537Z"
     },
     {
       "id": "2026-11-10|3547287|rebounds|UNDER|sgo/draftkings|4.5",
@@ -39307,7 +39307,7 @@
       "oldActual": 6,
       "newResult": "LOSS",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 00cc8a7386af, fetched 2026-11-12T13:49:08.577490573Z"
+      "reason": "identity-checked final player/game/stat; source 254cefa17e2e, fetched 2026-11-12T15:06:26.395934694Z"
     },
     {
       "id": "2026-11-10|3547287|threes|UNDER|sgo/betmgm|3.5",
@@ -39322,7 +39322,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 00cc8a7386af, fetched 2026-11-12T13:49:08.577490573Z"
+      "reason": "identity-checked final player/game/stat; source 254cefa17e2e, fetched 2026-11-12T15:06:26.395934694Z"
     },
     {
       "id": "2026-11-10|38017688|points|OVER|sgo/bovada|8.5",
@@ -39337,7 +39337,7 @@
       "oldActual": 11,
       "newResult": "WIN",
       "newActual": 11,
-      "reason": "identity-checked final player/game/stat; source 83726d420098, fetched 2026-11-12T13:49:08.577126515Z"
+      "reason": "identity-checked final player/game/stat; source 4c28b37bf819, fetched 2026-11-12T15:06:26.395623225Z"
     },
     {
       "id": "2026-11-10|406|points|OVER|ballybet|3.5",
@@ -39352,7 +39352,7 @@
       "oldActual": 0,
       "newResult": "LOSS",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 09394275e0c9, fetched 2026-11-12T13:49:08.576789285Z"
+      "reason": "identity-checked final player/game/stat; source 6b43a4fb13f5, fetched 2026-11-12T15:06:26.395266071Z"
     },
     {
       "id": "2026-11-10|56677827|assists|UNDER|draftkings|5.5",
@@ -39367,7 +39367,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 4c37704ca90d, fetched 2026-11-12T13:49:08.577688728Z"
+      "reason": "identity-checked final player/game/stat; source 4539f96fafaa, fetched 2026-11-12T15:06:26.395976972Z"
     },
     {
       "id": "2026-11-10|56677827|assists|UNDER|sgo/bovada|4.5",
@@ -39382,7 +39382,7 @@
       "oldActual": 5,
       "newResult": "LOSS",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 4c37704ca90d, fetched 2026-11-12T13:49:08.577688728Z"
+      "reason": "identity-checked final player/game/stat; source 4539f96fafaa, fetched 2026-11-12T15:06:26.395976972Z"
     },
     {
       "id": "2026-11-10|56677827|rebounds|UNDER|sgo/bovada|4.5",
@@ -39397,7 +39397,7 @@
       "oldActual": 7,
       "newResult": "LOSS",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source 4c37704ca90d, fetched 2026-11-12T13:49:08.577688728Z"
+      "reason": "identity-checked final player/game/stat; source 4539f96fafaa, fetched 2026-11-12T15:06:26.395976972Z"
     },
     {
       "id": "2026-11-10|1028025344|rebounds|UNDER|draftkings|11.5",
@@ -39412,7 +39412,7 @@
       "oldActual": 13,
       "newResult": "LOSS",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source ba0b38cc4991, fetched 2026-11-12T13:49:08.578470601Z"
+      "reason": "identity-checked final player/game/stat; source be33505138dd, fetched 2026-11-12T15:06:26.396477302Z"
     },
     {
       "id": "2026-11-10|1028037477|points|UNDER|draftkings|19.5",
@@ -39427,7 +39427,7 @@
       "oldActual": 14,
       "newResult": "WIN",
       "newActual": 14,
-      "reason": "identity-checked final player/game/stat; source dd125bac976c, fetched 2026-11-12T13:49:08.578870251Z"
+      "reason": "identity-checked final player/game/stat; source 639b12fecbea, fetched 2026-11-12T15:06:26.396996918Z"
     },
     {
       "id": "2026-11-10|1028037477|rebounds|UNDER|sgo/draftkings|4.5",
@@ -39442,7 +39442,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source dd125bac976c, fetched 2026-11-12T13:49:08.578870251Z"
+      "reason": "identity-checked final player/game/stat; source 639b12fecbea, fetched 2026-11-12T15:06:26.396996918Z"
     },
     {
       "id": "2026-11-10|1091351965|rebounds|UNDER|sgo/bovada|7.5",
@@ -39457,7 +39457,7 @@
       "oldActual": 10,
       "newResult": "LOSS",
       "newActual": 10,
-      "reason": "identity-checked final player/game/stat; source ddc1352bbaec, fetched 2026-11-12T13:49:08.579173408Z"
+      "reason": "identity-checked final player/game/stat; source dd97af86d317, fetched 2026-11-12T15:06:26.397405187Z"
     },
     {
       "id": "2026-11-10|1091351965|rebounds|UNDER|sgo/draftkings|7.5",
@@ -39472,7 +39472,7 @@
       "oldActual": 10,
       "newResult": "LOSS",
       "newActual": 10,
-      "reason": "identity-checked final player/game/stat; source ddc1352bbaec, fetched 2026-11-12T13:49:08.579173408Z"
+      "reason": "identity-checked final player/game/stat; source dd97af86d317, fetched 2026-11-12T15:06:26.397405187Z"
     },
     {
       "id": "2026-11-10|175|threes|UNDER|draftkings|2.5",
@@ -39487,7 +39487,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 6730f52865d7, fetched 2026-11-12T13:49:08.579021466Z"
+      "reason": "identity-checked final player/game/stat; source feec7df87fa0, fetched 2026-11-12T15:06:26.397209854Z"
     },
     {
       "id": "2026-11-10|201|assists|UNDER|fanduel|3.5",
@@ -39502,7 +39502,7 @@
       "oldActual": 5,
       "newResult": "LOSS",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 0c9b0c95acc1, fetched 2026-11-12T13:49:08.578947521Z"
+      "reason": "identity-checked final player/game/stat; source 12e383f78aa2, fetched 2026-11-12T15:06:26.397100901Z"
     },
     {
       "id": "2026-11-10|201|rebounds|UNDER|betparx|10.5",
@@ -39517,7 +39517,7 @@
       "oldActual": 9,
       "newResult": "WIN",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source 0c9b0c95acc1, fetched 2026-11-12T13:49:08.578947521Z"
+      "reason": "identity-checked final player/game/stat; source 12e383f78aa2, fetched 2026-11-12T15:06:26.397100901Z"
     },
     {
       "id": "2026-11-10|201|rebounds|UNDER|betrivers|10.5",
@@ -39532,7 +39532,7 @@
       "oldActual": 9,
       "newResult": "WIN",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source 0c9b0c95acc1, fetched 2026-11-12T13:49:08.578947521Z"
+      "reason": "identity-checked final player/game/stat; source 12e383f78aa2, fetched 2026-11-12T15:06:26.397100901Z"
     },
     {
       "id": "2026-11-10|201|rebounds|UNDER|sgo/draftkings|10.5",
@@ -39547,7 +39547,7 @@
       "oldActual": 9,
       "newResult": "WIN",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source 0c9b0c95acc1, fetched 2026-11-12T13:49:08.578947521Z"
+      "reason": "identity-checked final player/game/stat; source 12e383f78aa2, fetched 2026-11-12T15:06:26.397100901Z"
     },
     {
       "id": "2026-11-10|278|threes|UNDER|sgo/espnbet|3.5",
@@ -39562,7 +39562,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 9cc410dfa8e1, fetched 2026-11-12T13:49:08.578561347Z"
+      "reason": "identity-checked final player/game/stat; source 22ed2498cde0, fetched 2026-11-12T15:06:26.396590443Z"
     },
     {
       "id": "2026-11-10|56677850|points|OVER|ballybet|2.5",
@@ -39577,7 +39577,7 @@
       "oldActual": 12,
       "newResult": "WIN",
       "newActual": 12,
-      "reason": "identity-checked final player/game/stat; source ae00f8c3c31e, fetched 2026-11-12T13:49:08.578390407Z"
+      "reason": "identity-checked final player/game/stat; source 57fea0de4f6d, fetched 2026-11-12T15:06:26.396375714Z"
     },
     {
       "id": "2026-11-10|89|points|UNDER|draftkings|6.5",
@@ -39592,7 +39592,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 142d81f3dcd9, fetched 2026-11-12T13:49:08.579097285Z"
+      "reason": "identity-checked final player/game/stat; source 3ec4f3be9b71, fetched 2026-11-12T15:06:26.397302396Z"
     },
     {
       "id": "2026-11-10|3547254|threes|UNDER|sgo/bovada|2.5",
@@ -39607,7 +39607,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 143dc96d5919, fetched 2026-11-12T13:48:09.178659323Z"
+      "reason": "identity-checked final player/game/stat; source 5dd628983053, fetched 2026-11-12T15:06:26.105582775Z"
     },
     {
       "id": "2026-11-10|1028036986|threes|UNDER|sgo/draftkings|1.5",
@@ -39622,7 +39622,7 @@
       "oldActual": 2,
       "newResult": "LOSS",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source b2a607c5b15d, fetched 2026-11-12T13:48:09.181076497Z"
+      "reason": "identity-checked final player/game/stat; source 98abf8851faa, fetched 2026-11-12T15:06:26.39435625Z"
     },
     {
       "id": "2026-11-10|3547258|threes|UNDER|sgo/espnbet|1.5",
@@ -39637,7 +39637,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 4f8f07278e5b, fetched 2026-11-12T13:48:09.180567688Z"
+      "reason": "identity-checked final player/game/stat; source 219f66f05b0a, fetched 2026-11-12T15:06:26.10764602Z"
     },
     {
       "id": "2026-11-10|1091342427|threes|UNDER|sgo/espnbet|2.5",
@@ -39652,7 +39652,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 8a33cb3090f4, fetched 2026-11-12T13:48:09.180721796Z"
+      "reason": "identity-checked final player/game/stat; source 51e4f7ba38fe, fetched 2026-11-12T15:06:26.107816968Z"
     },
     {
       "id": "2026-11-10|1057279571|threes|UNDER|sgo/fanduel|1.5",
@@ -39667,7 +39667,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source f1551ad7c422, fetched 2026-11-12T13:49:08.578290758Z"
+      "reason": "identity-checked final player/game/stat; source 923b266c08c2, fetched 2026-11-12T15:06:26.396277371Z"
     },
     {
       "id": "2026-11-10|17896026|assists|UNDER|sgo/draftkings|8.5",
@@ -39682,7 +39682,7 @@
       "oldActual": 7,
       "newResult": "WIN",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source e61310a8bb1a, fetched 2026-11-12T13:49:08.577295631Z"
+      "reason": "identity-checked final player/game/stat; source a86cbc7adb79, fetched 2026-11-12T15:06:26.395825791Z"
     },
     {
       "id": "2026-11-10|17896026|rebounds|UNDER|sgo/espnbet|6.5",
@@ -39697,7 +39697,7 @@
       "oldActual": 7,
       "newResult": "LOSS",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source e61310a8bb1a, fetched 2026-11-12T13:49:08.577295631Z"
+      "reason": "identity-checked final player/game/stat; source a86cbc7adb79, fetched 2026-11-12T15:06:26.395825791Z"
     },
     {
       "id": "2026-11-10|175|threes|UNDER|sgo/betmgm|2.5",
@@ -39712,7 +39712,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 6730f52865d7, fetched 2026-11-12T13:49:08.579021466Z"
+      "reason": "identity-checked final player/game/stat; source feec7df87fa0, fetched 2026-11-12T15:06:26.397209854Z"
     },
     {
       "id": "2026-11-10|201|rebounds|UNDER|sgo/bovada|10.5",
@@ -39727,7 +39727,7 @@
       "oldActual": 9,
       "newResult": "WIN",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source 0c9b0c95acc1, fetched 2026-11-12T13:49:08.578947521Z"
+      "reason": "identity-checked final player/game/stat; source 12e383f78aa2, fetched 2026-11-12T15:06:26.397100901Z"
     },
     {
       "id": "2026-11-10|61|threes|UNDER|sgo/betmgm|1.5",
@@ -39742,7 +39742,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source fa67eee702d7, fetched 2026-11-12T13:48:08.908476409Z"
+      "reason": "identity-checked final player/game/stat; source 71e3d35427bf, fetched 2026-11-12T15:06:26.104257472Z"
     },
     {
       "id": "2026-11-10|447|rebounds|UNDER|sgo/espnbet|13.5",
@@ -39757,7 +39757,7 @@
       "oldActual": 16,
       "newResult": "LOSS",
       "newActual": 16,
-      "reason": "identity-checked final player/game/stat; source 896bafc2cb4e, fetched 2026-11-12T13:48:08.908512481Z"
+      "reason": "identity-checked final player/game/stat; source 97e35d89559f, fetched 2026-11-12T15:06:26.10429951Z"
     },
     {
       "id": "2026-11-10|666609|rebounds|UNDER|betrivers|5.5",
@@ -39772,7 +39772,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 00105f4d14d9, fetched 2026-11-12T13:48:09.180117546Z"
+      "reason": "identity-checked final player/game/stat; source 6f845aab945b, fetched 2026-11-12T15:06:26.107167821Z"
     },
     {
       "id": "2026-11-10|3547258|threes|UNDER|betmgm|1.5",
@@ -39787,7 +39787,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 4f8f07278e5b, fetched 2026-11-12T13:48:09.180567688Z"
+      "reason": "identity-checked final player/game/stat; source 219f66f05b0a, fetched 2026-11-12T15:06:26.10764602Z"
     },
     {
       "id": "2026-11-10|17896026|assists|UNDER|betrivers|8.5",
@@ -39802,7 +39802,7 @@
       "oldActual": 7,
       "newResult": "WIN",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source e61310a8bb1a, fetched 2026-11-12T13:49:08.577295631Z"
+      "reason": "identity-checked final player/game/stat; source a86cbc7adb79, fetched 2026-11-12T15:06:26.395825791Z"
     },
     {
       "id": "2026-11-10|1091349754|threes|UNDER|sgo/espnbet|1.5",
@@ -39817,7 +39817,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 02c2203ebd22, fetched 2026-11-12T13:48:09.178036908Z"
+      "reason": "identity-checked final player/game/stat; source db3c6aabddfe, fetched 2026-11-12T15:06:26.104936123Z"
     },
     {
       "id": "2026-11-10|447|rebounds|UNDER|sgo/bovada|13.5",
@@ -39832,7 +39832,7 @@
       "oldActual": 16,
       "newResult": "LOSS",
       "newActual": 16,
-      "reason": "identity-checked final player/game/stat; source 896bafc2cb4e, fetched 2026-11-12T13:48:08.908512481Z"
+      "reason": "identity-checked final player/game/stat; source 97e35d89559f, fetched 2026-11-12T15:06:26.10429951Z"
     },
     {
       "id": "2026-11-10|3547258|threes|UNDER|sgo/betmgm|1.5",
@@ -39847,7 +39847,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 4f8f07278e5b, fetched 2026-11-12T13:48:09.180567688Z"
+      "reason": "identity-checked final player/game/stat; source 219f66f05b0a, fetched 2026-11-12T15:06:26.10764602Z"
     },
     {
       "id": "2026-11-10|1091342427|threes|UNDER|sgo/bovada|2.5",
@@ -39862,7 +39862,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 8a33cb3090f4, fetched 2026-11-12T13:48:09.180721796Z"
+      "reason": "identity-checked final player/game/stat; source 51e4f7ba38fe, fetched 2026-11-12T15:06:26.107816968Z"
     },
     {
       "id": "2026-11-10|1057279571|threes|UNDER|fanduel|1.5",
@@ -39877,7 +39877,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source f1551ad7c422, fetched 2026-11-12T13:49:08.578290758Z"
+      "reason": "identity-checked final player/game/stat; source 923b266c08c2, fetched 2026-11-12T15:06:26.396277371Z"
     },
     {
       "id": "2026-11-10|3547258|rebounds|UNDER|sgo/fanduel|2.5",
@@ -39892,7 +39892,7 @@
       "oldActual": 5,
       "newResult": "LOSS",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 4f8f07278e5b, fetched 2026-11-12T13:48:09.180567688Z"
+      "reason": "identity-checked final player/game/stat; source 219f66f05b0a, fetched 2026-11-12T15:06:26.10764602Z"
     },
     {
       "id": "2026-11-10|175|threes|UNDER|sgo/draftkings|2.5",
@@ -39907,7 +39907,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 6730f52865d7, fetched 2026-11-12T13:49:08.579021466Z"
+      "reason": "identity-checked final player/game/stat; source feec7df87fa0, fetched 2026-11-12T15:06:26.397209854Z"
     },
     {
       "id": "2026-11-10|666609|rebounds|UNDER|sgo/bovada|5.5",
@@ -39922,7 +39922,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 00105f4d14d9, fetched 2026-11-12T13:48:09.180117546Z"
+      "reason": "identity-checked final player/game/stat; source 6f845aab945b, fetched 2026-11-12T15:06:26.107167821Z"
     },
     {
       "id": "2026-11-10|1028036986|threes|UNDER|sgo/fanduel|1.5",
@@ -39937,7 +39937,7 @@
       "oldActual": 2,
       "newResult": "LOSS",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source b2a607c5b15d, fetched 2026-11-12T13:48:09.181076497Z"
+      "reason": "identity-checked final player/game/stat; source 98abf8851faa, fetched 2026-11-12T15:06:26.39435625Z"
     },
     {
       "id": "2026-11-10|3547258|threes|UNDER|sgo/draftkings|1.5",
@@ -39952,7 +39952,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 4f8f07278e5b, fetched 2026-11-12T13:48:09.180567688Z"
+      "reason": "identity-checked final player/game/stat; source 219f66f05b0a, fetched 2026-11-12T15:06:26.10764602Z"
     },
     {
       "id": "2026-11-10|1091342427|threes|UNDER|sgo/betmgm|2.5",
@@ -39967,7 +39967,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 8a33cb3090f4, fetched 2026-11-12T13:48:09.180721796Z"
+      "reason": "identity-checked final player/game/stat; source 51e4f7ba38fe, fetched 2026-11-12T15:06:26.107816968Z"
     },
     {
       "id": "2026-11-10|3547258|rebounds|UNDER|sgo/betmgm|2.5",
@@ -39982,7 +39982,7 @@
       "oldActual": 5,
       "newResult": "LOSS",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 4f8f07278e5b, fetched 2026-11-12T13:48:09.180567688Z"
+      "reason": "identity-checked final player/game/stat; source 219f66f05b0a, fetched 2026-11-12T15:06:26.10764602Z"
     },
     {
       "id": "2026-11-10|17896026|assists|UNDER|sgo/fanduel|8.5",
@@ -39997,7 +39997,7 @@
       "oldActual": 7,
       "newResult": "WIN",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source e61310a8bb1a, fetched 2026-11-12T13:49:08.577295631Z"
+      "reason": "identity-checked final player/game/stat; source a86cbc7adb79, fetched 2026-11-12T15:06:26.395825791Z"
     },
     {
       "id": "2026-11-10|201|rebounds|UNDER|sgo/fanduel|10.5",
@@ -40012,7 +40012,7 @@
       "oldActual": 9,
       "newResult": "WIN",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source 0c9b0c95acc1, fetched 2026-11-12T13:49:08.578947521Z"
+      "reason": "identity-checked final player/game/stat; source 12e383f78aa2, fetched 2026-11-12T15:06:26.397100901Z"
     },
     {
       "id": "2026-11-10|3547287|threes|UNDER|sgo/fanduel|3.5",
@@ -40027,7 +40027,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 00cc8a7386af, fetched 2026-11-12T13:49:08.577490573Z"
+      "reason": "identity-checked final player/game/stat; source 254cefa17e2e, fetched 2026-11-12T15:06:26.395934694Z"
     },
     {
       "id": "2026-11-10|56677827|assists|UNDER|sgo/fanduel|5.5",
@@ -40042,7 +40042,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 4c37704ca90d, fetched 2026-11-12T13:49:08.577688728Z"
+      "reason": "identity-checked final player/game/stat; source 4539f96fafaa, fetched 2026-11-12T15:06:26.395976972Z"
     },
     {
       "id": "2026-11-10|17896026|assists|UNDER|betparx|8.5",
@@ -40057,7 +40057,7 @@
       "oldActual": 7,
       "newResult": "WIN",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source e61310a8bb1a, fetched 2026-11-12T13:49:08.577295631Z"
+      "reason": "identity-checked final player/game/stat; source a86cbc7adb79, fetched 2026-11-12T15:06:26.395825791Z"
     },
     {
       "id": "2026-11-10|38017734|threes|UNDER|sgo/draftkings|1.5",
@@ -40072,7 +40072,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 674ad6e86be4, fetched 2026-11-12T13:49:08.577256368Z"
+      "reason": "identity-checked final player/game/stat; source 12e83ca709ef, fetched 2026-11-12T15:06:26.395778684Z"
     },
     {
       "id": "2026-11-11|246|threes|UNDER|fanatics|1.5",
@@ -40083,11 +40083,11 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 1.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
+      "oldResult": "WIN",
+      "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source a5ab9d290353, fetched 2026-11-12T13:49:09.156460757Z"
+      "reason": "identity-checked final player/game/stat; source ab4473c55bbb, fetched 2026-11-12T15:07:26.208870376Z"
     },
     {
       "id": "2026-11-11|1091349754|threes|UNDER|sgo/fanduel|1.5",
@@ -40098,11 +40098,11 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 1.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
+      "oldResult": "WIN",
+      "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 8d45cf4fb0f2, fetched 2026-11-12T13:49:08.845830125Z"
+      "reason": "identity-checked final player/game/stat; source 06aa1c5a2763, fetched 2026-11-12T15:06:26.702666796Z"
     },
     {
       "id": "2026-11-11|125|threes|UNDER|sgo/bovada|0.5",
@@ -40113,11 +40113,11 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 0.5,
-      "oldResult": "REVIEW",
+      "oldResult": "WIN",
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source c0c8946eae5a, fetched 2026-11-12T13:49:09.156656739Z"
+      "reason": "identity-checked final player/game/stat; source ed89619bb21e, fetched 2026-11-12T15:07:26.209083672Z"
     },
     {
       "id": "2026-11-11|56677825|rebounds|UNDER|sgo/bovada|7.5",
@@ -40128,11 +40128,11 @@
       "stat": "rebounds",
       "side": "UNDER",
       "line": 7.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
+      "oldResult": "WIN",
+      "oldActual": 7,
       "newResult": "WIN",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source e4eb2b918a9c, fetched 2026-11-12T13:49:09.157998656Z"
+      "reason": "identity-checked final player/game/stat; source 4ac47ad20ca0, fetched 2026-11-12T15:07:26.210683465Z"
     },
     {
       "id": "2026-11-11|1091349754|threes|UNDER|sgo/caesars|1.5",
@@ -40143,11 +40143,11 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 1.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
+      "oldResult": "WIN",
+      "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 8d45cf4fb0f2, fetched 2026-11-12T13:49:08.845830125Z"
+      "reason": "identity-checked final player/game/stat; source 06aa1c5a2763, fetched 2026-11-12T15:06:26.702666796Z"
     },
     {
       "id": "2026-11-11|201|assists|UNDER|sgo/espnbet|4.5",
@@ -40158,11 +40158,11 @@
       "stat": "assists",
       "side": "UNDER",
       "line": 4.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
+      "oldResult": "LOSS",
+      "oldActual": 6,
       "newResult": "LOSS",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source ed3481820fbb, fetched 2026-11-12T13:49:09.398017016Z"
+      "reason": "identity-checked final player/game/stat; source 9bd3fe2d5ce9, fetched 2026-11-12T15:07:26.490030152Z"
     },
     {
       "id": "2026-11-11|125|threes|UNDER|sgo/espnbet|0.5",
@@ -40173,11 +40173,11 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 0.5,
-      "oldResult": "",
+      "oldResult": "WIN",
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source c0c8946eae5a, fetched 2026-11-12T13:49:09.156656739Z"
+      "reason": "identity-checked final player/game/stat; source ed89619bb21e, fetched 2026-11-12T15:07:26.209083672Z"
     },
     {
       "id": "2026-11-11|1028029127|rebounds|UNDER|sgo/espnbet|8.5",
@@ -40188,11 +40188,11 @@
       "stat": "rebounds",
       "side": "UNDER",
       "line": 8.5,
-      "oldResult": "",
-      "oldActual": 0,
+      "oldResult": "WIN",
+      "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source d1979a7c2539, fetched 2026-11-12T13:49:08.845752929Z"
+      "reason": "identity-checked final player/game/stat; source 014321aead00, fetched 2026-11-12T15:06:26.702585896Z"
     },
     {
       "id": "2026-11-11|1091349754|threes|UNDER|sgo/betmgm|1.5",
@@ -40203,11 +40203,11 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 1.5,
-      "oldResult": "",
-      "oldActual": 0,
+      "oldResult": "WIN",
+      "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 8d45cf4fb0f2, fetched 2026-11-12T13:49:08.845830125Z"
+      "reason": "identity-checked final player/game/stat; source 06aa1c5a2763, fetched 2026-11-12T15:06:26.702666796Z"
     },
     {
       "id": "2026-11-11|38017734|rebounds|UNDER|sgo/draftkings|4.5",
@@ -40218,7 +40218,7 @@
       "stat": "rebounds",
       "side": "UNDER",
       "line": 4.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "zero or missing minutes; verify participation and sportsbook void rule"
@@ -40232,11 +40232,11 @@
       "stat": "assists",
       "side": "UNDER",
       "line": 5.5,
-      "oldResult": "",
-      "oldActual": 0,
+      "oldResult": "LOSS",
+      "oldActual": 8,
       "newResult": "LOSS",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 3fa1ea002fb2, fetched 2026-11-12T13:49:09.157588321Z"
+      "reason": "identity-checked final player/game/stat; source cfeeadcc4f90, fetched 2026-11-12T15:07:26.210200557Z"
     },
     {
       "id": "2026-11-11|38017734|threes|UNDER|sgo/bovada|1.5",
@@ -40247,7 +40247,7 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 1.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "zero or missing minutes; verify participation and sportsbook void rule"
@@ -40261,11 +40261,11 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 4.5,
-      "oldResult": "",
-      "oldActual": 0,
+      "oldResult": "WIN",
+      "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source ed97f94a2002, fetched 2026-11-12T13:49:09.158604Z"
+      "reason": "identity-checked final player/game/stat; source 348a87c0cbe6, fetched 2026-11-12T15:07:26.211389586Z"
     },
     {
       "id": "2026-11-11|56677827|assists|UNDER|sgo/fanduel|5.5",
@@ -40276,11 +40276,11 @@
       "stat": "assists",
       "side": "UNDER",
       "line": 5.5,
-      "oldResult": "",
-      "oldActual": 0,
+      "oldResult": "LOSS",
+      "oldActual": 8,
       "newResult": "LOSS",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 3fa1ea002fb2, fetched 2026-11-12T13:49:09.157588321Z"
+      "reason": "identity-checked final player/game/stat; source cfeeadcc4f90, fetched 2026-11-12T15:07:26.210200557Z"
     },
     {
       "id": "2026-11-12|228|threes|UNDER|sgo/draftkings|3.5",
@@ -40291,7 +40291,7 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 3.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -40305,7 +40305,7 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 3.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -40319,7 +40319,7 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 1.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -40333,7 +40333,7 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 2.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -40347,6 +40347,76 @@
       "stat": "rebounds",
       "side": "UNDER",
       "line": 8.5,
+      "oldResult": "REVIEW",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|228|threes|UNDER|sgo/betmgm|3.5",
+      "player": "Kyrie Irving",
+      "date": "2026-11-12",
+      "gameId": 21718093,
+      "playerId": 228,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 3.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|17896067|rebounds|OVER|sgo/espnbet|3.5",
+      "player": "Santi Aldama",
+      "date": "2026-11-12",
+      "gameId": 21718093,
+      "playerId": 17896067,
+      "stat": "rebounds",
+      "side": "OVER",
+      "line": 3.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|8|threes|UNDER|sgo/betmgm|3.5",
+      "player": "Grayson Allen",
+      "date": "2026-11-12",
+      "gameId": 21718094,
+      "playerId": 8,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 3.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|667378|threes|UNDER|sgo/espnbet|2.5",
+      "player": "Naz Reid",
+      "date": "2026-11-12",
+      "gameId": 21718094,
+      "playerId": 667378,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 2.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|1057384156|threes|UNDER|sgo/betmgm|1.5",
+      "player": "Sion James",
+      "date": "2026-11-12",
+      "gameId": 21718094,
+      "playerId": 1057384156,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 1.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
@@ -40354,222 +40424,14 @@
     }
   ],
   "staleSources": 6,
-  "at": "2026-11-12T14:03:21.708480581Z",
+  "at": "2026-11-12T15:21:32.693906267Z",
   "log": "settled.jsonl",
-  "checked": 2720,
+  "checked": 2725,
   "confirmed": 2272,
-  "review": 448,
+  "review": 453,
   "changes": [
     {
-      "id": "2026-11-11|246|threes|UNDER|fanatics|1.5",
-      "player": "Nikola Jokic",
-      "date": "2026-11-11",
-      "gameId": 21718085,
-      "playerId": 246,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 1.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
-      "newResult": "WIN",
-      "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source a5ab9d290353, fetched 2026-11-12T13:49:09.156460757Z"
-    },
-    {
-      "id": "2026-11-11|1091349754|threes|UNDER|sgo/fanduel|1.5",
-      "player": "Brayden Burries",
-      "date": "2026-11-11",
-      "gameId": 21718086,
-      "playerId": 1091349754,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 1.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
-      "newResult": "WIN",
-      "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 8d45cf4fb0f2, fetched 2026-11-12T13:49:08.845830125Z"
-    },
-    {
-      "id": "2026-11-11|125|threes|UNDER|sgo/bovada|0.5",
-      "player": "DeMar DeRozan",
-      "date": "2026-11-11",
-      "gameId": 21718085,
-      "playerId": 125,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 0.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
-      "newResult": "WIN",
-      "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source c0c8946eae5a, fetched 2026-11-12T13:49:09.156656739Z"
-    },
-    {
-      "id": "2026-11-11|56677825|rebounds|UNDER|sgo/bovada|7.5",
-      "player": "Amen Thompson",
-      "date": "2026-11-11",
-      "gameId": 21718089,
-      "playerId": 56677825,
-      "stat": "rebounds",
-      "side": "UNDER",
-      "line": 7.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
-      "newResult": "WIN",
-      "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source e4eb2b918a9c, fetched 2026-11-12T13:49:09.157998656Z"
-    },
-    {
-      "id": "2026-11-11|1091349754|threes|UNDER|sgo/caesars|1.5",
-      "player": "Brayden Burries",
-      "date": "2026-11-11",
-      "gameId": 21718086,
-      "playerId": 1091349754,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 1.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
-      "newResult": "WIN",
-      "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 8d45cf4fb0f2, fetched 2026-11-12T13:49:08.845830125Z"
-    },
-    {
-      "id": "2026-11-11|201|assists|UNDER|sgo/espnbet|4.5",
-      "player": "Isaiah Hartenstein",
-      "date": "2026-11-11",
-      "gameId": 21718090,
-      "playerId": 201,
-      "stat": "assists",
-      "side": "UNDER",
-      "line": 4.5,
-      "oldResult": "REVIEW",
-      "oldActual": 0,
-      "newResult": "LOSS",
-      "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source ed3481820fbb, fetched 2026-11-12T13:49:09.398017016Z"
-    },
-    {
-      "id": "2026-11-11|125|threes|UNDER|sgo/espnbet|0.5",
-      "player": "DeMar DeRozan",
-      "date": "2026-11-11",
-      "gameId": 21718085,
-      "playerId": 125,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 0.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "WIN",
-      "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source c0c8946eae5a, fetched 2026-11-12T13:49:09.156656739Z"
-    },
-    {
-      "id": "2026-11-11|1028029127|rebounds|UNDER|sgo/espnbet|8.5",
-      "player": "Kel'el Ware",
-      "date": "2026-11-11",
-      "gameId": 21718086,
-      "playerId": 1028029127,
-      "stat": "rebounds",
-      "side": "UNDER",
-      "line": 8.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "WIN",
-      "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source d1979a7c2539, fetched 2026-11-12T13:49:08.845752929Z"
-    },
-    {
-      "id": "2026-11-11|1091349754|threes|UNDER|sgo/betmgm|1.5",
-      "player": "Brayden Burries",
-      "date": "2026-11-11",
-      "gameId": 21718086,
-      "playerId": 1091349754,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 1.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "WIN",
-      "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 8d45cf4fb0f2, fetched 2026-11-12T13:49:08.845830125Z"
-    },
-    {
-      "id": "2026-11-11|38017734|rebounds|UNDER|sgo/draftkings|4.5",
-      "player": "Jamal Cain",
-      "date": "2026-11-11",
-      "gameId": 21718088,
-      "playerId": 38017734,
-      "stat": "rebounds",
-      "side": "UNDER",
-      "line": 4.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "zero or missing minutes; verify participation and sportsbook void rule"
-    },
-    {
-      "id": "2026-11-11|56677827|assists|UNDER|sgo/bovada|5.5",
-      "player": "Anthony Black",
-      "date": "2026-11-11",
-      "gameId": 21718088,
-      "playerId": 56677827,
-      "stat": "assists",
-      "side": "UNDER",
-      "line": 5.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "LOSS",
-      "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 3fa1ea002fb2, fetched 2026-11-12T13:49:09.157588321Z"
-    },
-    {
-      "id": "2026-11-11|38017734|threes|UNDER|sgo/bovada|1.5",
-      "player": "Jamal Cain",
-      "date": "2026-11-11",
-      "gameId": 21718088,
-      "playerId": 38017734,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 1.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "zero or missing minutes; verify participation and sportsbook void rule"
-    },
-    {
-      "id": "2026-11-11|115|threes|UNDER|sgo/bovada|4.5",
-      "player": "Stephen Curry",
-      "date": "2026-11-11",
-      "gameId": 21718089,
-      "playerId": 115,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 4.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "WIN",
-      "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source ed97f94a2002, fetched 2026-11-12T13:49:09.158604Z"
-    },
-    {
-      "id": "2026-11-11|56677827|assists|UNDER|sgo/fanduel|5.5",
-      "player": "Anthony Black",
-      "date": "2026-11-11",
-      "gameId": 21718088,
-      "playerId": 56677827,
-      "stat": "assists",
-      "side": "UNDER",
-      "line": 5.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "LOSS",
-      "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 3fa1ea002fb2, fetched 2026-11-12T13:49:09.157588321Z"
-    },
-    {
-      "id": "2026-11-12|228|threes|UNDER|sgo/draftkings|3.5",
+      "id": "2026-11-12|228|threes|UNDER|sgo/betmgm|3.5",
       "player": "Kyrie Irving",
       "date": "2026-11-12",
       "gameId": 21718093,
@@ -40583,7 +40445,21 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-12|8|threes|UNDER|sgo/bovada|3.5",
+      "id": "2026-11-12|17896067|rebounds|OVER|sgo/espnbet|3.5",
+      "player": "Santi Aldama",
+      "date": "2026-11-12",
+      "gameId": 21718093,
+      "playerId": 17896067,
+      "stat": "rebounds",
+      "side": "OVER",
+      "line": 3.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|8|threes|UNDER|sgo/betmgm|3.5",
       "player": "Grayson Allen",
       "date": "2026-11-12",
       "gameId": 21718094,
@@ -40597,21 +40473,7 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-12|1057384156|threes|UNDER|sgo/bovada|1.5",
-      "player": "Sion James",
-      "date": "2026-11-12",
-      "gameId": 21718094,
-      "playerId": 1057384156,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 1.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "exact player/game final row missing; missing stats do not establish DNP"
-    },
-    {
-      "id": "2026-11-12|667378|threes|UNDER|sgo/fanduel|2.5",
+      "id": "2026-11-12|667378|threes|UNDER|sgo/espnbet|2.5",
       "player": "Naz Reid",
       "date": "2026-11-12",
       "gameId": 21718094,
@@ -40625,14 +40487,14 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-12|667378|rebounds|UNDER|sgo/fanduel|8.5",
-      "player": "Naz Reid",
+      "id": "2026-11-12|1057384156|threes|UNDER|sgo/betmgm|1.5",
+      "player": "Sion James",
       "date": "2026-11-12",
       "gameId": 21718094,
-      "playerId": 667378,
-      "stat": "rebounds",
+      "playerId": 1057384156,
+      "stat": "threes",
       "side": "UNDER",
-      "line": 8.5,
+      "line": 1.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
@@ -40640,81 +40502,6 @@
     }
   ],
   "history": [
-    {
-      "id": "2026-10-28|666400|points|UNDER|sgo/draftkings|19.5",
-      "player": "Nickeil Alexander-Walker",
-      "date": "2026-10-28",
-      "gameId": 21717975,
-      "playerId": 666400,
-      "stat": "points",
-      "side": "UNDER",
-      "line": 19.5,
-      "oldResult": "LOSS",
-      "oldActual": 23,
-      "newResult": "LOSS",
-      "newActual": 23,
-      "reason": "identity-checked final player/game/stat; source ce0d6368cdad, fetched 2026-11-10T19:29:02.3634214Z"
-    },
-    {
-      "id": "2026-10-28|38017677|rebounds|UNDER|sgo/draftkings|6.5",
-      "player": "Dyson Daniels",
-      "date": "2026-10-28",
-      "gameId": 21717975,
-      "playerId": 38017677,
-      "stat": "rebounds",
-      "side": "UNDER",
-      "line": 6.5,
-      "oldResult": "WIN",
-      "oldActual": 4,
-      "newResult": "WIN",
-      "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 958949bcc29e, fetched 2026-11-10T19:29:02.3634214Z"
-    },
-    {
-      "id": "2026-10-28|3547270|rebounds|UNDER|sgo/draftkings|9.5",
-      "player": "Paul Reed",
-      "date": "2026-10-28",
-      "gameId": 21717977,
-      "playerId": 3547270,
-      "stat": "rebounds",
-      "side": "UNDER",
-      "line": 9.5,
-      "oldResult": "WIN",
-      "oldActual": 4,
-      "newResult": "WIN",
-      "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source a1a105ffc0cb, fetched 2026-11-10T19:29:02.3644574Z"
-    },
-    {
-      "id": "2026-10-28|101|rebounds|UNDER|betparx|7.5",
-      "player": "John Collins",
-      "date": "2026-10-28",
-      "gameId": 21717977,
-      "playerId": 101,
-      "stat": "rebounds",
-      "side": "UNDER",
-      "line": 7.5,
-      "oldResult": "WIN",
-      "oldActual": 2,
-      "newResult": "WIN",
-      "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 8f96b028d8f0, fetched 2026-11-10T19:29:02.3644574Z"
-    },
-    {
-      "id": "2026-10-28|667378|rebounds|UNDER|sgo/espnbet|8.5",
-      "player": "Naz Reid",
-      "date": "2026-10-28",
-      "gameId": 21717977,
-      "playerId": 667378,
-      "stat": "rebounds",
-      "side": "UNDER",
-      "line": 8.5,
-      "oldResult": "WIN",
-      "oldActual": 6,
-      "newResult": "WIN",
-      "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 8d13cd67f203, fetched 2026-11-10T19:29:02.3654932Z"
-    },
     {
       "id": "2026-10-28|667378|threes|UNDER|betmgm|2.5",
       "player": "Naz Reid",
@@ -70144,6 +69931,76 @@
       "stat": "rebounds",
       "side": "UNDER",
       "line": 8.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|228|threes|UNDER|sgo/betmgm|3.5",
+      "player": "Kyrie Irving",
+      "date": "2026-11-12",
+      "gameId": 21718093,
+      "playerId": 228,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 3.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|17896067|rebounds|OVER|sgo/espnbet|3.5",
+      "player": "Santi Aldama",
+      "date": "2026-11-12",
+      "gameId": 21718093,
+      "playerId": 17896067,
+      "stat": "rebounds",
+      "side": "OVER",
+      "line": 3.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|8|threes|UNDER|sgo/betmgm|3.5",
+      "player": "Grayson Allen",
+      "date": "2026-11-12",
+      "gameId": 21718094,
+      "playerId": 8,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 3.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|667378|threes|UNDER|sgo/espnbet|2.5",
+      "player": "Naz Reid",
+      "date": "2026-11-12",
+      "gameId": 21718094,
+      "playerId": 667378,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 2.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-12|1057384156|threes|UNDER|sgo/betmgm|1.5",
+      "player": "Sion James",
+      "date": "2026-11-12",
+      "gameId": 21718094,
+      "playerId": 1057384156,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 1.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
