@@ -97,3 +97,37 @@ func TestWatchEstimateDoesNotReuseMarketCoinFlip(t *testing.T) {
 		t.Fatal(side, p, raw, odds)
 	}
 }
+
+func TestExpandedComboDisplayRetainsTrackingAndSpreadsComparisons(t *testing.T) {
+	picked := scored{PlayerID: 999, GameID: 1, Stat: data.PRA, Tier: "COMBO", Prob: .57, Odds: -110}
+	var watch []scored
+	for pid := 1; pid <= 40; pid++ {
+		game := 1
+		if pid > 30 {
+			game = 2
+		}
+		for _, st := range []data.Stat{data.PRA, data.PR, data.PA, data.RA} {
+			watch = append(watch, scored{PlayerID: pid, GameID: game, Stat: st, Tier: "COMBOWATCH", Prob: .6, Odds: -110, Edge: .08})
+		}
+	}
+	got := comboDisplay([]scored{picked}, watch)
+	if len(got) != 60 || got[0].PlayerID != 999 || got[0].Prob != .57 || got[0].Tier != "COMBO" {
+		t.Fatal("display changed tracked pick or failed expanded capacity")
+	}
+	byPlayer, byGame := map[int]int{}, map[int]int{}
+	for _, s := range got {
+		byPlayer[s.PlayerID]++
+		byGame[s.GameID]++
+		if s.PlayerID != 999 && s.Tier != "COMBOWATCH" {
+			t.Fatal("comparison promoted into pick")
+		}
+	}
+	for _, n := range byPlayer {
+		if n > 2 {
+			t.Fatal("one player crowded out comparisons")
+		}
+	}
+	if byGame[2] == 0 {
+		t.Fatal("smaller game's comparisons vanished")
+	}
+}

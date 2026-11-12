@@ -113,7 +113,7 @@ func moreCandidates(picks, all []scored, perGame, perPlayer int) []scored {
 	perG, perP := map[int]int{}, map[int]int{}
 	var out []scored
 	for _, c := range cands {
-		if c.Edge <= 0 || c.Far || posted[[3]string{strconv.Itoa(c.PlayerID), string(c.Stat), c.Side}] {
+		if c.Edge <= 0 || c.Far || c.Maybe != "" || posted[[3]string{strconv.Itoa(c.PlayerID), string(c.Stat), c.Side}] {
 			continue
 		}
 		if perG[c.GameID] >= perGame || perP[c.PlayerID] >= perPlayer {
@@ -134,7 +134,7 @@ func writeMore(dir, date string, extra []scored, ctx []GameCtx, moves map[string
 		f.Plays = append(f.Plays, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor,
-			Prob: s.Prob, ProbRaw: s.ProbRaw, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Tier: "LEAN", Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
+			Prob: s.Prob, ProbRaw: s.ProbRaw, Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Tier: "LEAN", Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
 		})
 	}
 	b, err := json.MarshalIndent(f, "", " ")

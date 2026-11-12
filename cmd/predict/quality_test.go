@@ -2,6 +2,7 @@ package main
 
 import (
 	"propsmodel/internal/accuracy"
+	"propsmodel/internal/data"
 	"propsmodel/internal/props"
 	"testing"
 )
@@ -31,5 +32,29 @@ func TestGameLeansRequirePositivePriceAndNoBadLine(t *testing.T) {
 		if s.Far || s.Edge <= 0 {
 			t.Fatal(s)
 		}
+	}
+}
+
+func TestLargerLeanBoardStillRefusesUncertainAndNegativeEdgeRows(t *testing.T) {
+	all := []scored{
+		{GameID: 1, PlayerID: 1, Stat: data.Points, Side: "OVER", Prob: .54, Odds: -110, Edge: .016},
+		{GameID: 1, PlayerID: 2, Stat: data.Points, Side: "UNDER", Prob: .54, Odds: -110, Edge: .016},
+		{GameID: 1, PlayerID: 3, Stat: data.Points, Side: "OVER", Prob: .54, Odds: -110, Edge: .016},
+		{GameID: 1, PlayerID: 4, Stat: data.Points, Side: "UNDER", Prob: .54, Odds: -110, Edge: .016},
+		{GameID: 1, PlayerID: 5, Stat: data.Points, Side: "OVER", Prob: .52, Odds: -110, Edge: -.004},
+		{GameID: 1, PlayerID: 6, Stat: data.Points, Side: "OVER", Prob: .58, Odds: -110, Edge: .056, Maybe: "Questionable"},
+	}
+	got := fillLeans(nil, all, map[int]props.GameInfo{1: {}}, 4, 2)
+	if len(got) != 4 {
+		t.Fatalf("got %d supported leans", len(got))
+	}
+	for _, s := range got {
+		if s.Tier != "LEAN" || s.Units != 0 || s.Edge <= 0 || s.Maybe != "" {
+			t.Fatal("filler became a funded or unsupported pick")
+		}
+	}
+	more := moreCandidates(nil, all, 8, 2)
+	if len(more) != 4 {
+		t.Fatal("expanded extras included uncertain or negative-edge filler")
 	}
 }

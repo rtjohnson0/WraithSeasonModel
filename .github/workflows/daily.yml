@@ -67,6 +67,7 @@ jobs:
         if: steps.mode.outputs.active == 'true'
         with:
           go-version-file: go.mod
+          cache: false # Standard-library-only module: no go.sum to hash.
 
       - name: Check source and merge regression tests
         if: steps.mode.outputs.active == 'true'

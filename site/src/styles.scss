@@ -509,3 +509,18 @@ button:disabled { opacity: .65; cursor: wait; }
 .board-loading > div { height: 110px; margin: 16px 0; background: #15101f; border: 1px solid #30233e; border-radius: 8px; }
 @media (max-width: 700px) { .play .why { padding: 16px; } .play .why .charts { grid-template-columns: minmax(0,1fr); } .reload-board { margin-left: auto; } .filter-summary { align-items: flex-start; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
+.availability { margin: 0 0 22px; padding: 18px; border: 1px solid #49335f; border-radius: 8px; background: #100b1c; }
+.availability-person + .availability-person { margin-top: 20px; padding-top: 20px; border-top: 1px solid #39284c; }
+.availability-heading { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.availability-heading span { font-size: .8rem; color: #efc978; border: 1px solid #6c5329; border-radius: 4px; padding: 2px 8px; }
+.availability-alert { border-left: 3px solid #efc978; padding-left: 12px; }
+.availability-table-wrap { overflow-x: auto; margin: 14px 0; }
+.availability table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.availability caption { text-align: left; padding: 0 0 10px; color: var(--muted); }
+.availability td, .availability th { padding: 10px; text-align: left; border-bottom: 1px solid #39284c; }
+.availability thead th { color: var(--muted); font-weight: 500; }
+.availability-direction { color: #cbb5ff; }
+@media(max-width:600px) { .availability { padding: 12px; } .availability td, .availability th { padding: 8px 5px; font-size: .8rem; } }
+
+.availability-hint { display: block; margin-top: 6px; font-size: .8rem; color: #e8c785; }

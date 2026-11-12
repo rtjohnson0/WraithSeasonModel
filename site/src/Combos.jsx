@@ -15,7 +15,7 @@ function ComboCard({ c, now }) {
  const comparison=c.tier==='COMBOWATCH'
  const confidence=comparison?(c.probRaw??c.prob):c.prob
  return <li className="combo-row"><details>
-  <summary className="combo-summary"><span><b>{c.player} <small>{c.team}</small></b><span>{c.side==='OVER'?'Over':'Under'} {c.line} {marketLabel(c)}</span><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} {c.book}</small></span>
+  <summary className="combo-summary"><span><b>{c.player} <small>{c.team}</small></b><span>{c.side==='OVER'?'Over':'Under'} {c.line} {marketLabel(c)}</span><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} {c.book}</small>{c.availability&&<small className="availability-hint">Availability watch · Compare minutes</small>}</span>
    <span className="combo-strip"><LineStrip line={c.line} proj={c.projStat} games={c.last5} side={c.side}/></span><span className="combo-prob">{comparison ? c.projStat.toFixed(1) : pct(confidence,1)}<small>{comparison ? 'Projected total' : 'Model probability'}</small><small>View analysis⌄</small></span></summary>
   <div className="combo-expanded"><QuoteDetails p={c} compact/>
    {comparison && <p className="small">Raw simulation: {pct(confidence,1)} for this side. This has not been calibrated or demonstrated as a hit rate; it has not cleared the combo selection rules.</p>}
@@ -35,7 +35,7 @@ export default function Combos({ site }) {
   const [all, setAll] = useState(false)
   const plays = (board.combos || []).filter((p) => visibleQuote(p))
   const list = plays.filter((c) => (stat === 'all' || c.stat === stat) && (side === 'ALL' || c.side === side))
-  const shown = all ? list : list.slice(0, 12)
+  const shown = all ? list : list.slice(0, 24)
   const rows = (rec.rows || []).map((r) => ({ ...r, name: r.name === 'OVER' ? 'Overs' : r.name === 'UNDER' ? 'Unders' : statLabel[r.name] || r.name }))
 
   return (
@@ -71,7 +71,7 @@ export default function Combos({ site }) {
               <ComboCard key={`${c.player}|${c.stat}|${c.side}`} c={c} now={now} />
             ))}
           </ul>
-          {list.length > 12 && (
+          {list.length > 24 && (
             <button type="button" className="morebtn" onClick={() => setAll((v) => !v)}>
               {all ? 'Show fewer' : `Show all ${list.length}`}
             </button>

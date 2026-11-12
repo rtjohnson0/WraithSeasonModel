@@ -62,23 +62,24 @@ var Stats = []Stat{Points, Rebounds, Assists, Threes}
 
 // PlayerGame is one player's box score line for one game they played.
 type PlayerGame struct {
-	PlayerID int
-	Name     string
-	TeamID   int
-	TeamAbbr string // BOS, if the API row carried it (display only)
-	GameID   int
-	Date     string // YYYY-MM-DD
-	Season   int    // start year, 2025 = the 2025-26 season
-	Minutes  float64
-	Pts      float64
-	Reb      float64
-	Ast      float64
-	Fga      float64 // field goal attempts (0 if the API row did not say)
-	Fgm      float64
-	Fg3a     float64 // three-point attempts (0 if the API row did not say)
-	Fg3m     float64 // three-pointers made
-	Blk      float64 // blocks (0 if the API row did not say)
-	Pos      string  // G, F, C or a mix such as G-F (empty if the API row did not say)
+	SourceFinal bool `json:"source_final,omitempty"` // explicit Final status and game/team membership; used by availability history only
+	PlayerID    int
+	Name        string
+	TeamID      int
+	TeamAbbr    string // BOS, if the API row carried it (display only)
+	GameID      int
+	Date        string // YYYY-MM-DD
+	Season      int    // start year, 2025 = the 2025-26 season
+	Minutes     float64
+	Pts         float64
+	Reb         float64
+	Ast         float64
+	Fga         float64 // field goal attempts (0 if the API row did not say)
+	Fgm         float64
+	Fg3a        float64 // three-point attempts (0 if the API row did not say)
+	Fg3m        float64 // three-pointers made
+	Blk         float64 // blocks (0 if the API row did not say)
+	Pos         string  // G, F, C or a mix such as G-F (empty if the API row did not say)
 
 	Day           int // days since 1970-01-01, for date arithmetic
 	HomeTeamID    int // 0 if the API row did not say
@@ -254,23 +255,24 @@ func LoadStatsFile(path string) ([]PlayerGame, error) {
 			season = SeasonOf(date)
 		}
 		out = append(out, PlayerGame{
-			PlayerID: r.Player.ID,
-			Name:     strings.TrimSpace(r.Player.FirstName + " " + r.Player.LastName),
-			TeamID:   team,
-			TeamAbbr: r.Team.Abbr,
-			GameID:   r.Game.ID,
-			Date:     date,
-			Season:   season,
-			Minutes:  mins,
-			Pts:      val(r.Pts),
-			Reb:      val(r.Reb),
-			Ast:      val(r.Ast),
-			Fga:      val(r.Fga),
-			Fgm:      val(r.Fgm),
-			Fg3a:     val(r.Fg3a),
-			Fg3m:     val(r.Fg3m),
-			Blk:      val(r.Blk),
-			Pos:      strings.TrimSpace(r.Player.Position),
+			SourceFinal: strings.EqualFold(strings.TrimSpace(r.Game.Status), "Final") && r.Team.ID != 0 && (r.Team.ID == r.Game.HomeTeamID || r.Team.ID == r.Game.VisitorTeamID),
+			PlayerID:    r.Player.ID,
+			Name:        strings.TrimSpace(r.Player.FirstName + " " + r.Player.LastName),
+			TeamID:      team,
+			TeamAbbr:    r.Team.Abbr,
+			GameID:      r.Game.ID,
+			Date:        date,
+			Season:      season,
+			Minutes:     mins,
+			Pts:         val(r.Pts),
+			Reb:         val(r.Reb),
+			Ast:         val(r.Ast),
+			Fga:         val(r.Fga),
+			Fgm:         val(r.Fgm),
+			Fg3a:        val(r.Fg3a),
+			Fg3m:        val(r.Fg3m),
+			Blk:         val(r.Blk),
+			Pos:         strings.TrimSpace(r.Player.Position),
 
 			Day:           DayNumber(date),
 			HomeTeamID:    r.Game.HomeTeamID,

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"propsmodel/internal/availability"
 	"regexp"
 	"sort"
 	"strconv"
@@ -20,33 +21,34 @@ import (
 
 // Play is one pick on the board.
 type Play struct {
-	Period               string            `json:"period,omitempty"`
-	Tip                  string            `json:"tip,omitempty"`
-	QuoteAt              string            `json:"quoteAt,omitempty"`
-	SourceUpdatedAt      string            `json:"sourceUpdatedAt,omitempty"`
-	MarketMedian         float64           `json:"marketMedian"`
-	BookCount            int               `json:"bookCount"`
-	BookQuotes           []props.BookQuote `json:"bookQuotes,omitempty"`
-	CaptureMaxAgeSeconds int               `json:"captureMaxAgeSeconds,omitempty"`
-	PriceMaxAgeSeconds   int               `json:"priceMaxAgeSeconds,omitempty"`
-	BreakEven            float64           `json:"breakEven"`
-	QuoteValidation      string            `json:"quoteValidation"`
-	Player               string            `json:"player"`
-	Team                 string            `json:"team"`
-	Stat                 string            `json:"stat"`
-	Side                 string            `json:"side"`
-	Line                 float64           `json:"line"`
-	Prob                 float64           `json:"prob"`
-	ProbRaw              float64           `json:"probRaw"`
-	Edge                 float64           `json:"edge"`
-	Grade                string            `json:"grade"`
-	Tier                 string            `json:"tier"`
-	Odds                 int               `json:"odds"`
-	Book                 string            `json:"book"`
-	ProjStat             float64           `json:"projStat"`
-	ProjMin              float64           `json:"projMin"`
-	Units                float64           `json:"units"`
-	Why                  string            `json:"why"`
+	Availability         *availability.Context `json:"availability,omitempty"`
+	Period               string                `json:"period,omitempty"`
+	Tip                  string                `json:"tip,omitempty"`
+	QuoteAt              string                `json:"quoteAt,omitempty"`
+	SourceUpdatedAt      string                `json:"sourceUpdatedAt,omitempty"`
+	MarketMedian         float64               `json:"marketMedian"`
+	BookCount            int                   `json:"bookCount"`
+	BookQuotes           []props.BookQuote     `json:"bookQuotes,omitempty"`
+	CaptureMaxAgeSeconds int                   `json:"captureMaxAgeSeconds,omitempty"`
+	PriceMaxAgeSeconds   int                   `json:"priceMaxAgeSeconds,omitempty"`
+	BreakEven            float64               `json:"breakEven"`
+	QuoteValidation      string                `json:"quoteValidation"`
+	Player               string                `json:"player"`
+	Team                 string                `json:"team"`
+	Stat                 string                `json:"stat"`
+	Side                 string                `json:"side"`
+	Line                 float64               `json:"line"`
+	Prob                 float64               `json:"prob"`
+	ProbRaw              float64               `json:"probRaw"`
+	Edge                 float64               `json:"edge"`
+	Grade                string                `json:"grade"`
+	Tier                 string                `json:"tier"`
+	Odds                 int                   `json:"odds"`
+	Book                 string                `json:"book"`
+	ProjStat             float64               `json:"projStat"`
+	ProjMin              float64               `json:"projMin"`
+	Units                float64               `json:"units"`
+	Why                  string                `json:"why"`
 
 	// Form is how he has done against this line recently: the last five games, his average and how
 	// often this side would have hit. Empty when the stats are not available to the export.
@@ -487,7 +489,7 @@ func makePlay(e picklog.Entry, date string, form Form, runs int, seenIn []string
 		CaptureMaxAgeSeconds: e.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: e.PriceMaxAgeSeconds, BreakEven: bets.Implied(e.Odds), QuoteValidation: "API snapshot; confirm at sportsbook",
 		Player: e.Player, Team: e.Team, Stat: e.Stat, Side: e.Side, Line: e.Line, Prob: e.Prob,
 		ProbRaw: e.ProbRaw, Edge: edgeOf(e), Grade: grade(e.Prob, t), Tier: t, Odds: e.Odds, Book: e.Book,
-		ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why, PlayerID: e.PlayerID, Dist: e.Dist,
+		Availability: e.Availability, ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why, PlayerID: e.PlayerID, Dist: e.Dist,
 	}
 	if p.Period == "" && e.Verified() {
 		p.Period = "game"

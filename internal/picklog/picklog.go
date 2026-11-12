@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"propsmodel/internal/availability"
 	"propsmodel/internal/marketperiod"
 	"propsmodel/internal/props"
 	"time"
@@ -14,31 +15,32 @@ import (
 
 // Entry is one posted pick.
 type Entry struct {
-	MarketMedian         float64           `json:"market_median,omitempty"`
-	BookCount            int               `json:"book_count,omitempty"`
-	BookQuotes           []props.BookQuote `json:"book_quotes,omitempty"`
-	CaptureMaxAgeSeconds int               `json:"capture_max_age_seconds,omitempty"`
-	PriceMaxAgeSeconds   int               `json:"price_max_age_seconds,omitempty"`
-	AuditVersion         int               `json:"audit_version,omitempty"`
-	QuoteAt              string            `json:"quote_at,omitempty"`
-	SourceUpdatedAt      string            `json:"source_updated_at,omitempty"`
-	Period               string            `json:"period,omitempty"` // game; empty is a legacy full-game entry
-	LoggedAt             string            `json:"logged_at"`
-	Date                 string            `json:"date"`
-	GameID               int               `json:"game_id"`
-	PlayerID             int               `json:"player_id"`
-	Player               string            `json:"player"`
-	Team                 string            `json:"team,omitempty"`
-	Stat                 string            `json:"stat"`
-	Side                 string            `json:"side"` // OVER or UNDER
-	Line                 float64           `json:"line"`
-	Odds                 int               `json:"odds"`
-	Book                 string            `json:"book"`
-	Prob                 float64           `json:"prob"`     // calibrated probability of the chosen side
-	ProbRaw              float64           `json:"prob_raw"` // before calibration
-	ProjMean             float64           `json:"proj_mean"`
-	ProjMin              float64           `json:"proj_min"`
-	Units                float64           `json:"units"`
+	Availability         *availability.Context `json:"availability,omitempty"`
+	MarketMedian         float64               `json:"market_median,omitempty"`
+	BookCount            int                   `json:"book_count,omitempty"`
+	BookQuotes           []props.BookQuote     `json:"book_quotes,omitempty"`
+	CaptureMaxAgeSeconds int                   `json:"capture_max_age_seconds,omitempty"`
+	PriceMaxAgeSeconds   int                   `json:"price_max_age_seconds,omitempty"`
+	AuditVersion         int                   `json:"audit_version,omitempty"`
+	QuoteAt              string                `json:"quote_at,omitempty"`
+	SourceUpdatedAt      string                `json:"source_updated_at,omitempty"`
+	Period               string                `json:"period,omitempty"` // game; empty is a legacy full-game entry
+	LoggedAt             string                `json:"logged_at"`
+	Date                 string                `json:"date"`
+	GameID               int                   `json:"game_id"`
+	PlayerID             int                   `json:"player_id"`
+	Player               string                `json:"player"`
+	Team                 string                `json:"team,omitempty"`
+	Stat                 string                `json:"stat"`
+	Side                 string                `json:"side"` // OVER or UNDER
+	Line                 float64               `json:"line"`
+	Odds                 int                   `json:"odds"`
+	Book                 string                `json:"book"`
+	Prob                 float64               `json:"prob"`     // calibrated probability of the chosen side
+	ProbRaw              float64               `json:"prob_raw"` // before calibration
+	ProjMean             float64               `json:"proj_mean"`
+	ProjMin              float64               `json:"proj_min"`
+	Units                float64               `json:"units"`
 	// Tier is PICK (posted), PAPER (a stat the backtest did not support staking), CHECK (cleared
 	// the bar but the minutes projection needs a human look) or LEAN (fill-in play). Empty means PICK, for entries logged before tiers existed.
 	Tier string `json:"tier,omitempty"`

@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 	"propsmodel/internal/accuracy"
+	"propsmodel/internal/availability"
 	"sort"
 	"strconv"
 	"strings"
@@ -50,6 +51,7 @@ type marketKey struct {
 }
 
 type scored struct {
+	Availability         *availability.Context
 	MarketMedian         float64
 	BookCount            int
 	BookQuotes           []props.BookQuote
@@ -100,7 +102,7 @@ func main() {
 	maxUnits := flag.Float64("maxunits", 0.5, "largest stake in units (1 unit = 1% of bankroll); the backtest edge is small, so the default is small")
 	maxGame := flag.Int("maxgame", 4, "most picks to post from any one game (picks in one game are correlated)")
 	maxPlayer := flag.Int("maxplayer", 2, "most picks to post on any one player")
-	perGame := flag.Int("pergame", 2, "make sure every game has at least this many plays; extras below the posting bar are marked LEAN, staked 0 units and not logged (0 turns this off)")
+	perGame := flag.Int("pergame", 4, "target this many board rows per game when positive-edge leans are available; extras below the posting bar are marked LEAN, staked 0 units and not logged (0 turns this off)")
 	maxGap := flag.Float64("maxgap", 1.0, "a line this far from the projection (as a share of max(projection, 2)) is marked CHECK, since it is more often a bad or alternate line than an edge; 0 turns the guard off")
 	maxCut := flag.Float64("maxshift", 8, "a play whose projected minutes differ from his recent average by this many or more is marked CHECK (0 units) until you confirm the minutes; 0 turns the guard off")
 	stakeStats := flag.String("stakestats", "rebounds", "stats that get a real stake; plays on other stats are tiered PAPER (0 units, still logged). Default follows the 2025 backtest: rebounds were profitable, assists lost money, points posted nothing")
@@ -366,6 +368,8 @@ func main() {
 		rowCache[pid] = row
 		return row
 	}
+
+	availabilityFor := availabilityView(availability.New(d.Games), availability.FreshStatuses(injPath, runAt, 30*time.Minute), *date, runAt.Format(time.RFC3339), teamOf, out)
 
 	// -anchor: the books' lines are unbiased on average (see cmd/linecheck: the actual numbers sit
 	// within a few hundredths of the line), so if the model's projections sit far below the lines
@@ -645,6 +649,13 @@ func main() {
 			Shift: pred.Minutes - row.TypicalMinutes(), Tip: g.Start,
 			Dist: pred.Dist(l.Stat, distMax(l.Stat, l.Line, pred.Mean(l.Stat))),
 		}
+		s.Availability = availabilityFor(s, pred, row, func(scenario predictor.Pred) (float64, error) {
+			if !calOK {
+				return 0, fmt.Errorf("calibration unavailable")
+			}
+			_, over, err := predictor.Price(scenario, l.Stat, l.Line, bets.MarketOver(l.OverOdds, l.UnderOdds), cal.Apply)
+			return over, err
+		})
 		s.Why = addWhy(s.Why, m.ExplainContext(row, l.Stat))
 		baseWhy := s.Why
 		if ls := byMarket[marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}]; len(ls) > 0 {
@@ -815,7 +826,7 @@ func main() {
 		direct, directOK := eval.LoadCalibration(filepath.Join(*dir, "combocalibration.json"))
 		directOK = directOK && direct.Config == config && direct.ModelVersion == m.Version && direct.TrainedBefore != "" && direct.TrainedBefore < *date
 		cd := comboDeps{
-			watch: &comboWatch, b: b, ix: ix, m: m, games: games, out: out, statuses: statuses, teamOf: lookup, rowFor: rowFor, adjust: adjustMinutes,
+			availability: availabilityFor, watch: &comboWatch, b: b, ix: ix, m: m, games: games, out: out, statuses: statuses, teamOf: lookup, rowFor: rowFor, adjust: adjustMinutes,
 			scale: func(st data.Stat, row *feat.Row) float64 {
 				f := biasFix.For(st)
 				if a, ok := anchorScale[st]; ok {
@@ -887,7 +898,7 @@ func main() {
 			nFirm++
 		}
 	}
-	fmt.Printf("%s: %d lines read, %d scored; %d PICK, %d CHECK/PAPER (not staked), %d LEAN (fill-ins, so every game has %d)\n",
+	fmt.Printf("%s: %d lines read, %d scored; %d PICK, %d CHECK/PAPER (not staked), %d LEAN (positive-edge fill-ins; target %d rows per game)\n",
 		*date, len(lines), len(all), nFirm, nReal-nFirm, len(picks)-nReal, *perGame)
 	if gid != 0 {
 		gameView(games[gid], consensus[gid], all, picks, staked, *topN, *hi, *minEdge, *date, *dir)
@@ -957,7 +968,7 @@ func main() {
 		if err := saveSideAudit(*dir, *date, all, picks, *hi, *minEdge); err != nil {
 			fatal(err)
 		}
-		extra := moreCandidates(picks, all, 5, 2)
+		extra := moreCandidates(picks, all, 8, 2)
 		var ctx []GameCtx
 		for id, c := range consensus {
 			if g, ok := games[id]; ok && c.HasSpread && c.HasTotal && g.HomeAbbr != "" {
@@ -1088,7 +1099,7 @@ func main() {
 			entries = append(entries, picklog.Entry{
 				Date: *date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 				Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-				ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
+				Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
 			})
 		}
 		n, err := picklog.Append(filepath.Join(*dir, "picklog.jsonl"), entries)
@@ -1913,6 +1924,6 @@ func printOffMarket(rows []offRow) {
 
 func boardEntry(date string, s scored, at time.Time) picklog.Entry {
 	return picklog.Entry{Date: date, LoggedAt: at.Format(time.RFC3339), GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Team: s.Team, Matchup: s.Matchup,
-		Stat: string(s.Stat), Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Edge: s.Edge, Dist: s.Dist,
+		Stat: string(s.Stat), Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw, Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Edge: s.Edge, Dist: s.Dist,
 		Period: "game", QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds}
 }

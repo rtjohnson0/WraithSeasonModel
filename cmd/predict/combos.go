@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"propsmodel/internal/availability"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -29,16 +30,17 @@ const comboTier = "COMBO"
 // comboDeps is what scoring a combined market needs from main: the same rows, rosters and
 // corrections the single stats use.
 type comboDeps struct {
-	watch    *[]scored
-	b        *feat.Builder
-	ix       interface{ Name(int) string }
-	m        *predictor.Model
-	games    map[int]props.GameInfo
-	out      map[int]string
-	statuses map[int]string
-	teamOf   func(int) (int, bool)
-	rowFor   func(pid int, g props.GameInfo, team int) *feat.Row
-	adjust   func(predictor.Pred, *feat.Row) predictor.Pred
+	availability func(scored, predictor.Pred, *feat.Row, func(predictor.Pred) (float64, error)) *availability.Context
+	watch        *[]scored
+	b            *feat.Builder
+	ix           interface{ Name(int) string }
+	m            *predictor.Model
+	games        map[int]props.GameInfo
+	out          map[int]string
+	statuses     map[int]string
+	teamOf       func(int) (int, bool)
+	rowFor       func(pid int, g props.GameInfo, team int) *feat.Row
+	adjust       func(predictor.Pred, *feat.Row) predictor.Pred
 	// scale is the rate correction the single stat gets (bias file, anchor, with-and-without).
 	scale func(st data.Stat, row *feat.Row) float64
 
@@ -189,6 +191,9 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 			Shift: sm.pred.Minutes - sm.row.TypicalMinutes(), Tip: sm.g.Start, Tier: comboTier,
 			Dist: comboDist(sm.dist, l.Stat),
 		}
+		if d.availability != nil {
+			s.Availability = d.availability(s, sm.pred, sm.row, nil)
+		}
 		s.Why = strings.Join(parts, "; ")
 		s.Why = addWhy(s.Why, fmt.Sprintf("model alone %.0f%% over, book %.0f%%, calibrated %.0f%%", 100*pr.Over, 100*market, 100*pOver))
 		if st, ok := d.statuses[l.PlayerID]; ok && props.IsUncertain(st) {
@@ -267,7 +272,7 @@ func comboEntries(date string, plays []scored) []picklog.Entry {
 		out = append(out, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
+			Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
 		})
 	}
 	return out
@@ -318,13 +323,44 @@ func comboDisplay(picks, watch []scored) []scored {
 	for _, s := range out {
 		seen[key(s)] = true
 	}
-	sort.SliceStable(watch, func(i, j int) bool { return watch[i].Edge > watch[j].Edge })
+	// Spread display-only comparisons across games and players. Tracked picks
+	// retain their original eligibility, probabilities, logs and limits.
+	perPlayer := map[int]int{}
+	for _, s := range out {
+		perPlayer[s.PlayerID]++
+	}
+	watch = append([]scored(nil), watch...)
+	sort.SliceStable(watch, func(i, j int) bool { return valueBefore(watch[i], watch[j]) })
+	groups := map[int][]scored{}
 	for _, s := range watch {
-		if !seen[key(s)] && len(out) < 30 {
-			out = append(out, s)
-			seen[key(s)] = true
+		groups[s.GameID] = append(groups[s.GameID], s)
+	}
+	ids := make([]int, 0, len(groups))
+	for id := range groups {
+		ids = append(ids, id)
+	}
+	sort.Ints(ids)
+	for len(out) < 60 {
+		added := false
+		for _, id := range ids {
+			for len(groups[id]) > 0 && len(out) < 60 {
+				s := groups[id][0]
+				groups[id] = groups[id][1:]
+				if seen[key(s)] || s.Far || s.Maybe != "" || perPlayer[s.PlayerID] >= 2 {
+					continue
+				}
+				out = append(out, s)
+				seen[key(s)] = true
+				perPlayer[s.PlayerID]++
+				added = true
+				break
+			}
+		}
+		if !added {
+			break
 		}
 	}
+
 	return out
 }
 

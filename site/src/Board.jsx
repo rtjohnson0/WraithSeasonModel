@@ -250,14 +250,14 @@ function GameContext({ c }) {
   )
 }
 
-// The next-best lines in a game, behind a button. They did not clear the board's bar, so they are
-// weaker than the plays above them.
+// Additional positive-edge leans are visible by default, with a collapse control.
+// They remain separate from picks that cleared the main selection rules.
 function MorePlays({ plays, started }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   return (
     <div className="more">
       <button type="button" className="morebtn" aria-expanded={open} onClick={() => setOpen(!open)}>
-        {open ? 'Hide extra plays' : `More plays (${plays.length})`}
+        {open ? `Hide extra leans (${plays.length})` : `Show extra leans (${plays.length})`}
       </button>
       {open && (
         <>
@@ -309,6 +309,7 @@ function PlayRow({ p, focus, started }) {
               {p.defense.early ? ', early' : ''}
             </span>
           )}
+          {p.availability && <span className="availability-hint">Availability watch · View minutes comparison</span>}
           {p.multi && (
             <span className="seen" title={`On the board in: ${p.seenIn.join(', ')}`}>
               In {p.runs} runs: {p.seenIn.join(', ')}
@@ -577,7 +578,9 @@ export default function Board({ site }) {
   const all = useMemo(() => (board.games || []).flatMap((g) => g.plays || []), [board])
   const current = all.filter((p) => visibleQuote(p))
   const currentStaked = current.filter((p) => p.tier === 'PICK' && p.units > 0).length
-  const count = (f) => current.filter(f).length
+  const extras = (board.games || []).flatMap(g => g.more || []).filter(p => visibleQuote(p))
+  const available = [...current, ...extras]
+  const count = (f) => available.filter(f).length
 
   const games = useMemo(
     () =>
@@ -624,9 +627,10 @@ export default function Board({ site }) {
               <dd>{currentStaked}</dd>
             </div>
             <div>
-              <dt>Plays</dt>
+              <dt>On board</dt>
               <dd>{current.length}</dd>
             </div>
+            <div><dt>Extra leans</dt><dd>{extras.length}</dd></div>
             <div>
               <dt>Games</dt>
               <dd>{board.games.length}</dd>
@@ -657,7 +661,7 @@ export default function Board({ site }) {
           label="Stat"
           value={stat}
           onChange={setStat}
-          options={[['all', 'All', current.length], ...STATS.map((s) => [s, statLabel[s], count((p) => p.stat === s)])]}
+          options={[['all', 'All', available.length], ...STATS.map((s) => [s, statLabel[s], count((p) => p.stat === s)])]}
         />
         <Seg
           label="Side"

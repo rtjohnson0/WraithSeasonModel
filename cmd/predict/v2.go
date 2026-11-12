@@ -250,7 +250,7 @@ func v2Entries(date string, plays []scored, tier string) []picklog.Entry {
 		out = append(out, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-			ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: t, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
+			Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: t, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
 		})
 	}
 	return out
@@ -315,6 +315,7 @@ func printV2(f v2Fix, info *V2Info, plays, combos []scored) {
 // V2 keeps its context (player, game, price, notes that do not depend on the side) and replaces the
 // probability, side, projection and edge.
 func v2Score(s scored, baseWhy string, pred predictor.Pred, l props.Line, f v2Fix, w float64) (scored, bool) {
+	s.Availability = nil // Never copy another policy's probability scenarios.
 	pv := f.apply(pred, l.Stat)
 	pr, err := pv.ProbOver(l.Stat, l.Line)
 	if err != nil {
