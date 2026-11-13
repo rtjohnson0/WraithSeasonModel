@@ -53,26 +53,16 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
 
-      # Paid delivery is the default. A missing or mistyped setting must never
-      # silently send the new board back to a public Pages deployment.
+      # GitHub Pages remains the default for this public repository.
+      # Protected delivery is available only when explicitly configured as whop.
       - name: Validate delivery mode
         env:
-          DELIVERY_MODE: ${{ vars.WRAITH_DELIVERY || 'whop' }}
+          DELIVERY_MODE: ${{ vars.WRAITH_DELIVERY || 'public' }}
         run: |
           case "$DELIVERY_MODE" in
             whop|public) ;;
-            *) echo "Set WRAITH_DELIVERY to whop (paid) or explicitly public (unprotected demo)."; exit 1 ;;
+            *) echo "Set WRAITH_DELIVERY to public (GitHub Pages) or whop (configured gateway)."; exit 1 ;;
           esac
-
-      - name: Enforce private-repository requirement for Whop delivery
-        if: vars.WRAITH_DELIVERY != 'public'
-        env:
-          REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
-        run: |
-          if [ "$REPOSITORY_PRIVATE" != "true" ]; then
-            echo "Whop delivery requires a private repository because generated state is committed."
-            exit 1
-          fi
 
       - name: Pick the mode
         id: mode
@@ -267,7 +257,7 @@ jobs:
       # deployed and export AGAIN from the merged logs; do not publish a stale view.
       - name: Validate merged source and export
         env:
-          DELIVERY_MODE: ${{ vars.WRAITH_DELIVERY || 'whop' }}
+          DELIVERY_MODE: ${{ vars.WRAITH_DELIVERY || 'public' }}
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap'
         run: |
           go test ./...
@@ -281,21 +271,21 @@ jobs:
           fi
 
       - name: Deliver board through the protected gateway
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY != 'public'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY == 'whop'
         env:
           PRIVATE_BOARD_URL: ${{ secrets.PRIVATE_BOARD_URL }}
           PRIVATE_PUBLISH_TOKEN: ${{ secrets.PRIVATE_PUBLISH_TOKEN }}
         run: python3 scripts/publish_private.py
 
       - uses: actions/setup-node@v4
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY == 'public'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: site/package-lock.json
 
       - name: Build the site
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY == 'public'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
         working-directory: site
         run: |
           npm ci
@@ -303,15 +293,15 @@ jobs:
           npm run build
 
       - uses: actions/configure-pages@v5
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY == 'public'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
       - uses: actions/upload-pages-artifact@v3
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY == 'public'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
         with:
           path: site/dist
 
   deploy:
     needs: run
-    if: needs.run.outputs.publish == 'true' && vars.WRAITH_DELIVERY == 'public'
+    if: needs.run.outputs.publish == 'true' && (vars.WRAITH_DELIVERY || 'public') == 'public'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

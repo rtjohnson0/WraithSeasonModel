@@ -14,7 +14,7 @@ Your storefront exposes a product named **WraithSznBets NBA Props Dashboard**, I
 - A separate publishing credential lets your GitHub workflow update a private, atomically replaced file. Older publications cannot overwrite newer ones. Publishing credentials cannot read the member endpoint without Whop identity.
 - The client clears its board if a private membership/data recheck fails. Membership checks are live on each fetch, not permanently stored in a browser flag. Revoked access denies later requests; it cannot erase data already delivered to a member.
 
-**The main daily workflow now defaults to Whop delivery and refuses to run against a public repository in that mode.** This prevents a missing setting from silently publishing future paid boards publicly. Existing GitHub Pages deployments are not automatically removed. To deliberately keep an unprotected demonstration running, the owner can explicitly set the repository variable `WRAITH_DELIVERY=public`; never use that setting for premium picks.
+**The daily workflow defaults to public GitHub Pages delivery and no longer requires a private repository.** This follows the owner's current hosting preference. Public delivery exposes the published picks and committed generated state. Setting `WRAITH_DELIVERY=whop` explicitly enables the separately configured gateway, but does not hide any state already committed to a public repository. The gateway is optional and has not been deployed by this update.
 
 ## 1. Create an app you own in Whop
 
@@ -67,7 +67,7 @@ Before distributing paid access:
 5. Run Daily. It generates `private/picks.json` and uploads it over HTTPS. It does not create or deploy a Pages artifact in Whop mode. The model/data workflow remains otherwise intact.
 6. Open the custom app as an owner, then test a member and a nonmember before directing customers to it.
 
-An unset delivery variable defaults to Whop, so pushing this package to the old public repository will intentionally stop the daily workflow at the private-repository check. Finish the migration settings instead of changing it to public for a paid board.
+An unset delivery variable now defaults to public Pages. The private-repository enforcement step has been removed. If WRAITH_DELIVERY is already set to whop, change it to public or remove the variable to use Pages. Protected delivery still requires completing the migration above; changing a workflow setting does not secure a public origin.
 
 ## Verification before launch
 
