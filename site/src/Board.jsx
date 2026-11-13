@@ -8,7 +8,8 @@ import QuarterBoard from './QuarterBoard.jsx'
 import PickReason from './PickReason.jsx'
 import PlayerPortrait from './PlayerPortrait.jsx'
 import { PropTicket, RecentForm } from './PropVisuals.jsx'
-import { remainingSlate } from './boardData.js'
+import TimedGroups from './TimedGroups.jsx'
+import { remainingSlate, groupTimedCards, compareGameTip } from './boardData.js'
 import {matchupSignal} from './matchup.js'
 import { visibleQuote, quoteState } from './quote.js'
 import { DaySummary, ResultList } from './Record.jsx'
@@ -112,7 +113,7 @@ function OversWatch({ overs, now }) {
   const open = (overs || []).filter((o) => {
     const s = tipState(o.tip, now).state
     return s !== 'live' && s !== 'done'
-  })
+  }).sort(compareGameTip)
   if (open.length === 0) return null
   const shown = all ? open : open.slice(0, 6)
   return (
@@ -399,8 +400,10 @@ export default function Board({ site }) {
   )
   const shown = games.reduce((n, g) => n + g.plays.length, 0)
 
-  const cards = games.flatMap(g => [...g.plays.map(p=>({p,g,extra:false})), ...g.more.map(p=>({p,g,extra:true}))]).sort((a,b)=>sort==='probability' ? b.p.prob-a.p.prob : sort==='tip' ? (Date.parse(a.g.tip)||Infinity)-(Date.parse(b.g.tip)||Infinity) : Number(a.extra)-Number(b.extra)||comparePlayValue(a.p,b.p))
-  const unlistedGames = remainingSlate(board.games,site.gameMarkets?.games)
+  const cards = games.flatMap(g => [...g.plays.map(p=>({p,g,extra:false})), ...g.more.map(p=>({p,g,extra:true}))])
+  const groups = groupTimedCards(cards,row=>row.g,(a,b)=>sort==='probability' ? b.p.prob-a.p.prob : Number(a.extra)-Number(b.extra)||comparePlayValue(a.p,b.p))
+  const unlistedGames = remainingSlate(board.games,site.gameMarkets?.games).sort(compareGameTip)
+
   return (
     <div className="boardpage">
       <section className="board-hero">
@@ -447,7 +450,7 @@ export default function Board({ site }) {
       </section>
 
       <div className="filter-summary" aria-live="polite">
-        <label className="sort-control">Sort by <select value={sort} onChange={e=>setSort(e.target.value)}><option value="value">Model value</option><option value="probability">Probability</option><option value="tip">Tip time</option></select></label>
+        <label className="sort-control">Within each game <select value={sort} onChange={e=>setSort(e.target.value)}><option value="value">Model value</option><option value="probability">Probability</option></select></label>
         <span>{shown} main {shown === 1 ? 'play' : 'plays'} · {games.reduce((n,g)=>n+g.more.length,0)} available leans</span>
         {(stat !== 'all' || label !== 'all' || side !== 'ALL' || q || repeatsOnly) && <button type="button" onClick={()=>{setStat('all');setLabel('all');setSide('ALL');setQ('');setRepeatsOnly(false)}}>Clear filters</button>}
       </div>
@@ -459,9 +462,8 @@ export default function Board({ site }) {
         </p>
       )}
 
-      <ul className="prop-grid" aria-label="Player props">
-        {cards.map(({p,g,extra})=><PlayRow key={`${g.id}-${extra?'lean':'pick'}-${playId(p)}`} p={p} game={g} markets={site.gameMarkets} started={['live','done'].includes(tipState(g.tip,now).state)}/>)}
-      </ul>
+      <p className="schedule-order-note">Games in tip-time order · Eastern time · Card sorting stays within each matchup</p>
+      <TimedGroups groups={groups} className="prop-grid" renderCard={({p,g,extra})=><PlayRow key={`${g.id}-${extra?'lean':'pick'}-${playId(p)}`} p={p} game={g} markets={site.gameMarkets} started={['live','done'].includes(tipState(g.tip,now).state)}/>}/>
       <OversWatch overs={board.overs} now={now}/>
       {unlistedGames.length>0 && <details className="slate-rest"><summary>Rest of the slate · {unlistedGames.length} games without player props</summary>{unlistedGames.map(g=><div key={g.id}><p>{g.matchup} · No qualifying player props</p><MatchupDetails game={g} data={site.gameMarkets}/></div>)}</details>}
       <QuarterBoard data={site.quarter}/>

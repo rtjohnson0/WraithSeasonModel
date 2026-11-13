@@ -11,6 +11,8 @@ import { PropTicket, RecentForm } from './PropVisuals.jsx'
 import { bookName, visibleQuote, quoteState } from './quote.js'
 import { comboGroups } from './combo.js'
 import { MatchupDetails } from './GameMarkets.jsx'
+import TimedGroups from './TimedGroups.jsx'
+import { groupTimedCards } from './boardData.js'
 import { comparePlayValue } from './format.js'
 
 const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
@@ -46,7 +48,10 @@ export default function Combos({ site }) {
   const groups = comboGroups((board.combos || []).filter((p) => visibleQuote(p)))
   const plays = groups[view]
   const list = plays.filter((c) => (stat === 'all' || c.stat === stat) && (side === 'ALL' || c.side === side) && (!q || `${c.player} ${c.team} ${c.matchup}`.toLowerCase().includes(q.toLowerCase()))).sort((a,b)=>view==='comparisons' ? a.player.localeCompare(b.player) : sort==='probability'?b.prob-a.prob:comparePlayValue(a,b))
-  const shown = all ? list : list.slice(0, 24)
+  const groupsByTime = groupTimedCards(list,c=>({matchup:c.matchup,tip:c.tip}))
+  const chronological = groupsByTime.flatMap(group=>group.cards)
+  const shown = all ? chronological : chronological.slice(0, 24)
+  const shownGroups = groupTimedCards(shown,c=>({matchup:c.matchup,tip:c.tip}))
   const rows = (rec.rows || []).map((r) => ({ ...r, name: r.name === 'OVER' ? 'Overs' : r.name === 'UNDER' ? 'Unders' : statLabel[r.name] || r.name }))
 
   return (
@@ -82,14 +87,11 @@ export default function Combos({ site }) {
               options={[['ALL', 'Both'], ['OVER', 'Over', plays.filter((c) => c.side === 'OVER').length], ['UNDER', 'Under', plays.filter((c) => c.side === 'UNDER').length]]}
             />
             <label className="search"><span className="sr">Search combos</span><input type="search" placeholder="Search player or team" value={q} onChange={e=>setQ(e.target.value)}/></label>
-            {view==='picks'&&<label className="sort-control">Sort by <select value={sort} onChange={e=>setSort(e.target.value)}><option value="value">Model value</option><option value="probability">Probability</option></select></label>}
+            {view==='picks'&&<label className="sort-control">Within each game <select value={sort} onChange={e=>setSort(e.target.value)}><option value="value">Model value</option><option value="probability">Probability</option></select></label>}
           </div>
           {list.length === 0 && <p className="notice">No combo plays match these filters.</p>}
-          <ul className="combo-grid">
-            {shown.map((c) => (
-              <ComboCard key={`${c.player}|${c.stat}|${c.side}`} c={c} now={now} site={site} />
-            ))}
-          </ul>
+          <p className="schedule-order-note">Games in tip-time order · Eastern time</p>
+          <TimedGroups groups={shownGroups} className="combo-grid" renderCard={c=><ComboCard key={`${c.player}|${c.stat}|${c.side}`} c={c} now={now} site={site}/>}/>
           {list.length > 24 && (
             <button type="button" className="morebtn" onClick={() => setAll((v) => !v)}>
               {all ? 'Show fewer' : `Show all ${list.length}`}

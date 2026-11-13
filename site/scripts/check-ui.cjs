@@ -12,7 +12,7 @@ const Board=require(path.join(tempDir,'Board.cjs')).default,Combos=require(path.
 const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/board-ui.json')));
 // Keep all fixtures fresh regardless of time elapsed since creation.
 const now=new Date().toISOString(),tip=new Date(Date.now()+4*3600000).toISOString();
-for(const g of fixture.board.games){g.tip=tip;for(const p of [...g.plays,...g.more])Object.assign(p,{tip,quoteAt:now,sourceUpdatedAt:now});}
+for(const [i,g] of fixture.board.games.entries()){g.tip=new Date(Date.parse(tip)+i*3600000).toISOString();for(const p of [...g.plays,...g.more])Object.assign(p,{tip:g.tip,quoteAt:now,sourceUpdatedAt:now});}
 for(const c of fixture.board.combos)Object.assign(c,{tip,quoteAt:now,sourceUpdatedAt:now});
 for(const o of fixture.board.overs)o.tip=tip;
 let root=createRoot(document.getElementById('root'));const checks=[];
@@ -22,6 +22,7 @@ function input(el,value){act(()=>{const setter=Object.getOwnPropertyDescriptor(w
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 fixture.board.games[0].plays[0].last5[0].value=fixture.board.games[0].plays[0].line;
 act(()=>root.render(React.createElement(Board,{site:fixture})));
+check('V1 groups keep games in scheduled order',$$('.timed-game .schedule-divider h3').map(n=>n.textContent).join('|')==='GSW @ LAL|DAL @ BOS');
 check('Every V1 card shows a prominent line ticket',$$('.prop-grid .prop-ticket').length===5&&$('.prop-grid .ticket-line').textContent==='25.5');
 check('Recent form exposes numeric outcomes',$$('.prop-grid>.play')[0].querySelectorAll('.form-result').length===5);
 check('A historical result exactly on the line is shown as a push',$$('.prop-grid>.play')[0].querySelector('.form-result.push b').textContent==='25.5');

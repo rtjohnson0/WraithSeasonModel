@@ -30,8 +30,8 @@ For the Whop-protected build, use `npm run build:private` instead of `npm run bu
 ## Verification
 
 - Full Go suite passed, including rotation allocation, alternate scenarios, exact replay and separated V2 records.
-- 25 frontend unit tests passed, including matchup linking and preservation of games without props.
-- 20 component interaction checks passed, covering portrait URLs/fallbacks, visible watch cards, filters/search, empty states, charts, embedded markets, closed quotes and combo research labeling.
+- 27 frontend unit tests passed, including matchup linking and preservation of games without props.
+- 21 component interaction checks passed, covering portrait URLs/fallbacks, visible watch cards, filters/search, empty states, charts, embedded markets, closed quotes and combo research labeling.
 - Public and private production builds passed.
 - Live browser rendering could not be verified in this environment because browser preview access was restricted. Component checks do not establish pixel-level layout quality or actual external-photo availability.
 
@@ -47,3 +47,7 @@ The previous rotation update already feeds adjusted minutes into V2 production a
 - Numeric recent-form tiles show actual historical values against the current line, including separate push styling. They are context, not graded historical bets.
 - Desktop hover lift and image zoom respect reduced-motion preferences and do not apply on touch-only devices.
 - Added component checks for prominent lines, numeric form and exact-line pushes. Both production builds still pass. Browser visual verification remains unavailable here.
+
+## Schedule order
+
+V1 and Combos keep games grouped by matchup in chronological tip-time order, with explicit Eastern-time dividers. Model-value and probability sorting operate within each game. Simultaneous tips use a stable matchup order; unknown start times appear last. Overs watch and games without props also follow tip time. Filters retain this grouping. Tests cover same-time games staying together, within-game sorting and missing or invalid start times.
