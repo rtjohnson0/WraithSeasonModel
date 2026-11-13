@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PlayerPortrait from './PlayerPortrait.jsx'
 import { FormBars } from './Charts.jsx'
 import { useNow } from './time.js'
 import { visibleQuote, quoteState, bookName, clock } from './quote.js'
@@ -10,7 +11,7 @@ function QuarterCard({ cards, now }) {
   const p = cards.find((p) => p.book === book) || cards[0]
   const c = p.comparison
   const counts = (p.side === 'UNDER' ? c.under : c.over)
-  return <article className="game-market-card quarter-card"><details className="quarter-play"><summary className="combo-summary"><span><b>{p.player}</b><span>{p.side==='UNDER'?'Under':'Over'} {p.line} · 1Q Points</span><small>{p.matchup} · {bookName(p.book)}</small></span><span className="combo-prob">{p.estimate!=null?pct(p.estimate):'1Q'}<small>View breakdown</small></span></summary><div className="combo-expanded">
+  return <article className="game-market-card quarter-card"><details className="quarter-play"><summary className="combo-summary"><span className="combo-player"><PlayerPortrait name={p.player} team={p.team}/><span><b>{p.player}</b><span>{p.side==='UNDER'?'Under':'Over'} {p.line} · 1Q Points</span><small>{p.matchup} · {bookName(p.book)}</small></span></span><span className="combo-prob">{p.estimate!=null?pct(p.estimate):'1Q'}<small>View breakdown</small></span></summary><div className="combo-expanded">
     <div className="game-market-heading"><h3>{p.player} <small>{p.matchup}</small></h3><select aria-label={`${p.player} 1Q book`} value={p.book} onChange={(e) => setBook(e.target.value)}>{cards.map((x) => <option key={x.book} value={x.book}>{bookName(x.book)}</option>)}</select></div>
     <h4>1Q · Points · {p.line}</h4>
     <p>Over {p.line} {oddsText(p.overOdds)} · Under {p.line} {oddsText(p.underOdds)}</p>
@@ -25,7 +26,7 @@ function QuarterCard({ cards, now }) {
 }
 export default function QuarterBoard({ data }) {
   const now = useNow()
-  if (!data) return <section className="game-markets"><h2>1Q points</h2><p>First-quarter comparisons appear after the quarter-data refresh. They use actual 1Q scoring and a separate paper record.</p></section>
+  if (!data) return <section className="game-markets quarter-board"><h2>1Q points</h2><p>First-quarter comparisons appear after the quarter-data refresh. They use actual 1Q scoring and a separate paper record.</p></section>
   const groups = new Map()
   for (const p of data.cards || []) {
     if (p.period !== '1q' || !visibleQuote(p, '1q')) continue

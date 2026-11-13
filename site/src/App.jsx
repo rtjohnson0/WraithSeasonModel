@@ -25,8 +25,6 @@ export default function App() {
   const [page, setPage] = useState(pageFromHash())
   const [site, setSite] = useState(null)
   const [error, setError] = useState('')
-  const [refreshTick, setRefreshTick] = useState(0)
-  const [loading, setLoading] = useState(false)
   const [accessRequired,setAccessRequired] = useState(false)
 
   useEffect(() => {
@@ -42,7 +40,6 @@ export default function App() {
     const load = async () => {
       if (pending) return
       pending = true
-      setLoading(true)
       try {
         const url = new URL(PRIVATE_BOARD ? '/api/picks' : 'data/picks.json', document.baseURI)
         url.searchParams.set('t', Date.now())
@@ -61,9 +58,9 @@ export default function App() {
       } catch (e) {
         if (active && e.name !== 'AbortError') {
           if(PRIVATE_BOARD) {setSite(null);setError('Could not verify access or load the board. Refresh to try again.')}
-          else setError('Could not refresh the board. Your last loaded plays are still shown. Use Refresh board to try again.')
+          else setError('Could not refresh the board. Your last loaded plays are still shown. The dashboard will check again automatically.')
         }
-      } finally { pending = false; if (active) setLoading(false) }
+      } finally { pending = false }
     }
     load()
     const timer = setInterval(load, 60000)
@@ -75,14 +72,14 @@ export default function App() {
       clearInterval(timer)
       document.removeEventListener('visibilitychange', onVisible)
     }
-  }, [refreshTick])
+  }, [])
 
   return (
     <>
       <header className="top">
         <a className="brand" href="#/board" aria-label="WraithPicksSZN home">
           <img src="./brand/logo.jpg" alt="" width="44" height="44" />
-          <span>WraithPicksSZN</span>
+          <span>WRAITH<span className="brand-accent">SZN</span><small>THE MODEL DASHBOARD</small></span>
         </a>
         <nav aria-label="Pages">
           {PAGES.map(([id, label]) => (
@@ -91,7 +88,6 @@ export default function App() {
             </a>
           ))}
         </nav>
-        <button type="button" className="reload-board" disabled={loading} onClick={() => setRefreshTick((x) => x + 1)}>{loading ? 'Refreshing…' : 'Refresh board'}</button>
       </header>
 
       {site?.sample && (

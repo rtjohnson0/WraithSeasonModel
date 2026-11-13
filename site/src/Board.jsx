@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { FormBars, LineStrip, MoveSpark, OutcomeCurve } from './Charts.jsx'
+import { useMemo, useState } from 'react'
+import { FormBars, MoveSpark, OutcomeCurve } from './Charts.jsx'
 import Icon from './Icons.jsx'
 import QuoteDetails from './QuoteDetails.jsx'
 import RunStatus from './RunStatus.jsx'
-import GameMarkets from './GameMarkets.jsx'
+import { MatchupDetails } from './GameMarkets.jsx'
 import QuarterBoard from './QuarterBoard.jsx'
 import PickReason from './PickReason.jsx'
 import PlayerPortrait from './PlayerPortrait.jsx'
+import { PropTicket, RecentForm } from './PropVisuals.jsx'
+import { remainingSlate } from './boardData.js'
 import {matchupSignal} from './matchup.js'
 import { visibleQuote, quoteState } from './quote.js'
 import { DaySummary, ResultList } from './Record.jsx'
@@ -103,46 +105,6 @@ function CaseView({ p }) {
   )
 }
 
-// The best plays still open: not started, strongest first. Tap one to jump to it.
-function TopPlays({ games, now, onPick }) {
-  const open = []
-  games.forEach((g) => {
-    const ts = tipState(g.tip, now)
-    if (ts.state === 'live' || ts.state === 'done') return
-    ;(g.plays || []).forEach((p) => {
-      if (p.label !== 'Lean' && visibleQuote(p)) open.push({ p, g, ts })
-    })
-  })
-  open.sort((a,b)=>comparePlayValue(a.p,b.p))
-  const top = open.slice(0, 5)
-  if (top.length === 0) return null
-  return (
-    <section className="topplays" aria-label="Top plays still open">
-      <h2>Best plays still open</h2>
-      <ol>
-        {top.map(({ p, g, ts }) => (
-          <li key={playId(p)}>
-            <button type="button" onClick={() => onPick(p)}>
-              <span className={`grade ${gradeTone(p.grade)}`}>{p.grade}</span>
-              <span className="tp-main">
-                <b>{p.player}</b>
-                <span>
-                  <i className={p.side === 'OVER' ? 'over' : 'under'}>{p.side === 'OVER' ? 'Over' : 'Under'}</i> {p.line} {marketLabel(p)}
-                </span>
-              </span>
-              <span className="tp-side">
-                <b>{pct(p.prob, 1)}</b>
-                <small>{oddsText(p.odds)} · {(100*p.edge).toFixed(1)} pp edge</small>
-                <small>{ts.label || g.matchup}</small>
-              </span>
-            </button>
-          </li>
-        ))}
-      </ol>
-    </section>
-  )
-}
-
 // Overs that are not picks: the closest to qualifying, and Overs at books priced a point or more
 // below the market. A board with no Overs still shows where they are and why they did not make it.
 function OversWatch({ overs, now }) {
@@ -154,8 +116,8 @@ function OversWatch({ overs, now }) {
   if (open.length === 0) return null
   const shown = all ? open : open.slice(0, 6)
   return (
-    <section className="overs" aria-label="Overs watch">
-      <h2>Overs watch</h2>
+    <section className="overs" aria-label="Overs watch" id="overs-watch">
+      <div className="section-heading"><div><span className="card-eyebrow">The other side of the board</span><h2>Overs watch<span className="section-dot">↗</span></h2></div><span className="research-chip">Research · not selected picks</span></div>
       <p className="small">
         None of these are picks. They are the Overs closest to qualifying today, and Overs at books priced a point or more below the market, which is the same
         edge the Unders get from a high line.
@@ -166,7 +128,7 @@ function OversWatch({ overs, now }) {
           return (
             <li key={`${o.player}|${o.stat}`} className={o.low_line ? 'lowline' : ''}>
               <div className="ov-head">
-                <b>{o.player}</b>
+                <PlayerPortrait name={o.player} team={o.team}/><b>{o.player}</b>
                 <span className="ov-bet">
                   Over {o.line} {marketLabel(o)}
                 </span>
@@ -180,7 +142,7 @@ function OversWatch({ overs, now }) {
                 <span>
                   Projected {o.proj.toFixed(1)} in {Math.round(o.proj_min)} min
                 </span>
-                <span>{ts.label || o.matchup}</span>
+                <span>{o.matchup} · {ts.label || tipText(o.tip)}</span>
               </div>
               <p className="ov-why">
                 {o.low_line && <em>Low line. </em>}
@@ -199,100 +161,17 @@ function OversWatch({ overs, now }) {
   )
 }
 
-// Who is out and who is uncertain on each side, from the injury report.
-function LineupNews({ news }) {
-  return (
-    <ul className="lineupnews">
-      {news.map((n) => (
-        <li key={n.team}>
-          <b>{n.team}</b>
-          {n.out?.length > 0 && <span> out: {n.out.join(', ')}.</span>}
-          {n.maybe?.length > 0 && <span className="maybe"> Uncertain: {n.maybe.join(', ')}.</span>}
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-// The game's betting market in plain terms: the spread says how close it should be (and so how
-// many minutes starters keep), the total says how many chances there will be to score.
-function GameContext({ c }) {
-  const diff = c.total - c.slateAvg
-  return (
-    <div className="gamectx">
-      <p className="chips">
-        <span>
-          <small>Spread</small>
-          <b>{c.favorite ? `${c.favorite} -${c.spread}` : "Pick'em"}</b>
-        </span>
-        <span>
-          <small>Total</small>
-          <b>
-            {c.total}
-            <i className={diff >= 4 ? 'up' : diff <= -4 ? 'down' : ''}>
-              {' '}
-              {diff >= 0 ? '+' : ''}
-              {diff.toFixed(1)} vs slate
-            </i>
-          </b>
-        </span>
-        <span>
-          <small>Expected score</small>
-          <b>
-            {c.visitor} {Math.round(c.visitorPts * 10) / 10}, {c.home} {Math.round(c.homePts * 10) / 10}
-          </b>
-        </span>
-      </p>
-      <ul>
-        {c.reads.map((r) => (
-          <li key={r}>{r}</li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-// Additional positive-edge leans are visible by default, with a collapse control.
-// They remain separate from picks that cleared the main selection rules.
-function MorePlays({ plays, started }) {
-  const [open, setOpen] = useState(true)
-  return (
-    <div className="more">
-      <button type="button" className="morebtn" aria-expanded={open} onClick={() => setOpen(!open)}>
-        {open ? `Hide extra leans (${plays.length})` : `Show extra leans (${plays.length})`}
-      </button>
-      {open && (
-        <>
-          <p className="small">The next best lines in this game. They did not clear the board's bar, so treat them as leans.</p>
-          <ul>
-            {plays.map((p) => (
-              <PlayRow key={`more-${p.player}-${p.stat}-${p.side}`} p={p} started={started} />
-            ))}
-          </ul>
-        </>
-      )}
-    </div>
-  )
-}
-
 const playId = (p) => `play-${p.player}-${p.stat}-${p.side}`.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
-function PlayRow({ p, focus, started }) {
+function PlayRow({ p, started, game, markets }) {
   const quote = quoteState(p, useNow())
   const [open, setOpen] = useState(false)
-  const ref = useRef(null)
-  // A tap on the top-plays strip opens this play and scrolls to it.
-  useEffect(() => {
-    if (focus && focus.id === playId(p)) {
-      setOpen(true)
-      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
-  }, [focus]) // eslint-disable-line react-hooks/exhaustive-deps
   const info = labelInfo[p.label] || labelInfo.Lean
   const signal=matchupSignal(p)
   const conf = Math.max(0, Math.min(1, (p.prob - 0.5) / 0.2))
   return (
-    <li ref={ref} id={playId(p)} className={`play quote-${quote.key} ${p.side === 'OVER' ? 'over' : 'under'} ${info.key}${p.multi ? ' multi' : ''}${started ? ' started' : ''}`}>
+    <li id={playId(p)} className={`play quote-${quote.key} ${p.side === 'OVER' ? 'over' : 'under'} ${info.key}${p.multi ? ' multi' : ''}${started ? ' started' : ''}`}>
+      {game && <div className="card-matchup"><span>{game.matchup}</span><span className={started?'closed-tag':''}>{started ? 'Pregame closed' : tipText(game.tip) || 'Tip pending'}</span></div>}
       <button type="button" className="playbtn" aria-expanded={open} onClick={() => setOpen(!open)}>
         <span className="portrait-grade"><PlayerPortrait name={p.player} team={p.team}/><span className={`grade ${gradeTone(p.grade)}`} aria-label={`Grade ${p.grade}`}>{p.grade}</span></span>
         <span className="who">
@@ -300,10 +179,7 @@ function PlayRow({ p, focus, started }) {
             {p.player}
             {p.team && <span className="team">{p.team}</span>}
           </span>
-          <span className="pick">
-            <b className={p.side === 'OVER' ? 'over' : 'under'}>{p.side === 'OVER' ? 'Over' : 'Under'}</b> {p.line}{' '}
-            {marketLabel(p)}
-          </span>
+          <PropTicket p={p}/>
           {signal && <span className={`matchup-signal ${signal.helps?'helps':'hurts'}`}>{signal.label}<small>{signal.helps?'Supports':'Works against'} this {p.side==='UNDER'?'Under':'Over'}</small></span>}
           {p.availability && <span className="availability-hint">Availability watch · View minutes comparison</span>}
           {p.rotation && <span className="availability-hint">Rotation forecast · View minutes breakdown</span>}
@@ -322,15 +198,9 @@ function PlayRow({ p, focus, started }) {
             </span>
           )}
         </span>
-        <span className="strip-wrap">
-          <LineStrip line={p.line} proj={p.projStat} games={p.last5} side={p.side} />
-          <small>
-            proj <b>{p.projStat.toFixed(1)}</b>
-            {p.last5?.length ? <> · {p.l5Hits} of {p.last5.length} hit</> : null}
-          </small>
-        </span>
+        <span className="strip-wrap"><span className="form-caption">Recent form<small>At this line</small></span><RecentForm p={p}/></span>
         <span className="meta">
-          <span className="prob">{pct(p.prob, 1)}</span>
+          <span className="prob-caption">Model probability</span><span className="prob">{pct(p.prob, 1)}</span>
           <span className="conf" aria-hidden="true">
             <i style={{ width: `${conf * 100}%` }} />
           </span>
@@ -343,6 +213,9 @@ function PlayRow({ p, focus, started }) {
           </span>
         </span>
       </button>
+      <div className="card-metrics"><span>Projection<b>{p.projStat.toFixed(1)}</b></span><span>Minutes<b>{Math.round(p.projMin)}</b></span><span>Price edge<b className={p.edge>0?'positive':''}>{p.edge>0?'+':''}{(100*p.edge).toFixed(1)}<small> pp</small></b></span><span>Last {p.last5?.length || 5} hits<b>{p.last5?.length ? `${p.l5Hits}/${p.last5.length}` : '—'}</b></span></div>
+      {quote.key !== 'recent' && <p className="card-quote-state">{quote.label}</p>}
+      {game && <MatchupDetails game={game} data={markets}/>}
       {open && (
         <div className="why">
           <QuoteDetails p={p} compact />
@@ -452,89 +325,6 @@ function LastResults({ record, date }) {
   )
 }
 
-const ODDS = (o) => (o > 0 ? `+${o}` : `${o}`)
-
-// Plays an earlier run posted that a later run dropped but that the model still rates at 58% or more
-// on the same side. They are not on the board any more, usually because stronger plays took their
-// place in the game, so they are worth a look rather than a pick.
-function EarlierPicks({ runs }) {
-  const seen = new Map()
-  ;(runs || []).forEach((r) =>
-    (r.dropped || []).forEach((d) => {
-      if (d.now && d.now.side === d.side && d.now.prob >= 0.58) {
-        seen.set(`${d.player}|${d.stat}|${d.side}`, { ...d, was: r.prev })
-      }
-    }),
-  )
-  const list = [...seen.values()].sort((a, b) => b.now.prob - a.now.prob)
-  if (list.length === 0) return null
-  return (
-    <details className="earlier">
-      <summary>
-        Earlier picks still at 58% or better: {list.length}
-      </summary>
-      <p className="small">Posted on an earlier run, off the board now, and the model still rates the same side at 58% or more.</p>
-      <ul>
-        {list.map((d) => (
-          <li key={`${d.player}-${d.stat}-${d.side}`}>
-            <b>{d.player}</b> {d.side.toLowerCase()} {d.now.line} {statLabel[d.stat] || d.stat}
-            {d.matchup ? ` (${d.matchup})` : ''}: {pc(d.prob)} on the {d.was} run, {pc(d.now.prob)} now
-            {d.now.line !== d.line ? ` (line moved from ${d.line})` : ''}
-            {d.now.odds ? ` at ${ODDS(d.now.odds)}${d.now.book ? ' ' + d.now.book : ''}` : ''}. <span className="reason">Dropped because {d.reason}.</span>
-          </li>
-        ))}
-      </ul>
-    </details>
-  )
-}
-
-const tierName = { PICK: 'Max play', CHECK: 'Risky play', PAPER: 'Great play', LEAN: 'Lean' }
-
-// What each later run dropped from the run before it, and why.
-function RunChanges({ runs }) {
-  const later = (runs || []).filter((r) => r.prev)
-  if (later.length === 0) return null
-  const dropped = later.reduce((n, r) => n + (r.dropped?.length || 0), 0)
-  return (
-    <details className="changes">
-      <summary>
-        What changed between runs today: {dropped} {dropped === 1 ? 'play' : 'plays'} dropped
-      </summary>
-      {later.map((r) => (
-        <section key={`${r.label}-${r.clock}`} className="runchange">
-          <h3>
-            {r.label} run ({r.clock}) compared with the {r.prev} run
-          </h3>
-          <p className="small">
-            {r.plays} plays now, {r.new} new, {r.dropped?.length || 0} dropped
-            {r.changed?.length ? `, ${r.changed.length} moved tier` : ''}.
-          </p>
-          {r.dropped?.length > 0 && (
-            <ul>
-              {r.dropped.map((d) => (
-                <li key={`${d.player}-${d.stat}-${d.side}`}>
-                  <b>{d.player}</b> {d.side.toLowerCase()} {d.line} {statLabel[d.stat] || d.stat}
-                  {d.matchup ? ` (${d.matchup})` : ''}: <span className="reason">{d.reason}.</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {r.changed?.length > 0 && (
-            <ul>
-              {r.changed.map((c) => (
-                <li key={`${c.player}-${c.stat}-${c.side}-t`}>
-                  <b>{c.player}</b> {c.side.toLowerCase()} {statLabel[c.stat] || c.stat}: {tierName[c.from] || c.from} became{' '}
-                  {tierName[c.to] || c.to}.
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      ))}
-    </details>
-  )
-}
-
 function tipText(iso) {
   if (!iso) return ''
   const d = new Date(iso)
@@ -568,8 +358,8 @@ export default function Board({ site }) {
   const [label, setLabel] = useState('all')
   const [side, setSide] = useState('ALL')
   const [q, setQ] = useState('')
+  const [sort, setSort] = useState('value')
   const [repeatsOnly, setRepeatsOnly] = useState(false)
-  const [focus, setFocus] = useState(null)
   const now = useNow()
 
   const all = useMemo(() => (board.games || []).flatMap((g) => g.plays || []), [board])
@@ -591,7 +381,7 @@ export default function Board({ site }) {
               (label === 'all' || p.label === label) &&
               (side === 'ALL' || p.side === side) &&
               (!repeatsOnly || p.multi) &&
-              (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
+              (!q.trim() || `${p.player} ${p.team || ''} ${g.matchup}`.toLowerCase().includes(q.trim().toLowerCase())),
           ),
           // Every visible row follows the selected filters.
           more: (g.more || []).filter(
@@ -601,7 +391,7 @@ export default function Board({ site }) {
               (!repeatsOnly || p.multi) &&
               (stat === 'all' || p.stat === stat) &&
               (side === 'ALL' || p.side === side) &&
-              (!q || p.player.toLowerCase().includes(q.toLowerCase()) || (p.team || '').toLowerCase() === q.toLowerCase()),
+              (!q.trim() || `${p.player} ${p.team || ''} ${g.matchup}`.toLowerCase().includes(q.trim().toLowerCase())),
           ),
         }))
         .filter((g) => (stat === 'all' && label === 'all' && side === 'ALL' && !q && !repeatsOnly) || g.plays.length || g.more.length),
@@ -609,51 +399,21 @@ export default function Board({ site }) {
   )
   const shown = games.reduce((n, g) => n + g.plays.length, 0)
 
+  const cards = games.flatMap(g => [...g.plays.map(p=>({p,g,extra:false})), ...g.more.map(p=>({p,g,extra:true}))]).sort((a,b)=>sort==='probability' ? b.p.prob-a.p.prob : sort==='tip' ? (Date.parse(a.g.tip)||Infinity)-(Date.parse(b.g.tip)||Infinity) : Number(a.extra)-Number(b.extra)||comparePlayValue(a.p,b.p))
+  const unlistedGames = remainingSlate(board.games,site.gameMarkets?.games)
   return (
-    <>
-      <div className="bannerwrap">
-        <img className="banner" src="./brand/banner.jpg" alt="WraithPicksSZN: data, discipline, profits" width="1600" height="639" />
-      </div>
-
-      <section className="day">
-        <div className="dayhead">
-          <h1>{prettyDate(board.date)}</h1>
-          <dl className="tally">
-            <div className={currentStaked ? 'hot' : ''}>
-              <dt>Max plays</dt>
-              <dd>{currentStaked}</dd>
-            </div>
-            <div>
-              <dt>On board</dt>
-              <dd>{current.length}</dd>
-            </div>
-            <div><dt>Extra leans</dt><dd>{extras.length}</dd></div>
-            <div>
-              <dt>{site.status?.scheduleComplete ? 'Scheduled games' : 'Games with data'}</dt>
-              <dd>{board.games.length}</dd>
-            </div>
-            {site.generatedAt && (
-              <div>
-                <dt>Updated</dt>
-                <dd className="time">{updatedText(site.generatedAt)}</dd>
-              </div>
-            )}
-          </dl>
-        </div>
+    <div className="boardpage">
+      <section className="board-hero">
+        <div className="hero-copy"><span className="card-eyebrow"><span className="live-dot"/> NBA INTELLIGENCE / V1</span><h1>Find your<br/><em>edge.</em></h1><p>Player props. A clearer perspective.</p><span className="hero-date">{prettyDate(board.date)} <span>· Updated {updatedText(site.generatedAt) || 'pending'}</span></span></div>
+        <div className="hero-art" aria-hidden="true"><img src="./brand/logo.jpg" alt=""/><span className="hero-orbit orbit-one"/><span className="hero-orbit orbit-two"/><span className="art-caption">WRAITHSZN / THE DAILY BOARD</span></div>
+        <dl className="hero-stats"><div><dt>On the board</dt><dd>{current.length.toString().padStart(2,'0')}</dd></div><div><dt>Max plays</dt><dd>{currentStaked.toString().padStart(2,'0')}</dd></div><div><dt>Extra leans</dt><dd>{extras.length.toString().padStart(2,'0')}</dd></div><div><dt>{site.status?.scheduleComplete?'Scheduled games':'Games with data'}</dt><dd>{board.games.length.toString().padStart(2,'0')}</dd></div></dl>
       </section>
 
       <RunStatus site={site} />
-      <GameMarkets data={site.gameMarkets} />
-      <QuarterBoard data={site.quarter} />
-      <h2>Full-game player props</h2>
-      <p className="small quote-disclaimer">Lines are specific to the named book and price. A current sportsbook screen takes precedence over an API snapshot.</p>
-      <TopPlays games={board.games || []} now={now} onPick={(p) => { setStat('all'); setLabel('all'); setSide('ALL'); setQ(''); setRepeatsOnly(false); setFocus({ id: playId(p), n: Date.now() }) }} />
-      <details className="exploratory-watch"><summary>Exploratory overs watch · not current picks</summary><p className="small">Historical watch quotes need a fresh check at the named book.</p><OversWatch overs={board.overs} now={now} /></details>
-      <LastResults record={site.record} date={board.date} />
+      <div className="section-heading prop-section-heading"><div><span className="card-eyebrow">The daily slate</span><h2>Player props<span className="section-dot">/</span></h2></div>{(board.overs||[]).some(o=>!["live","done"].includes(tipState(o.tip,now).state)) && <a className="overs-jump" href="#overs-watch" onClick={e=>{e.preventDefault();document.getElementById("overs-watch")?.scrollIntoView({behavior:"smooth",block:"start"})}}>Overs watch ↗</a>}</div>
+      {/* Published picks remain visible; quote freshness is shown on each card. */}
 
-      {/* Historical quotes belong in run changes, never in the current-pick list. */}
-
-      <section className="filters" aria-label="Filters">
+      <section className="filters board-filters" aria-label="Filters">
         <Seg
           label="Stat"
           value={stat}
@@ -687,10 +447,11 @@ export default function Board({ site }) {
       </section>
 
       <div className="filter-summary" aria-live="polite">
+        <label className="sort-control">Sort by <select value={sort} onChange={e=>setSort(e.target.value)}><option value="value">Model value</option><option value="probability">Probability</option><option value="tip">Tip time</option></select></label>
         <span>{shown} main {shown === 1 ? 'play' : 'plays'} · {games.reduce((n,g)=>n+g.more.length,0)} available leans</span>
         {(stat !== 'all' || label !== 'all' || side !== 'ALL' || q || repeatsOnly) && <button type="button" onClick={()=>{setStat('all');setLabel('all');setSide('ALL');setQ('');setRepeatsOnly(false)}}>Clear filters</button>}
       </div>
-      {shown === 0 && (
+      {cards.length === 0 && (
         <p className="notice">
           {board.games.length === 0
             ? 'No qualifying plays in the latest run. A new odds refresh is required to publish new quotes.'
@@ -698,45 +459,13 @@ export default function Board({ site }) {
         </p>
       )}
 
-      <div className="games">
-        {games.map((g) => {
-          const [away, home] = g.matchup.split(' @ ')
-          const ts = tipState(g.tip, now)
-          const started = ts.state === 'live' || ts.state === 'done'
-          return (
-            <article className={`game${started ? ' started' : ''}`} key={g.id}>
-              <header>
-                <h2>
-                  {home ? (
-                    <>
-                      {away}
-                      <i>at</i>
-                      {home}
-                    </>
-                  ) : (
-                    g.matchup
-                  )}
-                </h2>
-                <span>
-                  {g.tip ? <b className="tip">{tipText(g.tip)}</b> : <em className="countdown">Tip time pending</em>}
-                  {ts.label && <em className={`countdown ${ts.state}`}>{ts.label}</em>}
-                  {g.plays.length} {g.plays.length === 1 ? 'play' : 'plays'}
-                </span>
-              </header>
-              {g.ctx && <GameContext c={g.ctx} />}
-              {g.news?.length > 0 && <LineupNews news={g.news} />}
-              {started && <p className="startednote">This game has started or is over, so these lines are closed. The plays are kept for the record.</p>}
-              {g.plays.length === 0 && <p className="no-qualifying">{g.more.length ? 'Available leans appear below; none cleared the main pick rules.' : !g.tip ? 'Waiting for a confirmed start time. Props will be evaluated after the schedule and odds refresh.' : started ? 'Pregame lines are closed for this game.' : 'No props cleared the current quote and model checks. A fresh odds run may add plays.'}</p>}
-              <ul>
-                {g.plays.map((p) => (
-                  <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} focus={focus} started={started} />
-                ))}
-              </ul>
-              {g.more.length > 0 && (g.plays.length === 0 ? <div className="game-leans"><p className="small">Available leans · below the main selection bar</p><ul>{g.more.map(p=><PlayRow key={`lean-${p.player}-${p.stat}-${p.side}`} p={p} started={started}/>)}</ul></div> : <MorePlays plays={g.more} started={started} />)}
-            </article>
-          )
-        })}
-      </div>
-    </>
+      <ul className="prop-grid" aria-label="Player props">
+        {cards.map(({p,g,extra})=><PlayRow key={`${g.id}-${extra?'lean':'pick'}-${playId(p)}`} p={p} game={g} markets={site.gameMarkets} started={['live','done'].includes(tipState(g.tip,now).state)}/>)}
+      </ul>
+      <OversWatch overs={board.overs} now={now}/>
+      {unlistedGames.length>0 && <details className="slate-rest"><summary>Rest of the slate · {unlistedGames.length} games without player props</summary>{unlistedGames.map(g=><div key={g.id}><p>{g.matchup} · No qualifying player props</p><MatchupDetails game={g} data={site.gameMarkets}/></div>)}</details>}
+      <QuarterBoard data={site.quarter}/>
+      <LastResults record={site.record} date={board.date}/>
+    </div>
   )
 }

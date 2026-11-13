@@ -3,6 +3,7 @@ import { visibleQuote, quoteState, bookName, clock } from './quote.js'
 import { useNow } from './time.js'
 import { explainGame, bestGameQuote } from './explain.js'
 import TeamRanks from './TeamRanks.jsx'
+import { findGameMarket } from './boardData.js'
 import { oddsText } from './format.js'
 
 const pc = (p) => `${(p * 100).toFixed(1)}%`
@@ -38,4 +39,14 @@ export default function GameMarkets({ data }) {
  <div className="projection-summary"><span>Projected score<b>{g.away} {g.awayScore.toFixed(1)} · {g.home} {g.homeScore.toFixed(1)}</b></span><span>Projected total<b>{g.total.toFixed(1)}</b></span></div>
  <details className="team-context"><summary>Team comparison & defensive rankings <span aria-hidden="true">⌄</span></summary><TeamRanks teams={[g.awayContext,g.homeContext]}/></details><Market game={g} market="moneyline" now={now} evidence={data.z}/><Market game={g} market="spread" now={now} evidence={data.z}/><Market game={g} market="total" now={now} evidence={data.z}/></article>)}
  </section>
+}
+
+// Game context travels with a player's prop instead of competing with the board.
+export function MatchupDetails({ game, data }) {
+ const now=useNow()
+ const g=findGameMarket(game,data?.games)
+ return <details className="matchup-lens"><summary><span>↗ <b>{game.matchup || (g ? `${g.away} @ ${g.home}` : 'Game context')}</b><small>Matchup & game markets</small></span><span aria-hidden="true">+</span></summary><div className="matchup-lens-body">
+ {game.news?.length>0 && <div className="lens-news">{game.news.map(n=><p key={n.team}><b>{n.team}</b>{n.out?.length>0?` · Out: ${n.out.join(', ')}`:''}{n.maybe?.length>0?` · Uncertain: ${n.maybe.join(', ')}`:''}</p>)}</div>}
+ {g ? <><div className="projection-summary"><span>Projected score<b>{g.away} {g.awayScore.toFixed(1)} · {g.home} {g.homeScore.toFixed(1)}</b></span><span>Projected total<b>{g.total.toFixed(1)}</b></span></div><details className="team-context"><summary>Team comparison & rankings</summary><TeamRanks teams={[g.awayContext,g.homeContext]}/></details><Market game={g} market="moneyline" now={now} evidence={data.z}/><Market game={g} market="spread" now={now} evidence={data.z}/><Market game={g} market="total" now={now} evidence={data.z}/></> : game.ctx ? <><p>Game total <b>{game.ctx.total}</b> · {game.ctx.favorite ? `${game.ctx.favorite} -${game.ctx.spread}` : "Pick’em"}</p>{game.ctx.reads?.map(r=><p className="small" key={r}>{r}</p>)}</> : <p className="small">Game-market projections are unavailable for this matchup.</p>}
+ </div></details>
 }

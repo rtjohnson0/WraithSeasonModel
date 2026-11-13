@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FormBars, LineStrip } from './Charts.jsx'
+import { FormBars } from './Charts.jsx'
 import { Seg } from './Board.jsx'
 import { ResultList, Table } from './Record.jsx'
 import { marketLabel, oddsText, pct, prettyDate, shortDate, statLabel } from './format.js'
@@ -7,25 +7,30 @@ import { tipState, useNow } from './time.js'
 import QuoteDetails from './QuoteDetails.jsx'
 import PickReason from './PickReason.jsx'
 import PlayerPortrait from './PlayerPortrait.jsx'
+import { PropTicket, RecentForm } from './PropVisuals.jsx'
 import { bookName, visibleQuote, quoteState } from './quote.js'
 import { comboGroups } from './combo.js'
+import { MatchupDetails } from './GameMarkets.jsx'
+import { comparePlayValue } from './format.js'
 
 const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
 
 
-function ComboCard({ c, now }) {
+function ComboCard({ c, now, site }) {
  const comparison=c.tier==='COMBOWATCH'
  const confidence=comparison?(c.probRaw??c.prob):c.prob
- return <li className="combo-row"><details>
-  <summary className="combo-summary"><span className="combo-player"><PlayerPortrait name={c.player} team={c.team}/><span><small className="card-eyebrow">{c.matchup} · {comparison?'Research comparison':'Selected combo'}</small><b>{c.player} <small className="team-chip">{c.team}</small></b><span>{c.side==='OVER'?'Over':'Under'} {c.line} {marketLabel(c)}</span><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} · {bookName(c.book)}</small>{c.availability&&<small className="availability-hint">Availability watch · Compare minutes</small>}</span></span>
-   <span className="combo-strip"><LineStrip line={c.line} proj={c.projStat} games={c.last5} side={c.side}/></span><span className="combo-prob">{comparison ? c.projStat.toFixed(1) : pct(confidence,1)}<small>{comparison ? 'Projected total' : 'Model probability'}</small><small className="expand-hint">View analysis <span aria-hidden="true">⌄</span></small></span></summary>
+ const game=(site.board.games||[]).find(g=>(c.gameId!=null&&g.id!=null&&String(g.id)===String(c.gameId))||g.matchup===c.matchup)||{id:c.gameId,matchup:c.matchup,tip:c.tip}
+ const quote=quoteState(c,now)
+ return <li className={`combo-row ${c.side==='OVER'?'over':'under'}`}><div className="card-matchup"><span>{c.matchup}</span><span>{tipState(c.tip,now).label || 'Tip pending'}</span></div><details>
+  <summary className="combo-summary"><span className="combo-player"><PlayerPortrait name={c.player} team={c.team}/><span><small className="card-eyebrow">{comparison?'Research comparison':'Selected combo'}</small><b>{c.player} <small className="team-chip">{c.team}</small></b><PropTicket p={c}/><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} · {bookName(c.book)}</small>{c.availability&&<small className="availability-hint">Availability watch · Compare minutes</small>}</span></span>
+   <span className="combo-strip"><span className="form-caption">Recent form<small>At this line</small></span><RecentForm p={c}/></span><span className="combo-prob">{comparison ? c.projStat.toFixed(1) : pct(confidence,1)}<small>{comparison ? 'Projected total' : 'Model probability'}</small><small className="expand-hint">View analysis <span aria-hidden="true">⌄</span></small></span></summary>
   <div className="combo-expanded"><QuoteDetails p={c} compact/>
    {comparison && <p className="small">Raw simulation: {pct(confidence,1)} for this side. This has not been calibrated or demonstrated as a hit rate; it has not cleared the combo selection rules.</p>}
    <p>Projected <b>{c.projStat.toFixed(1)}</b> in {Math.round(c.projMin)} minutes · {c.matchup}</p>
    {c.last5?.length>0 && <div className="charts"><figure><figcaption>{statLabel[c.stat]} · last {c.last5.length} games</figcaption><FormBars games={c.last5} line={c.line} side={c.side} lineLabel={`line ${c.line}`}/></figure><figure><figcaption>Minutes played</figcaption><FormBars games={c.last5.map(g=>({...g,value:g.minutes}))} line={c.projMin} side={c.side} tone="minutes" lineLabel={`projected ${Math.round(c.projMin)}`}/></figure></div>}
    <PickReason p={comparison?{...c,prob:confidence,probabilityBasis:"estimate"}:c}/>
   </div>
- </details></li>
+ </details><div className="card-metrics"><span>Projection<b>{c.projStat.toFixed(1)}</b></span><span>Minutes<b>{Math.round(c.projMin)}</b></span><span>{comparison?'Simulation edge':'Price edge'}<b>{Number.isFinite(c.edge)?`${c.edge>0?'+':''}${(c.edge*100).toFixed(1)}`:'—'}<small> pp</small></b></span><span>Last {c.last5?.length||5} hits<b>{c.last5?.length?`${c.l5Hits}/${c.last5.length}`:'—'}</b></span></div>{quote.key!=='recent'&&<p className="card-quote-state">{quote.label}</p>}<MatchupDetails game={game} data={site.gameMarkets}/></li>
 }
 
 export default function Combos({ site }) {
@@ -35,18 +40,19 @@ export default function Combos({ site }) {
   const [stat, setStat] = useState('all')
   const [side, setSide] = useState('ALL')
   const [all, setAll] = useState(false)
+  const [q,setQ] = useState('')
+  const [sort,setSort] = useState('value')
   const [view, setView] = useState(()=>comboGroups(board.combos||[]).picks.length?'picks':'comparisons')
   const groups = comboGroups((board.combos || []).filter((p) => visibleQuote(p)))
   const plays = groups[view]
-  const list = plays.filter((c) => (stat === 'all' || c.stat === stat) && (side === 'ALL' || c.side === side))
+  const list = plays.filter((c) => (stat === 'all' || c.stat === stat) && (side === 'ALL' || c.side === side) && (!q || `${c.player} ${c.team} ${c.matchup}`.toLowerCase().includes(q.toLowerCase()))).sort((a,b)=>view==='comparisons' ? a.player.localeCompare(b.player) : sort==='probability'?b.prob-a.prob:comparePlayValue(a,b))
   const shown = all ? list : list.slice(0, 24)
   const rows = (rec.rows || []).map((r) => ({ ...r, name: r.name === 'OVER' ? 'Overs' : r.name === 'UNDER' ? 'Unders' : statLabel[r.name] || r.name }))
 
   return (
     <div className="combopage">
-      <section className="day">
-        <h1>Combo picks</h1>
-        <p className="small">PRA, points + rebounds, points + assists, and rebounds + assists. Tap a line for its projection, recent games and explanation.</p>
+      <section className="combo-hero"><span className="card-eyebrow">NBA INTELLIGENCE / COMBOS</span><div><h1>More to<br/><em>their game.</em></h1><p>Points. Boards. Assists.<br/>See the complete picture.</p></div><span className="hero-date">{prettyDate(board.date)}</span><div className="combo-hero-mark" aria-hidden="true">P<span>+</span>R<span>+</span>A</div></section>
+      <section className="day combo-controls">
 
 
         <Seg label="View" value={view} onChange={setView} options={[
@@ -55,14 +61,14 @@ export default function Combos({ site }) {
         ]}/>
         {!groups.picks.length && groups.comparisons.length>0 && <p className="small">Showing available projections while the combo selection checks gather evidence.</p>}
         {view === 'comparisons' && <p className="small">Research comparisons, not selected bets. Projections and recent games are available below; raw simulations have not earned a reliable hit-rate estimate.</p>}
-        {site.comboHealth && <div className="combo-readiness"><b>Combo readiness</b><p>{site.comboHealth.status}</p><p className="small">{site.comboHealth.eligibleRows} eligible pregame forecasts across {site.comboHealth.eligibleDates||0} dates · {site.comboHealth.trainingRows} for calibration · {site.comboHealth.evaluationRows} on later dates. Each combo type must pass its own evaluation before becoming a selected play.</p></div>}
+
         {!plays.length && <p className="notice">{view === 'picks' ? 'No combo currently clears the calibrated selection rules. Line comparisons remain available in the next tab.' : 'No combo line comparisons are available for this slate.'}</p>}
       </section>
 
       {plays.length > 0 && (
         <section className="overs combos" aria-label="Today's combo plays">
           <h2>{view === 'picks' ? 'Selected combo plays' : 'Combo line comparisons'}</h2>
-          <div className="combo-filters">
+          <div className="combo-filters board-filters">
             <Seg
               label="Combo"
               value={stat}
@@ -75,11 +81,13 @@ export default function Combos({ site }) {
               onChange={setSide}
               options={[['ALL', 'Both'], ['OVER', 'Over', plays.filter((c) => c.side === 'OVER').length], ['UNDER', 'Under', plays.filter((c) => c.side === 'UNDER').length]]}
             />
+            <label className="search"><span className="sr">Search combos</span><input type="search" placeholder="Search player or team" value={q} onChange={e=>setQ(e.target.value)}/></label>
+            {view==='picks'&&<label className="sort-control">Sort by <select value={sort} onChange={e=>setSort(e.target.value)}><option value="value">Model value</option><option value="probability">Probability</option></select></label>}
           </div>
           {list.length === 0 && <p className="notice">No combo plays match these filters.</p>}
-          <ul>
+          <ul className="combo-grid">
             {shown.map((c) => (
-              <ComboCard key={`${c.player}|${c.stat}|${c.side}`} c={c} now={now} />
+              <ComboCard key={`${c.player}|${c.stat}|${c.side}`} c={c} now={now} site={site} />
             ))}
           </ul>
           {list.length > 24 && (
@@ -91,6 +99,7 @@ export default function Combos({ site }) {
       )}
 
 
+        {site.comboHealth && <div className="combo-readiness"><b>Combo readiness</b><p>{site.comboHealth.status}</p><p className="small">{site.comboHealth.eligibleRows} eligible pregame forecasts across {site.comboHealth.eligibleDates||0} dates · {site.comboHealth.trainingRows} for calibration · {site.comboHealth.evaluationRows} on later dates. Each combo type must pass its own evaluation before becoming a selected play.</p></div>}
       {site.combos?.rows?.length>0 && site.historicalCombos?.rows?.length>0 && <section className="record"><h2>Historical combo results</h2><Table rows={site.historicalCombos.rows}/><ResultList rows={(site.historicalCombos.recent||[]).slice(0,30)}/></section>}
       <section className="record" aria-label="Combo record">
         <h2>Combo record</h2>
