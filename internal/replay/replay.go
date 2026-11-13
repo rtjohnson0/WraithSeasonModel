@@ -13,6 +13,7 @@ import (
 	"propsmodel/internal/data"
 	"propsmodel/internal/eval"
 	"propsmodel/internal/feat"
+	"propsmodel/internal/minutesaudit"
 	"propsmodel/internal/predictor"
 )
 
@@ -67,6 +68,7 @@ func (r Row) Features() *feat.Row {
 }
 
 type Record struct {
+	AuditContext      *minutesaudit.Context `json:"audit_context,omitempty"`
 	SelectionPolicy   string                `json:"selection_policy,omitempty"`
 	Period            string                `json:"period,omitempty"`
 	BookCount         int                   `json:"book_count,omitempty"`

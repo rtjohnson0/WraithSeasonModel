@@ -17,6 +17,7 @@ Run "forward accuracy evaluation" { go run ./cmd/accuracy }
 Run "offline accuracy report" { python scripts/accuracy_report.py }
 Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
 Run "player props"                 { go run ./cmd/predict }
+Run "minutes and Under-bias audit" { go run ./cmd/minutesaudit -legacy } -Optional
 Run "game lines"                   { go run ./cmd/games } -Optional
 
 Run "first-quarter points comparisons" { go run ./cmd/quarter } -Optional
