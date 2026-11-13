@@ -524,3 +524,5 @@ button:disabled { opacity: .65; cursor: wait; }
 @media(max-width:600px) { .availability { padding: 12px; } .availability td, .availability th { padding: 8px 5px; font-size: .8rem; } }
 
 .availability-hint { display: block; margin-top: 6px; font-size: .8rem; color: #e8c785; }
+
+.whop-access { display: inline-block; padding: 12px 18px; background: #a98aff; color: #10091c; border-radius: 6px; font-weight: 600; text-decoration: none; }

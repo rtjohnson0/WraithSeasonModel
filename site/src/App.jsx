@@ -5,6 +5,9 @@ import Combos from './Combos.jsx'
 import V2 from './V2.jsx'
 import About from './About.jsx'
 
+const PRIVATE_BOARD = import.meta.env.VITE_PRIVATE_BOARD === 'true'
+const WHOP_URL = 'https://whop.com/wraithsznbets'
+
 const PAGES = [
   ['board', 'Board'],
   ['combos', 'Combos'],
@@ -24,6 +27,7 @@ export default function App() {
   const [error, setError] = useState('')
   const [refreshTick, setRefreshTick] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [accessRequired,setAccessRequired] = useState(false)
 
   useEffect(() => {
     const onHash = () => { setPage(pageFromHash()); window.scrollTo({ top: 0 }) }
@@ -40,17 +44,25 @@ export default function App() {
       pending = true
       setLoading(true)
       try {
-        const url = new URL('data/picks.json', document.baseURI)
+        const url = new URL(PRIVATE_BOARD ? '/api/picks' : 'data/picks.json', document.baseURI)
         url.searchParams.set('t', Date.now())
         const r = await fetch(url, { cache: 'no-store', signal: controller.signal })
+        if (PRIVATE_BOARD && (r.status===401 || r.status===403)) {
+          if(active) {setSite(null);setAccessRequired(true);setError(r.status===401 ? 'Open this dashboard inside Whop to verify your account.' : 'Your account does not have access to WraithSznBets NBA Props Dashboard.')}
+          return
+        }
         if (!r.ok) throw new Error(`The board did not load (${r.status}).`)
         const next = await r.json()
         if (active) {
           setSite((prev) => !prev || (next.generatedAt || '') >= (prev.generatedAt || '') ? next : prev)
           setError('')
+          setAccessRequired(false)
         }
       } catch (e) {
-        if (active && e.name !== 'AbortError') setError('Could not refresh the board. Your last loaded plays are still shown. Use Refresh board to try again.')
+        if (active && e.name !== 'AbortError') {
+          if(PRIVATE_BOARD) {setSite(null);setError('Could not verify access or load the board. Refresh to try again.')}
+          else setError('Could not refresh the board. Your last loaded plays are still shown. Use Refresh board to try again.')
+        }
       } finally { pending = false; if (active) setLoading(false) }
     }
     load()
@@ -89,7 +101,7 @@ export default function App() {
       )}
 
       <main>
-        {error && <p className="notice">{error}</p>}
+        {error && <div className="notice" role="alert"><p>{error}</p>{accessRequired && <a className="whop-access" href={WHOP_URL} target="_blank" rel="noopener noreferrer">Open WraithSznBets on Whop ↗</a>}</div>}
         {!site && !error && <div className="board-loading" role="status"><p>Loading today’s board…</p><div /><div /><div /></div>}
         {site && page === 'board' && <Board site={site} />}
         {site && page === 'combos' && <Combos site={site} />}

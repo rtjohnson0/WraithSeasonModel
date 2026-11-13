@@ -1,0 +1,29 @@
+name: Protected Whop gateway checks
+on:
+  push:
+    paths: ['server/**', 'site/**', 'scripts/build_private_site.mjs', 'scripts/publish_private.py', 'Dockerfile.whop', '.github/workflows/secure_gateway.yml']
+  pull_request:
+    paths: ['server/**', 'site/**', 'scripts/build_private_site.mjs', 'scripts/publish_private.py', 'Dockerfile.whop', '.github/workflows/secure_gateway.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r server/requirements.txt
+      - run: python -m unittest server.test_app
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - working-directory: site
+        run: |
+          npm ci
+          npm test
+          npm run build:private

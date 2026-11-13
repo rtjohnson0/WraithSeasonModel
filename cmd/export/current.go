@@ -24,16 +24,32 @@ func currentBoard(snapshot *boardstate.Snapshot, date string, form Form, runs []
 	if snapshot == nil || snapshot.Date != date {
 		return board
 	}
-	have := map[int]bool{}
-	for _, g := range board.Games {
-		have[g.ID] = true
+	have := map[int]int{}
+	for i, g := range board.Games {
+		have[g.ID] = i
 	}
 	for _, g := range snapshot.Games {
-		if !have[g.ID] {
+		if i, exists := have[g.ID]; exists {
+			if board.Games[i].Tip == "" {
+				board.Games[i].Tip = g.Tip
+			}
+		} else {
 			board.Games = append(board.Games, Game{ID: g.ID, Matchup: g.Matchup, Tip: g.Tip, Plays: []Play{}})
 		}
 	}
-	sort.SliceStable(board.Games, func(i, j int) bool { return board.Games[i].Tip < board.Games[j].Tip })
+	sort.SliceStable(board.Games, func(i, j int) bool {
+		a, b := board.Games[i], board.Games[j]
+		if a.Tip == b.Tip {
+			return a.ID < b.ID
+		}
+		if a.Tip == "" {
+			return false
+		}
+		if b.Tip == "" {
+			return true
+		}
+		return a.Tip < b.Tip
+	})
 	return board
 }
 

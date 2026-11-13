@@ -43,6 +43,11 @@ func TestScheduleKeepsFourGamesWhenOnlyTwoHaveProps(t *testing.T) {
 	if e != nil || len(games) != 4 || !complete || captured != at || games[3].Start != "" || games[4].Start == "" {
 		t.Fatalf("incomplete slate: %d %v %v", len(games), complete, e)
 	}
+	for _, id := range []int{1, 2} {
+		if games[id].Start != "2026-11-13T00:00:00Z" {
+			t.Fatalf("7 PM game %d lost its real midnight-UTC tip: %+v", id, games[id])
+		}
+	}
 	// No prop requests succeeding must still preserve the independent schedule.
 	if e = os.Remove(path); e != nil {
 		t.Fatal(e)

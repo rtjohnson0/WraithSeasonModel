@@ -729,7 +729,7 @@ export default function Board({ site }) {
               {g.ctx && <GameContext c={g.ctx} />}
               {g.news?.length > 0 && <LineupNews news={g.news} />}
               {started && <p className="startednote">This game has started or is over, so these lines are closed. The plays are kept for the record.</p>}
-              {g.plays.length === 0 && <p className="no-qualifying">{g.more.length ? 'Available leans appear below; none cleared the main pick rules.' : 'No qualifying props are available for this scheduled game yet.'}</p>}
+              {g.plays.length === 0 && <p className="no-qualifying">{g.more.length ? 'Available leans appear below; none cleared the main pick rules.' : !g.tip ? 'Waiting for a confirmed start time. Props will be evaluated after the schedule and odds refresh.' : started ? 'Pregame lines are closed for this game.' : 'No props cleared the current quote and model checks. A fresh odds run may add plays.'}</p>}
               <ul>
                 {g.plays.map((p) => (
                   <PlayRow key={`${p.player}-${p.stat}-${p.side}`} p={p} focus={focus} started={started} />

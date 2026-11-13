@@ -54,7 +54,7 @@ func SaveSchedule(dir, date, captured string, raw []json.RawMessage) error {
 			return fmt.Errorf("duplicate game in schedule")
 		}
 		seen[g.ID] = true
-		s.Games = append(s.Games, GameInfo{ID: g.ID, Date: date, Home: home, Visitor: away, HomeAbbr: g.Home.Abbr, VisitorAbbr: g.Visitor.Abbr, Start: startTime(g.Datetime, g.Status)})
+		s.Games = append(s.Games, GameInfo{ID: g.ID, Date: date, Home: home, Visitor: away, HomeAbbr: g.Home.Abbr, VisitorAbbr: g.Visitor.Abbr, Start: startTime(g.Datetime, g.Status, date)})
 	}
 	if _, e := time.Parse(time.RFC3339, captured); e != nil {
 		return e

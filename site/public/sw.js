@@ -12,7 +12,7 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(req)
       .then((res) => {
-        if (res.ok && !new URL(req.url).pathname.includes('/data/')) {
+        if (res.ok && !new URL(req.url).pathname.includes('/data/') && !new URL(req.url).pathname.startsWith('/api/') && !new URL(req.url).pathname.startsWith('/internal/') && !res.headers.get('cache-control')?.includes('no-store')) {
           const copy = res.clone()
           caches.open(SHELL).then((c) => c.put(req, copy))
         }

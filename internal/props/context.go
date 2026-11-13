@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 	"time"
+	_ "time/tzdata"
 )
 
 // GameInfo says which teams play in a game and when.
@@ -20,14 +21,31 @@ type GameInfo struct {
 
 // startTime picks the tip-off from the game's datetime or, for games not yet played, its status
 // (which holds the start time). A bare date with no clock time is not a tip-off.
-func startTime(datetime, status string) string {
+// When supplied, gameDate is the provider's NBA slate date in US Eastern time.
+// Midnight UTC on the following day is a real 7/8 PM Eastern tip, not a placeholder.
+func startTime(datetime, status string, gameDate ...string) string {
+	date := ""
+	if len(gameDate) > 0 {
+		date = strings.TrimSpace(gameDate[0])
+		if len(date) >= 10 {
+			date = date[:10]
+		}
+	}
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		return ""
+	}
 	for _, v := range []string{datetime, status} {
 		t, err := time.Parse(time.RFC3339, v)
 		if err != nil {
 			continue
 		}
-		if t.UTC().Hour() == 0 && t.UTC().Minute() == 0 && t.UTC().Second() == 0 {
-			continue // midnight UTC is a date placeholder, not a start time
+		if date != "" {
+			if t.In(loc).Format("2006-01-02") != date {
+				continue // date-only midnight placeholders fall on the previous Eastern day
+			}
+		} else if t.UTC().Hour() == 0 && t.UTC().Minute() == 0 && t.UTC().Second() == 0 {
+			continue // legacy row without a slate date cannot disambiguate midnight
 		}
 		return t.UTC().Format(time.RFC3339)
 	}
@@ -63,7 +81,7 @@ func LoadGames(path string) (map[int]GameInfo, error) {
 		}
 		g := GameInfo{ID: row.GameID, Home: row.Game.Home.ID, Visitor: row.Game.Visitor.ID, Date: row.Game.Date,
 			HomeAbbr: row.Game.Home.Abbr, VisitorAbbr: row.Game.Visitor.Abbr,
-			Start: startTime(row.Game.Datetime, row.Game.Status)}
+			Start: startTime(row.Game.Datetime, row.Game.Status, row.Game.Date)}
 		if g.Home == 0 {
 			g.Home = row.Game.HomeID
 		}

@@ -1,3 +1,5 @@
+> **Whop migration update:** The protected gateway is prepared, not deployed. Read `WHOP_PROTECTION.md` before pushing this version. Daily delivery now defaults to Whop and intentionally stops on a public repository or missing private-host settings. Your existing live Pages site is not automatically removed. API keys belong only in host/GitHub secrets.
+
 > **Current upgrade instructions:** [UPGRADE.md](UPGRADE.md) covers quote validation, verified records, model version 4, replay and conflict-safe publishing. It supersedes older descriptions of defaults, combo calibration and Git synchronization below.
 
 > Period safeguards and historical record audit: see [PERIOD_FIX.md](PERIOD_FIX.md).

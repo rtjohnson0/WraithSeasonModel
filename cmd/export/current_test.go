@@ -72,3 +72,12 @@ func TestFullSlateExportKeepsGamesWithNoQualifyingProps(t *testing.T) {
 		t.Fatalf("schedule count changed with prop eligibility: %+v", got)
 	}
 }
+
+func TestCurrentBoardFillsTipForGameWithPlaysAndSortsUnknownLast(t *testing.T) {
+	date := "2026-11-12"
+	s := &boardstate.Snapshot{Date: date, Plays: []picklog.Entry{{Date: date, GameID: 2, PlayerID: 7, Player: "P", Stat: "points", Period: "game", Side: "OVER", Line: 20.5, Tier: "LEAN"}}, Games: []boardstate.Game{{ID: 1, Matchup: "A @ B"}, {ID: 2, Matchup: "C @ D", Tip: "2026-11-13T00:00:00Z"}}}
+	got := currentBoard(s, date, nil, nil)
+	if len(got.Games) != 2 || got.Games[0].ID != 2 || got.Games[0].Tip != s.Games[1].Tip || got.Games[1].Tip != "" {
+		t.Fatalf("lost scheduled tip or sorted unknown first: %+v", got.Games)
+	}
+}
