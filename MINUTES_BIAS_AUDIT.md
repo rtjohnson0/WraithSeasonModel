@@ -44,8 +44,8 @@ go run ./cmd/minutesaudit -legacy
 
 Open `run_evidence/minutes-audit/report.html`. JSON is saved beside it. `-legacy` explicitly enables the separate older-log diagnostic. Without that flag, only eligible frozen replay decisions are considered for outcome scoring. Forecast-stage forensic counts remain clearly labelled and are not verified outcomes.
 
-## What is still needed
+## Follow-up artifact received
 
-This public repository contains no frozen `data/replay` captures, so this audit has zero verified replay questions. Download the latest GitHub Actions `model-run-…` evidence artifact containing `data/replay/decisions_*.jsonl` and their matching `model_<sha>.json` checkpoints. Those original snapshots are needed to reproduce probabilities and separate minutes, distribution and calibration effects against final outcomes.
+The public-repository audit above has zero verified replay questions because that source does not track frozen `data/replay` captures. The subsequently supplied `model-run-43458527780-1.zip` provides those snapshots. See `WORKFLOW_ARTIFACT_AUDIT.md` for its findings, the confirmed missing-name capture defect, its fix and a separately labelled supplemental analysis of two completed games.
 
 After reviewing them, define one fixed challenger and evaluate it on later, newly captured dates. Do not reuse the previously inspected final test for model selection, force an Over quota, or copy exploratory results into the public record.

@@ -621,7 +621,7 @@ func main() {
 						}
 					}
 					replayRows[mk] = replay.Record{AuditContext: captureAuditContext(b, row, team, l.PlayerID, statuses, out, consensus[l.GameID]), SelectionPolicy: *selectionPolicy, Period: "game", BookCount: marketViews[props.MarketKey{Game: l.GameID, Player: l.PlayerID, Stat: string(l.Stat)}].Books, CalibrationBefore: cal.TrainedBefore, Date: *date, At: runAt.Format(time.RFC3339), Tip: g.Start,
-						Row: decisionIdentity(row, l.GameID, *date), Policy: policy, Cal: rule, Stat: l.Stat, Line: l.Line, Book: l.Vendor,
+						Row: decisionIdentity(row, l.GameID, *date, name, teamAbbr), Policy: policy, Cal: rule, Stat: l.Stat, Line: l.Line, Book: l.Vendor,
 						QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds,
 						Market: bets.MarketOver(l.OverOdds, l.UnderOdds), P1: pOver}
 

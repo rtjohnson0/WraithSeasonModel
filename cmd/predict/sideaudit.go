@@ -138,10 +138,12 @@ func saveSideAudit(dir, date string, all, picks []scored, hi, minEdge float64) e
 
 // A forecast row is a hypothetical player/date, so it may lack a game ID.
 // Bind the quote's real game before recording an auditable decision.
-func decisionIdentity(r *feat.Row, gameID int, date string) replay.Row {
+func decisionIdentity(r *feat.Row, gameID int, date, name, team string) replay.Row {
 	captured := replay.Capture(r)
 	captured.G.GameID = gameID
 	captured.G.Date = date
+	captured.G.Name = name
+	captured.G.TeamAbbr = team
 	return captured
 }
 

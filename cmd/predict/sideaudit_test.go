@@ -26,8 +26,8 @@ func TestSideAuditDedupesBooksAndRevealsCalibrationFlip(t *testing.T) {
 
 func TestDecisionCaptureBindsQuoteGameWithoutChangingFeatures(t *testing.T) {
 	r := &feat.Row{G: data.PlayerGame{PlayerID: 7, GameID: 0, Date: "2026-11-10"}, X: []float64{1, 2}}
-	got := decisionIdentity(r, 99, "2026-11-10")
-	if got.G.GameID != 99 || r.G.GameID != 0 || *got.X[0] != 1 {
+	got := decisionIdentity(r, 99, "2026-11-10", "Test Player", "MIN")
+	if got.G.GameID != 99 || got.G.Name != "Test Player" || got.G.TeamAbbr != "MIN" || r.G.Name != "" || r.G.TeamAbbr != "" || r.G.GameID != 0 || *got.X[0] != 1 {
 		t.Fatal("decision identity repair changed features or original row")
 	}
 }

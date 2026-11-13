@@ -106,6 +106,10 @@ func collect(dir, before, since string, legacy bool) (Report, error) {
 				skip("identity/stat invalid")
 				continue
 			}
+			if strings.TrimSpace(r.Row.G.Name) == "" {
+				skip("forecast player name not captured")
+				continue
+			}
 			at, ea := time.Parse(time.RFC3339Nano, r.At)
 			tip, et := time.Parse(time.RFC3339Nano, r.Tip)
 			q, eq := time.Parse(time.RFC3339Nano, r.QuoteAt)
