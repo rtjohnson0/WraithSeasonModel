@@ -122,7 +122,7 @@ func main() {
 	minBlend := flag.Float64("minblend", 0, "pull projected minutes this share of the way to each player's normal minutes (0 to 1). `go run ./cmd/bias` recommends a value from all of this season's games")
 	useBias := flag.Bool("bias", false, "apply data/biasfix.json. Off by default: on 2026-10-26 it pulled live projections to 14% under the lines while the lines themselves were accurate (cmd/linecheck)")
 	useCombos := flag.Bool("combos", true, "also score the combined markets (points+rebounds+assists, points+rebounds, points+assists, rebounds+assists). They are tracked in data/combolog.jsonl and shown on the site apart from the picks, never staked, until `go run ./cmd/combos settle` shows they earn it")
-	comboWeight := flag.Float64("comboweight", -1, "-1 (default): a combo's probability uses the calibration its parts (points, rebounds, assists) earned, weighted by their share of the total, so it is only as confident as the singles have earned. 0 to 1: a plain blend with this share from the model, the rest the book's devigged price")
+	comboWeight := flag.Float64("comboweight", -1, "-1: use direct, time-valid combo calibration; 0 to 1: experimental model/book blend for comparisons only, never qualified combo picks")
 	useV2 := flag.Bool("v2", true, "also run the V2 challenger beside the real model: a live correction fitted on earlier days plus a model-forward blend. Its plays are tracked in data/v2log.jsonl and shown on the site's V2 test page; they never change a real pick")
 	v2ModelFile := flag.String("v2model", "model_v2.json", "V2: a second model file in the data directory (train it with `go run ./cmd/train -v2`: teammates-out and missed-shots features on). V2 uses the main model when the file is missing")
 	v2Books := flag.Int("v2books", v2MinBooks, "V2: the fewest books that must list a player's stat for V2 to post it (a thin market is where the median line is least trustworthy)")
@@ -851,6 +851,7 @@ func main() {
 			d2.watch = nil
 			d2.observe = nil
 			d2.weight = *v2Weight
+			d2.research = true
 			d2.m = m2
 			d2.adjust = func(p predictor.Pred, row *feat.Row) predictor.Pred { return v2fix.shiftMinutes(adjustMinutes(p, row)) }
 			d2.scale = func(st data.Stat, row *feat.Row) float64 { return v2fix.statFactor(st) }

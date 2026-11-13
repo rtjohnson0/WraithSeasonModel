@@ -42,6 +42,12 @@ func main() {
 	fs := flag.NewFlagSet(cmd, flag.ExitOnError)
 	dir := fs.String("data", "data", "data directory")
 	switch cmd {
+	case "audit":
+		legacy := fs.Bool("legacy", false, "include cached identity-checked historical outcomes for exploratory diagnosis only")
+		fs.Parse(args)
+		if err := comboAudit(os.Stdout, *dir, *legacy); err != nil {
+			fatal(err)
+		}
 	case "calibrate":
 		before := fs.String("before", time.Now().Format("2006-01-02"), "use only dates strictly before this date")
 		fs.Parse(args)
@@ -71,7 +77,7 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: go run ./cmd/combos count|fit|check|settle|calibrate [flags]")
+	fmt.Fprintln(os.Stderr, "usage: go run ./cmd/combos count|fit|check|settle|calibrate|audit [flags]")
 	os.Exit(2)
 }
 

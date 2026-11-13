@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"strings"
 	"testing"
 
@@ -9,6 +10,65 @@ import (
 	"propsmodel/internal/eval"
 	"propsmodel/internal/predictor"
 )
+
+func TestComboQualificationCannotBypassDirectFit(t *testing.T) {
+	d := comboDeps{weight: -1, calOK: true, cal: eval.Calibration{ByStat: map[string]eval.Cal{"pra": {Slope: .3, Market: .7}}}}
+	if !d.qualifiedCalibration(data.PRA) || d.qualifiedCalibration(data.PR) {
+		t.Fatal("must validate each combo independently")
+	}
+	for _, weight := range []float64{0, .5, 1, 2, math.NaN()} {
+		d.weight = weight
+		if d.qualifiedCalibration(data.PRA) {
+			t.Fatal("experimental weight qualified a pick", weight)
+		}
+	}
+	d.weight = -1
+	d.cal.ByStat["pra"] = eval.Cal{Slope: math.NaN()}
+	if d.qualifiedCalibration(data.PRA) || d.calibrate(data.PRA, predictor.Pred{}, .9, .48) != .48 {
+		t.Fatal("invalid calibration did not fall back to market comparison")
+	}
+}
+
+func TestComboSelectionRequiresFitPriceAndResolvedOwnStatus(t *testing.T) {
+	d := comboDeps{weight: -1, calOK: true, minEdge: .01, cal: eval.Calibration{ByStat: map[string]eval.Cal{"pra": {Slope: .3, Market: .7}}}}
+	s := scored{Stat: data.PRA, Side: "UNDER", Prob: .58, Edge: .03, Odds: -110}
+	if !d.qualifies(s, .55) {
+		t.Fatal("valid combo rejected")
+	}
+	for _, alter := range []func(*scored){
+		func(s *scored) { s.Maybe = "questionable" },
+		func(s *scored) { s.Far = true },
+		func(s *scored) { s.Odds = 0 },
+		func(s *scored) { s.Prob = .53 },
+		func(s *scored) { s.Edge = -.01 },
+		func(s *scored) { s.Stat = data.PR },
+	} {
+		bad := s
+		alter(&bad)
+		if d.qualifies(bad, .55) {
+			t.Fatal("unqualified combo selected", bad)
+		}
+	}
+	d.weight = .5
+	if d.qualifies(s, .55) {
+		t.Fatal("experimental blend became a public pick")
+	}
+	d.research = true
+	if !d.qualifies(s, .55) {
+		t.Fatal("separate research output was disabled")
+	}
+}
+
+func TestComboComparisonsAreNotRankedByUncalibratedReturn(t *testing.T) {
+	watch := []scored{
+		{GameID: 1, PlayerID: 2, Player: "Z Player", Stat: data.PRA, Tier: "COMBOWATCH", Side: "UNDER", Prob: .99, Odds: 110},
+		{GameID: 1, PlayerID: 1, Player: "A Player", Stat: data.PRA, Tier: "COMBOWATCH", Side: "OVER", Prob: .52, Odds: -110},
+	}
+	got := comboDisplay(nil, watch)
+	if len(got) != 2 || got[0].Player != "A Player" || got[1].Prob != .99 {
+		t.Fatal("uncalibrated confidence determines display priority or probabilities were altered", got)
+	}
+}
 
 func TestComboEntriesAreTheirOwnTier(t *testing.T) {
 	s := scored{PlayerID: 7, GameID: 9, Player: "A B", Stat: data.PRA, Side: "UNDER", Line: 38.5, Prob: 0.58, Odds: -115, Units: 1.2, Tier: comboTier}

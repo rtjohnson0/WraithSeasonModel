@@ -47,9 +47,11 @@ type comboDeps struct {
 	corr combo.Corr
 	// cal contains directly fitted combo calibration, never borrowed single-stat confidence.
 	// A nonnegative weight explicitly requests a plain experimental model/book blend.
-	cal       eval.Calibration
-	calOK     bool
-	weight    float64
+	cal    eval.Calibration
+	calOK  bool
+	weight float64
+	// research is reserved for the separately labelled V2 shadow output.
+	research  bool
 	hi        float64
 	minEdge   float64
 	maxGap    float64
@@ -69,16 +71,33 @@ type comboStats struct {
 // calibrate uses direct combo calibration. Without it, use the book baseline;
 // comparisons remain visible, but this fallback does not manufacture an edge.
 func (d comboDeps) calibrate(st data.Stat, pred predictor.Pred, pModel, pMarket float64) float64 {
-	if d.weight >= 0 {
+	if d.weight >= 0 && d.weight <= 1 {
 		return d.weight*pModel + (1-d.weight)*pMarket
 	}
-	if d.calOK {
+	if d.qualifiedCalibration(st) {
 		if cal, ok := d.cal.ByStat[string(st)]; ok {
 			return cal.Apply(pModel, pMarket)
 		}
 	}
 	// No direct, time-valid calibration: do not invent confidence from the singles.
 	return pMarket
+}
+
+// Experimental blends and a missing stat fit are comparisons, never qualified
+// picks. In particular, a command-line weight must not bypass direct validation.
+func (d comboDeps) qualifiedCalibration(st data.Stat) bool {
+	if !finiteCombo(d.weight) || d.weight >= 0 || !d.calOK {
+		return false
+	}
+	c, ok := d.cal.ByStat[string(st)]
+	return ok && finiteCombo(c.Intercept) && finiteCombo(c.Slope) && finiteCombo(c.Market) && c.Slope >= 0
+}
+
+func finiteCombo(v float64) bool { return !math.IsNaN(v) && !math.IsInf(v, 0) }
+
+func (d comboDeps) qualifies(s scored, bar float64) bool {
+	return (d.research || d.qualifiedCalibration(s.Stat)) && s.Maybe == "" && !s.Far &&
+		finiteCombo(s.Prob) && s.Prob >= bar && s.Prob <= 1 && s.Odds != 0 && finiteCombo(s.Edge) && s.Edge >= d.minEdge
 }
 
 // scoreCombos prices validated combined markets. Qualified tracking and
@@ -154,8 +173,13 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		ls := marketLines[mk]
 		if d.observe != nil && !seen[mk] && len(ls) > 0 && l.Line == ls[len(ls)/2] {
 			seen[mk] = true
-			d.observe(lineslog.Market{Player: d.ix.Name(l.PlayerID), TrainedBefore: d.m.TrainedBefore, QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds, Date: d.date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID,
-				Stat: string(l.Stat), Tip: g.Start, Line: l.Line, Books: len(ls), Lo: ls[0], Hi: ls[len(ls)-1], RawOver: pr.Over, MarketOver: market, POver: pOver, AuditVersion: props.QuoteVersion})
+			teamAbbr := g.HomeAbbr
+			if team == g.Visitor {
+				teamAbbr = g.VisitorAbbr
+			}
+			d.observe(lineslog.Market{Player: d.ix.Name(l.PlayerID), Team: teamAbbr, TrainedBefore: d.m.TrainedBefore, QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds, Date: d.date, At: time.Now().UTC().Format(time.RFC3339), GameID: l.GameID, PlayerID: l.PlayerID,
+				Stat: string(l.Stat), Tip: g.Start, Line: l.Line, Books: views[props.MarketKey{Game: l.GameID, Player: l.PlayerID, Stat: string(l.Stat)}].Books, Lo: ls[0], Hi: ls[len(ls)-1], RawOver: pr.Over, MarketOver: market, POver: pOver, AuditVersion: props.QuoteVersion,
+				Proj: sm.dist.Mean(l.Stat), ProjMin: sm.pred.Minutes, Shift: sm.pred.Minutes - sm.row.TypicalMinutes()})
 		}
 		cs.Scored++
 		if pOver >= 0.5 {
@@ -192,7 +216,13 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 			Dist: comboDist(sm.dist, l.Stat),
 		}
 		if d.availability != nil {
-			s.Availability = d.availability(s, sm.pred, sm.row, nil)
+			s.Availability = d.availability(s, sm.pred, sm.row, func(p predictor.Pred) (float64, error) {
+				r, err := combo.Simulate(p, d.corr, 2000, int64(l.PlayerID)*1000003+int64(l.GameID)).ProbOver(l.Stat, l.Line)
+				if err != nil {
+					return 0, err
+				}
+				return d.calibrate(l.Stat, p, r.Over, market), nil
+			})
 		}
 		s.Why = strings.Join(parts, "; ")
 		s.Why = addWhy(s.Why, fmt.Sprintf("model alone %.0f%% over, book %.0f%%, calibrated %.0f%%", 100*pr.Over, 100*market, 100*pOver))
@@ -210,18 +240,24 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 			// disguised as model confidence. Qualification above/below is unchanged.
 			w.Side, w.Prob, w.ProbRaw, w.Odds = comboEstimate(pr.Over, l.OverOdds, l.UnderOdds)
 			w.Edge = bets.Edge(w.Prob, w.Odds)
+			if d.availability != nil {
+				w.Availability = d.availability(w, sm.pred, sm.row, func(p predictor.Pred) (float64, error) {
+					r, err := combo.Simulate(p, d.corr, 2000, int64(l.PlayerID)*1000003+int64(l.GameID)).ProbOver(l.Stat, l.Line)
+					return r.Over, err
+				})
+			}
 			w.Why = addWhy(strings.Join(parts, "; "), "uncalibrated combo simulation; comparison estimate, not a qualified pick")
 			*d.watch = append(*d.watch, w)
 		}
-		if !s.Far && (pOver >= d.hi || pOver <= 1-d.hi) && s.Edge >= d.minEdge {
+		if d.qualifies(s, d.hi) {
 			cands = append(cands, s)
 		}
-		if !s.Far && (pOver >= 0.55 || pOver <= 0.45) && s.Edge >= d.minEdge {
+		if d.qualifies(s, .55) {
 			cs.Cleared++
 		}
 	}
 	cands = bestLinePerPick(cands)
-	sort.SliceStable(cands, func(i, j int) bool { return cands[i].Edge > cands[j].Edge })
+	sort.SliceStable(cands, func(i, j int) bool { return valueBefore(cands[i], cands[j]) })
 	perP := map[int]int{}
 	var out []scored
 	for _, c := range cands {
@@ -330,7 +366,27 @@ func comboDisplay(picks, watch []scored) []scored {
 		perPlayer[s.PlayerID]++
 	}
 	watch = append([]scored(nil), watch...)
-	sort.SliceStable(watch, func(i, j int) bool { return valueBefore(watch[i], watch[j]) })
+	// Comparisons have no validated probability. Do not sort them by the
+	// apparent ROI of an uncalibrated estimate (which amplified extreme unders).
+	sort.SliceStable(watch, func(i, j int) bool {
+		a, b := watch[i], watch[j]
+		if a.GameID != b.GameID {
+			return a.GameID < b.GameID
+		}
+		if a.Player != b.Player {
+			return a.Player < b.Player
+		}
+		if a.PlayerID != b.PlayerID {
+			return a.PlayerID < b.PlayerID
+		}
+		if a.Stat != b.Stat {
+			return a.Stat < b.Stat
+		}
+		if a.Vendor != b.Vendor {
+			return a.Vendor < b.Vendor
+		}
+		return a.Line < b.Line
+	})
 	groups := map[int][]scored{}
 	for _, s := range watch {
 		groups[s.GameID] = append(groups[s.GameID], s)

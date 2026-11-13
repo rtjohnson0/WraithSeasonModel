@@ -7,6 +7,7 @@ import { tipState, useNow } from './time.js'
 import QuoteDetails from './QuoteDetails.jsx'
 import PickReason from './PickReason.jsx'
 import { visibleQuote, quoteState } from './quote.js'
+import { comboGroups } from './combo.js'
 
 const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
 
@@ -33,7 +34,9 @@ export default function Combos({ site }) {
   const [stat, setStat] = useState('all')
   const [side, setSide] = useState('ALL')
   const [all, setAll] = useState(false)
-  const plays = (board.combos || []).filter((p) => visibleQuote(p))
+  const [view, setView] = useState('picks')
+  const groups = comboGroups((board.combos || []).filter((p) => visibleQuote(p)))
+  const plays = groups[view]
   const list = plays.filter((c) => (stat === 'all' || c.stat === stat) && (side === 'ALL' || c.side === side))
   const shown = all ? list : list.slice(0, 24)
   const rows = (rec.rows || []).map((r) => ({ ...r, name: r.name === 'OVER' ? 'Overs' : r.name === 'UNDER' ? 'Unders' : statLabel[r.name] || r.name }))
@@ -41,16 +44,21 @@ export default function Combos({ site }) {
   return (
     <div className="combopage">
       <section className="day">
-        <h1>Combo lines</h1>
+        <h1>Combo picks</h1>
         <p className="small">PRA, points + rebounds, points + assists, and rebounds + assists. Tap a line for its projection, recent games and explanation.</p>
 
 
-        {!plays.length && <p className="notice">No combo picks have been published for this slate yet.</p>}
+        <Seg label="View" value={view} onChange={setView} options={[
+          ['picks', 'Selected plays', groups.picks.length],
+          ['comparisons', 'Line comparisons', groups.comparisons.length],
+        ]}/>
+        {view === 'comparisons' && <p className="small">Research comparisons, not selected bets. Projections and recent games are available below; raw simulations have not earned a reliable hit-rate estimate.</p>}
+        {!plays.length && <p className="notice">{view === 'picks' ? 'No combo currently clears the calibrated selection rules. Line comparisons remain available in the next tab.' : 'No combo line comparisons are available for this slate.'}</p>}
       </section>
 
       {plays.length > 0 && (
         <section className="overs combos" aria-label="Today's combo plays">
-          <h2>Combo picks & comparisons</h2>
+          <h2>{view === 'picks' ? 'Selected combo plays' : 'Combo line comparisons'}</h2>
           <div className="combo-filters">
             <Seg
               label="Combo"
