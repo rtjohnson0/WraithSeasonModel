@@ -39,6 +39,7 @@ Run "refresh advanced stats"       { go run ./cmd/pull advanced -seasons $Season
 Run "current rosters"              { go run ./cmd/pull players }
 Run "audit quote provenance"       { python scripts/audit_quotes.py --data data --apply }
 Run "grade past picks"             { go run ./cmd/settle } -Optional
+Run "grade game markets" { go run ./cmd/games -settle } -Optional
 Run "grade combo plays"            { go run ./cmd/combos settle } -Optional
 Run "grade every logged line"      { go run ./cmd/lines } -Optional
 Run "grade the V2 challenger"      { go run ./cmd/v2 settle } -Optional
@@ -54,6 +55,7 @@ Run "extra books (SportsGameOdds)" { go run ./cmd/sgo snapshot } -Optional
 
 Run "forward accuracy evaluation" { go run ./cmd/accuracy }
 Run "offline accuracy report" { python scripts/accuracy_report.py }
+Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
 Run "player props"                 { go run ./cmd/predict }
 Run "game lines"                   { go run ./cmd/games } -Optional
 

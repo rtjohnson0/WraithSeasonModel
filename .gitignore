@@ -61,3 +61,7 @@ forecast_audit/
 /private/
 /server/.env
 .venv/
+
+!data/gamepicklog.jsonl
+!data/gamesettled.jsonl
+!data/combohealth.json

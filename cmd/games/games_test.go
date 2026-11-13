@@ -55,3 +55,20 @@ func TestCleanRowsDropsLinesThatLookWrong(t *testing.T) {
 		}
 	}
 }
+
+func TestSpreadQuotesReachBoardWithCorrectAwaySideAndPush(t *testing.T) {
+	rows := []team.Odds{row("a", -3, 217, -150, 130, ""), row("b", -3, 217, -150, 130, ""), row("c", -3, 217, -150, 130, "")}
+	g := makeGameBoard(7, "BOS", "NYK", "2026-11-13T00:00:00Z", 3, 217, 15, 12, rows)
+	n := 0
+	for _, q := range g.Quotes {
+		if q.Market == "spread" {
+			n++
+			if q.Line != -3 || q.Sides[0].Push <= 0 || q.Sides[0].Conditional != .5 || q.Sides[1].Label != "NYK" {
+				t.Fatal(q)
+			}
+		}
+	}
+	if n != 3 {
+		t.Fatal("spreads missing", g)
+	}
+}

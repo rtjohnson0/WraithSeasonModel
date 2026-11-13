@@ -203,6 +203,9 @@ jobs:
             data/*audit*.json
             data/*before-result-*
             data/exclusions.jsonl
+            data/gamepicklog.jsonl
+            data/gamesettled.jsonl
+            data/combohealth.json
             data/*.csv
             data/accuracy_report.html
             data/tail_shadow/replay

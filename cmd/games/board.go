@@ -9,6 +9,9 @@ func makeGameBoard(id int, home, away, tip string, margin, total, totalSigma, ma
 	g := gameboard.Game{ID: id, Home: home, Away: away, Tip: tip, HomeScore: (total + margin) / 2, AwayScore: (total - margin) / 2, Margin: margin, Total: total, TotalLow: total - 1.28155*totalSigma, TotalHigh: total + 1.28155*totalSigma, Quotes: []gameboard.Quote{}}
 	counts := map[string]int{}
 	for _, o := range rows {
+		if o.HasSpread {
+			counts["spread"]++
+		}
 		if o.HasTotal {
 			counts["total"]++
 		}
@@ -18,6 +21,15 @@ func makeGameBoard(id int, home, away, tip string, margin, total, totalSigma, ma
 	}
 	for _, o := range rows {
 		base := gameboard.Quote{Book: o.Vendor, QuoteAt: o.CapturedAt, SourceUpdatedAt: o.Stamp, Tip: tip}
+		if o.HasSpread && counts["spread"] >= 3 {
+			q := base
+			q.Market = "spread"
+			q.Line = o.SpreadHome
+			q.BookCount = counts["spread"]
+			ph, pa, pp := gameboard.TotalProb(margin, marginSigma, -o.SpreadHome)
+			q.Sides = gameboard.Pair([2]string{home, away}, [2]int{o.SpreadHomeOdds, o.SpreadAwayOdds}, [2]float64{ph, pa}, pp)
+			g.Quotes = append(g.Quotes, q)
+		}
 		if o.HasTotal && counts["total"] >= 3 {
 			q := base
 			q.Market = "total"

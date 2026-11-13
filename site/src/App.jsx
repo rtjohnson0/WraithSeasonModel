@@ -107,7 +107,7 @@ export default function App() {
         {site && page === 'combos' && <Combos site={site} />}
         {site && page === 'record' && <Record site={site} />}
         {site && page === 'v2' && <V2 site={site} />}
-        {site && page === 'about' && <About />}
+        {site && page === 'about' && <About site={site} />}
       </main>
 
       <footer className="foot">

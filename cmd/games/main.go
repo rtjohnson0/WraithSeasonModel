@@ -24,12 +24,14 @@ import (
 	"propsmodel/internal/bets"
 	"propsmodel/internal/data"
 	"propsmodel/internal/gameboard"
+	"propsmodel/internal/matchup"
 	"propsmodel/internal/props"
 	"propsmodel/internal/team"
 )
 
 func main() {
 	dir := flag.String("data", "data", "data directory")
+	settleOnly := flag.Bool("settle", false, "grade frozen game-market decisions against explicit final scores")
 	backtest := flag.Bool("backtest", false, "test against last season's opening lines instead of picking today's games")
 	season := flag.Int("season", 2025, "season (start year) to backtest")
 	date := flag.String("date", "", "game date YYYY-MM-DD (default: today, US Eastern)")
@@ -42,9 +44,31 @@ func main() {
 	minPrior := flag.Int("minprior", 150, "backtest: games needed before the second stage is fitted")
 	flag.Parse()
 
+	if *settleOnly {
+		if err := gameboard.Settle(*dir); err != nil {
+			fatal(err)
+		}
+		return
+	}
+	if *date == "" && !*backtest {
+		loc, e := time.LoadLocation("America/New_York")
+		if e != nil {
+			fatal(e)
+		}
+		*date = time.Now().In(loc).Format("2006-01-02")
+	}
 	rows, err := data.LoadStatsDir(*dir)
 	if err != nil {
 		fatal(err)
+	}
+	if *date != "" && !*backtest {
+		var prior []data.PlayerGame
+		for _, r := range rows {
+			if r.Date < *date {
+				prior = append(prior, r)
+			}
+		}
+		rows = prior
 	}
 	games := team.Build(rows)
 	samples, state := team.Samples(games)
@@ -370,6 +394,11 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 		}
 		byGame[o.GameID] = append(byGame[o.GameID], o)
 	}
+	historicalRows, err := data.LoadStatsDir(dir)
+	if err != nil {
+		fatal(err)
+	}
+	context := matchup.Build(historicalRows, date)
 	day := data.DayNumber(date)
 
 	ids := make([]int, 0, len(gm))
@@ -410,6 +439,13 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 		muM := cal.Margin.Mean(-c.SpreadHome, pm)
 		muT := cal.Total.Mean(c.Total, pt)
 		gameView := makeGameBoard(id, h, a, g.Start, muM, muT, cal.Total.Sigma, cal.Margin.Sigma, rowsO)
+		gameView.HomeID, gameView.AwayID = g.Home, g.Visitor
+		if c, ok := context.Teams[g.Home]; ok {
+			gameView.HomeContext = &c
+		}
+		if c, ok := context.Teams[g.Visitor]; ok {
+			gameView.AwayContext = &c
+		}
 		marketMargin, marketTotal := -c.SpreadHome, c.Total
 		gameView.RatingsMargin, gameView.RatingsTotal, gameView.MarketMargin, gameView.MarketTotal = &pm, &pt, &marketMargin, &marketTotal
 		board.Games = append(board.Games, gameView)
@@ -525,6 +561,12 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 	tw.Flush()
 
 	if err := board.Save(dir); err != nil {
+		fatal(err)
+	}
+	if err := gameboard.Log(dir, board, hi, minEdge); err != nil {
+		fatal(err)
+	}
+	if err := gameboard.Settle(dir); err != nil {
 		fatal(err)
 	}
 	path := filepath.Join(dir, fmt.Sprintf("gamepicks_%s.csv", date))

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { explainProp, explainGame, bestGameQuote } from './explain.js'
+import { explainProp, explainGame, bestGameQuote, positionReasons } from './explain.js'
 test('a favorable scoring matchup is a counterargument to an under', () => {
  const e = explainProp({side:'UNDER',period:'game',stat:'points',line:20.5,projStat:18.9,projMin:29,minTypical:34,prob:.57,last5:[1,2,3,4,5],l5Hits:3,defense:{helps:false,text:'Allows the 2nd-most points to centers (+37%)'}})
  assert(e.against.some((s) => s.includes('2nd-most') && s.includes('against the Under')))
@@ -32,4 +32,15 @@ test('default book compares quotes for predicted winner instead of feed order',(
 test('raw combo estimates are explicitly distinct from calibrated probabilities',()=>{
  const e=explainProp({side:'OVER',period:'game',stat:'pra',line:30.5,projStat:34,prob:.637,probabilityBasis:'estimate'})
  assert(e.decision.includes('63.7%'));assert(e.decision.includes('uncalibrated simulation'));assert(!e.decision.includes('final probability also reflects'))
+})
+
+test('spread labels use each side handicap and analyze cover rather than winning outright',()=>{
+ const e=explainGame({home:'BOS',away:'NYK',margin:2,total:220,homeScore:111,awayScore:109},{market:'spread',line:-5.5,sides:[{label:'BOS',conditional:.4,odds:-110},{label:'NYK',conditional:.6,odds:-110}]})
+ assert.equal(e.choice,'NYK +5.5');assert(e.why.includes('cover probability'));assert(!e.why.includes('Projected total'))
+})
+
+test('combo matchup explanation covers its components rather than borrowing points-only defense',()=>{
+ const context={opponent:{name:'NYK'},position:[{stat:'points',rank:1,of:30,average:10,games:8,position:'centers'},{stat:'rebounds',rank:29,of:30,average:14,games:8,position:'centers'},{stat:'assists',rank:2,of:30,average:3,games:8,position:'centers'}]}
+ const reasons=positionReasons({stat:'ra',side:'UNDER',matchupContext:context})
+ assert.equal(reasons.length,2);assert(reasons.some(x=>!x.helps&&x.text.includes('Rebounds')));assert(!reasons.some(x=>x.text.includes('points allowed')))
 })

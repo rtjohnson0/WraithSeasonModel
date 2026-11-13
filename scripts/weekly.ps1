@@ -21,5 +21,6 @@ if (-not (Test-Path "data\opening_games_$Last.jsonl")) {
 Run "backtest + calibration (history + live snapshots)" { go run ./cmd/backtest -season $Last -live }
 Run "retrain"                                           { go run ./cmd/train }
 Run "game-line backtest"                                { go run ./cmd/games -backtest -season $Last } -Optional
+Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
 Write-Host ""
 Write-Host "Done. Paste the backtest scorecard to review it."

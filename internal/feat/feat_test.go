@@ -481,7 +481,11 @@ func TestAdjustShortExits(t *testing.T) {
 }
 
 func TestDefenseRank(t *testing.T) {
-	b := NewBuilder(miniLeague(), nil)
+	games := miniLeague()
+	for i := range games {
+		games[i].Pos = "F"
+	}
+	b := NewBuilder(games, nil)
 	// Team 1's players outproduce team 2's, so team 2 allows more to forwards than team 1 does.
 	r, ok := b.DefenseRank(11, 2, data.Points, "2025-11-24")
 	if !ok {
@@ -539,4 +543,11 @@ func hasName(names []string, n string) bool {
 		}
 	}
 	return false
+}
+
+func TestDefenseRankDoesNotGuessUnknownPosition(t *testing.T) {
+	b := NewBuilder(miniLeague(), nil)
+	if _, ok := b.DefenseRank(11, 2, data.Points, "2025-11-24"); ok {
+		t.Fatal("missing position treated as forwards")
+	}
 }

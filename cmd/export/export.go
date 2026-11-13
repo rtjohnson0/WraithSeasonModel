@@ -13,6 +13,7 @@ import (
 	"propsmodel/internal/bets"
 	"propsmodel/internal/boardstate"
 	"propsmodel/internal/gameboard"
+	"propsmodel/internal/matchup"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/props"
 	"propsmodel/internal/quarter"
@@ -21,6 +22,7 @@ import (
 
 // Play is one pick on the board.
 type Play struct {
+	MatchupContext       *matchup.Prop         `json:"matchupContext,omitempty"`
 	Availability         *availability.Context `json:"availability,omitempty"`
 	Period               string                `json:"period,omitempty"`
 	Tip                  string                `json:"tip,omitempty"`
@@ -296,6 +298,8 @@ type Site struct {
 	ResultAudits     []json.RawMessage   `json:"resultAudits,omitempty"`
 	SideAudit        json.RawMessage     `json:"sideAudit,omitempty"`
 	Quarter          *quarter.Board      `json:"quarter,omitempty"`
+	GameRecord       []gameboard.Result  `json:"gameRecord,omitempty"`
+	ComboHealth      json.RawMessage     `json:"comboHealth,omitempty"`
 	GameMarkets      *gameboard.Snapshot `json:"gameMarkets,omitempty"`
 	Status           *boardstate.Status  `json:"status,omitempty"`
 	Archive          *ArchiveData        `json:"archive,omitempty"`

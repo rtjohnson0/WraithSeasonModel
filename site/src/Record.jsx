@@ -1,3 +1,4 @@
+import GameRecord from './GameRecord.jsx'
 import { useState } from 'react'
 import { DayGrid, HitRateBars, UnitsChart } from './Charts.jsx'
 import Lines from './Lines.jsx'
@@ -79,6 +80,7 @@ export default function Record({ site }) {
   const current = !!site.record?.tiers?.length
   const historical = !!site.archive?.record?.tiers?.length
   return <>
+    {!site.hideGameRecord&&<GameRecord rows={site.gameRecord||[]}/>}
     {current && <RecordBody site={site} />}
     {historical && <RecordBody site={{...site,record:site.archive.record,lines:null}} title={current ? 'Historical results' : 'The record'} />}
     {!current && !historical && <p className="notice">No completed results yet.</p>}

@@ -23,6 +23,7 @@ python3 scripts/audit_quotes.py --data data --apply
 echo "== grade past picks =="
 go run ./cmd/settle || echo "settle skipped"
 go run ./cmd/combos settle || echo "combo settle skipped"
+go run ./cmd/games -settle || echo "game settlement unavailable"
 go run ./cmd/lines || echo "lines report skipped"
 go run ./cmd/v2 settle || echo "v2 settle skipped"
 echo "== review yesterday (csv) =="
@@ -38,6 +39,7 @@ go run ./cmd/sgo snapshot || echo "sgo snapshot skipped"
 echo "== player props =="
 go run ./cmd/accuracy
 python3 scripts/accuracy_report.py
+go run ./cmd/combos calibrate || echo "combo calibration unavailable; comparison mode retained"
 go run ./cmd/predict
 echo "== game lines =="
 go run ./cmd/games || echo "game lines skipped"

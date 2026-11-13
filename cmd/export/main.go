@@ -105,6 +105,13 @@ func main() {
 		Combos:      buildComboRecord(comboSettled, 120),
 		Lines:       buildLinesRecord(*dir),
 	}
+	site.GameRecord, err = gameboard.LoadResults(*dir)
+	if err != nil {
+		fatal(err)
+	}
+	if raw, e := os.ReadFile(filepath.Join(*dir, "combohealth.json")); e == nil && json.Valid(raw) {
+		site.ComboHealth = raw
+	}
 	site.Quarter, err = quarter.LoadBoard(*dir, *date)
 	if err != nil {
 		fatal(err)
@@ -151,6 +158,7 @@ func main() {
 	if site.V2 != nil && (snapshot == nil || site.V2.At != snapshot.At) {
 		site.V2 = nil
 	}
+	enrichMatchups(&site, *dir)
 	// Source-only deployments must not replace a published slate with missing state.
 	// Use only the exact previously published board, never a best historical line.
 	if snapshot == nil {
@@ -160,6 +168,9 @@ func main() {
 			site.Status = previous.Status
 			site.Quarter = previous.Quarter
 			site.GameMarkets = previous.GameMarkets
+			if len(site.GameRecord) == 0 {
+				site.GameRecord = previous.GameRecord
+			}
 			site.V2 = previous.V2
 		} else {
 			fatal(fmt.Errorf("no saved board or matching published slate; run pretip before publishing"))

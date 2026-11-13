@@ -1,10 +1,11 @@
-export default function About() {
+import V2Methodology from './V2Methodology.jsx'
+export default function About({site}) {
   return (
     <article className="about">
       <h1>How the picks work</h1>
       <p>
         For every NBA player prop with a posted line, a model projects the player's minutes and then his points,
-        rebounds or assists in those minutes. It compares that with the sportsbook line and the price, and gives the
+        rebounds, assists or made threes in those minutes. It compares that with the sportsbook line and the price, and gives the
         chance that the over or the under hits.
       </p>
 
@@ -45,6 +46,8 @@ export default function About() {
         the same information, and the model's lean is often small.
       </p>
 
+      <section id="v2-methodology" className="methodology"><h2>V2: the challenger model</h2><p>V2 runs alongside the main model with its own experimental board and record. It is paper tracking, not evidence of a profitable betting strategy.</p><V2Methodology info={site?.v2?.info}/></section>
+      <h2>Game markets and matchup rankings</h2><p>Moneyline, spreads and totals use team scoring history blended with the sportsbook consensus. A likely winner can still have a poor price. Selected game plays need 55% probability, at least a 1 percentage point price edge and supporting market-level evidence. All model directions and selected plays have separate record views.</p><p>Team and position rankings use explicit final full-game box scores from the current season before the forecast date. Defensive rank #1 allows the fewest. These are per-game totals including overtime, not opponent-adjusted or pace-adjusted defensive ratings. Broad feed position groups are used; a missing position is not guessed. Rankings are descriptive and do not automatically change a probability.</p>
     </article>
   )
 }

@@ -18,7 +18,7 @@ STATE_FILES = [
     'biasfix.json', 'minfix.json', 'wofix.json', 'runs.jsonl', 'more.json',
     'projlog.jsonl', 'model.json', 'combolog.jsonl', 'combosettled.jsonl',
     'combocorr.json', 'v2log.jsonl', 'v2settled.jsonl', 'v2.json', 'model_v2.json',
-    'combocalibration.json', 'exclusions.jsonl', 'model_tail.json', 'calibration_tail.json',
+    'gamepicklog.jsonl', 'gamesettled.jsonl', 'combohealth.json', 'combocalibration.json', 'exclusions.jsonl', 'model_tail.json', 'calibration_tail.json',
 ]
 MODEL_BUNDLE = ['data/' + x for x in ('model.json', 'model_v2.json', 'calibration.json',
                 'combocalibration.json', 'gamecal.json', 'biasfix.json', 'minfix.json',
@@ -70,6 +70,8 @@ def record_key(name, row):
         return json.dumps(row, sort_keys=True, separators=(',', ':'))
     if name.endswith('exclusions.jsonl'):
         return row.get('id', json.dumps(row, sort_keys=True))
+    if name.endswith(('gamepicklog.jsonl', 'gamesettled.jsonl')):
+        return (row.get('date'), row.get('game_id'), row.get('market'))
     return (row.get('date'), row.get('game_id', row.get('game')),
             row.get('player_id', row.get('pid')), row.get('stat'), row.get('side'),
             row.get('book'), row.get('line'), row.get('period', 'game'))
@@ -126,6 +128,10 @@ def merge_jsonl(name, base, ours, theirs):
             value = ov
         elif is_input(name):
             value = prefer_input(ov, tv)
+        elif name.endswith('gamesettled.jsonl'):
+            value = prefer_input(ov, tv, field='sourceAt')
+        elif name.endswith('gamepicklog.jsonl'):
+            value = min((ov, tv), key=lambda r: r.get('at', ''))
         elif name.endswith('settled.jsonl'):
             value = prefer_input(ov, tv, field='source_fetched_at')
         elif name.endswith('projlog.jsonl') or '/lines/market_' in name:

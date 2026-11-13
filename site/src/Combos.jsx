@@ -6,7 +6,7 @@ import { marketLabel, oddsText, pct, prettyDate, shortDate, statLabel } from './
 import { tipState, useNow } from './time.js'
 import QuoteDetails from './QuoteDetails.jsx'
 import PickReason from './PickReason.jsx'
-import { visibleQuote, quoteState } from './quote.js'
+import { bookName, visibleQuote, quoteState } from './quote.js'
 import { comboGroups } from './combo.js'
 
 const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
@@ -16,8 +16,8 @@ function ComboCard({ c, now }) {
  const comparison=c.tier==='COMBOWATCH'
  const confidence=comparison?(c.probRaw??c.prob):c.prob
  return <li className="combo-row"><details>
-  <summary className="combo-summary"><span><b>{c.player} <small>{c.team}</small></b><span>{c.side==='OVER'?'Over':'Under'} {c.line} {marketLabel(c)}</span><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} {c.book}</small>{c.availability&&<small className="availability-hint">Availability watch · Compare minutes</small>}</span>
-   <span className="combo-strip"><LineStrip line={c.line} proj={c.projStat} games={c.last5} side={c.side}/></span><span className="combo-prob">{comparison ? c.projStat.toFixed(1) : pct(confidence,1)}<small>{comparison ? 'Projected total' : 'Model probability'}</small><small>View analysis⌄</small></span></summary>
+  <summary className="combo-summary"><span><small className="card-eyebrow">{c.matchup} · {comparison?'Research comparison':'Selected combo'}</small><b>{c.player} <small className="team-chip">{c.team}</small></b><span>{c.side==='OVER'?'Over':'Under'} {c.line} {marketLabel(c)}</span><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} · {bookName(c.book)}</small>{c.availability&&<small className="availability-hint">Availability watch · Compare minutes</small>}</span>
+   <span className="combo-strip"><LineStrip line={c.line} proj={c.projStat} games={c.last5} side={c.side}/></span><span className="combo-prob">{comparison ? c.projStat.toFixed(1) : pct(confidence,1)}<small>{comparison ? 'Projected total' : 'Model probability'}</small><small className="expand-hint">View analysis <span aria-hidden="true">⌄</span></small></span></summary>
   <div className="combo-expanded"><QuoteDetails p={c} compact/>
    {comparison && <p className="small">Raw simulation: {pct(confidence,1)} for this side. This has not been calibrated or demonstrated as a hit rate; it has not cleared the combo selection rules.</p>}
    <p>Projected <b>{c.projStat.toFixed(1)}</b> in {Math.round(c.projMin)} minutes · {c.matchup}</p>
@@ -34,7 +34,7 @@ export default function Combos({ site }) {
   const [stat, setStat] = useState('all')
   const [side, setSide] = useState('ALL')
   const [all, setAll] = useState(false)
-  const [view, setView] = useState('picks')
+  const [view, setView] = useState(()=>comboGroups(board.combos||[]).picks.length?'picks':'comparisons')
   const groups = comboGroups((board.combos || []).filter((p) => visibleQuote(p)))
   const plays = groups[view]
   const list = plays.filter((c) => (stat === 'all' || c.stat === stat) && (side === 'ALL' || c.side === side))
@@ -52,7 +52,9 @@ export default function Combos({ site }) {
           ['picks', 'Selected plays', groups.picks.length],
           ['comparisons', 'Line comparisons', groups.comparisons.length],
         ]}/>
+        {!groups.picks.length && groups.comparisons.length>0 && <p className="small">Showing available projections while the combo selection checks gather evidence.</p>}
         {view === 'comparisons' && <p className="small">Research comparisons, not selected bets. Projections and recent games are available below; raw simulations have not earned a reliable hit-rate estimate.</p>}
+        {site.comboHealth && <div className="combo-readiness"><b>Combo readiness</b><p>{site.comboHealth.status}</p><p className="small">{site.comboHealth.eligibleRows} eligible pregame forecasts across {site.comboHealth.eligibleDates||0} dates · {site.comboHealth.trainingRows} for calibration · {site.comboHealth.evaluationRows} on later dates. Each combo type must pass its own evaluation before becoming a selected play.</p></div>}
         {!plays.length && <p className="notice">{view === 'picks' ? 'No combo currently clears the calibrated selection rules. Line comparisons remain available in the next tab.' : 'No combo line comparisons are available for this slate.'}</p>}
       </section>
 

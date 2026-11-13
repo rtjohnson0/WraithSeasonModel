@@ -62,24 +62,27 @@ var Stats = []Stat{Points, Rebounds, Assists, Threes}
 
 // PlayerGame is one player's box score line for one game they played.
 type PlayerGame struct {
-	SourceFinal bool `json:"source_final,omitempty"` // explicit Final status and game/team membership; used by availability history only
-	PlayerID    int
-	Name        string
-	TeamID      int
-	TeamAbbr    string // BOS, if the API row carried it (display only)
-	GameID      int
-	Date        string // YYYY-MM-DD
-	Season      int    // start year, 2025 = the 2025-26 season
-	Minutes     float64
-	Pts         float64
-	Reb         float64
-	Ast         float64
-	Fga         float64 // field goal attempts (0 if the API row did not say)
-	Fgm         float64
-	Fg3a        float64 // three-point attempts (0 if the API row did not say)
-	Fg3m        float64 // three-pointers made
-	Blk         float64 // blocks (0 if the API row did not say)
-	Pos         string  // G, F, C or a mix such as G-F (empty if the API row did not say)
+	AnalyticsReady bool // explicit final, complete stat fields, download provenance and final scores
+	FinalHomeScore float64
+	FinalAwayScore float64
+	SourceFinal    bool `json:"source_final,omitempty"` // explicit Final status and game/team membership; used by availability history only
+	PlayerID       int
+	Name           string
+	TeamID         int
+	TeamAbbr       string // BOS, if the API row carried it (display only)
+	GameID         int
+	Date           string // YYYY-MM-DD
+	Season         int    // start year, 2025 = the 2025-26 season
+	Minutes        float64
+	Pts            float64
+	Reb            float64
+	Ast            float64
+	Fga            float64 // field goal attempts (0 if the API row did not say)
+	Fgm            float64
+	Fg3a           float64 // three-point attempts (0 if the API row did not say)
+	Fg3m           float64 // three-pointers made
+	Blk            float64 // blocks (0 if the API row did not say)
+	Pos            string  // G, F, C or a mix such as G-F (empty if the API row did not say)
 
 	Day           int // days since 1970-01-01, for date arithmetic
 	HomeTeamID    int // 0 if the API row did not say
@@ -181,17 +184,19 @@ func ParseMinutes(raw json.RawMessage) float64 {
 }
 
 type rawStat struct {
-	Period *int            `json:"period"`
-	Min    json.RawMessage `json:"min"`
-	Pts    *float64        `json:"pts"`
-	Reb    *float64        `json:"reb"`
-	Ast    *float64        `json:"ast"`
-	Fga    *float64        `json:"fga"`
-	Fgm    *float64        `json:"fgm"`
-	Fg3a   *float64        `json:"fg3a"`
-	Fg3m   *float64        `json:"fg3m"`
-	Blk    *float64        `json:"blk"`
-	Player struct {
+	FetchedAt string          `json:"_stats_fetched_at"`
+	Endpoint  string          `json:"_stats_endpoint"`
+	Period    *int            `json:"period"`
+	Min       json.RawMessage `json:"min"`
+	Pts       *float64        `json:"pts"`
+	Reb       *float64        `json:"reb"`
+	Ast       *float64        `json:"ast"`
+	Fga       *float64        `json:"fga"`
+	Fgm       *float64        `json:"fgm"`
+	Fg3a      *float64        `json:"fg3a"`
+	Fg3m      *float64        `json:"fg3m"`
+	Blk       *float64        `json:"blk"`
+	Player    struct {
 		ID        int    `json:"id"`
 		FirstName string `json:"first_name"`
 		LastName  string `json:"last_name"`
@@ -203,12 +208,14 @@ type rawStat struct {
 		Abbr string `json:"abbreviation"`
 	} `json:"team"`
 	Game struct {
-		Status        string `json:"status"`
-		ID            int    `json:"id"`
-		Date          string `json:"date"`
-		Season        int    `json:"season"`
-		HomeTeamID    int    `json:"home_team_id"`
-		VisitorTeamID int    `json:"visitor_team_id"`
+		Status        string   `json:"status"`
+		HomeScore     *float64 `json:"home_team_score"`
+		AwayScore     *float64 `json:"visitor_team_score"`
+		ID            int      `json:"id"`
+		Date          string   `json:"date"`
+		Season        int      `json:"season"`
+		HomeTeamID    int      `json:"home_team_id"`
+		VisitorTeamID int      `json:"visitor_team_id"`
 	} `json:"game"`
 }
 
@@ -254,7 +261,10 @@ func LoadStatsFile(path string) ([]PlayerGame, error) {
 		if season == 0 {
 			season = SeasonOf(date)
 		}
+		_, stampErr := time.Parse(time.RFC3339Nano, r.FetchedAt)
+		complete := r.Pts != nil && r.Reb != nil && r.Ast != nil && r.Fg3m != nil && r.Game.HomeScore != nil && r.Game.AwayScore != nil && r.Endpoint == "/nba/v1/stats" && stampErr == nil
 		out = append(out, PlayerGame{
+			AnalyticsReady: complete, FinalHomeScore: val(r.Game.HomeScore), FinalAwayScore: val(r.Game.AwayScore),
 			SourceFinal: strings.EqualFold(strings.TrimSpace(r.Game.Status), "Final") && r.Team.ID != 0 && (r.Team.ID == r.Game.HomeTeamID || r.Team.ID == r.Game.VisitorTeamID),
 			PlayerID:    r.Player.ID,
 			Name:        strings.TrimSpace(r.Player.FirstName + " " + r.Player.LastName),

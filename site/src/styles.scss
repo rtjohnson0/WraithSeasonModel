@@ -526,3 +526,47 @@ button:disabled { opacity: .65; cursor: wait; }
 .availability-hint { display: block; margin-top: 6px; font-size: .8rem; color: #e8c785; }
 
 .whop-access { display: inline-block; padding: 12px 18px; background: #a98aff; color: #10091c; border-radius: 6px; font-weight: 600; text-decoration: none; }
+
+.team-ranks { margin: 1.2rem 0; padding: 1rem; border: 1px solid #44315f; border-radius: .6rem; background: #100d19; }
+.team-ranks h4 { margin-top: 0; }
+.team-rank-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:1rem; }
+.team-ranks table, .game-record table { width:100%; }
+.team-ranks caption { text-align:left; margin:1rem 0 .5rem; }
+.game-record small {display:block; max-width:26rem; white-space:normal;}
+.game-record .filters {display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem;}
+.combo-readiness {padding:1rem; margin:1rem 0; border-left:3px solid #9a76fa; background:#151021;}
+// Consistent market cards: restrained chrome, one clear interaction, readable mobile detail.
+.game-markets { margin: 2rem 0; }
+.game-market-card, .combos > ul > .combo-row { border: 1px solid #352b48; border-radius: 14px; background: linear-gradient(145deg,#151020,#0c0912 70%); box-shadow: 0 8px 28px #0003; overflow:hidden; }
+.game-market-card { padding: 22px; margin: 18px 0; }
+.matchup-header {display:flex; align-items:center; justify-content:space-between; gap:16px;}
+.matchup-header h3 {display:flex; gap:12px; align-items:center; margin:5px 0 0;font-size:28px;}
+.matchup-header h3 small {font-family:inherit; font-size:11px; letter-spacing:.12em; margin:0;}
+.card-eyebrow {display:block; color:#b09bcf; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;}
+.tip-chip,.team-chip {border:1px solid #4c3a64; border-radius:5px; padding:4px 7px; background:#21162e; font-size:11px; color:#d4c3ef; white-space:nowrap;}
+.projection-summary {display:grid;grid-template-columns:2fr 1fr;gap:12px;margin:20px 0;}
+.projection-summary>span {background:#1b1427; padding:14px; border-radius:8px;}
+.market-play {border-top:0; margin-top:10px;}
+.market-play>summary {border-radius:10px; background:#15101e; padding:17px; align-items:center;}
+.market-play[open]>summary {background:#20162e; border-color:#8c68bf;}
+.market-play[open] .expand-hint, .combo-row details[open] .expand-hint {color:#d0b1ff;}
+.market-expanded {padding:16px 6px 8px;}
+.market-prob small {max-width:180px;white-space:normal;}
+.team-context>summary {font-size:13px;color:#c4b6d9;cursor:pointer;padding:10px 0;display:flex;justify-content:space-between;}
+.combo-summary {padding:22px;grid-template-columns:minmax(0,1fr) 190px 132px;}
+.combo-summary b {font-size:20px;line-height:1.4;}
+.combo-summary .expand-hint {margin-top:9px; color:#c5a1fa; border:1px solid #524065;border-radius:5px; padding:5px 8px;display:inline-block;}
+.combo-row details[open] {background:#120d1c;}
+.combo-expanded {padding:22px;}
+.combo-prob {font-variant-numeric:tabular-nums;}
+.game-margin-chart {display:flex;align-items:center;gap:12px;margin:0 0 18px;color:#d3c0ed;font-size:12px;}
+.game-margin-chart>div {height:7px;flex:1;border-radius:9px;background:#55406d;overflow:hidden;}
+.game-margin-chart i {display:block;height:100%;background:#af83ed;}
+.v2-status {display:flex;align-items:center;flex-wrap:wrap;gap:14px 28px;background:#171020;border:1px solid #443057;border-radius:10px;padding:16px;margin:18px 0;}
+.v2-status span {font-size:12px;color:#a99abf;}.v2-status b {font-size:20px;color:#eee4fc;margin-right:4px;}.v2-status a {margin-left:auto;font-size:13px;color:#c5a1fa;}
+.methodology .v2changes {border:0;background:none;padding:0;}.methodology p {max-width:80ch;line-height:1.7;}
+@media(max-width:640px) {
+ .game-market-card {padding:14px;border-radius:10px;}.matchup-header h3 {font-size:24px;}.tip-chip {font-size:10px;}
+ .projection-summary {grid-template-columns:1fr;}.projection-summary>span {padding:11px;}.combo-summary {grid-template-columns:minmax(0,1fr) 100px;gap:12px;padding:16px;}.combo-summary b {font-size:18px;}.combo-strip {display:none;}.combo-prob {font-size:23px;}.combo-expanded {padding:14px;}.market-play>summary {gap:10px;padding:13px;}.market-play>summary b {font-size:18px;}.market-prob {font-size:23px;}.market-prob small {max-width:110px;font-size:10px;}
+ .team-ranks {padding:10px;}.v2-status {gap:12px;}.v2-status a {margin-left:0;}.game-margin-chart {flex-wrap:wrap;}.game-margin-chart>div {min-width:60px;}
+}

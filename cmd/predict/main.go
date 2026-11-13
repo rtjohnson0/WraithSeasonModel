@@ -130,7 +130,7 @@ func main() {
 	v2Edge := flag.Float64("v2edge", 0.04, "V2: a play also qualifies on edge alone at this size when V2 gives its side 50%+, so a plus-money Over with a real edge is not shut out by the 55% bar (0 turns it off)")
 	v2Juice := flag.Int("v2juice", 160, "V2: plays priced worse than -this are left out: a -190 favourite needs 65.5% to break even, so a 67% number there is almost all price (0 turns it off)")
 	v2Weight := flag.Float64("v2weight", 0.5, "V2: explicit linear model/book blend; the primary model instead uses fitted logit calibration")
-	comboBar := flag.Float64("combobar", 0.53, "a combo is tracked at this probability (53% Over or 47% Under by default), looser than the 55% posting bar because combos are never staked and need a graded sample; the printout says how many reach 55%")
+	comboBar := flag.Float64("combobar", 0.55, "minimum calibrated probability for a combo selection (55% by default; effective floor 55%); direct calibration and price checks are also required")
 	comboPer := flag.Int("comboperplayer", 1, "most combo plays to track per player (PRA and PR on the same player are one idea, not two)")
 	comboMax := flag.Int("combomax", 30, "most combo plays to track per run")
 	noLog := flag.Bool("nolog", false, "do not append picks to data/picklog.jsonl")

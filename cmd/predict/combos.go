@@ -96,6 +96,7 @@ func (d comboDeps) qualifiedCalibration(st data.Stat) bool {
 func finiteCombo(v float64) bool { return !math.IsNaN(v) && !math.IsInf(v, 0) }
 
 func (d comboDeps) qualifies(s scored, bar float64) bool {
+	bar = math.Max(.55, bar)
 	return (d.research || d.qualifiedCalibration(s.Stat)) && s.Maybe == "" && !s.Far &&
 		finiteCombo(s.Prob) && s.Prob >= bar && s.Prob <= 1 && s.Odds != 0 && finiteCombo(s.Edge) && s.Edge >= d.minEdge
 }
@@ -206,6 +207,11 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		oppTeam := map[bool]int{true: sm.g.Home, false: sm.g.Visitor}[team == sm.g.Visitor]
 		parts := []string{componentNote(l.Stat, sm.pred)}
 		parts = append(parts, whyContext(d.b, d.ix, sm.row, data.Points, sm.pred, team, oppTeam, d.out)...)
+		for _, st := range l.Stat.Parts() {
+			if dr, ok := d.b.DefenseRank(l.PlayerID, oppTeam, st, d.date); ok {
+				parts = append(parts, defenseNote(dr, st))
+			}
+		}
 		view := views[props.MarketKey{Game: l.GameID, Player: l.PlayerID, Stat: string(l.Stat)}]
 		s := scored{
 			MarketMedian: view.Median, BookCount: view.Books, BookQuotes: view.Quotes, CaptureMaxAgeSeconds: 1800, PriceMaxAgeSeconds: 21600,

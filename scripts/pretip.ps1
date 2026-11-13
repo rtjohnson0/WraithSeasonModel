@@ -15,6 +15,7 @@ Run "snapshot lines and injuries"  { go run ./cmd/pull snapshot }
 Run "extra books (SportsGameOdds)" { go run ./cmd/sgo snapshot } -Optional
 Run "forward accuracy evaluation" { go run ./cmd/accuracy }
 Run "offline accuracy report" { python scripts/accuracy_report.py }
+Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
 Run "player props"                 { go run ./cmd/predict }
 Run "game lines"                   { go run ./cmd/games } -Optional
 

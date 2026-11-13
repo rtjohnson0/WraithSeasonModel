@@ -1391,7 +1391,7 @@ func PosName(pg int) string {
 func (b *Builder) DefenseRank(playerID, opp int, stat data.Stat, date string) (DefRank, bool) {
 	day := data.DayNumber(date)
 	hist := b.history(playerID, day)
-	if len(hist) == 0 || opp == 0 {
+	if len(hist) == 0 || opp == 0 || strings.TrimSpace(hist[len(hist)-1].Pos) == "" {
 		return DefRank{}, false
 	}
 	k := data.StatIndex(stat)
