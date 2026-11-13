@@ -51,4 +51,20 @@ func TestExactReplayPreservesMissingFeaturesAndAdjustments(t *testing.T) {
 	if err != nil || math.Abs(got-want) > 1e-12 {
 		t.Fatalf("replay %v != live %v: %v", got, want, err)
 	}
+	// Rotation uses a different probability rule and an exact team-minute target.
+	target := 27.35
+	trial := rec
+	trial.Policy = predictor.Adjustments{TargetMinutes: &target}
+	trial.ProbabilityMethod = "linear"
+	trial.BlendWeight = .5
+	got, err = Recompute(m, trial)
+	forecast := m.Forecast(r, trial.Policy)
+	pr, pe := forecast.ProbOver(data.Points, trial.Line)
+	want = .5*pr.Over + .5*trial.Market
+	if err != nil || pe != nil || math.Abs(got-want) > 1e-12 || math.Abs(forecast.Minutes-target) > 1e-8 {
+		t.Fatal("rotation replay differs", got, want, err)
+	}
+	if rec.Policy.TargetMinutes != nil {
+		t.Fatal("rotation changed original policy")
+	}
 }

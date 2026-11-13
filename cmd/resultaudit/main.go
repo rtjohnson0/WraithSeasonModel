@@ -13,7 +13,7 @@ import (
 func main() {
 	dir := flag.String("data", "data", "data directory")
 	flag.Parse()
-	for _, pair := range [][2]string{{"picklog.jsonl", "settled.jsonl"}, {"combolog.jsonl", "combosettled.jsonl"}, {"v2log.jsonl", "v2settled.jsonl"}} {
+	for _, pair := range [][2]string{{"picklog.jsonl", "settled.jsonl"}, {"combolog.jsonl", "combosettled.jsonl"}, {"v2log.jsonl", "v2settled.jsonl"}, {"v2_rotationlog.jsonl", "v2_rotationsettled.jsonl"}} {
 		_, a := os.Stat(filepath.Join(*dir, pair[0]))
 		_, b := os.Stat(filepath.Join(*dir, pair[1]))
 		if os.IsNotExist(a) && os.IsNotExist(b) {

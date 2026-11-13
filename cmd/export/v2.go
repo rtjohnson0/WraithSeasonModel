@@ -7,6 +7,7 @@ import (
 
 	"propsmodel/internal/data"
 	"propsmodel/internal/picklog"
+	"propsmodel/internal/rotation"
 )
 
 // V2Site is the challenger's half of the site: a board and a record built from the same code as the
@@ -23,6 +24,7 @@ type V2Site struct {
 
 // V2Info mirrors the summary predict writes about the day's V2 run.
 type V2Info struct {
+	Policy   string             `json:"policy,omitempty"`
 	At       string             `json:"at"`
 	Weight   float64            `json:"weight"`
 	Bar      float64            `json:"bar"`
@@ -93,7 +95,11 @@ func buildV2(dir string, form Form) *V2Site {
 	if json.Unmarshal(raw, &f) != nil || f.Date == "" {
 		return nil
 	}
-	settled, _ := picklog.LoadSettled(filepath.Join(dir, "v2settled.jsonl"))
+	settledName := "v2settled.jsonl"
+	if f.Info != nil && f.Info.Policy == rotation.Policy {
+		settledName = rotation.SettledFile
+	}
+	settled, _ := picklog.LoadSettled(filepath.Join(dir, settledName))
 	var verified []picklog.Settled
 	for _, r := range settled {
 		if r.Verified() {

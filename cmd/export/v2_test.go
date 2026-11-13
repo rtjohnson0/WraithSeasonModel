@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"propsmodel/internal/picklog"
+	"propsmodel/internal/rotation"
 )
 
 func TestBuildV2(t *testing.T) {
@@ -52,6 +53,28 @@ func TestBuildV2(t *testing.T) {
 	}
 	if v.Info == nil || v.Info.MinShift != 0.4 {
 		t.Error("info should pass through")
+	}
+}
+
+func TestRotationRecordDoesNotInheritLegacyV2Wins(t *testing.T) {
+	dir := t.TempDir()
+	e := picklog.Entry{AuditVersion: 2, Date: "2026-10-28", GameID: 1, PlayerID: 5, Player: "A", Team: "ATL", Stat: "points", Side: "OVER", Line: 20.5, Odds: -110, Prob: .6, Tier: "PAPER"}
+	if _, err := picklog.AppendSettled(filepath.Join(dir, "v2settled.jsonl"), []picklog.Settled{verifiedResultFixture(e, 24, 0, true)}); err != nil {
+		t.Fatal(err)
+	}
+	f := v2File{Date: "2026-11-13", Info: &V2Info{Policy: rotation.Policy}}
+	b, _ := json.Marshal(f)
+	os.WriteFile(filepath.Join(dir, "v2.json"), b, 0644)
+	v := buildV2(dir, nil)
+	if v == nil || v.Record.Days != 0 || len(v.Record.Recent) != 0 {
+		t.Fatal("mixed policy records", v)
+	}
+	if _, err := picklog.AppendSettled(filepath.Join(dir, rotation.SettledFile), []picklog.Settled{verifiedResultFixture(e, 24, 0, true)}); err != nil {
+		t.Fatal(err)
+	}
+	v = buildV2(dir, nil)
+	if v.Record.Days != 1 {
+		t.Fatal("new-policy result missing")
 	}
 }
 

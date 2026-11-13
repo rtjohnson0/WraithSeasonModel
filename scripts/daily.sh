@@ -42,6 +42,8 @@ python3 scripts/accuracy_report.py
 go run ./cmd/combos calibrate || echo "combo calibration unavailable; comparison mode retained"
 go run ./cmd/predict
 go run ./cmd/minutesaudit -legacy || echo "Minutes audit unavailable; live model unchanged"
+go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
+go run ./cmd/rotationaudit || echo "Rotation evaluation unavailable; V1 unchanged"
 echo "== game lines =="
 go run ./cmd/games || echo "game lines skipped"
 

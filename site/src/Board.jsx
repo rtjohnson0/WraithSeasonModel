@@ -306,6 +306,7 @@ function PlayRow({ p, focus, started }) {
           </span>
           {signal && <span className={`matchup-signal ${signal.helps?'helps':'hurts'}`}>{signal.label}<small>{signal.helps?'Supports':'Works against'} this {p.side==='UNDER'?'Under':'Over'}</small></span>}
           {p.availability && <span className="availability-hint">Availability watch · View minutes comparison</span>}
+          {p.rotation && <span className="availability-hint">Rotation forecast · View minutes breakdown</span>}
           {p.multi && (
             <span className="seen" title={`On the board in: ${p.seenIn.join(', ')}`}>
               In {p.runs} runs: {p.seenIn.join(', ')}

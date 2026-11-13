@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"propsmodel/internal/availability"
+	"propsmodel/internal/rotation"
 	"regexp"
 	"sort"
 	"strconv"
@@ -22,6 +23,7 @@ import (
 
 // Play is one pick on the board.
 type Play struct {
+	Rotation             *rotation.Context     `json:"rotation,omitempty"`
 	MatchupContext       *matchup.Prop         `json:"matchupContext,omitempty"`
 	Availability         *availability.Context `json:"availability,omitempty"`
 	Period               string                `json:"period,omitempty"`
@@ -493,7 +495,7 @@ func makePlay(e picklog.Entry, date string, form Form, runs int, seenIn []string
 		CaptureMaxAgeSeconds: e.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: e.PriceMaxAgeSeconds, BreakEven: bets.Implied(e.Odds), QuoteValidation: "API snapshot; confirm at sportsbook",
 		Player: e.Player, Team: e.Team, Stat: e.Stat, Side: e.Side, Line: e.Line, Prob: e.Prob,
 		ProbRaw: e.ProbRaw, Edge: edgeOf(e), Grade: grade(e.Prob, t), Tier: t, Odds: e.Odds, Book: e.Book,
-		Availability: e.Availability, ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why, PlayerID: e.PlayerID, Dist: e.Dist,
+		Rotation: e.Rotation, Availability: e.Availability, ProjStat: e.ProjMean, ProjMin: e.ProjMin, Units: e.Units, Why: e.Why, PlayerID: e.PlayerID, Dist: e.Dist,
 	}
 	if p.Period == "" && e.Verified() {
 		p.Period = "game"

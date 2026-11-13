@@ -112,7 +112,7 @@ def run(directory, apply=False):
     new_exclusions={}
     evidence=[]; reports={}
     now=datetime.now(timezone.utc).isoformat().replace('+00:00','Z')
-    for name in ('settled.jsonl','combosettled.jsonl','v2settled.jsonl'):
+    for name in ('settled.jsonl','combosettled.jsonl','v2settled.jsonl','v2_rotationsettled.jsonl'):
         file=root/name
         if not file.exists():continue
         fixed=[];counts=Counter();checks=[]

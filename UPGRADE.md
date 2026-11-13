@@ -1,5 +1,13 @@
 # Model and workflow upgrade
 
+## Latest: V2 rotation experiment
+
+See `V2_ROTATION_UPDATE.md`. The next daily or pre-tip prediction runs the new
+rotation V2 automatically, with confirmed-out minutes redistribution, uncertain
+player scenarios and separate results. V1 remains on its existing policy.
+Push the updated source and run the daily workflow; a site-only export does not
+generate new forecasts. The new V2 record starts separately from legacy V2.
+
 ## Windows UTF-8 hotfix
 
 The Python audits now explicitly read UTF-8 (with optional BOM) and write UTF-8.

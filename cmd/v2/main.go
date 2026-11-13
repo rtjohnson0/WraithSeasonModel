@@ -7,6 +7,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -16,6 +17,7 @@ import (
 
 	"propsmodel/internal/data"
 	"propsmodel/internal/picklog"
+	"propsmodel/internal/rotation"
 	"propsmodel/internal/settlement"
 )
 
@@ -32,7 +34,18 @@ func main() {
 }
 
 func settle(dir string, legacy bool) {
-	entries, err := picklog.Load(filepath.Join(dir, "v2log.jsonl"))
+	logName, settledName := "v2log.jsonl", "v2settled.jsonl"
+	if b, e := os.ReadFile(filepath.Join(dir, "v2.json")); e == nil {
+		var f struct {
+			Info struct {
+				Policy string `json:"policy"`
+			} `json:"info"`
+		}
+		if json.Unmarshal(b, &f) == nil && f.Info.Policy == rotation.Policy {
+			logName, settledName = rotation.LogFile, rotation.SettledFile
+		}
+	}
+	entries, err := picklog.Load(filepath.Join(dir, logName))
 	if err != nil {
 		fatal(err)
 	}
@@ -40,11 +53,11 @@ func settle(dir string, legacy bool) {
 		entries = picklog.VerifiedEntries(entries)
 	}
 	if len(entries) == 0 {
-		fmt.Println("data/v2log.jsonl is empty. Run `go run ./cmd/predict` first; it logs the V2 plays.")
+		fmt.Printf("%s is empty. Run `go run ./cmd/predict` first; it logs the V2 plays.\n", filepath.Join(dir, logName))
 	}
-	settledPath := filepath.Join(dir, "v2settled.jsonl")
+	settledPath := filepath.Join(dir, settledName)
 
-	report, err := settlement.Reconcile(dir, "v2settled.jsonl", entries, nil)
+	report, err := settlement.Reconcile(dir, settledName, entries, nil)
 	if err != nil {
 		fatal(err)
 	}

@@ -21,6 +21,7 @@ export default function V2({ site }) {
       <section className="day">
         <h1>V2 test</h1>
         <p className="small">Experimental model · separate picks and record · paper tracking.</p>
+        {v2.info?.policy === 'rotation-v1' && <p className="notice">Rotation V2 uses confirmed absences to redistribute team minutes. Questionable-player scenarios appear inside each play. This version has a fresh, separate record.</p>}
         <div className="v2-status"><span><b>{v2.board?.plays||0}</b> plays on this board</span><span><b>{v2.info?.strong||0}</b> strong</span><span><b>{v2.info?.lean||0}</b> leans</span><a href="#/about">How V2 works ↗</a></div>
         <Seg
           label="V2 section"

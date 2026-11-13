@@ -42,6 +42,7 @@ import (
 	"propsmodel/internal/projlog"
 	"propsmodel/internal/props"
 	"propsmodel/internal/replay"
+	"propsmodel/internal/rotation"
 	"propsmodel/internal/sgo"
 	"propsmodel/internal/team"
 )
@@ -51,6 +52,7 @@ type marketKey struct {
 }
 
 type scored struct {
+	Rotation             *rotation.Context
 	Availability         *availability.Context
 	MarketMedian         float64
 	BookCount            int
@@ -124,6 +126,7 @@ func main() {
 	useCombos := flag.Bool("combos", true, "also score the combined markets (points+rebounds+assists, points+rebounds, points+assists, rebounds+assists). They are tracked in data/combolog.jsonl and shown on the site apart from the picks, never staked, until `go run ./cmd/combos settle` shows they earn it")
 	comboWeight := flag.Float64("comboweight", -1, "-1: use direct, time-valid combo calibration; 0 to 1: experimental model/book blend for comparisons only, never qualified combo picks")
 	useV2 := flag.Bool("v2", true, "also run the V2 challenger beside the real model: a live correction fitted on earlier days plus a model-forward blend. Its plays are tracked in data/v2log.jsonl and shown on the site's V2 test page; they never change a real pick")
+	rotationV2 := flag.Bool("v2rotation", true, "V2: use the separate rotation-v1 minutes experiment; -v2rotation=false restores legacy V2")
 	v2ModelFile := flag.String("v2model", "model_v2.json", "V2: a second model file in the data directory (train it with `go run ./cmd/train -v2`: teammates-out and missed-shots features on). V2 uses the main model when the file is missing")
 	v2Books := flag.Int("v2books", v2MinBooks, "V2: the fewest books that must list a player's stat for V2 to post it (a thin market is where the median line is least trustworthy)")
 	v2Keep := flag.Bool("v2keep", true, "V2: a play the real model opposes at 53%+ is a Lean (never Strong) instead of being dropped. V2's level anchor lifts projections the real model leaves low, so dropping them removes the Overs the anchor creates; -v2keep=false drops them")
@@ -143,6 +146,9 @@ func main() {
 	valueMinROI := flag.Float64("valueminroi", .04, "value research: minimum forecast return conditional on no push")
 	launchGate := flag.Bool("evidencegate", true, "require recent verified forward evidence for a staked PICK; unproven plays remain visible as PAPER")
 	flag.Parse()
+	if *rotationV2 && (math.IsNaN(*v2Weight) || math.IsInf(*v2Weight, 0) || *v2Weight < 0 || *v2Weight > 1) {
+		fatal(fmt.Errorf("V2 rotation blend weight must be between zero and one"))
+	}
 	if *selectionPolicy != "confidence" && *selectionPolicy != "value" {
 		fatal(fmt.Errorf("unknown selection policy"))
 	}
@@ -425,7 +431,13 @@ func main() {
 	v2gates := map[string]V2Gate{}
 	var v2all []scored
 	m2, v2model := m, "the main model"
-	if *useV2 && gid == 0 {
+	var rotations *rotationForecast
+	var rotationRecords []replay.Record
+	if *useV2 && *rotationV2 && gid == 0 {
+		rotations = newRotationForecast(d.Games, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date)
+		v2model = rotation.Policy + " · current V1 per-minute rates + joint team allocation; uncalibrated experiment"
+	}
+	if *useV2 && !*rotationV2 && gid == 0 {
 		prev, _ := projlog.Load(filepath.Join(*dir, "projlog.jsonl"))
 		v2fix = fitV2(prev, *date, ix.Actual)
 		// V2's gates: its own record on every graded line in the market log, from earlier days only.
@@ -710,7 +722,7 @@ func main() {
 		}
 		s.Tier = "LEAN"
 		all = append(all, s)
-		if *useV2 && gid == 0 && !s.Far {
+		if *useV2 && !*rotationV2 && gid == 0 && !s.Far {
 			if v2s, ok := v2Score(s, baseWhy, adjustMinutes(m2.Predict(row), row), l, v2fix, *v2Weight); ok {
 				v2all = append(v2all, v2s)
 				// The market log also keeps V2's own P(over) at the median line, so the gates can be
@@ -804,6 +816,9 @@ func main() {
 		}
 	}
 
+	if rotations != nil {
+		v2all, rotationRecords = scoreRotationSingles(rotations, m, b, lines, games, teamOf, rowFor, statuses, *date, *v2Weight, *maxGap, runAt)
+	}
 	var comboWatch []scored
 	var comboPlays []scored
 	var comboSummary comboStats
@@ -856,7 +871,26 @@ func main() {
 			d2.m = m2
 			d2.adjust = func(p predictor.Pred, row *feat.Row) predictor.Pred { return v2fix.shiftMinutes(adjustMinutes(p, row)) }
 			d2.scale = func(st data.Stat, row *feat.Row) float64 { return v2fix.statFactor(st) }
+			if rotations != nil {
+				d2.availability = nil
+				d2.adjust = rotations.adjust
+				d2.scale = func(data.Stat, *feat.Row) float64 { return 1 }
+			}
 			v2Combos, v2ComboSummary = scoreCombos(d2, comboLines)
+			if rotations != nil {
+				for i, s := range v2Combos {
+					team, _ := teamOf(s.PlayerID)
+					if row := rowFor(s.PlayerID, games[s.GameID], team); row != nil {
+						// The two-sided price is retained by the source quote; find the exact quote.
+						for _, l := range comboLines {
+							if l.PlayerID == s.PlayerID && l.GameID == s.GameID && l.Stat == s.Stat && l.Line == s.Line && l.Vendor == s.Vendor {
+								v2Combos[i] = rotations.decorate(s, m.Predict(row), row, bets.MarketOver(l.OverOdds, l.UnderOdds), *v2Weight, d2.corr)
+								break
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -917,12 +951,18 @@ func main() {
 	var v2Meta *V2Info
 	if *useV2 && gid == 0 {
 		rules := v2Rules{Hi: *hi, MinEdge: *minEdge, MaxGame: *maxGame, MaxPlayer: *maxPlayer, Gates: v2gates, MinBooks: *v2Books, KeepDisagree: *v2Keep, EdgeBar: *v2Edge, MaxJuice: *v2Juice}
+		if rotations != nil {
+			rules.EdgeBar = 0
+		}
 		var drops V2Drops
 		v2Plays, drops = v2Select(v2all, rules)
 		v2Overs = v2OversWatch(v2all, v2Plays, rules, 12)
 		v2Meta = v2Info(v2fix, *v2Weight, *hi, *comboBar, v2model, v2all, v2Plays, drops, v2gates)
 		v2Meta.Watch = len(v2Overs)
-		v2Meta.Keep, v2Meta.EdgeBar, v2Meta.MaxJuice = *v2Keep, *v2Edge, *v2Juice
+		v2Meta.Keep, v2Meta.EdgeBar, v2Meta.MaxJuice = *v2Keep, rules.EdgeBar, *v2Juice
+		if rotations != nil {
+			v2Meta.Policy = rotation.Policy
+		}
 		printV2(v2fix, v2Meta, v2Plays, v2Combos)
 	}
 	fmt.Printf("skipped: %d no game info, %d player not on a team playing today, %d too little history, %d not enough minutes, %d ruled out, %d with no price on one side\n\n",
@@ -1039,11 +1079,31 @@ func main() {
 			fmt.Println("note: could not save data/v2.json:", err)
 		}
 		if len(pe)+len(ce) > 0 {
-			n, err := picklog.Append(filepath.Join(*dir, "v2log.jsonl"), append(pe, ce...))
+			logName := "v2log.jsonl"
+			if rotations != nil {
+				logName = rotation.LogFile
+			}
+			n, err := picklog.Append(filepath.Join(*dir, logName), append(pe, ce...))
 			if err != nil {
 				fatal(err)
 			}
-			fmt.Printf("Logged %d new V2 plays to %s (graded by `go run ./cmd/v2 settle`; the V2 test page shows them).\n", n, filepath.Join(*dir, "v2log.jsonl"))
+			fmt.Printf("Logged %d new V2 plays to %s (graded by `go run ./cmd/v2 settle`; the V2 test page shows them).\n", n, filepath.Join(*dir, logName))
+		}
+		if rotations != nil {
+			captureDir := filepath.Join(*dir, "v2_rotation")
+			checkpoint, err := replay.Checkpoint(captureDir, m)
+			if err != nil {
+				fatal(err)
+			}
+			for i := range rotationRecords {
+				rotationRecords[i].ModelID = checkpoint
+			}
+			if err = replay.Append(captureDir, *date, rotationRecords); err != nil {
+				fatal(err)
+			}
+			if err = writeRotationEvidence(*dir, *date, runAt, rotations); err != nil {
+				fatal(err)
+			}
 		}
 	}
 

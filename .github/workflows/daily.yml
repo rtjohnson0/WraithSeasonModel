@@ -109,6 +109,7 @@ jobs:
         with:
           path: |
             data/replay
+            data/v2_rotation
             data/tail_shadow/replay
             data/tail_shadow/picklog.jsonl
             data/tail_shadow/settled.jsonl
@@ -200,6 +201,7 @@ jobs:
             data/quarter_games
             data/snapshots
             data/replay
+            data/v2_rotation
             data/*audit*.json
             data/*before-result-*
             data/exclusions.jsonl
@@ -225,6 +227,7 @@ jobs:
         with:
           path: |
             data/replay
+            data/v2_rotation
             data/tail_shadow/replay
             data/tail_shadow/picklog.jsonl
             data/tail_shadow/settled.jsonl

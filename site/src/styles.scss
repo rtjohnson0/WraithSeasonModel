@@ -524,6 +524,12 @@ button:disabled { opacity: .65; cursor: wait; }
 @media(max-width:600px) { .availability { padding: 12px; } .availability td, .availability th { padding: 8px 5px; font-size: .8rem; } }
 
 .availability-hint { display: block; margin-top: 6px; font-size: .8rem; color: #e8c785; }
+.rotation-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin: 14px 0; }
+.rotation-metrics small, .rotation-metrics b { display: block; }
+.rotation-metrics small { color: var(--muted); font-size: .75rem; }
+.rotation-metrics b { font-size: 1.15rem; margin-top: 4px; }
+.rotation-sample { display: block; color: #e8c785; }
+@media(max-width:480px) { .rotation-metrics { grid-template-columns: 1fr; gap: 8px; } .rotation-metrics>div { display:flex; align-items:center; justify-content:space-between; gap:10px; } }
 
 .whop-access { display: inline-block; padding: 12px 18px; background: #a98aff; color: #10091c; border-radius: 6px; font-weight: 600; text-decoration: none; }
 

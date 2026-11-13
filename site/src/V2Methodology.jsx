@@ -41,6 +41,12 @@ function Gates({ gates, minN }) {
 
 export default function V2Methodology({ info }) {
   if (!info) return null
+  if (info.policy === 'rotation-v1') return <div className="v2changes">
+    <p><b>Rotation V2.</b> This experiment allocates 240 regulation minutes across each team using recent complete box scores and fresh confirmed absences. Similar earlier rotations influence who receives the minutes; limited evidence is labelled for review.</p>
+    <p>Questionable and doubtful teammates stay in the main allocation. Each play can show a separate scenario if one sits. Per-minute scoring, rebounding and assist rates stay with the current model; extra usage is not assumed.</p>
+    <p>Probabilities use an experimental {Math.round(info.weight*100)}/{Math.round((1-info.weight)*100)} model/book blend. Singles need at least {Math.round(info.bar*100)}% and an edge over the offered price, with the same rules for Overs and Unders. This version has its own paper record and is not validated for staking.</p>
+    <p>The earlier V2 level anchor and live correction are not applied in this version, so the rotation change can be evaluated separately. Existing graphs and pick breakdowns remain available.</p>
+  </div>
   const learned = info.players > 0
   return (
     <div className="v2changes">

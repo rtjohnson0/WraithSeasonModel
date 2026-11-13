@@ -58,6 +58,8 @@ Run "offline accuracy report" { python scripts/accuracy_report.py }
 Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
 Run "player props"                 { go run ./cmd/predict }
 Run "minutes and Under-bias audit" { go run ./cmd/minutesaudit -legacy } -Optional
+Run "Over and Under price comparison" { go run ./cmd/priceaudit } -Optional
+Run "V2 rotation comparison" { go run ./cmd/rotationaudit } -Optional
 Run "game lines"                   { go run ./cmd/games } -Optional
 
 Write-Host ""

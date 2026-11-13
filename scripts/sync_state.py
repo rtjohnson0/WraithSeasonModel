@@ -14,6 +14,7 @@ import time
 from pathlib import Path
 
 STATE_FILES = [
+    'v2_rotationlog.jsonl', 'v2_rotationsettled.jsonl', 'v2_rotationsettled_audit.json',
     'settled_audit.json', 'combosettled_audit.json', 'v2settled_audit.json', 'side_audit.json', 'accuracy.json', 'quarterboard.json', 'quarterlog.jsonl', 'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
     'biasfix.json', 'minfix.json', 'wofix.json', 'runs.jsonl', 'more.json',
     'projlog.jsonl', 'model.json', 'combolog.jsonl', 'combosettled.jsonl',

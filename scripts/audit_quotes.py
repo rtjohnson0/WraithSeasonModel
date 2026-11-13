@@ -13,7 +13,7 @@ STATS={'points','rebounds','assists','threes','pra','pr','pa','ra'}
 SGO_STATS={'threePointersMade':'threes','points+rebounds':'pr','points+assists':'pa',
            'rebounds+assists':'ra','points+rebounds+assists':'pra'}
 FULL={'','game','full_game','full game','full','0'}
-LOGS=['picklog.jsonl','settled.jsonl','combolog.jsonl','combosettled.jsonl','v2log.jsonl','v2settled.jsonl']
+LOGS=['picklog.jsonl','settled.jsonl','combolog.jsonl','combosettled.jsonl','v2log.jsonl','v2settled.jsonl','v2_rotationlog.jsonl','v2_rotationsettled.jsonl']
 
 
 def read(path):

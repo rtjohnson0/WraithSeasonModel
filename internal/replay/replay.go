@@ -15,6 +15,7 @@ import (
 	"propsmodel/internal/feat"
 	"propsmodel/internal/minutesaudit"
 	"propsmodel/internal/predictor"
+	"propsmodel/internal/rotation"
 )
 
 type Row struct {
@@ -68,6 +69,9 @@ func (r Row) Features() *feat.Row {
 }
 
 type Record struct {
+	Rotation          *rotation.Context     `json:"rotation,omitempty"`
+	ProbabilityMethod string                `json:"probability_method,omitempty"`
+	BlendWeight       float64               `json:"blend_weight,omitempty"`
 	AuditContext      *minutesaudit.Context `json:"audit_context,omitempty"`
 	SelectionPolicy   string                `json:"selection_policy,omitempty"`
 	Period            string                `json:"period,omitempty"`
@@ -142,6 +146,17 @@ func Recompute(m *predictor.Model, r Record) (float64, error) {
 		}
 	}
 	pred := m.Forecast(r.Row.Features(), r.Policy)
-	_, p, err := predictor.Price(pred, r.Stat, r.Line, r.Market, func(_ data.Stat, raw, market float64) float64 { return r.Cal.Apply(raw, market) })
+	if r.ProbabilityMethod != "" && r.ProbabilityMethod != "linear" {
+		return 0, fmt.Errorf("unknown probability method")
+	}
+	if r.ProbabilityMethod == "linear" && (math.IsNaN(r.BlendWeight) || r.BlendWeight < 0 || r.BlendWeight > 1) {
+		return 0, fmt.Errorf("invalid blend weight")
+	}
+	_, p, err := predictor.Price(pred, r.Stat, r.Line, r.Market, func(_ data.Stat, raw, market float64) float64 {
+		if r.ProbabilityMethod == "linear" {
+			return math.Max(.01, math.Min(.99, r.BlendWeight*raw+(1-r.BlendWeight)*market))
+		}
+		return r.Cal.Apply(raw, market)
+	})
 	return p, err
 }

@@ -170,6 +170,7 @@ func blend(pModel, pMarket, w float64) float64 {
 
 // V2Info summarises the day's V2 run for the site.
 type V2Info struct {
+	Policy   string             `json:"policy,omitempty"`
 	At       string             `json:"at"`
 	Weight   float64            `json:"weight"`
 	Bar      float64            `json:"bar"`
@@ -248,9 +249,10 @@ func v2Entries(date string, plays []scored, tier string) []picklog.Entry {
 			t = s.Tier
 		}
 		out = append(out, picklog.Entry{
+			Period: "game", LoggedAt: time.Now().UTC().Format(time.RFC3339Nano),
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-			Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: t, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
+			Rotation: s.Rotation, Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: t, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
 		})
 	}
 	return out
@@ -477,7 +479,9 @@ func v2Tier(s scored, r v2Rules) (tier, drop string) {
 	}
 	gap := s.ProbRaw - s.Mkt
 	switch {
-	case s.Maybe != "" || (s.Mkt > 0 && gap >= v2GapMax):
+	case s.Rotation != nil && !s.Rotation.Supported:
+		return tierCheck, ""
+	case s.Far || s.Maybe != "" || (s.Mkt > 0 && gap >= v2GapMax):
 		return tierCheck, ""
 	case g.State == gateProven && s.V1Prob >= v2AgreeBar:
 		return tierStrong, ""
@@ -518,7 +522,9 @@ func v2Select(all []scored, r v2Rules) ([]scored, V2Drops) {
 		case tierStrong:
 			s.Why = addWhy(s.Why, "V2 STRONG: the real model leans the same way and V2 has proven this stat and side on graded lines")
 		case tierCheck:
-			if s.Maybe == "" {
+			if s.Rotation != nil && !s.Rotation.Supported {
+				s.Why = addWhy(s.Why, "V2 CHECK: rotation estimate has limited or unavailable supporting history")
+			} else if s.Maybe == "" {
 				s.Why = addWhy(s.Why, fmt.Sprintf("V2 CHECK: the model alone says %.0f%% and the book %.0f%%, a gap this big is more often missing news than an edge", 100*s.ProbRaw, 100*s.Mkt))
 			}
 		default:

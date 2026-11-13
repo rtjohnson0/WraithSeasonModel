@@ -10,11 +10,13 @@ import (
 	"propsmodel/internal/availability"
 	"propsmodel/internal/marketperiod"
 	"propsmodel/internal/props"
+	"propsmodel/internal/rotation"
 	"time"
 )
 
 // Entry is one posted pick.
 type Entry struct {
+	Rotation             *rotation.Context     `json:"rotation,omitempty"`
 	Availability         *availability.Context `json:"availability,omitempty"`
 	MarketMedian         float64               `json:"market_median,omitempty"`
 	BookCount            int                   `json:"book_count,omitempty"`
