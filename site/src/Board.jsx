@@ -6,6 +6,8 @@ import RunStatus from './RunStatus.jsx'
 import GameMarkets from './GameMarkets.jsx'
 import QuarterBoard from './QuarterBoard.jsx'
 import PickReason from './PickReason.jsx'
+import PlayerPortrait from './PlayerPortrait.jsx'
+import {matchupSignal} from './matchup.js'
 import { visibleQuote, quoteState } from './quote.js'
 import { DaySummary, ResultList } from './Record.jsx'
 import { tipState, useNow } from './time.js'
@@ -287,13 +289,12 @@ function PlayRow({ p, focus, started }) {
     }
   }, [focus]) // eslint-disable-line react-hooks/exhaustive-deps
   const info = labelInfo[p.label] || labelInfo.Lean
+  const signal=matchupSignal(p)
   const conf = Math.max(0, Math.min(1, (p.prob - 0.5) / 0.2))
   return (
     <li ref={ref} id={playId(p)} className={`play quote-${quote.key} ${p.side === 'OVER' ? 'over' : 'under'} ${info.key}${p.multi ? ' multi' : ''}${started ? ' started' : ''}`}>
       <button type="button" className="playbtn" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <span className={`grade ${gradeTone(p.grade)}`} aria-label={`Grade ${p.grade}`}>
-          {p.grade}
-        </span>
+        <span className="portrait-grade"><PlayerPortrait name={p.player} team={p.team}/><span className={`grade ${gradeTone(p.grade)}`} aria-label={`Grade ${p.grade}`}>{p.grade}</span></span>
         <span className="who">
           <span className="name">
             {p.player}
@@ -303,12 +304,7 @@ function PlayRow({ p, focus, started }) {
             <b className={p.side === 'OVER' ? 'over' : 'under'}>{p.side === 'OVER' ? 'Over' : 'Under'}</b> {p.line}{' '}
             {marketLabel(p)}
           </span>
-          {p.defense && (
-            <span className={`defense ${p.defense.helps ? 'helps' : 'hurts'}`} title={p.defense.early ? 'Early in the season: this ranking still leans on last season' : undefined}>
-              {p.defense.text}
-              {p.defense.early ? ', early' : ''}
-            </span>
-          )}
+          {signal && <span className={`matchup-signal ${signal.helps?'helps':'hurts'}`}>{signal.label}<small>{signal.helps?'Supports':'Works against'} this {p.side==='UNDER'?'Under':'Over'}</small></span>}
           {p.availability && <span className="availability-hint">Availability watch · View minutes comparison</span>}
           {p.multi && (
             <span className="seen" title={`On the board in: ${p.seenIn.join(', ')}`}>
@@ -338,7 +334,7 @@ function PlayRow({ p, focus, started }) {
             <i style={{ width: `${conf * 100}%` }} />
           </span>
           <span className={`tier ${info.key}`} title={info.note}>
-            {p.label}
+            {p.prob<.55?'Low-confidence lean':p.label}
           </span>
           <span className="expand-hint">{open ? 'Hide analysis' : 'View analysis'} <span aria-hidden="true">{open ? '⌃' : '⌄'}</span></span>
           <span className="price">

@@ -44,3 +44,11 @@ Do not delete the existing data folder or generated logs when applying this upda
 ## Validation
 
 Regression coverage includes spread publication and pushes, exact score/team/date matching, rejection of quarter/missing-provenance results, immutable first decisions, missing-position handling, strict historical cutoffs, combo-component explanations, paper-versus-selected record separation, and concurrent state merges. Go tests, frontend tests, Python tests and the production frontend build were run. The browser blocked the local preview, so desktop/mobile visual appearance was not verified in-browser here.
+
+## Player-card follow-up
+
+Player and combo cards now include headshots matched against the official NBA roster by exact normalized full name. NBA IDs are kept separate from provider IDs. Names without an exact match and failed image loads show initials. The roster snapshot is dated November 13, 2026; image availability is dependent on the NBA CDN.
+
+The compact matchup line explicitly says whether the matchup supports or works against the shown side. When a saved forecast includes the fitted defense-rate audit, its breakdown displays that measured effect separately from the descriptive allowance/rank percentage. Older forecasts without that audit do not get an invented effect. Below-55% directions are visibly labelled low-confidence leans. No fitted coefficient or probability was changed in response to a single game result.
+
+For example, the supplied cache includes a Towns rebound under whose descriptive defense note says second-most allowed (+36%); its measured fitted defense-rate sensitivity is +1.2%, with projected minutes three below his usual workload. Those are different quantities. This cached example is not a verification of the screenshot's current forecast.

@@ -570,3 +570,34 @@ button:disabled { opacity: .65; cursor: wait; }
  .projection-summary {grid-template-columns:1fr;}.projection-summary>span {padding:11px;}.combo-summary {grid-template-columns:minmax(0,1fr) 100px;gap:12px;padding:16px;}.combo-summary b {font-size:18px;}.combo-strip {display:none;}.combo-prob {font-size:23px;}.combo-expanded {padding:14px;}.market-play>summary {gap:10px;padding:13px;}.market-play>summary b {font-size:18px;}.market-prob {font-size:23px;}.market-prob small {max-width:110px;font-size:10px;}
  .team-ranks {padding:10px;}.v2-status {gap:12px;}.v2-status a {margin-left:0;}.game-margin-chart {flex-wrap:wrap;}.game-margin-chart>div {min-width:60px;}
 }
+// Player identity and stronger card hierarchy.
+.player-portrait {position:relative;display:inline-flex;align-items:flex-end;justify-content:center;width:72px;height:76px;flex:none;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse at 50% 25%,#67488d 0%,#281c3a 55%,#14101d 100%);border:1px solid #65468a;box-shadow:inset 0 0 18px #b47dff12;}
+.player-portrait img {width:112%;height:100%;max-width:none;object-fit:cover;object-position:50% 10%;filter:drop-shadow(0 3px 7px #0007);}
+.portrait-initials {align-self:center;font-size:25px;font-weight:800;color:#e7d5ff;letter-spacing:.03em;}
+.portrait-grade {position:relative;display:block;width:76px;padding-bottom:9px;}
+.portrait-grade>.grade {position:absolute;bottom:0;right:-3px;width:27px;height:27px;min-width:0;display:grid;place-items:center;font-size:14px;line-height:1;border-radius:7px;background:#17101f;border:1px solid #8c65ba;box-shadow:0 3px 8px #0006;}
+.playbtn {grid-template-columns:76px minmax(0,1.2fr) 190px 150px;gap:20px;padding:22px 24px;}
+.play .name {font-size:21px;font-weight:750;letter-spacing:-.02em;line-height:1.3;}
+.play .team {padding:3px 6px;border-radius:4px;font-size:10px;letter-spacing:.08em;color:#c6b2df;border:1px solid #473457;background:#21162c;}
+.play .pick {font-size:17px;margin-top:3px;line-height:1.5;}
+.play .pick>b {padding:3px 7px;border-radius:5px;background:#17453955;}
+.play .pick>b.under {background:#60401c50;}
+.play {margin:10px 12px;border:1px solid #372a49;border-radius:12px;overflow:hidden;background:linear-gradient(115deg,#17101f,#100b18 60%,#130d1e);box-shadow:0 5px 18px #0002;}
+.playbtn {border:0;background:transparent;}
+.playbtn[aria-expanded="true"] {background:linear-gradient(110deg,#39254b55,#171022);}
+.play .meta .prob {font-size:30px;letter-spacing:-.04em;line-height:1.1;font-variant-numeric:tabular-nums;}
+.play .meta {gap:6px;}
+.play .expand-hint {display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;padding:5px 9px;border:1px solid #654781;border-radius:6px;background:#35204555;color:#d7baff;font-size:11px;}
+.matchup-signal {display:block;margin-top:6px;font-size:12px;line-height:1.5;}
+.matchup-signal small {display:block;font-size:10px;font-weight:600;opacity:.9;}
+.matchup-signal.hurts {color:#ff8d9d;}.matchup-signal.helps {color:#7edbbb;}
+.model-defense-impact {margin:16px 0;padding:14px 16px;border:1px solid #503966;border-radius:8px;background:linear-gradient(110deg,#251a33,#17101f);}
+.model-defense-impact>b {color:#d9c3f5;font-size:13px;}.model-defense-impact p {font-size:13px;line-height:1.65;margin:.5rem 0 0;}
+.combo-player {display:flex!important;align-items:center;gap:16px!important;}
+.combo-player>span:last-child {display:grid;gap:7px;min-width:0;}
+.combo-player .player-portrait {width:62px;height:68px;}
+.game-market-card {border-top:2px solid #9b6cdc;}
+@media(max-width:900px){.playbtn {grid-template-columns:66px minmax(0,1fr) 120px;gap:14px;}.playbtn .strip-wrap {display:none;}.portrait-grade {width:66px;}.player-portrait {width:62px;height:68px;}.play .name {font-size:19px;}}
+@media(max-width:600px){
+ .play {margin:9px 0;border-radius:10px;}.playbtn {grid-template-columns:52px minmax(0,1fr) 90px;gap:10px;padding:16px 12px;}.portrait-grade {width:52px;}.player-portrait {width:50px;height:58px;border-radius:8px;}.portrait-grade>.grade {width:23px;height:23px;font-size:12px;right:0;}.portrait-initials {font-size:20px;}.play .name {font-size:16px;}.play .pick {font-size:13px;}.play .pick>b {padding:2px 4px;}.play .team {font-size:9px;}.play .meta .prob {font-size:25px;}.play .meta .tier {font-size:10px;}.play .meta .expand-hint {font-size:10px;padding:4px 6px;}.play .meta .price {font-size:10px;}.matchup-signal {font-size:10px;}.matchup-signal small {font-size:9px;}.combo-player {gap:9px!important;}.combo-player .player-portrait {width:43px;height:52px;}.combo-summary {grid-template-columns:minmax(0,1fr) 91px;}.combo-player b {font-size:16px;}.combo-player .card-eyebrow {font-size:9px;}.combo-summary small {font-size:10px;}.model-defense-impact {padding:12px;}
+}
