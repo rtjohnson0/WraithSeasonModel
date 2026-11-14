@@ -1,14 +1,14 @@
 {
   "activeStats": [],
-  "at": "2026-11-14T03:25:38Z",
-  "before": "2026-11-13",
+  "at": "2026-11-14T07:39:02Z",
+  "before": "2026-11-14",
   "eligibleDates": 3,
   "eligibleRows": 653,
   "evaluationDates": 0,
   "evaluationRows": 394,
   "excluded": {
-    "final actuals pending or identity review": 28,
-    "model/date/provenance mismatch": 467
+    "final actuals pending or identity review": 478,
+    "model/date/provenance mismatch": 17
   },
   "loadedRows": 1148,
   "qualifiedStats": [],
