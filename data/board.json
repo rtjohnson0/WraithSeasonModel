@@ -1,6 +1,6 @@
 {
  "date": "2026-11-14",
- "at": "2026-11-15T00:00:03.579442278Z",
+ "at": "2026-11-15T02:48:29.416005137Z",
  "plays": [
   {
    "availability": {
@@ -4991,14 +4991,14 @@
  ],
  "status": {
   "scheduleComplete": true,
-  "scheduleCapturedAt": "2026-11-14T23:58:49Z",
+  "scheduleCapturedAt": "2026-11-15T02:47:11Z",
   "scheduleGames": 5,
-  "scoredAt": "2026-11-15T00:00:03Z",
+  "scoredAt": "2026-11-15T02:48:29Z",
   "quotesRead": 2848,
-  "usableQuotes": 1116,
-  "unsafeOrDuplicate": 959,
-  "conflictingBooks": 9,
-  "offConsensus": 160,
+  "usableQuotes": 0,
+  "unsafeOrDuplicate": 2848,
+  "conflictingBooks": 0,
+  "offConsensus": 0,
   "captureMaxAgeSeconds": 1800,
   "priceMaxAgeSeconds": 21600,
   "minBooks": 3,
@@ -5006,11 +5006,11 @@
   "feeds": [
    {
     "name": "BALLDONTLIE",
-    "quotes": 253
+    "quotes": 0
    },
    {
     "name": "SportsGameOdds",
-    "quotes": 863
+    "quotes": 0
    }
   ]
  }
