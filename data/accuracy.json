@@ -19,11 +19,11 @@
         "stat": "rebounds",
         "n": 155,
         "days": 2,
-        "candidateLogLoss": 0.6892870449640746,
-        "existingLogLoss": 0.6862987751678818,
-        "marketLogLoss": 0.685529153459766,
-        "gainVsExisting": -0.0029882697961930087,
-        "dateClusteredZ": -0.6482246798513067,
+        "candidateLogLoss": 0.6891308540719739,
+        "existingLogLoss": 0.6858783715849287,
+        "marketLogLoss": 0.6846955293857014,
+        "gainVsExisting": -0.0032524824870453933,
+        "dateClusteredZ": -0.6784449480872325,
         "supported": false
       },
       {
@@ -50,14 +50,14 @@
       }
     ]
   },
-  "at": "2026-11-16T14:04:08Z",
+  "at": "2026-11-16T21:33:53Z",
   "through": "2026-11-15",
   "config": "pregame-7af6e4",
   "modelVersion": 4,
   "accepted": 1033,
   "excluded": {
     "final_identity_or_source_unverified": 71,
-    "not_completed_date": 353
+    "not_completed_date": 716
   },
   "slices": [
     {
