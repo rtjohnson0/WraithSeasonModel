@@ -50,14 +50,14 @@
       }
     ]
   },
-  "at": "2026-11-16T21:33:53Z",
+  "at": "2026-11-16T23:16:11Z",
   "through": "2026-11-15",
   "config": "pregame-7af6e4",
   "modelVersion": 4,
   "accepted": 1033,
   "excluded": {
     "final_identity_or_source_unverified": 71,
-    "not_completed_date": 716
+    "not_completed_date": 1077
   },
   "slices": [
     {
