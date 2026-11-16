@@ -50,14 +50,14 @@
       }
     ]
   },
-  "at": "2026-11-16T23:16:11Z",
+  "at": "2026-11-16T23:56:33Z",
   "through": "2026-11-15",
   "config": "pregame-7af6e4",
   "modelVersion": 4,
   "accepted": 1033,
   "excluded": {
     "final_identity_or_source_unverified": 71,
-    "not_completed_date": 1077
+    "not_completed_date": 1441
   },
   "slices": [
     {
@@ -251,7 +251,7 @@
       "logLoss": 0.6979054316283608,
       "marketLogLoss": 0.6753208550559754,
       "gain": -0.022584576572385464,
-      "dateClusteredZ": -0.804167758249129,
+      "dateClusteredZ": -0.8041677582491288,
       "actualMinusProjected": -0.06353461903918037,
       "mae": 3.148329413357245,
       "minutesBias": 2.1646354014581104,
