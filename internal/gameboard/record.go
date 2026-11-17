@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"propsmodel/internal/data"
 	"propsmodel/internal/marketperiod"
+	"propsmodel/internal/team"
 	"sort"
 	"strings"
 	"time"
@@ -17,6 +18,7 @@ import (
 // Decision freezes the first visible pregame direction and exact quote per game/market.
 // Leans stay separate from selected plays; neither can be relabelled after the result.
 type Decision struct {
+	Policy    string  `json:"policy,omitempty"`
 	Date      string  `json:"date"`
 	At        string  `json:"at"`
 	GameID    int     `json:"game_id"`
@@ -96,7 +98,8 @@ func validDecision(d Decision) bool {
 	return a == nil && b == nil && c == nil && e == nil && at.Before(tip) && !q.After(at) && !u.After(at) && at.Sub(q) <= 30*time.Minute && at.Sub(u) <= 6*time.Hour && d.GameID > 0 && d.HomeID > 0 && d.AwayID > 0 && d.HomeID != d.AwayID && d.Home != "" && d.Away != "" && d.Home != d.Away && data.DayNumber(d.Date) > 0 && sideOK && (d.Odds <= -100 || d.Odds >= 100) && d.Prob > 0 && d.Prob < 1 && !math.IsNaN(d.Line) && !math.IsInf(d.Line, 0) && (d.Tier == "PICK" || d.Tier == "LEAN" || d.Tier == "PAPER" || d.Tier == "CHECK")
 }
 func Log(dir string, s Snapshot, hi, edge float64) error {
-	path := filepath.Join(dir, "gamepicklog.jsonl")
+	logName, _ := recordFiles(s.Policy)
+	path := filepath.Join(dir, logName)
 	rows, e := readJSONL[Decision](path)
 	if e != nil {
 		return e
@@ -137,7 +140,7 @@ func Log(dir string, s Snapshot, hi, edge float64) error {
 			if (market == "total" && g.MarketTotal != nil && math.Abs(g.Total-*g.MarketTotal) > 7) || (market != "total" && g.MarketMargin != nil && math.Abs(g.Margin-*g.MarketMargin) > 4) {
 				tier = "CHECK"
 			}
-			d := Decision{Date: s.Date, At: s.At, GameID: g.ID, HomeID: g.HomeID, AwayID: g.AwayID, Home: g.Home, Away: g.Away, Tip: g.Tip, Market: market, Side: chosen.Label, Line: best.Line, Odds: chosen.Odds, Book: best.Book, QuoteAt: best.QuoteAt, UpdatedAt: best.SourceUpdatedAt, Prob: chosen.Conditional, Tier: tier}
+			d := Decision{Policy: s.Policy, Date: s.Date, At: s.At, GameID: g.ID, HomeID: g.HomeID, AwayID: g.AwayID, Home: g.Home, Away: g.Away, Tip: g.Tip, Market: market, Side: chosen.Label, Line: best.Line, Odds: chosen.Odds, Book: best.Book, QuoteAt: best.QuoteAt, UpdatedAt: best.SourceUpdatedAt, Prob: chosen.Conditional, Tier: tier}
 			if validDecision(d) && !seen[decisionKey(d)] {
 				rows = append(rows, d)
 				seen[decisionKey(d)] = true
@@ -164,7 +167,17 @@ type finalRow struct {
 
 // Settle uses the provider's explicit final game scores, never sums an incomplete player download.
 func Settle(dir string) error {
-	rows, e := readJSONL[Decision](filepath.Join(dir, "gamepicklog.jsonl"))
+	for _, p := range []string{"legacy", team.CurrentGamePolicy} {
+		log, settled := recordFiles(p)
+		if err := settleFiles(dir, log, settled); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func settleFiles(dir, logName, resultName string) error {
+	rows, e := readJSONL[Decision](filepath.Join(dir, logName))
 	if e != nil {
 		return e
 	}
@@ -280,8 +293,35 @@ func Settle(dir string) error {
 		}
 		return decisionKey(out[i].Decision) < decisionKey(out[j].Decision)
 	})
-	return writeJSONL(filepath.Join(dir, "gamesettled.jsonl"), out)
+	return writeJSONL(filepath.Join(dir, resultName), out)
 }
 func LoadResults(dir string) ([]Result, error) {
+	policy := "legacy"
+	if b, err := os.ReadFile(filepath.Join(dir, "gameboard.json")); err == nil {
+		var snapshot Snapshot
+		if json.Unmarshal(b, &snapshot) == nil {
+			policy = snapshot.Policy
+		}
+	}
+	_, name := recordFiles(policy)
+	return readJSONL[Result](filepath.Join(dir, name))
+}
+
+func recordFiles(policy string) (string, string) {
+	if policy == team.CurrentGamePolicy {
+		return "v2_gamepicklog.jsonl", "v2_gamesettled.jsonl"
+	}
+	return "gamepicklog.jsonl", "gamesettled.jsonl"
+}
+
+func LoadPreviousResults(dir string) ([]Result, error) {
+	b, err := os.ReadFile(filepath.Join(dir, "gameboard.json"))
+	if err != nil {
+		return nil, nil
+	}
+	var snapshot Snapshot
+	if json.Unmarshal(b, &snapshot) != nil || snapshot.Policy != team.CurrentGamePolicy {
+		return nil, nil
+	}
 	return readJSONL[Result](filepath.Join(dir, "gamesettled.jsonl"))
 }

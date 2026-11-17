@@ -68,3 +68,9 @@ forecast_audit/
 !data/gamepicklog.jsonl
 !data/gamesettled.jsonl
 !data/combohealth.json
+
+!data/gamecal_research.json
+!data/v2_gamepicklog.jsonl
+!data/v2_gamesettled.jsonl
+!data/v2_rotation_strictlog.jsonl
+!data/v2_rotation_strictsettled.jsonl

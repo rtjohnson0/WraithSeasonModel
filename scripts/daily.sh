@@ -30,9 +30,10 @@ echo "== review yesterday (csv) =="
 go run ./cmd/review || echo "review skipped"
 if [ "$SKIP" = 0 ]; then
   echo "== retrain =="
-  go run ./cmd/train $LINEUP
-  go run ./cmd/backtest -season "$((SEASON-1))" $LINEUP
+  python3 scripts/refresh_models.py --season "$SEASON" ${LINEUP:+--lineup}
 fi
+echo "== calibrate game-v2 =="
+python3 scripts/calibrate_games.py --force --season "$((SEASON-1))"
 echo "== snapshot lines and injuries =="
 go run ./cmd/pull snapshot
 go run ./cmd/sgo snapshot || echo "sgo snapshot skipped"
@@ -40,7 +41,7 @@ echo "== player props =="
 go run ./cmd/accuracy
 python3 scripts/accuracy_report.py
 go run ./cmd/combos calibrate || echo "combo calibration unavailable; comparison mode retained"
-go run ./cmd/predict
+go run ./cmd/predict -rotationpolicy rotation-v2
 go run ./cmd/minutesaudit -legacy || echo "Minutes audit unavailable; live model unchanged"
 go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
 go run ./cmd/rotationaudit || echo "Rotation evaluation unavailable; V1 unchanged"

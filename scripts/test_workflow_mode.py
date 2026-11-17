@@ -13,6 +13,7 @@ class ModeTests(unittest.TestCase):
     def test_manual_mode_and_branch(self):
         self.assertEqual(select('workflow_dispatch','site','','main','main'),('site',True))
         self.assertEqual(select('push','','','main','main'),('site',True))
+        self.assertEqual(select('push','daily','','main','main'),('daily',True))
         with self.assertRaises(ValueError):select('workflow_dispatch','site','','feature','main')
 
 if __name__=='__main__':unittest.main()

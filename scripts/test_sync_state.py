@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from sync_state import merge_jsonl, sync, is_input, merge_result_audit
+from sync_state import merge_jsonl, sync, is_input, merge_result_audit, is_state, MODEL_BUNDLE
 
 
 def run(cwd, *args):
@@ -19,6 +19,11 @@ def line(pid, **kwargs):
 
 
 class MergeTests(unittest.TestCase):
+    def test_new_model_records_and_calibration_are_retained(self):
+        for name in ('v2_gamepicklog.jsonl','v2_gamesettled.jsonl','v2_rotation_strictlog.jsonl','v2_rotation_strictsettled.jsonl','gamecal_research.json'):
+            self.assertTrue(is_state('data/'+name),name)
+        self.assertIn('data/gamecal_research.json',MODEL_BUNDLE)
+
     def test_concurrent_result_audits_keep_both_corrections(self):
         older = dict(at='2026-11-10T17:00:00Z', checked=1, history=[dict(id='a', newResult='LOSS')])
         newer = dict(at='2026-11-10T18:00:00Z', checked=2, history=[dict(id='b', newResult='REVIEW')])

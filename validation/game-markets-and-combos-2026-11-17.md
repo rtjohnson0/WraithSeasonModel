@@ -1,6 +1,6 @@
 # Spreads, totals and combo evidence — November 17, 2026
 
-This patch starts a separate game-model research track and improves combo evidence diagnostics. It does not claim the live spreads or totals are now strong, does not promote the challenger, and does not manufacture combo selections. Existing prop/game LEANs and combo comparisons remain available.
+This began as a separate game-model research track. The launch update below activates it at the user’s request; the diagnostic limitations still apply, and no combo selections are manufactured. Existing prop/game LEANs and combo comparisons remain available.
 
 ## Game-market findings and changes
 
@@ -36,7 +36,7 @@ go run ./cmd/games -audit -season 2025
 go run ./cmd/games -backtest -season 2025 -research
 ```
 
-The audit writes report.json, report.md and forecasts.csv under run_evidence/game-research. The research backtest writes gamecal_research.json; daily prediction continues using gamecal.json. `-research` requires `-backtest` and cannot silently become a live policy. If the local opening file is missing, the existing download command is `go run ./cmd/pull gameodds -season 2025`.
+The audit writes report.json, report.md and forecasts.csv under run_evidence/game-research. The research backtest writes gamecal_research.json; daily prediction continues using gamecal.json. Following the launch update, game-v2 is the daily default; use `-research=false` for the legacy game model. If the local opening file is missing, the existing download command is `go run ./cmd/pull gameodds -season 2025`.
 
 ## Why combos are not selected
 
@@ -51,3 +51,12 @@ The simulator, its probabilities and the posted forecasts are not made stronger 
 ## Verification
 
 Full Go suite, 28 frontend unit tests and production build passed. Regression tests cover pregame offseason expiration without double-resetting, explicit/conflicting finals, no future-game feature leakage, symmetric schedule updates, bounded non-inverting market blends, whole-line probability consistency, combo exclusion categories and slate-level evidence counts. Historical diagnostics and combo calibration checks ran in separate output directories without changing live data or model files.
+
+
+## Launch update
+
+The user authorized activation after reviewing these results. Game-v2 is now the default daily game policy; `-research=false` explicitly restores legacy. Its matching calibration remains in `gamecal_research.json` for filename compatibility, with policy/cutoff metadata required by live scoring. Daily re-fits this calibration and the prop model/calibration pair; pre-tip uses the matching trained files and latest inputs. The comparative results and their limitations above have not changed.
+
+New game forecasts/results use `v2_gamepicklog.jsonl` and `v2_gamesettled.jsonl`. Prior game records remain available in a separate archive. Old results are not presented as the new model's record. V2 rotation-v2 is also selected explicitly by daily/pre-tip prediction. No unproven-staking override or forced combo qualification is enabled.
+
+The first Daily run can spend hours filling missing historical prop-quote caches. Downloads resume by game and the workflow retains its input cache; subsequent daily runs reuse that history. Prop training/calibration are restored together on failure rather than leaving mismatched files. A `[refresh-models]` source-push commit explicitly launches a full Daily run; ordinary source pushes retain fast site publication.

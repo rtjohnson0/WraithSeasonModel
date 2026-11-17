@@ -8,7 +8,7 @@ def select(event, requested, schedule, branch, default_branch, now=None):
     if branch != default_branch:
         raise ValueError('Publishing is restricted to the default branch.')
     if event == 'push':
-        return 'site', True
+        return ('daily' if requested == 'daily' else 'site'), True
     if event == 'workflow_dispatch':
         if requested not in {'bootstrap', 'daily', 'pretip', 'site'}:
             raise ValueError('Unknown workflow mode')

@@ -46,17 +46,19 @@ Run "grade the V2 challenger"      { go run ./cmd/v2 settle } -Optional
 Run "review yesterday (csv)"        { go run ./cmd/review } -Optional
 
 if (-not $SkipTrain) {
-    Run "retrain" { go run ./cmd/train @lineupFlag }
-    Run "refit calibration" { go run ./cmd/backtest -season ($Season - 1) @lineupFlag }
+    $refreshFlags = @("--season", "$Season")
+    if ($Lineup) { $refreshFlags += "--lineup" }
+    Run "refresh prop model and matching calibration" { python scripts/refresh_models.py @refreshFlags }
 }
 
+Run "calibrate game-v2" { python scripts/calibrate_games.py --force --season ($Season - 1) }
 Run "snapshot lines and injuries"  { go run ./cmd/pull snapshot }
 Run "extra books (SportsGameOdds)" { go run ./cmd/sgo snapshot } -Optional
 
 Run "forward accuracy evaluation" { go run ./cmd/accuracy }
 Run "offline accuracy report" { python scripts/accuracy_report.py }
 Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
-Run "player props"                 { go run ./cmd/predict }
+Run "player props"                 { go run ./cmd/predict -rotationpolicy rotation-v2 }
 Run "minutes and Under-bias audit" { go run ./cmd/minutesaudit -legacy } -Optional
 Run "Over and Under price comparison" { go run ./cmd/priceaudit } -Optional
 Run "V2 rotation comparison" { go run ./cmd/rotationaudit } -Optional

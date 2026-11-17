@@ -44,7 +44,7 @@ jobs:
   run:
     if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 360
     outputs:
       publish: ${{ steps.mode.outputs.publish }}
     steps:
@@ -68,7 +68,7 @@ jobs:
         id: mode
         env:
           EVENT_NAME: ${{ github.event_name }}
-          REQUESTED_MODE: ${{ inputs.mode }}
+          REQUESTED_MODE: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[refresh-models]') && 'daily' || inputs.mode }}
           EVENT_SCHEDULE: ${{ github.event.schedule }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           RUN_BRANCH: ${{ github.ref_name }}
@@ -159,7 +159,7 @@ jobs:
         env:
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
           SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
-        run: bash scripts/daily.sh -s
+        run: bash scripts/daily.sh
 
       - name: Pre-tip run
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'pretip'

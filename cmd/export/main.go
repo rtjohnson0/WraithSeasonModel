@@ -109,6 +109,10 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
+	site.PreviousGameRecord, err = gameboard.LoadPreviousResults(*dir)
+	if err != nil {
+		fatal(err)
+	}
 	if raw, e := os.ReadFile(filepath.Join(*dir, "combohealth.json")); e == nil && json.Valid(raw) {
 		site.ComboHealth = raw
 	}

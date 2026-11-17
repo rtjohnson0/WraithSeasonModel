@@ -30,7 +30,7 @@ import (
 )
 
 func main() {
-	research := flag.Bool("research", false, "backtest only: verified finals, pregame offseason reset and constrained market blend; writes separate research calibration")
+	research := flag.Bool("research", true, "use game-v2 verified finals, schedule-adjusted ratings and constrained blend; false restores legacy")
 	audit := flag.Bool("audit", false, "read-only monthly point-forecast comparison; writes only the audit output directory")
 	auditOut := flag.String("out", filepath.Join("run_evidence", "game-research"), "read-only audit output directory")
 	dir := flag.String("data", "data", "data directory")
@@ -46,9 +46,6 @@ func main() {
 	minGames := flag.Int("mingames", 6, "predict: games each team needs before its game is projected (an offseason counts as 4, so 6 is two games into the season; the model was fitted at 8)")
 	minPrior := flag.Int("minprior", 150, "backtest: games needed before the second stage is fitted")
 	flag.Parse()
-	if *research && !*backtest {
-		fatal(fmt.Errorf("-research requires -backtest; live policy is unchanged"))
-	}
 
 	if *settleOnly {
 		if err := gameboard.Settle(*dir); err != nil {
@@ -107,7 +104,7 @@ func main() {
 	if state.MinGames < team.DefaultMinGames {
 		fmt.Printf("note: early season, ratings lean on last year's teams (min %d games, model fitted at %d); treat as paper\n", state.MinGames, team.DefaultMinGames)
 	}
-	runPredict(*dir, *date, samples, state, *hi, *minEdge, *maxUnits, *skipBooks, *allowUnproven)
+	runPredict(*dir, *date, samples, state, *hi, *minEdge, *maxUnits, *skipBooks, *allowUnproven, *research)
 }
 
 // ---------------------------------------------------------------- backtest
@@ -228,11 +225,11 @@ func runBacktest(dir string, samples []team.Sample, season int, hi, minEdge floa
 	if research {
 		out = filepath.Join(dir, "gamecal_research.json")
 	}
-	if err := (team.Calibration{Margin: mixM, Total: mixT, Z: zs}).Save(out); err != nil {
+	if err := (team.Calibration{Margin: mixM, Total: mixT, Z: zs, Policy: gamePolicy(research), TrainedBefore: recs[len(recs)-1].g.Date}).Save(out); err != nil {
 		fatal(err)
 	}
 	if research {
-		fmt.Printf("\nSaved %s for research only; live prediction does not load this file.\n", out)
+		fmt.Printf("\nSaved %s for the active game-v2 policy.\n", out)
 	} else {
 		fmt.Printf("\nSaved %s. Now run: go run ./cmd/games\n", out)
 	}
@@ -392,10 +389,14 @@ type play struct {
 	Model                 string
 }
 
-func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, minEdge, maxUnits float64, skipBooks string, allowUnproven bool) {
-	cal, ok := team.LoadCalibration(filepath.Join(dir, "gamecal.json"))
-	if !ok {
-		fatal(fmt.Errorf("no data/gamecal.json (run: go run ./cmd/games -backtest -season 2025)"))
+func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, minEdge, maxUnits float64, skipBooks string, allowUnproven, research bool) {
+	name := "gamecal.json"
+	if research {
+		name = "gamecal_research.json"
+	}
+	cal, ok := team.LoadCalibration(filepath.Join(dir, name))
+	if !ok || (research && (cal.Policy != team.CurrentGamePolicy || cal.TrainedBefore == "" || cal.TrainedBefore >= date)) {
+		fatal(fmt.Errorf("missing or incompatible game calibration; run python scripts/calibrate_games.py"))
 	}
 	mdl, err := team.Fit(samples)
 	if err != nil {
@@ -407,7 +408,7 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 	if err != nil {
 		fatal(fmt.Errorf("%w (run: go run ./cmd/pull snapshot)", err))
 	}
-	board := gameboard.Snapshot{Date: date, At: asOf.Format(time.RFC3339Nano), Z: cal.Z}
+	board := gameboard.Snapshot{Policy: gamePolicy(research), Date: date, At: asOf.Format(time.RFC3339Nano), Z: cal.Z}
 	odds, err := team.LoadPregameOdds(filepath.Join(snap, fmt.Sprintf("odds_%s.jsonl", date)), gm, asOf, 6*time.Hour)
 	if err != nil {
 		fatal(fmt.Errorf("%w (run: go run ./cmd/pull snapshot)", err))
@@ -447,7 +448,7 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 			fmt.Printf("note: no game odds yet for game %d\n", id)
 			continue
 		}
-		if !state.Ready(g.Home, g.Visitor) {
+		if !state.ReadyAt(g.Home, g.Visitor, day) {
 			fmt.Printf("note: %s @ %s skipped: only %d and %d games of history (need %d each; lower with -mingames)\n",
 				abbr(g.VisitorAbbr, g.Visitor), abbr(g.HomeAbbr, g.Home),
 				state.Games(g.Visitor), state.Games(g.Home), state.MinGames)
@@ -738,4 +739,11 @@ func marketZ(evs []event, mk string) float64 {
 	}
 	_, z := meanZ(d)
 	return z
+}
+
+func gamePolicy(research bool) string {
+	if research {
+		return team.CurrentGamePolicy
+	}
+	return "legacy"
 }
