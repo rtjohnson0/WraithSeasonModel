@@ -7,8 +7,9 @@ const {JSDOM}=require('jsdom');
 const dom=new JSDOM('<div id="root"></div>',{url:'https://preview.test/'});
 global.window=dom.window;global.document=dom.window.document;global.navigator=dom.window.navigator;global.IS_REACT_ACT_ENVIRONMENT=true;
 const {createRoot}=require('react-dom/client');
-for(const name of ['Board','Combos'])esbuild.buildSync({entryPoints:[path.join(siteDir,'src',name+'.jsx')],outfile:path.join(tempDir,`${name}.cjs`),bundle:true,platform:'node',format:'cjs',jsx:'automatic',packages:'external'});
+for(const name of ['Board','Combos','Record'])esbuild.buildSync({entryPoints:[path.join(siteDir,'src',name+'.jsx')],outfile:path.join(tempDir,`${name}.cjs`),bundle:true,platform:'node',format:'cjs',jsx:'automatic',packages:'external'});
 const Board=require(path.join(tempDir,'Board.cjs')).default,Combos=require(path.join(tempDir,'Combos.cjs')).default;
+const Record=require(path.join(tempDir,'Record.cjs')).default;
 const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/board-ui.json')));
 // Keep all fixtures fresh regardless of time elapsed since creation.
 const now=new Date().toISOString(),tip=new Date(Date.now()+4*3600000).toISOString();
@@ -54,5 +55,35 @@ click($$('[aria-label="View"] button').find(b=>b.textContent.includes('Line comp
 check('Research comparison shows projected total instead of raw probability',$('.combo-prob').textContent.includes('37.3')&&!$('.combo-prob').textContent.includes('81'));
 check('Research comparison has player image',$$('.combo-grid .player-portrait img').length===1);
 input($('input[type="search"]'),'UnknownPlayer');check('Combo empty search state',$$('.combo-grid>.combo-row').length===0&&document.body.textContent.includes('No combo plays match'));
+act(()=>root.unmount());
+root=createRoot($('#root'));
+const recordFixture={record:{since:'2026-11-14',until:'2026-11-15',days:2,tiers:[{name:'Everything tracked',wins:2,losses:1,pushes:0,hitRate:2/3,predicted:.6,units:.8}],stats:[],sides:[],daily:[],buckets:[],recent:[
+ {date:'2026-11-15',player:'Stephen Curry',team:'GSW',matchup:'GSW @ LAL',stat:'points',side:'OVER',line:20.5,actual:25,proj:24,result:'WIN',tier:'PAPER'},
+ {date:'2026-11-15',player:'Kevin Durant',team:'HOU',matchup:'HOU @ WAS',stat:'assists',side:'UNDER',line:4.5,actual:6,proj:4,result:'LOSS',tier:'LEAN'},
+ {date:'2026-11-14',player:'Devin Booker',team:'PHX',stat:'threes',side:'OVER',line:1.5,actual:3,proj:2,result:'WIN',tier:'PAPER'}]},gameRecord:[
+ {date:'2026-11-17',game_id:17,home:'LAL',away:'GSW',market:'moneyline',side:'LAL',line:0,odds:-110,prob:.55,book:'test',tier:'PAPER',result:'PENDING',units:0},
+ {date:'2026-11-15',game_id:15,home:'LAL',away:'GSW',market:'spread',side:'LAL',line:-2.5,odds:-110,prob:.55,book:'test',tier:'PAPER',result:'WIN',units:.91,homeScore:100,awayScore:90},
+ {date:'2026-11-14',game_id:14,home:'LAL',away:'GSW',market:'moneyline',side:'LAL',line:0,odds:-110,prob:.55,book:'test',tier:'PICK',result:'WIN',units:.91,homeScore:100,awayScore:90}]};
+act(()=>root.render(React.createElement(Record,{site:recordFixture})));
+check('Individual prop results precede game markets',Boolean($('.prop-results').compareDocumentPosition($('.game-record'))&window.Node.DOCUMENT_POSITION_FOLLOWING));
+check('Prop cards retain player portraits, final actuals and projections',$$('.record-page>.prop-record .prop-result-cards>li').length>0&&$('.prop-result-cards>li .player-portrait')&&$('.prop-result-cards>li .result-values').textContent.includes('Final result'));
+const latestPropDate=[...new Set(recordFixture.record.recent.map(r=>r.date))].sort().reverse()[0];
+check('Latest completed prop date is selected by default',$('.prop-results select').value===latestPropDate);
+click($$('.prop-results button').find(b=>b.textContent==='Hits'));
+check('Prop Hits filter excludes losses',$$('.record-page>.prop-record .prop-result-cards>li').length>0&&$$('.record-page>.prop-record .prop-result-cards>li').every(n=>n.classList.contains('win')));
+click($$('.prop-results button').find(b=>b.textContent==='All'));
+input($('.prop-results input'),'UnknownPlayer');check('Prop result search has a clear empty state',$$('.record-page>.prop-record .prop-result-cards>li').length===0&&$('.prop-results').textContent.includes('No prop results match'));
+input($('.prop-results input'),'');
+act(()=>{$('.prop-results select').value='ALL';$('.prop-results select').dispatchEvent(new window.Event('change',{bubbles:true}));});
+check('All dates exposes every available prop actual',$$('.record-page>.prop-record .prop-result-cards>li').length===recordFixture.record.recent.length);
+check('Charts remain accessible in a breakdown disclosure',$('.record-analysis').textContent.includes('Units over time'));
+check('Each game market has a summary card',$$('.game-record-summary article').length===3);
+const latestGradedGameDate=[...new Set(recordFixture.gameRecord.filter(r=>['WIN','LOSS','PUSH'].includes(r.result)).map(r=>r.date))].sort().reverse()[0];
+check('Game results default to the latest completed date',$('.game-record select').value===latestGradedGameDate);
+click($$('.game-record button').find(b=>b.textContent==='Selected plays only'));
+check('Selected game view never labels paper as selected',$$('.game-result').every(n=>!n.textContent.includes('not staked')));
+act(()=>root.unmount());
+act(()=>{root=createRoot($('#root'));root.render(React.createElement(Record,{site:{...recordFixture,hideGameRecord:true}}));});
+check('Embedded research pages can still hide game records',!$('.game-record'));
 act(()=>root.unmount());
 console.log(JSON.stringify({passed:checks.length,checks},null,2));fs.rmSync(tempDir,{recursive:true,force:true});dom.window.close();

@@ -1,0 +1,86 @@
+// Results share the board's quiet purple palette, with outcomes kept explicit.
+.record-page {padding-bottom:40px;
+ h1,h2,h3,h4 {font-family:var(--body);letter-spacing:-.035em;}
+ .record-intro {display:flex;justify-content:space-between;align-items:center;gap:24px;padding:30px 32px;background:radial-gradient(ellipse at 95% 20%,#653c8555,transparent 60%),#15101f;border:1px solid #453152;border-radius:20px;}
+ .record-intro h1 {font-size:clamp(32px,5vw,52px);line-height:1.1;font-weight:600;margin:12px 0;}
+ .record-intro p {font-size:14px;color:#c3b7d1;margin:0;}
+ .record-period {font-size:12px;color:#d0bcdf;background:#ffffff08;border:1px solid #ffffff17;border-radius:30px;padding:10px 16px;white-space:nowrap;}
+ .record-metrics {display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0;}
+ .record-metrics>div {padding:20px 22px;border:1px solid var(--edge);border-radius:14px;background:#14101c;}
+ .record-metrics dt {color:#b8aac9;font-size:11px;}
+ .record-metrics dd {font-size:clamp(27px,3vw,38px);line-height:1.3;letter-spacing:-.05em;margin:8px 0;}
+ .record-metrics dd span {color:#92dfbd;}
+ i {font-style:normal;color:#8f819e;margin:0 5px;}
+ .record-metrics small,.record-disclosure {font-size:11px;color:#aa9db8;}
+ .record-disclosure {max-width:94ch;margin:16px 0 30px;line-height:1.8;}
+ .record-section-head {display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 18px;}
+ .record-section-head h2 {font-size:27px;margin:5px 0 0;font-weight:500;text-shadow:none;}
+ .record-section-head p {font-size:13px;color:#b5a6c5;margin:7px 0 0;}
+ .record-count {font-size:11px;color:#b8a9c9;white-space:nowrap;}
+ .record-controls {display:flex;flex-wrap:wrap;align-items:end;gap:14px;background:#14101d;border:1px solid var(--edge);border-radius:14px;padding:16px;}
+ label {display:flex;flex-direction:column;gap:7px;font-size:10px;letter-spacing:.03em;color:#bcaecc;}
+ select,input[type=search] {color:#eee7f5;background:#0d0a13;border:1px solid #473651;border-radius:8px;font:inherit;font-size:12px;padding:10px 12px;min-height:44px;max-width:100%;}
+ select option {background:#15101f;}
+ .record-controls label:nth-child(2) {flex:1;min-width:170px;}
+ .record-result-filter {display:flex;flex-wrap:wrap;gap:4px;}
+ button {font-family:var(--body);cursor:pointer;}
+ .record-result-filter button {min-height:44px;border:1px solid transparent;border-radius:8px;padding:9px 12px;color:#bdafcc;background:#22192e;font-size:11px;}
+ .record-result-filter button[aria-pressed=true] {background:#bea0e9;color:#1c102b;border-color:#dac4fa;font-weight:600;}
+ button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible {outline:2px solid #d4b4ff;outline-offset:4px;}
+ .record-day-caption {display:flex;justify-content:space-between;gap:14px;margin:20px 0 12px;font-size:13px;color:#c7bbd5;}
+ .daysum {font-family:var(--body);font-size:11px;color:#aa9db8;}
+ .prop-result-cards {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;list-style:none;margin:0;padding:0;}
+ .prop-result-cards li {position:relative;display:grid;grid-template-columns:46px 1fr auto;gap:7px 12px;align-items:center;padding:18px;background:linear-gradient(135deg,#191221,#100d18);border:1px solid #382a44;border-radius:14px;border-top:2px solid #665477;min-width:0;}
+ .prop-result-cards .player-portrait {grid-column:1;grid-row:1/3;width:46px;height:52px;border-radius:10px;}
+ .prop-result-cards .portrait-team {font-size:7px;bottom:0;}
+ .prop-result-cards .what {grid-column:2;grid-row:1;min-width:0;}
+ .prop-result-cards .what strong {font-size:13px;line-height:1.4;display:block;}
+ .prop-result-cards .what small {display:block;font-size:12px;color:#d4c0e7;margin-top:4px;}
+ .prop-result-cards .res {grid-column:3;grid-row:1;align-self:start;font-size:10px;border-radius:6px;padding:4px 8px;background:#ffffff08;color:#c5b4d3;}
+ .prop-result-cards .result-matchup {grid-column:2/4;grid-row:2;font-size:9px;color:#ac9dbb;}
+ .prop-result-cards .result-values {grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #ffffff0c;margin-top:8px;padding-top:12px;gap:6px;}
+ .result-values>span {font-size:9px;color:#a899b9;}
+ .result-values b {display:block;color:#e8dfef;font-size:19px;font-weight:500;margin-top:3px;}
+ .result-values>span:last-child b {font-size:13px;padding-top:5px;}
+ .result-stake-note {grid-column:1/-1;font-size:9px;color:#9889a8;}
+ .prop-result-cards .win {border-top-color:#62cda0;}.prop-result-cards .win .res {background:#174b373d;color:#82ddb3;}
+ .prop-result-cards .loss {border-top-color:#cb627a;}.prop-result-cards .loss .res {background:#682e403d;color:#f195a9;}
+ .record-analysis,.record-archive,.record-method {border:1px solid var(--edge);border-radius:14px;padding:18px 20px;margin-top:24px;background:#110d18;}
+ summary {cursor:pointer;font-size:14px;color:#d4c4e3;}
+ summary>span {font-size:10px;color:#a394b3;margin-left:12px;}
+ .record-analysis[open] {padding-bottom:24px;}
+ .record-archive .prop-record {margin-top:24px;}
+ .game-record {margin-top:42px;padding-top:30px;border-top:1px solid #493455;}
+ .game-record-summary {display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 24px;}
+ .game-record-summary article {border:1px solid #3b2b49;border-radius:14px;padding:20px;background:radial-gradient(ellipse at 100% 0,#48315b36,transparent 80%),#14101c;}
+ .game-record-summary strong {display:block;font-size:32px;letter-spacing:-.05em;font-weight:500;margin:9px 0;}
+ .game-record-summary article>div {display:flex;justify-content:space-between;gap:12px;font-size:11px;color:#c5b6d5;}
+ .game-record-summary small {display:block;font-size:10px;color:#9d8fab;margin-top:10px;}
+ .up {color:#83dbb2;}.down {color:#ec8ca3;}
+ .game-results-heading {margin-top:24px;}.game-results-heading h3 {font-size:20px;font-weight:500;}.game-results-heading label {flex-direction:row;align-items:center;gap:12px;}
+ .game-result-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+ .game-result {min-width:0;background:#14101c;border:1px solid var(--edge);border-radius:13px;padding:18px;}
+ .game-result-top {display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;}
+ .outcome {font-size:10px;padding:4px 8px;border-radius:6px;background:#ffffff08;color:#b5a5c6;}
+ .game-result.win .outcome {color:#82ddb3;background:#174b373d;}.game-result.loss .outcome {color:#f195a9;background:#682e403d;}
+ .game-result-market {display:block;font-size:10px;color:#a797b7;margin-top:9px;}
+ .game-result h4 {font-size:23px;font-weight:500;margin:13px 0 10px;}
+ .game-result-meta {display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:9px;color:#ad9bbc;}
+ .game-result-score {display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;border-top:1px solid #ffffff0c;margin-top:15px;padding-top:12px;font-size:11px;color:#d1c3df;}
+ .game-result-score small {font-size:10px;color:#b4a1c5;}
+ .game-result p.small {font-size:9px;line-height:1.5;color:#9b8ba9;margin-bottom:0;}
+ .record-more {display:block;margin:20px auto 0;padding:12px 22px;border:1px solid #594168;border-radius:10px;color:#d2b8e9;background:#23162f;min-height:44px;font-size:12px;}
+ .record-method {margin-top:18px;}.record-method summary {font-size:12px;}
+ @media(max-width:1000px) {.prop-result-cards,.game-result-grid {grid-template-columns:repeat(2,minmax(0,1fr));}.record-controls .record-result-filter {width:100%;}}
+ @media(max-width:640px) {
+  .record-intro {padding:24px 20px;display:block;}.record-period {display:inline-block;margin-top:16px;}
+  .record-metrics {grid-template-columns:repeat(2,1fr);gap:8px;}.record-metrics>div {padding:15px;}.record-metrics small {font-size:9px;}
+  .prop-result-cards,.game-result-grid,.game-record-summary {grid-template-columns:1fr;}
+  .record-controls {padding:12px;}.record-controls label {flex:1;min-width:130px;}
+  .record-section-head {align-items:start;}.record-section-head h2 {font-size:24px;}.record-count {font-size:9px;}
+  .record-day-caption {flex-direction:column;gap:5px;}
+  .game-record-summary article {padding:16px;}.game-record-summary strong {margin:5px 0;font-size:28px;}
+  .record-analysis,.record-archive {padding:16px 13px;}summary>span {display:block;margin:5px 0 0;}
+  .game-results-heading {align-items:center;}.game-results-heading label {font-size:0;}.game-results-heading select {font-size:11px;}
+ }
+}
