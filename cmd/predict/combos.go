@@ -284,7 +284,7 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 		}
 	}
 	cands = bestLinePerPick(cands)
-	sort.SliceStable(cands, func(i, j int) bool { return valueBefore(cands[i], cands[j]) })
+	sort.SliceStable(cands, func(i, j int) bool { return boardBefore(cands[i], cands[j]) })
 	perP := map[int]int{}
 	var out []scored
 	for _, c := range cands {

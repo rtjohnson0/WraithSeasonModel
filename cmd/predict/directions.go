@@ -12,7 +12,7 @@ func oneDirection(rows []scored) []scored {
 	best := map[string]scored{}
 	for _, s := range rows {
 		cur, ok := best[key(s)]
-		if !ok || picklog.TierRank(s.Tier) < picklog.TierRank(cur.Tier) || (picklog.TierRank(s.Tier) == picklog.TierRank(cur.Tier) && valueBefore(s, cur)) {
+		if !ok || picklog.TierRank(s.Tier) < picklog.TierRank(cur.Tier) || (picklog.TierRank(s.Tier) == picklog.TierRank(cur.Tier) && boardBefore(s, cur)) {
 			best[key(s)] = s
 		}
 	}

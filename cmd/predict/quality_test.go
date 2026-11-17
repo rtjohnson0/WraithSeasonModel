@@ -14,10 +14,10 @@ func TestEvidenceGateKeepsVisibleResearchPicks(t *testing.T) {
 		t.Fatal(out)
 	}
 }
-func TestPriceRankingDoesNotMistakeFavoriteForBestValue(t *testing.T) {
+func TestConfidenceBoardDoesNotRankByPayout(t *testing.T) {
 	p := []scored{{PlayerID: 1, GameID: 1, Prob: .67, Odds: -188, Edge: .017}, {PlayerID: 2, GameID: 1, Prob: .552, Odds: -105, Edge: .04}}
 	p = capCorrelated(p, 1, 1)
-	if len(p) != 1 || p[0].PlayerID != 2 {
+	if len(p) != 1 || p[0].PlayerID != 1 {
 		t.Fatal(p)
 	}
 }
@@ -56,5 +56,45 @@ func TestLargerLeanBoardStillRefusesUncertainAndNegativeEdgeRows(t *testing.T) {
 	more := moreCandidates(nil, all, 8, 2)
 	if len(more) != 4 {
 		t.Fatal("expanded extras included uncertain or negative-edge filler")
+	}
+}
+
+func TestValueResearchRetainsPriceRanking(t *testing.T) {
+	old := boardRanking
+	boardRanking = "value"
+	defer func() { boardRanking = old }()
+	picks := capCorrelated([]scored{
+		{PlayerID: 1, GameID: 1, Prob: .67, Odds: -188, Edge: .017},
+		{PlayerID: 2, GameID: 1, Prob: .552, Odds: -105, Edge: .04},
+	}, 1, 1)
+	if len(picks) != 1 || picks[0].PlayerID != 2 {
+		t.Fatal(picks)
+	}
+}
+
+func TestConfidenceRankingIsSideNeutralAndDoesNotChangeProbabilities(t *testing.T) {
+	for _, side := range []string{"OVER", "UNDER"} {
+		high := scored{PlayerID: 1, GameID: 1, Side: side, Prob: .65, Odds: -170}
+		low := scored{PlayerID: 2, GameID: 1, Prob: .56, Odds: 110}
+		picks := capCorrelated([]scored{low, high}, 1, 1)
+		if len(picks) != 1 || picks[0].PlayerID != 1 || picks[0].Prob != .65 {
+			t.Fatal(picks)
+		}
+	}
+}
+
+func TestZeroFillTargetAddsNoMarginalCards(t *testing.T) {
+	out := fillLeans(nil, []scored{{GameID: 1, PlayerID: 1, Prob: .519, Edge: .002}}, map[int]props.GameInfo{1: {}}, 0, 2)
+	if len(out) != 0 {
+		t.Fatal(out)
+	}
+}
+
+func TestLeansStayAvailableWithoutReplacingQualifiedRows(t *testing.T) {
+	qualified := scored{GameID: 1, PlayerID: 1, Stat: data.Rebounds, Side: "UNDER", Tier: "PAPER", Prob: .60, Odds: -110, Edge: .07}
+	lean := scored{GameID: 1, PlayerID: 2, Stat: data.Points, Side: "OVER", Prob: .54, Odds: 110, Edge: .06}
+	out := fillLeans([]scored{qualified}, []scored{lean}, map[int]props.GameInfo{1: {}}, 4, 2)
+	if len(out) != 2 || out[0].PlayerID != 1 || out[0].Tier != "PAPER" || out[1].Tier != "LEAN" || out[1].Units != 0 {
+		t.Fatal(out)
 	}
 }

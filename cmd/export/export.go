@@ -574,13 +574,13 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 		}
 	}
 	// Resolve opposite directions even in legacy saved inputs. Keep the more
-	// trusted tier, then modeled return at the exact offered price.
+	// trusted tier, then the stronger estimated hit probability. Price breaks ties.
 	direction := map[string]picklog.Entry{}
 	question := func(e picklog.Entry) string { return fmt.Sprintf("%d|%d|%s", e.GameID, e.PlayerID, e.Stat) }
 	for _, k := range order {
 		e := best[k]
 		cur, ok := direction[question(e)]
-		if !ok || picklog.TierRank(e.Tier) < picklog.TierRank(cur.Tier) || (picklog.TierRank(e.Tier) == picklog.TierRank(cur.Tier) && bets.ExpectedReturn(e.Prob, e.Odds) > bets.ExpectedReturn(cur.Prob, cur.Odds)) {
+		if !ok || picklog.TierRank(e.Tier) < picklog.TierRank(cur.Tier) || (picklog.TierRank(e.Tier) == picklog.TierRank(cur.Tier) && (e.Prob > cur.Prob || (e.Prob == cur.Prob && bets.ExpectedReturn(e.Prob, e.Odds) > bets.ExpectedReturn(cur.Prob, cur.Odds)))) {
 			direction[question(e)] = e
 		}
 	}

@@ -50,6 +50,18 @@ func evidenceGate(picks []scored, report accuracy.Report, date, config string, v
 	return picks
 }
 
+// boardRanking follows the selected policy. The normal board prioritizes the
+// estimated chance of the selected outcome; value comparisons remain research.
+// main sets this once before scoring. It does not change calibration or gates.
+var boardRanking = "confidence"
+
+func boardBefore(a, b scored) bool {
+	if boardRanking != "value" && a.Prob != b.Prob {
+		return a.Prob > b.Prob
+	}
+	return valueBefore(a, b)
+}
+
 // valueBefore ranks qualified questions by their offered price, never confidence
 // alone. It does not alter probabilities, qualify a new side, or balance sides.
 func valueBefore(a, b scored) bool {

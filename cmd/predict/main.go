@@ -152,6 +152,7 @@ func main() {
 	if *selectionPolicy != "confidence" && *selectionPolicy != "value" {
 		fatal(fmt.Errorf("unknown selection policy"))
 	}
+	boardRanking = *selectionPolicy
 	runAt := time.Now().UTC()
 
 	if *date == "" {
@@ -931,7 +932,7 @@ func main() {
 		if picks[i].Tier != picks[j].Tier {
 			return tierRank(picks[i].Tier) < tierRank(picks[j].Tier)
 		}
-		return valueBefore(picks[i], picks[j])
+		return boardBefore(picks[i], picks[j])
 	})
 
 	if guarded, reason := guardSelectedSides(picks, *skewMax); reason != "" {
@@ -1471,7 +1472,7 @@ func bestLinePerPick(picks []scored) []scored {
 		if !ok {
 			order = append(order, k)
 		}
-		if !ok || valueBefore(s, cur) {
+		if !ok || boardBefore(s, cur) {
 			best[k] = s
 		}
 	}
@@ -1487,7 +1488,7 @@ func bestLinePerPick(picks []scored) []scored {
 // weaker than real picks, so they get 0 units and are labelled LEAN.
 func fillLeans(picks, all []scored, games map[int]props.GameInfo, min, perPlayer int) []scored {
 	cands := bestLinePerPick(all)
-	sort.SliceStable(cands, func(i, j int) bool { return valueBefore(cands[i], cands[j]) })
+	sort.SliceStable(cands, func(i, j int) bool { return boardBefore(cands[i], cands[j]) })
 	perGame, perPlr := map[int]int{}, map[int]int{}
 	used := map[[2]int]bool{}
 	for _, s := range picks {
@@ -1517,11 +1518,11 @@ func fillLeans(picks, all []scored, games map[int]props.GameInfo, min, perPlayer
 	return picks
 }
 
-// capCorrelated limits picks per game and per player, keeping larger model returns at the offered price. Picks in the
+// capCorrelated limits picks per game and per player, keeping stronger estimated hit probabilities by default. Picks in the
 // same game or on the same player tend to win and lose together, so posting everything
 // concentrates risk.
 func capCorrelated(picks []scored, perGame, perPlayer int) []scored {
-	sort.SliceStable(picks, func(i, j int) bool { return valueBefore(picks[i], picks[j]) })
+	sort.SliceStable(picks, func(i, j int) bool { return boardBefore(picks[i], picks[j]) })
 	games, players := map[int]int{}, map[int]int{}
 	var out []scored
 	for _, s := range picks {
@@ -1545,11 +1546,11 @@ func oddsStr(o int) string {
 	return fmt.Sprintf("%d", o)
 }
 
-// writeCSV saves the board for a spreadsheet: forecast value first, with percentages as
+// writeCSV saves the board for a spreadsheet using the selected ranking policy, with percentages as
 // plain numbers (62.3 means 62.3%) so Excel can sort and filter them.
 func writeCSV(path string, in []scored) error {
 	picks := append([]scored(nil), in...)
-	sort.SliceStable(picks, func(i, j int) bool { return valueBefore(picks[i], picks[j]) })
+	sort.SliceStable(picks, func(i, j int) bool { return boardBefore(picks[i], picks[j]) })
 	f, err := os.Create(path)
 	if err != nil {
 		return err
