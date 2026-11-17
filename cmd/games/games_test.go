@@ -1,6 +1,9 @@
 package main
 
 import (
+	"math"
+	"propsmodel/internal/gameboard"
+	"propsmodel/internal/glm"
 	"testing"
 
 	"propsmodel/internal/team"
@@ -70,5 +73,23 @@ func TestSpreadQuotesReachBoardWithCorrectAwaySideAndPush(t *testing.T) {
 	}
 	if n != 3 {
 		t.Fatal("spreads missing", g)
+	}
+}
+
+func TestBacktestAndBoardUseSameWholeLineProbability(t *testing.T) {
+	mix := &team.Mix{Lin: &glm.Linear{Intercept: 4.2}, Sigma: 12}
+	total := &team.Mix{Lin: &glm.Linear{Intercept: 222.7}, Sigma: 18}
+	r := rec{g: team.Game{HPts: 110, APts: 105}, c: team.Consensus{HasSpread: true, SpreadHome: -3, SpreadHomeOdds: -110, SpreadAwayOdds: -110, HasTotal: true, Total: 220, Over: -110, Under: -110}}
+	events := eventsFor(r, mix, total)
+	home, _, push := gameboard.TotalProb(4.2, 12, 3)
+	over, _, tpush := gameboard.TotalProb(222.7, 18, 220)
+	for _, e := range events {
+		expected := home / (1 - push)
+		if e.market == "total" {
+			expected = over / (1 - tpush)
+		}
+		if math.Abs(e.p-expected) > 1e-12 {
+			t.Fatal("backtest and published quote disagree", e.p, expected)
+		}
 	}
 }

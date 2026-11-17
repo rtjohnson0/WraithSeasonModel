@@ -865,7 +865,7 @@ func main() {
 		comboLines, _ = props.FilterConsensus(comboLines, *minMarketBooks, *maxMarketGap)
 		var cs comboStats
 		direct, directOK := eval.LoadCalibration(filepath.Join(*dir, "combocalibration.json"))
-		directOK = directOK && direct.Config == config && direct.ModelVersion == m.Version && direct.TrainedBefore != "" && direct.TrainedBefore < *date
+		directOK = directOK && direct.EvidencePolicy == eval.ComboEvidencePolicy && direct.Config == config && direct.ModelVersion == m.Version && direct.TrainedBefore != "" && direct.TrainedBefore < *date
 		cd := comboDeps{
 			availability: availabilityFor, watch: &comboWatch, b: b, ix: ix, m: m, games: games, out: out, statuses: statuses, teamOf: lookup, rowFor: rowFor, adjust: adjustMinutes,
 			scale: func(st data.Stat, row *feat.Row) float64 {

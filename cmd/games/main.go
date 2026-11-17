@@ -30,6 +30,9 @@ import (
 )
 
 func main() {
+	research := flag.Bool("research", false, "backtest only: verified finals, pregame offseason reset and constrained market blend; writes separate research calibration")
+	audit := flag.Bool("audit", false, "read-only monthly point-forecast comparison; writes only the audit output directory")
+	auditOut := flag.String("out", filepath.Join("run_evidence", "game-research"), "read-only audit output directory")
 	dir := flag.String("data", "data", "data directory")
 	settleOnly := flag.Bool("settle", false, "grade frozen game-market decisions against explicit final scores")
 	backtest := flag.Bool("backtest", false, "test against last season's opening lines instead of picking today's games")
@@ -43,6 +46,9 @@ func main() {
 	minGames := flag.Int("mingames", 6, "predict: games each team needs before its game is projected (an offseason counts as 4, so 6 is two games into the season; the model was fitted at 8)")
 	minPrior := flag.Int("minprior", 150, "backtest: games needed before the second stage is fitted")
 	flag.Parse()
+	if *research && !*backtest {
+		fatal(fmt.Errorf("-research requires -backtest; live policy is unchanged"))
+	}
 
 	if *settleOnly {
 		if err := gameboard.Settle(*dir); err != nil {
@@ -70,12 +76,22 @@ func main() {
 		}
 		rows = prior
 	}
+	if *audit {
+		if err := runGameAudit(*dir, *auditOut, rows, *season); err != nil {
+			fatal(err)
+		}
+		return
+	}
 	games := team.Build(rows)
 	samples, state := team.Samples(games)
+	if *research {
+		games = team.BuildVerified(rows)
+		samples, state = team.ResearchSamples(games)
+	}
 	fmt.Printf("%d games of history\n", len(games))
 
 	if *backtest {
-		runBacktest(*dir, samples, *season, *hi, *minEdge, *minPrior)
+		runBacktest(*dir, samples, *season, *hi, *minEdge, *minPrior, *research)
 		return
 	}
 	if *date == "" {
@@ -109,7 +125,7 @@ type event struct {
 	oA, oB int
 }
 
-func runBacktest(dir string, samples []team.Sample, season int, hi, minEdge float64, minPrior int) {
+func runBacktest(dir string, samples []team.Sample, season int, hi, minEdge float64, minPrior int, research bool) {
 	path := filepath.Join(dir, fmt.Sprintf("opening_games_%d.jsonl", season))
 	odds, err := team.LoadOdds(path)
 	if err != nil {
@@ -170,7 +186,7 @@ func runBacktest(dir string, samples []team.Sample, season int, hi, minEdge floa
 				test = append(test, r)
 			}
 		}
-		mixM, mixT := fitMixes(prior)
+		mixM, mixT := fitMixesPolicy(prior, research)
 		if len(prior) < minPrior || mixM == nil || mixT == nil {
 			continue
 		}
@@ -190,7 +206,7 @@ func runBacktest(dir string, samples []team.Sample, season int, hi, minEdge floa
 	}
 	tw.Flush()
 
-	mixM, mixT := fitMixes(recs)
+	mixM, mixT := fitMixesPolicy(recs, research)
 	if mixM == nil || mixT == nil {
 		fatal(fmt.Errorf("could not fit the final blend"))
 	}
@@ -209,14 +225,23 @@ func runBacktest(dir string, samples []team.Sample, season int, hi, minEdge floa
 		}
 	}
 	out := filepath.Join(dir, "gamecal.json")
+	if research {
+		out = filepath.Join(dir, "gamecal_research.json")
+	}
 	if err := (team.Calibration{Margin: mixM, Total: mixT, Z: zs}).Save(out); err != nil {
 		fatal(err)
 	}
-	fmt.Printf("\nSaved %s. Now run: go run ./cmd/games\n", out)
+	if research {
+		fmt.Printf("\nSaved %s for research only; live prediction does not load this file.\n", out)
+	} else {
+		fmt.Printf("\nSaved %s. Now run: go run ./cmd/games\n", out)
+	}
 	fmt.Println("Read the 'gain/bet' and 'z' columns first: a z under about 2 means the model has not shown it beats the book.")
 }
 
-func fitMixes(rs []rec) (*team.Mix, *team.Mix) {
+func fitMixes(rs []rec) (*team.Mix, *team.Mix) { return fitMixesPolicy(rs, false) }
+
+func fitMixesPolicy(rs []rec, research bool) (*team.Mix, *team.Mix) {
 	var mr, tr []team.Rec
 	for _, r := range rs {
 		if r.c.HasSpread {
@@ -229,8 +254,12 @@ func fitMixes(rs []rec) (*team.Mix, *team.Mix) {
 	if len(mr) < 50 || len(tr) < 50 {
 		return nil, nil
 	}
-	a, err1 := team.FitMix(mr)
-	b, err2 := team.FitMix(tr)
+	fit := team.FitMix
+	if research {
+		fit = team.FitAnchoredMix
+	}
+	a, err1 := fit(mr)
+	b, err2 := fit(tr)
 	if err1 != nil || err2 != nil {
 		return nil, nil
 	}
@@ -242,7 +271,8 @@ func eventsFor(r rec, mixM, mixT *team.Mix) []event {
 	margin, total := r.g.Margin(), r.g.Total()
 	if r.c.HasSpread {
 		mu := mixM.Mean(-r.c.SpreadHome, r.projM)
-		p := team.NormCDF((mu + r.c.SpreadHome) / mixM.Sigma)
+		ph, _, push := gameboard.TotalProb(mu, mixM.Sigma, -r.c.SpreadHome)
+		p := ph / (1 - push)
 		if v := margin + r.c.SpreadHome; v != 0 {
 			out = append(out, event{"spread", p, bets.MarketOver(r.c.SpreadHomeOdds, r.c.SpreadAwayOdds), b2f(v > 0), r.c.SpreadHomeOdds, r.c.SpreadAwayOdds})
 		}
@@ -253,7 +283,8 @@ func eventsFor(r rec, mixM, mixT *team.Mix) []event {
 	}
 	if r.c.HasTotal && total != r.c.Total {
 		mu := mixT.Mean(r.c.Total, r.projT)
-		p := 1 - team.NormCDF((r.c.Total-mu)/mixT.Sigma)
+		po, _, push := gameboard.TotalProb(mu, mixT.Sigma, r.c.Total)
+		p := po / (1 - push)
 		out = append(out, event{"total", p, bets.MarketOver(r.c.Over, r.c.Under), b2f(total > r.c.Total), r.c.Over, r.c.Under})
 	}
 	return out
@@ -483,9 +514,9 @@ func runPredict(dir, date string, samples []team.Sample, state *team.State, hi, 
 		}
 		for _, o := range rowsO {
 			if o.HasSpread {
-				ph := team.NormCDF((muM + o.SpreadHome) / cal.Margin.Sigma)
+				ph, pa, push := gameboard.TotalProb(muM, cal.Margin.Sigma, -o.SpreadHome)
+				ph, pa = ph/(1-push), pa/(1-push)
 				add("spread", "home", fmt.Sprintf("%s %+.1f", h, o.SpreadHome), ph, o.SpreadHomeOdds, o.Vendor)
-				pa := team.NormCDF((o.SpreadAway - muM) / cal.Margin.Sigma)
 				add("spread", "away", fmt.Sprintf("%s %+.1f", a, o.SpreadAway), pa, o.SpreadAwayOdds, o.Vendor)
 			}
 			if o.HasTotal {
