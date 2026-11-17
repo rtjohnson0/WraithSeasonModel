@@ -305,3 +305,52 @@ func ClusterGain(diffs []float64, dates []string) (mean, z float64) {
 	}
 	return
 }
+
+// PairedGainByDate treats a slate as one observation. Many correlated player
+// lines from one day must not masquerade as independent evidence of improvement.
+func PairedGainByDate(a, b []backtest.Result) (mean, z float64, days int) {
+	sums := map[string]float64{}
+	counts := map[string]int{}
+	for i, r := range a {
+		if i >= len(b) {
+			break
+		}
+		other := b[i]
+		if r.Date != other.Date || r.GameID != other.GameID || r.PlayerID != other.PlayerID || r.Stat != other.Stat || r.Line != other.Line {
+			continue
+		}
+		x, ok := lossOf(r)
+		y, ok2 := lossOf(other)
+		if !ok || !ok2 {
+			continue
+		}
+		sums[r.Date] += y - x
+		counts[r.Date]++
+	}
+	keys := []string{}
+	for d := range sums {
+		keys = append(keys, d)
+	}
+	sort.Strings(keys)
+	for _, d := range keys {
+		mean += sums[d] / float64(counts[d])
+	}
+	days = len(keys)
+	if days == 0 {
+		return 0, 0, 0
+	}
+	mean /= float64(days)
+	if days < 2 {
+		return mean, 0, days
+	}
+	ss := 0.
+	for _, d := range keys {
+		delta := sums[d]/float64(counts[d]) - mean
+		ss += delta * delta
+	}
+	se := math.Sqrt(ss / float64(days-1) / float64(days))
+	if se > 0 {
+		z = mean / se
+	}
+	return mean, z, days
+}

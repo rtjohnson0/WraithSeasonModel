@@ -138,12 +138,15 @@ func marketOf(r backtest.Result) float64 {
 
 // Calibration holds the final-probability rule: one global fit, plus one per stat where there
 // is enough data.
+const ComboEvidencePolicy = "date-clustered-combo-v1"
+
 type Calibration struct {
-	TrainedBefore string         `json:"trained_before,omitempty"`
-	ModelVersion  int            `json:"model_version,omitempty"`
-	Config        string         `json:"config"` // "pregame" or "lineup": which feature set it was fitted for
-	Global        Cal            `json:"global"`
-	ByStat        map[string]Cal `json:"by_stat"`
+	EvidencePolicy string         `json:"evidence_policy,omitempty"`
+	TrainedBefore  string         `json:"trained_before,omitempty"`
+	ModelVersion   int            `json:"model_version,omitempty"`
+	Config         string         `json:"config"` // "pregame" or "lineup": which feature set it was fitted for
+	Global         Cal            `json:"global"`
+	ByStat         map[string]Cal `json:"by_stat"`
 }
 
 const minPerStat = 1500

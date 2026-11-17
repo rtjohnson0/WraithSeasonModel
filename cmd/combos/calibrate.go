@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"propsmodel/internal/backtest"
@@ -43,7 +44,7 @@ func calibrateCombos(dir, before string) {
 	}
 	report["loadedRows"] = len(rows)
 	active := []string{}
-	if c, ok := eval.LoadCalibration(filepath.Join(dir, "combocalibration.json")); ok && c.ModelVersion == model.Version && c.Config == config && c.TrainedBefore != "" && c.TrainedBefore < before {
+	if c, ok := eval.LoadCalibration(filepath.Join(dir, "combocalibration.json")); ok && c.EvidencePolicy == eval.ComboEvidencePolicy && c.ModelVersion == model.Version && c.Config == config && c.TrainedBefore != "" && c.TrainedBefore < before {
 		for _, st := range data.Combos {
 			if _, ok := c.ByStat[string(st)]; ok {
 				active = append(active, string(st))
@@ -55,8 +56,8 @@ func calibrateCombos(dir, before string) {
 	report["excluded"] = rejected
 	var rs []backtest.Result
 	for _, r := range rows {
-		if r.TrainedBefore == "" || r.TrainedBefore >= r.Date || r.Date >= before || r.ModelVersion != model.Version || r.Config != config || r.AuditVersion < 2 || r.RawOver <= 0 || r.RawOver >= 1 || r.MarketOver <= 0 || r.MarketOver >= 1 {
-			rejected["model/date/provenance mismatch"]++
+		if reason := comboEvidenceExclusion(r, before, model.Version, config); reason != "" {
+			rejected[reason]++
 			continue
 		}
 		at, ea := time.Parse(time.RFC3339Nano, r.At)
@@ -87,6 +88,32 @@ func calibrateCombos(dir, before string) {
 		allDates[r.Date] = true
 	}
 	report["eligibleDates"] = len(allDates)
+	perStat := map[string]any{}
+	for _, st := range data.Combos {
+		n, trainN, testN := 0, 0, 0
+		days := map[string]bool{}
+		testDays := map[string]bool{}
+		for _, r := range rs {
+			if r.Stat == st {
+				n++
+				days[r.Date] = true
+			}
+		}
+		for _, r := range first {
+			if r.Stat == st {
+				trainN++
+			}
+		}
+		for _, r := range test {
+			if r.Stat == st {
+				testN++
+				testDays[r.Date] = true
+			}
+		}
+		perStat[string(st)] = map[string]any{"eligibleRows": n, "eligibleDates": len(days), "trainingRows": trainN, "evaluationRows": testN, "evaluationDates": len(testDays), "requiredTrainingRows": 300, "requiredEvaluationRows": 200, "requiredEvaluationDates": 30}
+	}
+	report["byStat"] = perStat
+	report["evidenceUnit"] = "date-clustered paired log-loss improvement; each slate counts once"
 	if len(first) < 300 || len(test) < 100 {
 		fmt.Println("Need at least 300 earlier calibration rows and 100 later evaluation rows on separate dates. No calibration written.")
 		return
@@ -97,7 +124,7 @@ func calibrateCombos(dir, before string) {
 	for i := range baseline {
 		baseline[i].POver = baseline[i].Market
 	}
-	gain, z := eval.PairedGain(corrected, baseline)
+	gain, z, _ := eval.PairedGainByDate(corrected, baseline)
 	dates := map[string]bool{}
 	for _, r := range test {
 		dates[r.Date] = true
@@ -121,7 +148,7 @@ func calibrateCombos(dir, before string) {
 				book = append(book, baseline[i])
 			}
 		}
-		g, z := eval.PairedGain(b, book)
+		g, z, _ := eval.PairedGainByDate(b, book)
 		dates := map[string]bool{}
 		for _, r := range a {
 			dates[r.Date] = true
@@ -142,10 +169,33 @@ func calibrateCombos(dir, before string) {
 		}
 	}
 	report["status"], report["qualifiedStats"] = "Direct calibration fitted; next dates are the forward test", qualified
+	final.EvidencePolicy = eval.ComboEvidencePolicy
 	final.Config = pipeline.ConfigName(model.Disabled)
 	final.ModelVersion = model.Version
 	if err := final.Save(filepath.Join(dir, "combocalibration.json")); err != nil {
 		fatal(err)
 	}
 	fmt.Printf("Saved direct fits for %d combo types, using dates strictly before %s. Subsequent dates remain the forward test.\n", len(final.ByStat), before)
+}
+
+func comboEvidenceExclusion(r lineslog.Market, before string, version int, config string) string {
+	if r.Date >= before {
+		return "forecast date not completed"
+	}
+	if r.ModelVersion != version {
+		return "different model version"
+	}
+	if r.Config != config {
+		return "different feature configuration"
+	}
+	if r.TrainedBefore == "" || r.TrainedBefore >= r.Date {
+		return "training cutoff missing or not pregame"
+	}
+	if r.AuditVersion < 2 {
+		return "quote provenance unavailable"
+	}
+	if math.IsNaN(r.RawOver) || math.IsInf(r.RawOver, 0) || math.IsNaN(r.MarketOver) || math.IsInf(r.MarketOver, 0) || r.RawOver <= 0 || r.RawOver >= 1 || r.MarketOver <= 0 || r.MarketOver >= 1 {
+		return "invalid raw or market probability"
+	}
+	return ""
 }

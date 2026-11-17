@@ -72,14 +72,18 @@ type tstate struct {
 	last                       int
 	n                          int
 	init                       bool
+	resetDay                   int
 }
 
 // State tracks every team's running ratings. Feed games in date order: read Vec for a game
 // BEFORE calling Update with it, so nothing about the game leaks into its own features.
 type State struct {
-	t      map[int]*tstate
-	league float64 // running mean points per team per game
-	nLg    int
+	// SeasonSafe is opt-in research; expire carried history before forecasting.
+	SeasonSafe       bool
+	ScheduleAdjusted bool
+	t                map[int]*tstate
+	league           float64 // running mean points per team per game
+	nLg              int
 	// MinGames is how many games (after an offseason reset, last year counts as 4) both teams
 	// need before a game is projected. Training always uses DefaultMinGames; prediction may lower it.
 	MinGames int
@@ -117,6 +121,10 @@ func (s *State) Games(id int) int { return s.get(id).n }
 // Vec returns the feature vector for a game between home and away on day.
 func (s *State) Vec(home, away, day int) []float64 {
 	h, a := s.get(home), s.get(away)
+	if s.SeasonSafe {
+		s.prepare(h, day)
+		s.prepare(a, day)
+	}
 	L := s.league
 	rest := func(t *tstate) (b2b, r float64) {
 		if t.last == 0 {
@@ -143,12 +151,13 @@ func (s *State) Vec(home, away, day int) []float64 {
 func (s *State) bump(t *tstate, scored, allowed float64, day int) {
 	// A long gap means an offseason: pull ratings most of the way back toward average,
 	// since rosters change.
-	if t.init && day-t.last > 60 {
+	if t.init && day-t.last > 60 && (!s.SeasonSafe || t.resetDay <= t.last) {
 		L := s.league
 		for _, p := range []*float64{&t.off10, &t.def10, &t.off30, &t.def30} {
 			*p = L + 0.6*(*p-L)
 		}
 		t.n = 4
+		t.resetDay = day
 	}
 	if !t.init {
 		t.off10, t.off30, t.def10, t.def30 = scored, scored, allowed, allowed
@@ -165,8 +174,26 @@ func (s *State) bump(t *tstate, scored, allowed float64, day int) {
 
 // Update folds a finished game into the ratings.
 func (s *State) Update(g Game) {
-	s.bump(s.get(g.Home), g.HPts, g.APts, g.Day)
-	s.bump(s.get(g.Away), g.APts, g.HPts, g.Day)
+	h, a := s.get(g.Home), s.get(g.Away)
+	hs, ha, as, aa := g.HPts, g.APts, g.APts, g.HPts
+	if s.ScheduleAdjusted {
+		// Normalize scoring by the opponent's strictly earlier long-run rating.
+		// Both sides read the same pre-update state; today's result cannot become
+		// the opponent baseline for the other side of this same game.
+		offH, defH, offA, defA := s.league, s.league, s.league, s.league
+		if h.init {
+			offH, defH = h.off30, h.def30
+		}
+		if a.init {
+			offA, defA = a.off30, a.def30
+		}
+		hs -= defA - s.league
+		ha -= offA - s.league
+		as -= defH - s.league
+		aa -= offH - s.league
+	}
+	s.bump(h, hs, ha, g.Day)
+	s.bump(a, as, aa, g.Day)
 	s.nLg += 2
 	w := 1.0 / math.Min(float64(s.nLg), 1500)
 	s.league += w * ((g.HPts+g.APts)/2 - s.league)
@@ -181,8 +208,14 @@ type Sample struct {
 
 // Samples replays history and returns each game's features computed from earlier games only,
 // plus the final state (for projecting upcoming games).
-func Samples(games []Game) ([]Sample, *State) {
+func Samples(games []Game) ([]Sample, *State) { return samples(games, false, false) }
+
+func ResearchSamples(games []Game) ([]Sample, *State) { return samples(games, true, true) }
+
+func samples(games []Game, seasonSafe, scheduleAdjusted bool) ([]Sample, *State) {
 	st := NewState()
+	st.SeasonSafe = seasonSafe
+	st.ScheduleAdjusted = scheduleAdjusted
 	out := make([]Sample, 0, len(games))
 	i := 0
 	for i < len(games) {
@@ -249,3 +282,20 @@ func (m *Model) Project(x []float64) (margin, total float64) {
 
 // NormCDF is the standard normal cumulative distribution.
 func NormCDF(z float64) float64 { return 0.5 * math.Erfc(-z/math.Sqrt2) }
+
+func (s *State) prepare(t *tstate, day int) {
+	if t.init && day-t.last > 60 && t.resetDay <= t.last {
+		for _, p := range []*float64{&t.off10, &t.def10, &t.off30, &t.def30} {
+			*p = s.league + .6*(*p-s.league)
+		}
+		t.n = 4
+		t.resetDay = day
+	}
+}
+func (s *State) ReadyAt(home, away, day int) bool {
+	if s.SeasonSafe {
+		s.prepare(s.get(home), day)
+		s.prepare(s.get(away), day)
+	}
+	return s.Ready(home, away)
+}
