@@ -104,8 +104,8 @@ func TestBuildV2TiersOversAndRecordRows(t *testing.T) {
 	if v.Board.Games[0].Plays[0].Player != "A" {
 		t.Error("the strong play sorts first")
 	}
-	if len(v.Board.Overs) != 1 || v.Board.Overs[0].Player != "D" {
-		t.Errorf("the Overs watch should pass through: %+v", v.Board.Overs)
+	if len(v.Board.Overs) != 0 {
+		t.Errorf("legacy partial over rows must not be presented as complete analytics: %+v", v.Board.Overs)
 	}
 	if v.Info.Gates == nil {
 		t.Error("gates must be a list, never null")

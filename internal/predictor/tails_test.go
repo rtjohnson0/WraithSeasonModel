@@ -53,10 +53,10 @@ func TestTailFitIsIsolatedAndRoundTrips(t *testing.T) {
 		t.Fatal(e)
 	}
 	after, _ := json.Marshal(base)
-	if string(before) != string(after) || base.Version != 4 {
+	if string(before) != string(after) || base.Version != CurrentVersion {
 		t.Fatal("candidate mutated reference")
 	}
-	if candidate.Version != 5 || candidate.TailFitAfter >= candidate.TrainedBefore {
+	if candidate.Version != TailVersion || candidate.TailFitAfter >= candidate.TrainedBefore {
 		t.Fatal("invalid residual dates")
 	}
 	path := filepath.Join(t.TempDir(), "model.json")

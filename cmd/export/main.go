@@ -151,6 +151,7 @@ func main() {
 	attachNews(&site.Board, mf)
 	if mf.Date == site.Board.Date {
 		site.Board.Overs = mf.Overs
+		enrichOvers(&site.Board, form)
 	}
 	attachCombos(&site.Board, mf, form)
 	attachCases(&site.Board, trackRecords(settled))

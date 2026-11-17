@@ -19,20 +19,21 @@ const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
 
 
 function ComboCard({ c, now, site }) {
- const comparison=c.tier==='COMBOWATCH'
- const confidence=comparison?(c.probRaw??c.prob):c.prob
+ const comparison=c.tier==='COMBOWATCH'||c.tier==='COMBORESEARCH'||c.research||!!c.rotation
+ const rawComparison=c.tier==='COMBOWATCH'
+ const confidence=rawComparison?(c.probRaw??c.prob):c.prob
  const game=(site.board.games||[]).find(g=>(c.gameId!=null&&g.id!=null&&String(g.id)===String(c.gameId))||g.matchup===c.matchup)||{id:c.gameId,matchup:c.matchup,tip:c.tip}
  const quote=quoteState(c,now)
  return <li className={`combo-row ${c.side==='OVER'?'over':'under'}`}><div className="card-matchup"><span>{c.matchup}</span><span>{tipState(c.tip,now).label || 'Tip pending'}</span></div><details>
   <summary className="combo-summary"><span className="combo-player"><PlayerPortrait name={c.player} team={c.team}/><span><small className="card-eyebrow">{comparison?'Research comparison':'Selected combo'}</small><b>{c.player} <small className="team-chip">{c.team}</small></b><PropTicket p={c}/><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} · {bookName(c.book)}</small>{c.availability&&<small className="availability-hint">Availability watch · Compare minutes</small>}</span></span>
    <span className="combo-strip"><span className="form-caption">Recent form<small>At this line</small></span><RecentForm p={c}/></span><span className="combo-prob">{comparison ? c.projStat.toFixed(1) : pct(confidence,1)}<small>{comparison ? 'Projected total' : 'Model probability'}</small><small className="expand-hint">View analysis <span aria-hidden="true">⌄</span></small></span></summary>
   <div className="combo-expanded"><QuoteDetails p={c} compact/>
-   {comparison && <p className="small">Raw simulation: {pct(confidence,1)} for this side. This has not been calibrated or demonstrated as a hit rate; it has not cleared the combo selection rules.</p>}
+   {comparison && <p className="small">{rawComparison?'Raw simulation':'Experimental model/book estimate'}: {pct(confidence,1)} for this side. This has not been calibrated or demonstrated as a hit rate; it has not cleared the combo selection rules.</p>}
    <p>Projected <b>{c.projStat.toFixed(1)}</b> in {Math.round(c.projMin)} minutes · {c.matchup}</p>
    {c.last5?.length>0 && <div className="charts"><figure><figcaption>{statLabel[c.stat]} · last {c.last5.length} games</figcaption><FormBars games={c.last5} line={c.line} side={c.side} lineLabel={`line ${c.line}`}/></figure><figure><figcaption>Minutes played</figcaption><FormBars games={c.last5.map(g=>({...g,value:g.minutes}))} line={c.projMin} side={c.side} tone="minutes" lineLabel={`projected ${Math.round(c.projMin)}`}/></figure></div>}
    <PickReason p={comparison?{...c,prob:confidence,probabilityBasis:"estimate"}:c}/>
   </div>
- </details><div className="card-metrics"><span>Projection<b>{c.projStat.toFixed(1)}</b></span><span>Minutes<b>{Math.round(c.projMin)}</b></span><span>{comparison?'Simulation edge':'Price edge'}<b>{Number.isFinite(c.edge)?`${c.edge>0?'+':''}${(c.edge*100).toFixed(1)}`:'—'}<small> pp</small></b></span><span>Last {c.last5?.length||5} hits<b>{c.last5?.length?`${c.l5Hits}/${c.last5.length}`:'—'}</b></span></div>{quote.key!=='recent'&&<p className="card-quote-state">{quote.label}</p>}<MatchupDetails game={game} data={site.gameMarkets}/></li>
+ </details><div className="card-metrics"><span>Projection<b>{c.projStat.toFixed(1)}</b></span><span>Minutes<b>{Math.round(c.projMin)}</b></span><span>{comparison?(rawComparison?'Simulation edge':'Experimental edge'):'Price edge'}<b>{Number.isFinite(c.edge)?`${c.edge>0?'+':''}${(c.edge*100).toFixed(1)}`:'—'}<small> pp</small></b></span><span>Last {c.last5?.length||5} hits<b>{c.last5?.length?`${c.l5Hits}/${c.last5.length}`:'—'}</b></span></div>{quote.key!=='recent'&&<p className="card-quote-state">{quote.label}</p>}<MatchupDetails game={game} data={site.gameMarkets}/></li>
 }
 
 export default function Combos({ site }) {
@@ -101,7 +102,8 @@ export default function Combos({ site }) {
       )}
 
 
-        {site.comboHealth && <div className="combo-readiness"><b>Combo readiness</b><p>{site.comboHealth.status}</p><p className="small">{site.comboHealth.eligibleRows} eligible pregame forecasts across {site.comboHealth.eligibleDates||0} dates · {site.comboHealth.trainingRows} for calibration · {site.comboHealth.evaluationRows} on later dates. Each combo type must pass its own evaluation before becoming a selected play.</p></div>}
+        {board.comboInfo?.blocked && <div className="combo-readiness"><b>Why combos were not selected</b><ul>{Object.entries(board.comboInfo.blocked).map(([reason,count])=><li key={reason}>{reason}: {count} priced quotes</li>)}</ul></div>}
+        {site.comboHealth && <div className="combo-readiness"><b>Combo readiness</b><p>{site.comboHealth.status}</p><p className="small">{site.comboHealth.eligibleRows} eligible pregame forecasts across {site.comboHealth.eligibleDates||0} dates · {site.comboHealth.trainingRows} for calibration · {site.comboHealth.evaluationRows} on later dates. Each combo type needs at least 30 later evaluation dates and improvement over raw and sportsbook probabilities. Current evaluation: {site.comboHealth.evaluationDates||0}/30 dates. {site.comboHealth.gainVsBook<=0?'The evaluated calibration has not improved on the sportsbook baseline.':''}</p></div>}
       {site.combos?.rows?.length>0 && site.historicalCombos?.rows?.length>0 && <section className="record"><h2>Historical combo results</h2><Table rows={site.historicalCombos.rows}/><ResultList rows={(site.historicalCombos.recent||[]).slice(0,30)}/></section>}
       <section className="record" aria-label="Combo record">
         <h2>Combo record</h2>

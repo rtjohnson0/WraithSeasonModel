@@ -23,6 +23,8 @@ import (
 
 // Play is one pick on the board.
 type Play struct {
+	ProbabilityBasis     string                `json:"probabilityBasis,omitempty"`
+	Research             bool                  `json:"research,omitempty"`
 	Rotation             *rotation.Context     `json:"rotation,omitempty"`
 	MatchupContext       *matchup.Prop         `json:"matchupContext,omitempty"`
 	Availability         *availability.Context `json:"availability,omitempty"`
@@ -519,8 +521,18 @@ func makePlay(e picklog.Entry, date string, form Form, runs int, seenIn []string
 	if runs > 0 {
 		p.Runs, p.SeenIn, p.Multi = runs, seenIn, runs >= 2
 	}
+	if t == "COMBOWATCH" || t == "COMBORESEARCH" {
+		p.ProbabilityBasis, p.Research, p.Label = "estimate", true, "Research comparison"
+	}
+	if t == "OVERWATCH" {
+		p.Research = true
+	}
 	p.Defense = parseDefense(e.Why, e.Side)
 	p.Label = label(t, e.Prob)
+	if p.Research {
+		p.Label = "Research comparison"
+		p.Grade = "—"
+	}
 	p.Badges = badgesFor(p)
 	return p
 }
@@ -561,11 +573,25 @@ func buildBoard(entries []picklog.Entry, date string, form Form, day []runlog.Ru
 			best[k] = e
 		}
 	}
+	// Resolve opposite directions even in legacy saved inputs. Keep the more
+	// trusted tier, then modeled return at the exact offered price.
+	direction := map[string]picklog.Entry{}
+	question := func(e picklog.Entry) string { return fmt.Sprintf("%d|%d|%s", e.GameID, e.PlayerID, e.Stat) }
+	for _, k := range order {
+		e := best[k]
+		cur, ok := direction[question(e)]
+		if !ok || picklog.TierRank(e.Tier) < picklog.TierRank(cur.Tier) || (picklog.TierRank(e.Tier) == picklog.TierRank(cur.Tier) && bets.ExpectedReturn(e.Prob, e.Odds) > bets.ExpectedReturn(cur.Prob, cur.Odds)) {
+			direction[question(e)] = e
+		}
+	}
 	byGame := map[int]*Game{}
 	var ids []int
 	b := Board{Date: date, Games: []Game{}}
 	for _, k := range order {
 		e := best[k]
+		if direction[question(e)].Side != e.Side {
+			continue
+		}
 		g := byGame[e.GameID]
 		if g == nil {
 			g = &Game{ID: e.GameID, Matchup: matchupOf(e), Tip: e.Tip, Plays: []Play{}}

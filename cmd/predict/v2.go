@@ -615,6 +615,9 @@ func v2OversWatch(all, posted []scored, r v2Rules, limit int) []OverWatch {
 		}
 	}
 	rows := overWatchRows(pool, posted, nil, r.Hi, r.MinEdge, limit)
+	for i := range rows {
+		rows[i].Experimental = true
+	}
 	byKey := map[[2]string]scored{}
 	for _, s := range pool {
 		k := [2]string{s.Player, string(s.Stat)}

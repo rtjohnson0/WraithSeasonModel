@@ -196,7 +196,7 @@ func main() {
 		// An opt-in feature set must not overwrite the calibration the live model uses.
 		out = filepath.Join(*dir, "calibration_misses.json")
 	}
-	final.ModelVersion = 4
+	final.ModelVersion = predictor.CurrentVersion
 	if err := final.Save(out); err != nil {
 		fatal(err)
 	}

@@ -21,6 +21,8 @@ type Client struct {
 	Key     string
 	HTTP    *http.Client
 	Sleep   time.Duration
+	// Logf optionally reports download activity; credentials and query values are never logged.
+	Logf func(string, ...any)
 }
 
 func New(key string) *Client {
@@ -32,10 +34,17 @@ func New(key string) *Client {
 	}
 }
 
+func (c *Client) progress(format string, args ...any) {
+	if c.Logf != nil {
+		c.Logf(format, args...)
+	}
+}
+
 // Get performs one GET and returns the raw response body.
 func (c *Client) Get(path string, q url.Values) ([]byte, error) {
 	var last string // what went wrong on the most recent attempt, shown if we give up
 	for attempt := 0; attempt < 6; attempt++ {
+		c.progress("Requesting %s (attempt %d/6)...", path, attempt+1)
 		backoff := time.Duration(1<<attempt) * time.Second
 
 		req, err := http.NewRequest(http.MethodGet, c.BaseURL+path+"?"+q.Encode(), nil)
@@ -47,6 +56,7 @@ func (c *Client) Get(path string, q url.Values) ([]byte, error) {
 		resp, err := c.HTTP.Do(req)
 		if err != nil {
 			last = "network error: " + err.Error()
+			c.progress("%s: network/read error; retrying in %s", path, backoff)
 			time.Sleep(backoff)
 			continue
 		}
@@ -54,6 +64,7 @@ func (c *Client) Get(path string, q url.Values) ([]byte, error) {
 		resp.Body.Close()
 		if readErr != nil {
 			last = "reading response: " + readErr.Error()
+			c.progress("%s: network/read error; retrying in %s", path, backoff)
 			time.Sleep(backoff)
 			continue
 		}
@@ -65,6 +76,7 @@ func (c *Client) Get(path string, q url.Values) ([]byte, error) {
 			if ra, err := strconv.Atoi(resp.Header.Get("Retry-After")); err == nil && ra > 0 && ra <= 120 {
 				wait = time.Duration(ra) * time.Second
 			}
+			c.progress("%s: HTTP %d; retrying in %s", path, resp.StatusCode, wait)
 			time.Sleep(wait)
 			continue
 		case resp.StatusCode >= 400:
@@ -85,6 +97,7 @@ func (c *Client) Paginate(path string, q url.Values, fn func(json.RawMessage) er
 		params[k] = append([]string(nil), v...)
 	}
 	params.Set("per_page", "100")
+	pages, rows := 0, 0
 
 	for {
 		body, err := c.Get(path, params)
@@ -105,6 +118,9 @@ func (c *Client) Paginate(path string, q url.Values, fn func(json.RawMessage) er
 				return err
 			}
 		}
+		pages++
+		rows += len(page.Data)
+		c.progress("%s: page %d received, %d rows on page, %d rows total", path, pages, len(page.Data), rows)
 		cursor := strings.Trim(string(page.Meta.NextCursor), `"`)
 		if cursor == "" || cursor == "null" {
 			return nil

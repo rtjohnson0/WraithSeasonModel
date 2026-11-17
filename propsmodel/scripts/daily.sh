@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Daily pipeline for macOS/Linux. Run from the project folder:  ./scripts/daily.sh [-l] [-s] [-f]
+#   -l  include the teammates-out (lineup) features
+#   -s  skip retraining
+#   -f  re-download the whole current season instead of only new games
+# Run it in the morning, then run ./scripts/pretip.sh an hour before tip-off.
+set -euo pipefail
+export PYTHONUTF8=1
+LINEUP=""; SKIP=0; NEW="-new"
+for a in "$@"; do
+  case "$a" in -l) LINEUP="-lineup";; -s) SKIP=1;; -f) NEW="";; esac
+done
+MONTH=$(date +%m); YEAR=$(date +%Y)
+if [ "$((10#$MONTH))" -ge 8 ]; then SEASON=$YEAR; else SEASON=$((YEAR-1)); fi
+
+echo "== refresh box scores ($SEASON) =="
+go run ./cmd/pull stats -seasons "$SEASON" $NEW
+go run ./cmd/pull advanced -seasons "$SEASON" $NEW || echo "advanced refresh skipped"
+echo "== current rosters =="
+go run ./cmd/pull players
+echo "== audit quote provenance =="
+python3 scripts/audit_quotes.py --data data --apply
+echo "== grade past picks =="
+go run ./cmd/settle || echo "settle skipped"
+go run ./cmd/combos settle || echo "combo settle skipped"
+go run ./cmd/games -settle || echo "game settlement unavailable"
+go run ./cmd/lines || echo "lines report skipped"
+go run ./cmd/v2 settle || echo "v2 settle skipped"
+echo "== review yesterday (csv) =="
+go run ./cmd/review || echo "review skipped"
+if [ "$SKIP" = 0 ]; then
+  echo "== retrain =="
+  go run ./cmd/train $LINEUP
+  go run ./cmd/backtest -season "$((SEASON-1))" $LINEUP
+fi
+echo "== snapshot lines and injuries =="
+go run ./cmd/pull snapshot
+go run ./cmd/sgo snapshot || echo "sgo snapshot skipped"
+echo "== player props =="
+go run ./cmd/accuracy
+python3 scripts/accuracy_report.py
+go run ./cmd/combos calibrate || echo "combo calibration unavailable; comparison mode retained"
+go run ./cmd/predict
+go run ./cmd/minutesaudit -legacy || echo "Minutes audit unavailable; live model unchanged"
+go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
+go run ./cmd/rotationaudit || echo "Rotation evaluation unavailable; V1 unchanged"
+echo "== game lines =="
+go run ./cmd/games || echo "game lines skipped"
+
+go run ./cmd/quarter || echo "quarter comparisons unavailable; full-game data was not substituted"
+
+python3 scripts/run_tail_shadow.py || echo "Experimental shadow unavailable; primary board retained"

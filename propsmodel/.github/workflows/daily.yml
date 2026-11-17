@@ -1,0 +1,317 @@
+name: WraithPicksSZN daily
+
+on:
+  push:
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'scripts/**'
+      - '.github/workflows/daily.yml'
+      - 'site/**'
+      - 'data/**'
+  schedule:
+    # Both UTC offsets are listed; Pick the mode chooses the Eastern DST offset.
+    - cron: "17 13 * * *"
+    - cron: "17 14 * * *"
+    - cron: "17 19 * * *"
+    - cron: "17 20 * * *"
+    - cron: "17 22 * * *"
+    - cron: "17 23 * * *"
+    - cron: "17 0 * * *"
+    - cron: "17 1 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: What to run
+        type: choice
+        default: daily
+        options: [bootstrap, daily, pretip, site]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Serialize the complete state-write and Pages deployment cycle.
+concurrency:
+  group: wraithpicks-${{ github.repository }}
+  cancel-in-progress: false
+
+env:
+  TZ: America/New_York
+
+jobs:
+  run:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    outputs:
+      publish: ${{ steps.mode.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      # GitHub Pages remains the default for this public repository.
+      # Protected delivery is available only when explicitly configured as whop.
+      - name: Validate delivery mode
+        env:
+          DELIVERY_MODE: ${{ vars.WRAITH_DELIVERY || 'public' }}
+        run: |
+          case "$DELIVERY_MODE" in
+            whop|public) ;;
+            *) echo "Set WRAITH_DELIVERY to public (GitHub Pages) or whop (configured gateway)."; exit 1 ;;
+          esac
+
+      - name: Pick the mode
+        id: mode
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REQUESTED_MODE: ${{ inputs.mode }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          RUN_BRANCH: ${{ github.ref_name }}
+        run: python3 scripts/workflow_mode.py
+
+      - uses: actions/setup-go@v5
+        if: steps.mode.outputs.active == 'true'
+        with:
+          go-version-file: go.mod
+          cache: false # Standard-library-only module: no go.sum to hash.
+
+      - name: Check source and merge regression tests
+        if: steps.mode.outputs.active == 'true'
+        run: |
+          go test ./...
+          python3 -m unittest discover -s scripts -p 'test_*.py'
+
+      # Cache only reproducible inputs. Tracked logs/models are always from Git,
+      # so a cache can never restore an old copy of a corrected/deleted record.
+      - name: Restore downloaded inputs
+        if: steps.mode.outputs.active == 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/stats_*.jsonl
+            data/advanced_*.jsonl
+            data/snapshots
+            data/players_active.jsonl
+            data/opening_props_*.jsonl
+            data/opening_odds_*.jsonl
+            data/opening_games_*.jsonl
+          key: inputs-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: inputs-v2-${{ github.ref_name }}-
+
+      - name: Restore immutable pregame decision evidence
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/replay
+            data/v2_rotation
+            data/tail_shadow/replay
+            data/tail_shadow/picklog.jsonl
+            data/tail_shadow/settled.jsonl
+            data/value_shadow/replay
+            data/value_shadow/picklog.jsonl
+            data/value_shadow/settled.jsonl
+          key: decisions-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            decisions-v2-${{ github.ref_name }}-
+            decisions-v1-${{ github.ref_name }}-
+
+      - name: Check API keys and trained files
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+        run: |
+          test -n "$BALLDONTLIE_API_KEY" || { echo "Set the BALLDONTLIE_API_KEY repository secret."; exit 1; }
+          if [ "${{ steps.mode.outputs.mode }}" != bootstrap ]; then
+            test -f data/model.json || { echo "Train and commit data/model.json first."; exit 1; }
+            test -f data/calibration.json || { echo "Backtest and commit data/calibration.json first."; exit 1; }
+          fi
+
+      - name: Bootstrap box scores
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'bootstrap'
+        timeout-minutes: 40
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+        run: |
+          YEAR=$(date +%Y); MONTH=$((10#$(date +%m)))
+          if [ "$MONTH" -ge 8 ]; then CUR=$YEAR; else CUR=$((YEAR-1)); fi
+          go run ./cmd/pull stats -seasons "$((CUR-1)),$CUR"
+          go run ./cmd/pull players
+
+      - name: Bootstrap advanced stats
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'bootstrap'
+        timeout-minutes: 60
+        continue-on-error: true
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+        run: |
+          YEAR=$(date +%Y); MONTH=$((10#$(date +%m)))
+          if [ "$MONTH" -ge 8 ]; then CUR=$YEAR; else CUR=$((YEAR-1)); fi
+          go run ./cmd/pull advanced -seasons "$((CUR-1)),$CUR"
+
+      - name: Morning run
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'daily'
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
+        run: bash scripts/daily.sh -s
+
+      - name: Pre-tip run
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'pretip'
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
+        run: bash scripts/pretip.sh
+
+      - name: Restore missing published board on source-only pushes
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'site'
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
+        run: |
+          if [ ! -s data/board.json ]; then
+            echo "Saved board is missing; generating a fresh slate before publication."
+            bash scripts/pretip.sh
+          fi
+
+      # Runs even after a failed model step/push. These are actual recoverable run
+      # outputs, including quote evidence; a failed push must never lose the logs.
+      - name: Retain current-season final stat inputs
+        if: always() && steps.mode.outputs.active == 'true'
+        continue-on-error: true
+        run: python3 scripts/stage_run_evidence.py
+
+      - name: Retain run evidence and generated state
+        if: always() && steps.mode.outputs.active == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-run-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            run_evidence
+            data/*.json
+            data/*log.jsonl
+            data/*settled.jsonl
+            data/runs.jsonl
+            data/lines
+            data/quarter_games
+            data/snapshots
+            data/replay
+            data/v2_rotation
+            data/*audit*.json
+            data/*before-result-*
+            data/exclusions.jsonl
+            data/gamepicklog.jsonl
+            data/gamesettled.jsonl
+            data/combohealth.json
+            data/*.csv
+            data/accuracy_report.html
+            data/tail_shadow/replay
+            data/tail_shadow/*log.jsonl
+            data/tail_shadow/settled.jsonl
+            data/tail_shadow/board.json
+            data/value_shadow/replay
+            data/value_shadow/*log.jsonl
+            data/value_shadow/settled.jsonl
+            data/value_shadow/board.json
+          retention-days: 90
+          if-no-files-found: ignore
+
+      - name: Retain decision history for forward evaluation
+        if: always() && steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/replay
+            data/v2_rotation
+            data/tail_shadow/replay
+            data/tail_shadow/picklog.jsonl
+            data/tail_shadow/settled.jsonl
+            data/value_shadow/replay
+            data/value_shadow/picklog.jsonl
+            data/value_shadow/settled.jsonl
+          key: decisions-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Save downloaded inputs
+        if: always() && steps.mode.outputs.active == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/stats_*.jsonl
+            data/advanced_*.jsonl
+            data/snapshots
+            data/players_active.jsonl
+            data/opening_props_*.jsonl
+            data/opening_odds_*.jsonl
+            data/opening_games_*.jsonl
+          key: inputs-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Synchronize state with latest branch
+        if: steps.mode.outputs.active == 'true'
+        env:
+          RUN_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "wraithpicks-bot"
+          git config user.email "wraithpicks-bot@users.noreply.github.com"
+          python3 scripts/sync_state.py --branch "$RUN_BRANCH"
+
+      # The merge may bring in a source update. Validate the code actually being
+      # deployed and export AGAIN from the merged logs; do not publish a stale view.
+      - name: Validate merged source and export
+        env:
+          DELIVERY_MODE: ${{ vars.WRAITH_DELIVERY || 'public' }}
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap'
+        run: |
+          go test ./...
+          if [ "$DELIVERY_MODE" = "whop" ]; then
+            mkdir -p private
+            go run ./cmd/export -out private/picks.json
+            python3 -c 'import json; p=json.load(open("private/picks.json")); assert not p.get("sample"), "Refusing sample data"'
+          else
+            go run ./cmd/export
+            python3 -c 'import json; p=json.load(open("site/public/data/picks.json")); assert not p.get("sample"), "Refusing sample data"'
+          fi
+
+      - name: Deliver board through the protected gateway
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY == 'whop'
+        env:
+          PRIVATE_BOARD_URL: ${{ secrets.PRIVATE_BOARD_URL }}
+          PRIVATE_PUBLISH_TOKEN: ${{ secrets.PRIVATE_PUBLISH_TOKEN }}
+        run: python3 scripts/publish_private.py
+
+      - uses: actions/setup-node@v4
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Build the site
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
+        working-directory: site
+        run: |
+          npm ci
+          node --test src/*.test.js
+          npm run build
+
+      - uses: actions/configure-pages@v5
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
+        with:
+          path: site/dist
+
+  deploy:
+    needs: run
+    if: needs.run.outputs.publish == 'true' && (vars.WRAITH_DELIVERY || 'public') == 'public'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

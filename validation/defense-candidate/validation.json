@@ -1,0 +1,22 @@
+{
+  "status": "candidate only; matching probability calibration and untouched-date evaluation required",
+  "model_version": 6,
+  "trained_through": "2026-11-15",
+  "training_rows": 94514,
+  "three_point_defense": {
+    "opp_allow": {
+      "coefficient": 0.03871600402648487,
+      "training_std": 0.06991328262501884
+    },
+    "pos5_allow": {
+      "coefficient": 0.005314851136490313,
+      "training_std": 0.1949119617562051
+    }
+  },
+  "backend_tests": "go test ./... passed",
+  "frontend_tests": 28,
+  "ui_interaction_checks": 23,
+  "production_build": "passed",
+  "regression": "fails on original aggregate and passes with corrected aggregate",
+  "calibration": "not fitted; original historical opening quote inputs are unavailable"
+}

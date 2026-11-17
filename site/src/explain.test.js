@@ -31,7 +31,7 @@ test('default book compares quotes for predicted winner instead of feed order',(
 })
 test('raw combo estimates are explicitly distinct from calibrated probabilities',()=>{
  const e=explainProp({side:'OVER',period:'game',stat:'pra',line:30.5,projStat:34,prob:.637,probabilityBasis:'estimate'})
- assert(e.decision.includes('63.7%'));assert(e.decision.includes('uncalibrated simulation'));assert(!e.decision.includes('final probability also reflects'))
+ assert(e.decision.includes('63.7%'));assert(e.decision.includes('experimental estimate'));assert(!e.decision.includes('final probability also reflects'))
 })
 
 test('spread labels use each side handicap and analyze cover rather than winning outright',()=>{

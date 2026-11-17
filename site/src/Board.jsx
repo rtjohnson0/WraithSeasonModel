@@ -109,64 +109,22 @@ function CaseView({ p }) {
 // Overs that are not picks: the closest to qualifying, and Overs at books priced a point or more
 // below the market. A board with no Overs still shows where they are and why they did not make it.
 function OversWatch({ overs, now }) {
-  const [all, setAll] = useState(false)
-  const open = (overs || []).filter((o) => {
-    const s = tipState(o.tip, now).state
-    return s !== 'live' && s !== 'done'
-  }).sort(compareGameTip)
-  if (open.length === 0) return null
-  const shown = all ? open : open.slice(0, 6)
-  return (
-    <section className="overs" aria-label="Overs watch" id="overs-watch">
-      <div className="section-heading"><div><span className="card-eyebrow">The other side of the board</span><h2>Overs watch<span className="section-dot">↗</span></h2></div><span className="research-chip">Research · not selected picks</span></div>
-      <p className="small">
-        None of these are picks. They are the Overs closest to qualifying today, and Overs at books priced a point or more below the market, which is the same
-        edge the Unders get from a high line.
-      </p>
-      <ul>
-        {shown.map((o) => {
-          const ts = tipState(o.tip, now)
-          return (
-            <li key={`${o.player}|${o.stat}`} className={o.low_line ? 'lowline' : ''}>
-              <div className="ov-head">
-                <PlayerPortrait name={o.player} team={o.team}/><b>{o.player}</b>
-                <span className="ov-bet">
-                  Over {o.line} {marketLabel(o)}
-                </span>
-                <span className="ov-price">
-                  {oddsText(o.odds)} <small>{o.book}</small>
-                </span>
-              </div>
-              <div className="ov-nums">
-                <span>Model {pct(o.prob)}</span>
-                <span className={o.edge >= 0 ? 'pos' : 'neg'}>Edge {o.edge >= 0 ? '+' : ''}{(100 * o.edge).toFixed(1)}%</span>
-                <span>
-                  Projected {o.proj.toFixed(1)} in {Math.round(o.proj_min)} min
-                </span>
-                <span>{o.matchup} · {ts.label || tipText(o.tip)}</span>
-              </div>
-              <p className="ov-why">
-                {o.low_line && <em>Low line. </em>}
-                {o.status}
-              </p>
-            </li>
-          )
-        })}
-      </ul>
-      {open.length > 6 && (
-        <button type="button" className="morebtn" onClick={() => setAll((v) => !v)}>
-          {all ? 'Show fewer' : `Show all ${open.length}`}
-        </button>
-      )}
-    </section>
-  )
+ const [all,setAll]=useState(false)
+ const open=(overs||[]).filter(o=>o.analysis && o.analysis.edge>0 && o.analysis.prob>=.5 && !['live','done'].includes(tipState(o.tip,now).state)).sort(compareGameTip)
+ if(!open.length)return null
+ return <section className="overs" aria-label="Over research comparisons" id="overs-watch">
+  <div className="section-heading"><div><span className="card-eyebrow">More to analyze</span><h2>Over comparisons<span className="section-dot">↗</span></h2></div><span className="research-chip">Research · not selected plays</span></div>
+  <p className="small">These positive-edge estimates have not cleared every selection check. Each card uses its exact quoted line and the same analytics as the main board.</p>
+  <ul className="plays">{(all?open:open.slice(0,6)).map(o=><PlayRow key={`${o.game_id}|${o.analysis.player}|${o.analysis.stat}`} p={{...o.analysis,research:true}} started={false} game={{matchup:o.matchup,tip:o.tip}} researchNote={o.status}/>)}</ul>
+  {open.length>6&&<button type="button" className="morebtn" onClick={()=>setAll(!all)}>{all?'Show fewer':`Show all ${open.length}`}</button>}
+ </section>
 }
 
 const playId = (p) => `play-${p.player}-${p.stat}-${p.side}`.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
-function PlayRow({ p, started, game, markets }) {
+function PlayRow({ p, started, game, markets, researchNote }) {
   const quote = quoteState(p, useNow())
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(!!p.research)
   const info = labelInfo[p.label] || labelInfo.Lean
   const signal=matchupSignal(p)
   const conf = Math.max(0, Math.min(1, (p.prob - 0.5) / 0.2))
@@ -201,12 +159,12 @@ function PlayRow({ p, started, game, markets }) {
         </span>
         <span className="strip-wrap"><span className="form-caption">Recent form<small>At this line</small></span><RecentForm p={p}/></span>
         <span className="meta">
-          <span className="prob-caption">Model probability</span><span className="prob">{pct(p.prob, 1)}</span>
+          <span className="prob-caption">{p.probabilityBasis==='estimate'?'Experimental estimate':'Model probability'}</span><span className="prob">{pct(p.prob, 1)}</span>
           <span className="conf" aria-hidden="true">
             <i style={{ width: `${conf * 100}%` }} />
           </span>
           <span className={`tier ${info.key}`} title={info.note}>
-            {p.prob<.55?'Low-confidence lean':p.label}
+            {p.research?'Research comparison':p.prob<.55?'Low-confidence lean':p.label}
           </span>
           <span className="expand-hint">{open ? 'Hide analysis' : 'View analysis'} <span aria-hidden="true">{open ? '⌃' : '⌄'}</span></span>
           <span className="price">
@@ -216,7 +174,8 @@ function PlayRow({ p, started, game, markets }) {
       </button>
       <div className="card-metrics"><span>Projection<b>{p.projStat.toFixed(1)}</b></span><span>Minutes<b>{Math.round(p.projMin)}</b></span><span>Price edge<b className={p.edge>0?'positive':''}>{p.edge>0?'+':''}{(100*p.edge).toFixed(1)}<small> pp</small></b></span><span>Last {p.last5?.length || 5} hits<b>{p.last5?.length ? `${p.l5Hits}/${p.last5.length}` : '—'}</b></span></div>
       {quote.key !== 'recent' && <p className="card-quote-state">{quote.label}</p>}
-      {game && <MatchupDetails game={game} data={markets}/>}
+      {researchNote&&<p className="card-quote-state">{researchNote}</p>}
+      {game && markets && <MatchupDetails game={game} data={markets}/>}
       {open && (
         <div className="why">
           <QuoteDetails p={p} compact />
@@ -413,7 +372,7 @@ export default function Board({ site }) {
       </section>
 
       <RunStatus site={site} />
-      <div className="section-heading prop-section-heading"><div><span className="card-eyebrow">The daily slate</span><h2>Player props<span className="section-dot">/</span></h2></div>{(board.overs||[]).some(o=>!["live","done"].includes(tipState(o.tip,now).state)) && <a className="overs-jump" href="#overs-watch" onClick={e=>{e.preventDefault();document.getElementById("overs-watch")?.scrollIntoView({behavior:"smooth",block:"start"})}}>Overs watch ↗</a>}</div>
+      <div className="section-heading prop-section-heading"><div><span className="card-eyebrow">The daily slate</span><h2>Player props<span className="section-dot">/</span></h2></div>{(board.overs||[]).some(o=>!["live","done"].includes(tipState(o.tip,now).state)) && <a className="overs-jump" href="#overs-watch" onClick={e=>{e.preventDefault();document.getElementById("overs-watch")?.scrollIntoView({behavior:"smooth",block:"start"})}}>Over comparisons ↗</a>}</div>
       {/* Published picks remain visible; quote freshness is shown on each card. */}
 
       <section className="filters board-filters" aria-label="Filters">

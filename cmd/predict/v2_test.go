@@ -235,11 +235,18 @@ func TestSelectTiersCapsAndDrops(t *testing.T) {
 
 func TestOversWatchExplainsWhyAnOverIsOut(t *testing.T) {
 	good := play(1, data.Points, "OVER", 0.52) // just short of the bar
-	good.Edge = 0
+	good.Edge = .02
+	good.Odds = 100
 	disagrees := play(2, data.Points, "OVER", 0.58)
 	disagrees.Player, disagrees.V1Prob = "Q", 0.40
 	thin := play(3, data.Points, "OVER", 0.50) // thin and short of the bar: not worth listing
 	thin.Player, thin.Books = "R", 2
+	for _, p := range []*scored{&good, &disagrees, &thin} {
+		p.GameID = 9
+		p.ProjMin = 28
+		p.Tip = "2026-11-17T00:00:00Z"
+		p.QuoteAt = "2026-11-16T14:00:00Z"
+	}
 	rows := v2OversWatch([]scored{good, disagrees, thin}, nil, v2Rules{Hi: 0.55, MinEdge: 0.01, MaxGame: 4, MaxPlayer: 2}, 12)
 	var names []string
 	for _, r := range rows {

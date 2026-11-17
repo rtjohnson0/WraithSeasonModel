@@ -39,6 +39,11 @@ func enrichMatchups(site *Site, dir string) {
 				attach(&g.More[i], g.Matchup)
 			}
 		}
+		for i := range b.Overs {
+			if b.Overs[i].Analysis != nil {
+				attach(b.Overs[i].Analysis, b.Overs[i].Matchup)
+			}
+		}
 		for i := range b.Combos {
 			attach(&b.Combos[i].Play, b.Combos[i].Matchup)
 		}

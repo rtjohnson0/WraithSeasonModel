@@ -8,7 +8,9 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
+	"propsmodel/internal/bets"
 	"propsmodel/internal/data"
 	"propsmodel/internal/feat"
 	"propsmodel/internal/picklog"
@@ -40,39 +42,42 @@ type MoreFile struct {
 
 // ComboInfo is a summary of one day's combo pricing.
 type ComboInfo struct {
-	Loaded  int     `json:"loaded"`
-	Fresh   int     `json:"fresh"`
-	Usable  int     `json:"usable"`
-	Priced  int     `json:"priced"`  // combo lines priced
-	Over    int     `json:"over"`    // lean Over after calibration
-	Under   int     `json:"under"`   // lean Under after calibration
-	Cleared int     `json:"cleared"` // reach the 55%/45% bar with the edge rule
-	Tracked int     `json:"tracked"` // plays tracked at the combo bar
-	Bar     float64 `json:"bar"`     // the tracking bar (0.53 = 53% Over or 47% Under)
-	Basis   string  `json:"basis"`   // how the probabilities were calibrated
-	At      string  `json:"at"`
+	Blocked map[string]int `json:"blocked,omitempty"`
+	Loaded  int            `json:"loaded"`
+	Fresh   int            `json:"fresh"`
+	Usable  int            `json:"usable"`
+	Priced  int            `json:"priced"`  // combo lines priced
+	Over    int            `json:"over"`    // lean Over after calibration
+	Under   int            `json:"under"`   // lean Under after calibration
+	Cleared int            `json:"cleared"` // reach the 55%/45% bar with the edge rule
+	Tracked int            `json:"tracked"` // plays tracked at the combo bar
+	Bar     float64        `json:"bar"`     // the tracking bar (0.53 = 53% Over or 47% Under)
+	Basis   string         `json:"basis"`   // how the probabilities were calibrated
+	At      string         `json:"at"`
 }
 
 // OverWatch is one Over the site lists even though it is not on the board.
 type OverWatch struct {
-	GameID   int     `json:"game_id"`
-	PlayerID int     `json:"player_id"`
-	Player   string  `json:"player"`
-	Team     string  `json:"team"`
-	Matchup  string  `json:"matchup"`
-	Stat     string  `json:"stat"`
-	Line     float64 `json:"line"`
-	Odds     int     `json:"odds"`
-	Book     string  `json:"book"`
-	Prob     float64 `json:"prob"`
-	Edge     float64 `json:"edge"`
-	Proj     float64 `json:"proj"`
-	ProjMin  float64 `json:"proj_min"`
-	Tip      string  `json:"tip,omitempty"`
-	LowLine  bool    `json:"low_line,omitempty"` // this book's line is a point or more below the market median
-	Median   float64 `json:"median,omitempty"`
-	Books    int     `json:"books,omitempty"`
-	Status   string  `json:"status"` // why it is not a pick yet
+	Experimental bool           `json:"experimental,omitempty"`
+	Forecast     *picklog.Entry `json:"forecast,omitempty"`
+	GameID       int            `json:"game_id"`
+	PlayerID     int            `json:"player_id"`
+	Player       string         `json:"player"`
+	Team         string         `json:"team"`
+	Matchup      string         `json:"matchup"`
+	Stat         string         `json:"stat"`
+	Line         float64        `json:"line"`
+	Odds         int            `json:"odds"`
+	Book         string         `json:"book"`
+	Prob         float64        `json:"prob"`
+	Edge         float64        `json:"edge"`
+	Proj         float64        `json:"proj"`
+	ProjMin      float64        `json:"proj_min"`
+	Tip          string         `json:"tip,omitempty"`
+	LowLine      bool           `json:"low_line,omitempty"` // this book's line is a point or more below the market median
+	Median       float64        `json:"median,omitempty"`
+	Books        int            `json:"books,omitempty"`
+	Status       string         `json:"status"` // why it is not a pick yet
 }
 
 // MovePoint is the median line across books at one capture.
@@ -106,14 +111,14 @@ type GameCtx struct {
 func moreCandidates(picks, all []scored, perGame, perPlayer int) []scored {
 	posted := map[[3]string]bool{}
 	for _, s := range picks {
-		posted[[3]string{strconv.Itoa(s.PlayerID), string(s.Stat), s.Side}] = true
+		posted[[3]string{strconv.Itoa(s.GameID), strconv.Itoa(s.PlayerID), string(s.Stat)}] = true
 	}
 	cands := bestLinePerPick(all)
 	sort.SliceStable(cands, func(i, j int) bool { return valueBefore(cands[i], cands[j]) })
 	perG, perP := map[int]int{}, map[int]int{}
 	var out []scored
 	for _, c := range cands {
-		if c.Edge <= 0 || c.Far || c.Maybe != "" || posted[[3]string{strconv.Itoa(c.PlayerID), string(c.Stat), c.Side}] {
+		if c.Edge <= 0 || c.Far || c.Maybe != "" || posted[[3]string{strconv.Itoa(c.GameID), strconv.Itoa(c.PlayerID), string(c.Stat)}] {
 			continue
 		}
 		if perG[c.GameID] >= perGame || perP[c.PlayerID] >= perPlayer {
@@ -199,91 +204,74 @@ func buildNews(b *feat.Builder, name func(int) string, games map[int]props.GameI
 // overWatchRows picks the Overs to list on the site: the strongest Overs by edge that are not on the
 // board, plus Overs at books whose line sits a point or more below the market median. At most one
 // row per player and stat; best edge first.
+// Comparison candidates must have positive modeled value and retain the exact
+// source quote. A lower market line alone is not an Over recommendation.
 func overWatchRows(all, picks []scored, off []offRow, hi, minEdge float64, limit int) []OverWatch {
-	on := map[[2]string]bool{}
+	blocked := map[string]bool{}
+	key := func(s scored) string { return fmt.Sprintf("%d|%d|%s", s.GameID, s.PlayerID, s.Stat) }
 	for _, s := range picks {
-		if s.Side == "OVER" {
-			on[[2]string{strconv.Itoa(s.PlayerID), string(s.Stat)}] = true
-		}
+		blocked[key(s)] = true
 	}
-	lowLine := map[[2]string]offRow{}
-	for _, r := range off {
-		if r.Side != "OVER" {
-			continue
-		}
-		k := [2]string{strconv.Itoa(r.PlayerID), string(r.Stat)}
-		if cur, ok := lowLine[k]; !ok || r.Edge > cur.Edge {
-			lowLine[k] = r
-		}
-	}
-	var cands []scored
-	for _, s := range bestLinePerPick(all) {
-		if s.Side == "OVER" && !s.Far {
-			cands = append(cands, s)
-		}
-	}
-	sort.SliceStable(cands, func(i, j int) bool { return cands[i].Edge > cands[j].Edge })
-	var out []OverWatch
-	seen := map[[2]string]bool{}
+	var candidates []OverWatch
 	add := func(s scored, low *offRow) {
-		k := [2]string{strconv.Itoa(s.PlayerID), string(s.Stat)}
-		if seen[k] || on[k] {
+		s.Edge = bets.Edge(s.Prob, s.Odds)
+		if s.Side != "OVER" || s.Far || s.Maybe != "" || s.Edge <= 0 || s.Prob < .5 || blocked[key(s)] {
 			return
 		}
-		seen[k] = true
-		w := OverWatch{GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Team: s.Team, Matchup: s.Matchup, Stat: string(s.Stat),
-			Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, Edge: s.Edge, Proj: s.ProjMean, ProjMin: s.ProjMin, Tip: s.Tip}
+		// Missing source identity/times must never become an apparent live card.
+		if s.GameID == 0 || s.PlayerID == 0 || s.Tip == "" || s.QuoteAt == "" || s.ProjMin <= 0 {
+			return
+		}
+		e := boardEntry("", s, time.Now().UTC())
+		e.Period, e.Tier, e.Units = "game", "OVERWATCH", 0
+		status := "Positive-edge comparison; not a selected play"
+		if s.Prob < hi {
+			status = fmt.Sprintf("Model gives it %.0f%%; selection needs %.0f%%", 100*s.Prob, 100*hi)
+		} else if s.Edge < minEdge {
+			status = "Positive edge is below the selection requirement"
+		}
+		w := OverWatch{Forecast: &e, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Team: s.Team, Matchup: s.Matchup, Stat: string(s.Stat), Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, Edge: s.Edge, Proj: s.ProjMean, ProjMin: s.ProjMin, Tip: s.Tip, Status: status}
 		if low != nil {
-			w.Line, w.Odds, w.Book, w.Prob, w.Edge = low.Line, low.Odds, low.Vendor, low.Prob, low.Edge
 			w.LowLine, w.Median, w.Books = true, low.Median, low.Books
 		}
-		switch {
-		case w.Prob < hi && w.Edge >= minEdge:
-			w.Status = fmt.Sprintf("price is fine, but the model gives it %.0f%% and a pick needs %.0f%%", 100*w.Prob, 100*hi)
-		case w.Prob < hi:
-			w.Status = fmt.Sprintf("model gives it %.0f%%; a pick needs %.0f%%", 100*w.Prob, 100*hi)
-		case w.Edge < minEdge:
-			w.Status = fmt.Sprintf("model likes it (%.0f%%) but the price of %s leaves no edge", 100*w.Prob, oddsStr(w.Odds))
-		default:
-			w.Status = "cleared the bar; lost its place to stronger plays"
+		candidates = append(candidates, w)
+	}
+	for _, s := range all {
+		add(s, nil)
+	}
+	for _, low := range off {
+		if low.Side != "OVER" || low.Edge <= 0 || low.Prob < .5 {
+			continue
 		}
-		if w.LowLine {
-			w.Status = fmt.Sprintf("this book's line is %.1f below the %d-book median of %.1f. %s", w.Median-w.Line, w.Books, w.Median, capFirst(w.Status))
-		}
-		out = append(out, w)
-	}
-	// off-market Overs first (the mirror of the Under edge), then the strongest by edge
-	var lows []offRow
-	for _, r := range lowLine {
-		lows = append(lows, r)
-	}
-	sort.Slice(lows, func(i, j int) bool { return lows[i].Edge > lows[j].Edge })
-	byKey := map[[2]string]scored{}
-	for _, c := range cands {
-		byKey[[2]string{strconv.Itoa(c.PlayerID), string(c.Stat)}] = c
-	}
-	for i := range lows {
-		r := lows[i]
-		base, ok := byKey[[2]string{strconv.Itoa(r.PlayerID), string(r.Stat)}]
-		if !ok {
-			base = scored{PlayerID: r.PlayerID, Player: r.Player, Team: r.Team, Matchup: r.Matchup, Stat: r.Stat, ProjMean: r.Proj}
-		}
-		add(base, &r)
-	}
-	for _, c := range cands {
-		if len(out) >= limit {
+		// Resolve by exact quote, including line and book. Never borrow another
+		// line's projection, distribution, timing, or injury status.
+		for _, source := range all {
+			if source.PlayerID != low.PlayerID || source.Stat != low.Stat || source.Line != low.Line || source.Vendor != low.Vendor || source.Matchup != low.Matchup {
+				continue
+			}
+			if source.Side != "OVER" {
+				source.Prob, source.ProbRaw = 1-source.Prob, 1-source.ProbRaw
+			}
+			source.Side, source.Odds, source.Edge = "OVER", low.Odds, low.Edge
+			add(source, &low)
 			break
 		}
-		add(c, nil)
 	}
-	sort.SliceStable(out, func(i, j int) bool {
-		if out[i].LowLine != out[j].LowLine {
-			return out[i].LowLine
-		}
-		return out[i].Edge > out[j].Edge
+	sort.SliceStable(candidates, func(i, j int) bool {
+		return bets.ExpectedReturn(candidates[i].Prob, candidates[i].Odds) > bets.ExpectedReturn(candidates[j].Prob, candidates[j].Odds)
 	})
-	if len(out) > limit {
-		out = out[:limit]
+	seen := map[string]bool{}
+	out := []OverWatch{}
+	for _, w := range candidates {
+		k := fmt.Sprintf("%d|%d|%s", w.GameID, w.PlayerID, w.Stat)
+		if seen[k] {
+			continue
+		}
+		seen[k] = true
+		out = append(out, w)
+		if limit > 0 && len(out) >= limit {
+			break
+		}
 	}
 	return out
 }

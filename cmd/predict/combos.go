@@ -63,6 +63,7 @@ type comboDeps struct {
 
 // comboStats summarises a day's combo scoring for the printout.
 type comboStats struct {
+	Blocked                      map[string]int
 	Scored, Over, Under, Cleared int
 	Loaded, Fresh, Usable        int
 	Basis                        string
@@ -95,16 +96,30 @@ func (d comboDeps) qualifiedCalibration(st data.Stat) bool {
 
 func finiteCombo(v float64) bool { return !math.IsNaN(v) && !math.IsInf(v, 0) }
 
-func (d comboDeps) qualifies(s scored, bar float64) bool {
-	bar = math.Max(.55, bar)
-	return (d.research || d.qualifiedCalibration(s.Stat)) && s.Maybe == "" && !s.Far &&
-		finiteCombo(s.Prob) && s.Prob >= bar && s.Prob <= 1 && s.Odds != 0 && finiteCombo(s.Edge) && s.Edge >= d.minEdge
+func (d comboDeps) rejection(s scored, bar float64) string {
+	if !d.research && !d.qualifiedCalibration(s.Stat) {
+		return "Direct combo calibration not qualified"
+	}
+	if s.Maybe != "" {
+		return "Player availability unresolved"
+	}
+	if s.Far {
+		return "Line too far from projection"
+	}
+	if !finiteCombo(s.Prob) || s.Prob > 1 || s.Prob < math.Max(.55, bar) {
+		return "Below probability requirement"
+	}
+	if s.Odds == 0 || !finiteCombo(s.Edge) || s.Edge < d.minEdge {
+		return "Price does not clear edge requirement"
+	}
+	return ""
 }
+func (d comboDeps) qualifies(s scored, bar float64) bool { return d.rejection(s, bar) == "" }
 
 // scoreCombos prices validated combined markets. Qualified tracking and
 // available comparison-only rows are kept separate; nothing here is staked.
 func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
-	var cs comboStats
+	cs := comboStats{Blocked: map[string]int{}}
 	type simKey struct{ pid, game int }
 	type sim struct {
 		pred predictor.Pred
@@ -255,7 +270,13 @@ func scoreCombos(d comboDeps, lines []props.Line) ([]scored, comboStats) {
 			w.Why = addWhy(strings.Join(parts, "; "), "uncalibrated combo simulation; comparison estimate, not a qualified pick")
 			*d.watch = append(*d.watch, w)
 		}
+		if reason := d.rejection(s, d.hi); reason != "" {
+			cs.Blocked[reason]++
+		}
 		if d.qualifies(s, d.hi) {
+			if d.research {
+				s.Tier = "COMBORESEARCH"
+			}
 			cands = append(cands, s)
 		}
 		if d.qualifies(s, .55) {
@@ -314,7 +335,7 @@ func comboEntries(date string, plays []scored) []picklog.Entry {
 		out = append(out, picklog.Entry{
 			Date: date, GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Stat: string(s.Stat),
 			Team: s.Team, Matchup: s.Matchup, Edge: s.Edge, Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw,
-			Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
+			Rotation: s.Rotation, Period: "game", Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: 0, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Dist: s.Dist, QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds,
 		})
 	}
 	return out
@@ -353,7 +374,7 @@ func comboInfo(cs comboStats, tracked int, bar float64) *ComboInfo {
 	if cs.Scored == 0 {
 		cs.Basis = "No priceable combo quotes passed freshness, consensus, availability and history checks"
 	}
-	return &ComboInfo{Loaded: cs.Loaded, Fresh: cs.Fresh, Usable: cs.Usable, Priced: cs.Scored, Over: cs.Over, Under: cs.Under, Cleared: cs.Cleared, Tracked: tracked, Bar: bar, Basis: cs.Basis,
+	return &ComboInfo{Blocked: cs.Blocked, Loaded: cs.Loaded, Fresh: cs.Fresh, Usable: cs.Usable, Priced: cs.Scored, Over: cs.Over, Under: cs.Under, Cleared: cs.Cleared, Tracked: tracked, Bar: bar, Basis: cs.Basis,
 		At: time.Now().UTC().Format(time.RFC3339)}
 }
 

@@ -1,0 +1,83 @@
+{
+  "findings": [
+    "points: none of the 31 calibrated Over leans reach the probability threshold.",
+    "rebounds: 7 Overs reach the probability bar, but none beat the exact price by the required margin.",
+    "assists: 12 Overs reach the probability bar, but none beat the exact price by the required margin.",
+    "threes: 17 Overs reach the probability bar, but none beat the exact price by the required margin."
+  ],
+  "date": "2026-11-16",
+  "at": "2026-11-16T14:04:41.711791416Z",
+  "hi": 0.55,
+  "minEdge": 0.01,
+  "rows": [
+    {
+      "stat": "points",
+      "markets": 102,
+      "rawOver": 32,
+      "rawUnder": 70,
+      "finalOver": 31,
+      "finalUnder": 71,
+      "overProbBar": 0,
+      "underProbBar": 1,
+      "overEdgeBar": 0,
+      "underEdgeBar": 0,
+      "postedOver": 0,
+      "postedUnder": 0,
+      "avgProjectionGap": 0.17318682128864915,
+      "avgMinutesShift": -1.7730933861184461,
+      "minutesDrivenUnders": 7
+    },
+    {
+      "stat": "rebounds",
+      "markets": 97,
+      "rawOver": 35,
+      "rawUnder": 62,
+      "finalOver": 35,
+      "finalUnder": 62,
+      "overProbBar": 7,
+      "underProbBar": 31,
+      "overEdgeBar": 0,
+      "underEdgeBar": 1,
+      "postedOver": 0,
+      "postedUnder": 6,
+      "avgProjectionGap": 0.16113896016131188,
+      "avgMinutesShift": -1.8025700024082612,
+      "minutesDrivenUnders": 7
+    },
+    {
+      "stat": "assists",
+      "markets": 80,
+      "rawOver": 32,
+      "rawUnder": 48,
+      "finalOver": 35,
+      "finalUnder": 45,
+      "overProbBar": 12,
+      "underProbBar": 21,
+      "overEdgeBar": 0,
+      "underEdgeBar": 0,
+      "postedOver": 0,
+      "postedUnder": 2,
+      "avgProjectionGap": 0.11097773990054519,
+      "avgMinutesShift": -1.9599462475493064,
+      "minutesDrivenUnders": 5
+    },
+    {
+      "stat": "threes",
+      "markets": 84,
+      "rawOver": 31,
+      "rawUnder": 53,
+      "finalOver": 28,
+      "finalUnder": 56,
+      "overProbBar": 17,
+      "underProbBar": 39,
+      "overEdgeBar": 0,
+      "underEdgeBar": 2,
+      "postedOver": 0,
+      "postedUnder": 15,
+      "avgProjectionGap": 0.07246988601185042,
+      "avgMinutesShift": -1.8571738285913115,
+      "minutesDrivenUnders": 6
+    }
+  ],
+  "note": "One quote nearest the market median per player/game/stat. Side counts diagnose model and selection behavior; they do not establish profitable bets. Refit only after actual-stat corrections and chronological validation; no forced Over quota."
+}

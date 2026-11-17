@@ -174,12 +174,18 @@ func main() {
 		fatal(fmt.Errorf("%w (run: go run ./cmd/train)", err))
 	}
 	config := pipeline.ConfigName(m.Disabled)
+	if m.Version < 6 {
+		fatal(fmt.Errorf("model version %d predates the three-point defense fix; retrain with cmd/train and refit calibration with cmd/backtest before live prediction", m.Version))
+	}
 	cal, calOK := eval.LoadCalibration(filepath.Join(*dir, "calibration.json"))
 	if calOK && m.Version >= 4 && cal.ModelVersion != m.Version {
 		fatal(fmt.Errorf("calibration was not fitted for model version %d; rerun cmd/backtest before prediction", m.Version))
 	}
 	switch {
 	case !calOK:
+		if m.Version >= predictor.CurrentVersion {
+			fatal(fmt.Errorf("corrected model requires newly fitted calibration; run cmd/backtest before live prediction"))
+		}
 		fmt.Println("WARNING: no data/calibration.json, so these probabilities are RAW and overconfident.")
 		fmt.Println("Run `go run ./cmd/backtest` first. Treat today's output as a dry run.")
 		fmt.Println()
@@ -452,6 +458,9 @@ func main() {
 			v2gates = v2Gates(lineslog.LeanCells(gm, func(g lineslog.GradedMarket) float64 { return g.P2 }), v2GateMinN)
 		}
 		if mm, err := predictor.Load(filepath.Join(*dir, *v2ModelFile)); err == nil {
+			if mm.Version < 6 {
+				fatal(fmt.Errorf("V2 model predates the defense fix; retrain cmd/train -v2"))
+			}
 			m2, v2model = mm, *v2ModelFile+" (a second model with the teammates-out and missed-shots features)"
 		}
 		// Level anchor for V2: the slate's average line over V2's average projection, per stat.
@@ -898,7 +907,7 @@ func main() {
 		evidence, _ := accuracy.Load(filepath.Join(*dir, "accuracy.json"))
 		picks = evidenceGate(picks, evidence, *date, config, m.Version)
 	}
-	picks = bestLinePerPick(picks)
+	picks = oneDirection(bestLinePerPick(picks))
 	// CHECK and PAPER plays are capped separately so they cannot crowd real picks out of a game.
 	var firm, check []scored
 	for _, s := range picks {
@@ -909,11 +918,12 @@ func main() {
 		}
 	}
 	picks = append(capCorrelated(firm, *maxGame, *maxPlayer), capCorrelated(check, *maxGame, *maxPlayer)...)
-	picks = addWatchlist(picks, all, *also, *alsoTop, *maxPlayer)
+	picks = oneDirection(addWatchlist(picks, all, *also, *alsoTop, *maxPlayer))
 	nReal := len(picks)
 	if *perGame > 0 {
 		picks = fillLeans(picks, all, games, *perGame, *maxPlayer)
 	}
+	picks = oneDirection(picks)
 	sort.Slice(picks, func(i, j int) bool {
 		if picks[i].GameID != picks[j].GameID {
 			return picks[i].GameID < picks[j].GameID
@@ -1982,6 +1992,6 @@ func printOffMarket(rows []offRow) {
 
 func boardEntry(date string, s scored, at time.Time) picklog.Entry {
 	return picklog.Entry{Date: date, LoggedAt: at.Format(time.RFC3339), GameID: s.GameID, PlayerID: s.PlayerID, Player: s.Player, Team: s.Team, Matchup: s.Matchup,
-		Stat: string(s.Stat), Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw, Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Edge: s.Edge, Dist: s.Dist,
+		Stat: string(s.Stat), Side: s.Side, Line: s.Line, Odds: s.Odds, Book: s.Vendor, Prob: s.Prob, ProbRaw: s.ProbRaw, Rotation: s.Rotation, Availability: s.Availability, ProjMean: s.ProjMean, ProjMin: s.ProjMin, Units: s.Units, Tier: s.Tier, Why: s.Why, Tip: s.Tip, Edge: s.Edge, Dist: s.Dist,
 		Period: "game", QuoteAt: s.QuoteAt, SourceUpdatedAt: s.SourceUpdatedAt, AuditVersion: s.AuditVersion, MarketMedian: s.MarketMedian, BookCount: s.BookCount, BookQuotes: s.BookQuotes, CaptureMaxAgeSeconds: s.CaptureMaxAgeSeconds, PriceMaxAgeSeconds: s.PriceMaxAgeSeconds}
 }

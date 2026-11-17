@@ -140,7 +140,13 @@ func buildV2(dir string, form Form) *V2Site {
 	if site.Info != nil && site.Info.Gates == nil {
 		site.Info.Gates = []V2Gate{} // the page reads it as a list
 	}
+	for i := range f.Combos {
+		if f.Combos[i].Tier == "COMBO" {
+			f.Combos[i].Tier = "COMBORESEARCH"
+		}
+	}
 	attachCombos(&site.Board, moreFile{Date: f.Date, Combos: f.Combos, ComboInfo: f.ComboInfo}, form)
+	enrichOvers(&site.Board, form)
 	attachCases(&site.Board, trackRecords(singles))
 	return site
 }

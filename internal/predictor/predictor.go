@@ -26,7 +26,12 @@ import (
 // Nodes is how many points represent the minutes distribution.
 const Nodes = 15
 
-const modelVersion = 4
+// Version 6 includes complete four-stat opponent aggregates. Earlier fits
+// learned no three-point defense effect and require retraining for live use.
+const modelVersion = 6
+
+// CurrentVersion identifies the feature and training policy for calibration.
+const CurrentVersion = modelVersion
 
 // maxProjMinutes caps the central minutes projection. No one is projected past a heavy-starter
 // load, even when many teammates are out and the regression extrapolates.
@@ -406,10 +411,10 @@ func Load(path string) (*Model, error) {
 	if err := json.Unmarshal(b, &m); err != nil {
 		return nil, err
 	}
-	if m.Minutes == nil || m.Stat[0] == nil || m.Stat[1] == nil || m.Stat[2] == nil || m.Stat[3] == nil || (m.Version != modelVersion && m.Version != 3 && m.Version != TailVersion) {
+	if m.Minutes == nil || m.Stat[0] == nil || m.Stat[1] == nil || m.Stat[2] == nil || m.Stat[3] == nil || (m.Version != modelVersion && m.Version != 3 && m.Version != 4 && m.Version != 5 && m.Version != TailVersion) {
 		return nil, errors.New("predictor: model file is incomplete or from another version; retrain with go run ./cmd/train")
 	}
-	if m.Version == TailVersion {
+	if m.Version == TailVersion || m.Version == 5 {
 		if len(m.MinuteWeights) != len(bucketEdges)+1 || len(m.ExitMinutes) != len(bucketEdges)+1 {
 			return nil, errors.New("tail model uncertainty fields are missing")
 		}

@@ -52,6 +52,12 @@ func main() {
 		fatal("set BALLDONTLIE_API_KEY in .env or your environment")
 	}
 	c := bdl.New(key)
+	started := time.Now()
+	c.Logf = func(format string, args ...any) {
+		fmt.Printf("[%s elapsed] ", time.Since(started).Round(time.Second))
+		fmt.Printf(format+"\n", args...)
+	}
+	c.Logf("Starting %s download; API host: %s", os.Args[1], c.BaseURL)
 
 	cmd, args := os.Args[1], os.Args[2:]
 	var err error
@@ -204,6 +210,7 @@ func runStats(c *bdl.Client, args []string) error {
 			if start != "" {
 				q.Set("start_date", start)
 			}
+			fmt.Printf("Season %d: downloading %s stats...\n", s, st)
 			err := c.Paginate("/nba/v1/stats", q, func(raw json.RawMessage) error {
 				var row map[string]json.RawMessage
 				if err := json.Unmarshal(raw, &row); err != nil {
@@ -473,12 +480,20 @@ func runProps(c *bdl.Client, args []string) error {
 	}
 	defer out.Close()
 
-	for i, id := range ids {
+	completed := 0
+	for _, id := range ids {
+		if done[id] {
+			completed++
+		}
+	}
+	fmt.Printf("Props: %d/%d games already cached; %d remaining\n", completed, len(ids), len(ids)-completed)
+	for _, id := range ids {
 		if done[id] {
 			continue
 		}
 		q := url.Values{}
 		q.Set("game_id", strconv.Itoa(id))
+		fmt.Printf("Props: fetching game %d (%d/%d completed)...\n", id, completed, len(ids))
 		body, err := c.Get("/nba/v2/odds/player_props/opening", q)
 		if err != nil {
 			return err
@@ -491,9 +506,17 @@ func runProps(c *bdl.Client, args []string) error {
 		if err := out.writeRow([]byte(line)); err != nil {
 			return err
 		}
-		if (i+1)%100 == 0 {
-			fmt.Printf("%d/%d games\n", i+1, len(ids))
+		if err := out.w.Flush(); err != nil {
+			return err
 		}
+		completed++
+		var received struct {
+			Data []json.RawMessage `json:"data"`
+		}
+		if err := json.Unmarshal(body, &received); err != nil {
+			return err
+		}
+		fmt.Printf("Props: %d/%d games (%.1f%%); game %d returned %d records\n", completed, len(ids), 100*float64(completed)/float64(len(ids)), id, len(received.Data))
 	}
 	fmt.Printf("wrote %s\n", filepath.Join(dataDir, name))
 	return nil

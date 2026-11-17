@@ -29,6 +29,20 @@ func (m *Model) ExplainContext(r *feat.Row, st data.Stat) string {
 		}
 	}
 	notes := []string{}
+	inputDescriptions := []string{}
+	for i, n := range g.Names {
+		if (n == "opp_allow" || n == "pos5_allow") && !math.IsNaN(x[i]) {
+			kind := "overall"
+			if n == "pos5_allow" {
+				kind = "position-specific"
+			}
+			inputDescriptions = append(inputDescriptions, fmt.Sprintf("%s allowance %+.1f%% versus its league baseline", kind, 100*math.Expm1(x[i])))
+		}
+	}
+	if len(inputDescriptions) > 0 {
+		notes = append(notes, "rolling defense inputs: "+strings.Join(inputDescriptions, ", ")+"; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive")
+	}
+
 	disabled := disabledSet(m.Disabled)
 	if disabled[feat.GroupTeammates] || disabled[feat.GroupOppOut] {
 		groups := []string{}

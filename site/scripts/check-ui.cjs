@@ -14,7 +14,10 @@ const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/board-ui.
 const now=new Date().toISOString(),tip=new Date(Date.now()+4*3600000).toISOString();
 for(const [i,g] of fixture.board.games.entries()){g.tip=new Date(Date.parse(tip)+i*3600000).toISOString();for(const p of [...g.plays,...g.more])Object.assign(p,{tip:g.tip,quoteAt:now,sourceUpdatedAt:now});}
 for(const c of fixture.board.combos)Object.assign(c,{tip,quoteAt:now,sourceUpdatedAt:now});
-for(const o of fixture.board.overs)o.tip=tip;
+for(const o of fixture.board.overs) {
+ o.tip=tip
+ o.analysis={...structuredClone(fixture.board.games[0].plays[0]),player:o.player,team:o.team,stat:o.stat,side:'OVER',line:o.line,projStat:o.proj,projMin:o.proj_min,prob:o.prob,edge:o.edge,odds:o.odds,book:o.book,quoteAt:now,sourceUpdatedAt:now,tip,research:true,label:'Research comparison',grade:'—'}
+}
 let root=createRoot(document.getElementById('root'));const checks=[];
 function check(label,condition){assert.ok(condition,label);checks.push(label);}
 function click(el){assert.ok(el,'Control exists');act(()=>el.dispatchEvent(new window.MouseEvent('click',{bubbles:true})));}
@@ -30,7 +33,9 @@ check('Every V1 prop card has a player image URL',$$('.prop-grid>.play').length=
 act(()=>$('.prop-grid .player-portrait img').dispatchEvent(new window.Event('error')));
 check('Unavailable photos fall back to player initials',$('.prop-grid .portrait-initials')?.textContent==='SC');
 check('Games no longer compete with props in a separate section',!$('.boardpage>.game-markets:not(.quarter-board)'));
-check('Overs are outside a collapsed disclosure',$$('.ov-head .player-portrait img').length===2&&!$('.ov-head').closest('details'));
+check('Over comparisons have player photos and expanded analytics',$$('#overs-watch .player-portrait img').length===2&&$$('#overs-watch .why .bars').length===4);
+check('Over comparisons never look like selected recommendations',$$('#overs-watch .tier').every(el=>el.textContent==='Research comparison'));
+check('Over comparisons include quote details and matchup explanations',$$('#overs-watch .pick-reason').length===2&&$('#overs-watch').textContent.includes('How defense affects this forecast'));
 click($('.prop-grid .playbtn'));check('Expanded V1 analysis retains charts',$$('.prop-grid .why .bars').length===2);
 click($('.prop-grid .matchup-lens>summary'));check('Game context attached to correct card',$('.prop-grid .matchup-lens').textContent.includes('GSW ML'));
 click($('[aria-label="Side"] button[aria-pressed="false"]'));check('Over filter shows only overs',$$('.prop-grid>.play').every(el=>el.classList.contains('over')));

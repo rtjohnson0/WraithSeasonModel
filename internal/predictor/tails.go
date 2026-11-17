@@ -11,7 +11,7 @@ import (
 
 // TailVersion changes the uncertainty model, not the feature schema. It must use
 // separately fitted probability calibration; a v4 calibration cannot price it.
-const TailVersion = 5
+const TailVersion = 7
 
 var alphaMeanEdges = []float64{2, 5, 10, 20, 35}
 
@@ -70,8 +70,8 @@ func FitTailUncertainty(base *Model, rows []feat.Row) (*Model, error) {
 	if e != nil {
 		return nil, e
 	}
-	if base.Version != 4 || base.Rows != len(played) || base.TrainedBefore != played[len(played)-1].G.Date {
-		return nil, errors.New("tail fitter needs a matching v4 training reference")
+	if base.Version != modelVersion || base.Rows != len(played) || base.TrainedBefore != played[len(played)-1].G.Date {
+		return nil, errors.New("tail fitter needs a matching current-feature training reference")
 	}
 	encoded, e := json.Marshal(base)
 	if e != nil {

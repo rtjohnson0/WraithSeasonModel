@@ -251,17 +251,18 @@ type moreFile struct {
 
 // ComboInfo mirrors the summary predict writes about the day's combo pricing.
 type ComboInfo struct {
-	Loaded  int     `json:"loaded"`
-	Fresh   int     `json:"fresh"`
-	Usable  int     `json:"usable"`
-	Priced  int     `json:"priced"`
-	Over    int     `json:"over"`
-	Under   int     `json:"under"`
-	Cleared int     `json:"cleared"`
-	Tracked int     `json:"tracked"`
-	Bar     float64 `json:"bar"`
-	Basis   string  `json:"basis"`
-	At      string  `json:"at"`
+	Blocked map[string]int `json:"blocked,omitempty"`
+	Loaded  int            `json:"loaded"`
+	Fresh   int            `json:"fresh"`
+	Usable  int            `json:"usable"`
+	Priced  int            `json:"priced"`
+	Over    int            `json:"over"`
+	Under   int            `json:"under"`
+	Cleared int            `json:"cleared"`
+	Tracked int            `json:"tracked"`
+	Bar     float64        `json:"bar"`
+	Basis   string         `json:"basis"`
+	At      string         `json:"at"`
 }
 
 // ComboPlay is a combined-market play (points + rebounds + assists and so on) shown in its own site
@@ -285,23 +286,27 @@ func attachCombos(b *Board, mf moreFile, form Form) {
 
 // OverWatch is an Over listed on the site's "Overs watch" section: not a pick.
 type OverWatch struct {
-	GameID  int     `json:"game_id"`
-	Player  string  `json:"player"`
-	Team    string  `json:"team"`
-	Matchup string  `json:"matchup"`
-	Stat    string  `json:"stat"`
-	Line    float64 `json:"line"`
-	Odds    int     `json:"odds"`
-	Book    string  `json:"book"`
-	Prob    float64 `json:"prob"`
-	Edge    float64 `json:"edge"`
-	Proj    float64 `json:"proj"`
-	ProjMin float64 `json:"proj_min"`
-	Tip     string  `json:"tip,omitempty"`
-	LowLine bool    `json:"low_line,omitempty"`
-	Median  float64 `json:"median,omitempty"`
-	Books   int     `json:"books,omitempty"`
-	Status  string  `json:"status"`
+	Experimental bool           `json:"experimental,omitempty"`
+	PlayerID     int            `json:"player_id,omitempty"`
+	Analysis     *Play          `json:"analysis,omitempty"`
+	Forecast     *picklog.Entry `json:"forecast,omitempty"`
+	GameID       int            `json:"game_id"`
+	Player       string         `json:"player"`
+	Team         string         `json:"team"`
+	Matchup      string         `json:"matchup"`
+	Stat         string         `json:"stat"`
+	Line         float64        `json:"line"`
+	Odds         int            `json:"odds"`
+	Book         string         `json:"book"`
+	Prob         float64        `json:"prob"`
+	Edge         float64        `json:"edge"`
+	Proj         float64        `json:"proj"`
+	ProjMin      float64        `json:"proj_min"`
+	Tip          string         `json:"tip,omitempty"`
+	LowLine      bool           `json:"low_line,omitempty"`
+	Median       float64        `json:"median,omitempty"`
+	Books        int            `json:"books,omitempty"`
+	Status       string         `json:"status"`
 }
 
 // MovePt is the market's median line at one capture.
@@ -355,6 +360,17 @@ func attachMore(b *Board, mf moreFile, form Form) {
 		idx[g.ID] = i
 	}
 	for _, e := range mf.Plays {
+		blocked := false
+		if gi, ok := idx[e.GameID]; ok {
+			for _, p := range append(append([]Play{}, b.Games[gi].Plays...), b.Games[gi].More...) {
+				if p.PlayerID == e.PlayerID && p.Stat == e.Stat {
+					blocked = true
+				}
+			}
+		}
+		if blocked {
+			continue
+		}
 		i, ok := idx[e.GameID]
 		if !ok {
 			b.Games = append(b.Games, Game{ID: e.GameID, Matchup: matchupOf(e), Tip: e.Tip, Plays: []Play{}})

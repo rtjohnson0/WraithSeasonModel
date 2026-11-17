@@ -279,15 +279,15 @@ func NewBuilder(games []data.PlayerGame, adv map[data.AdvKey]data.AdvRow) *Build
 			b.team[g.TeamID] = append(b.team[g.TeamID], tg)
 		}
 		tg.Players[g.PlayerID] = g.Minutes
-		tg.For[0] += g.Pts
-		tg.For[1] += g.Reb
-		tg.For[2] += g.Ast
 		tg.Fga += g.Fga
 		tg.Miss += g.Fga - g.Fgm
 		pg := PosGroup(g.Pos)
-		tg.PosFor[pg][0] += g.Pts
-		tg.PosFor[pg][1] += g.Reb
-		tg.PosFor[pg][2] += g.Ast
+		// Keep every modeled stat in team and position totals. Omitting threes
+		// made both defense ratios missing throughout training and live scoring.
+		for k, st := range data.Stats {
+			tg.For[k] += g.Value(st)
+			tg.PosFor[pg][k] += g.Value(st)
+		}
 	}
 	// Pair each team game with the opponent's side of the same game.
 	byGame := map[int][]int{}
