@@ -60,3 +60,12 @@ The user authorized activation after reviewing these results. Game-v2 is now the
 New game forecasts/results use `v2_gamepicklog.jsonl` and `v2_gamesettled.jsonl`. Prior game records remain available in a separate archive. Old results are not presented as the new model's record. V2 rotation-v2 is also selected explicitly by daily/pre-tip prediction. No unproven-staking override or forced combo qualification is enabled.
 
 The first Daily run can spend hours filling missing historical prop-quote caches. Downloads resume by game and the workflow retains its input cache; subsequent daily runs reuse that history. Prop training/calibration are restored together on failure rather than leaving mismatched files. A `[refresh-models]` source-push commit explicitly launches a full Daily run; ordinary source pushes retain fast site publication.
+
+
+### Bounded historical backfill correction
+
+The original launch made publication wait for the entire opening-props history. Daily now gives the resumable downloader a five-minute budget checked between games. The current request and its normal retries may finish after that soft budget. Completion is checked against unique expected season game IDs before any prop retraining occurs.
+
+When history is incomplete or its download fails, Daily retains the existing matching model/calibration pair, records progress in `data/model_refresh.json`, and continues with current-data predictions. It fails if no matching pair exists. Once history is complete, training and calibration resume automatically with the existing rollback behavior. Completed games remain in the normal cached input file; they are not requested again.
+
+A workflow that was already running at the time of this correction keeps its original script/process. Merging this fix does not interrupt or shorten that process. The existing six-hour limit remains; future Daily runs use the bounded downloader.
