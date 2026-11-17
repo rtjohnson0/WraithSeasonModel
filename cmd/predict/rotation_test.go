@@ -12,6 +12,7 @@ import (
 	"propsmodel/internal/predictor"
 	"propsmodel/internal/props"
 	"propsmodel/internal/replay"
+	"propsmodel/internal/rotation"
 	"testing"
 	"time"
 )
@@ -102,6 +103,104 @@ func TestRotationCanScoreNewBenchOpportunityAndReplayExactly(t *testing.T) {
 		t.Fatal("rotation forecast not reproducible", p, err)
 	}
 	if records[0].Row.G.Name == "" || records[0].Rotation == nil || records[0].Policy.TargetMinutes == nil {
+		t.Fatal("incomplete capture")
+	}
+	if m.Predict(r) != baseline {
+		t.Fatal("V1 baseline changed")
+	}
+}
+
+func TestStrictFallbackLeavesBaselineAndHealthyMinutesAlone(t *testing.T) {
+	rows, roster := rotationFixture()
+	for _, fresh := range []map[int]availability.Status{
+		nil,
+		{101: {PlayerID: 101, Name: "Player 101", Status: "Out", At: "2026-11-09T17:00:00Z"}},
+	} {
+		f := newRotationForecast(rows, roster, fresh, nil, map[int]props.GameInfo{9: {Home: 1, Visitor: 2}}, "2026-11-09", true)
+		p := predictor.Pred{Minutes: 30}
+		p.Rate[0] = .7
+		for i := range p.MinNodes {
+			p.MinNodes[i] = 30
+		}
+		row := &feat.Row{G: data.PlayerGame{TeamID: 1, PlayerID: 103}}
+		if got := f.adjust(p, row); got != p {
+			t.Fatal("fallback changed baseline", got, p)
+		}
+		s := scored{PlayerID: 103, Stat: data.Points, ProjMin: p.Minutes}
+		context := f.context(s, p, row, .5, .5, combo.Corr{})
+		if context.AllocationApplied || context.Supported || context.Policy != rotation.StrictPolicy {
+			t.Fatal(context)
+		}
+	}
+}
+
+func TestStrictSupportedJointAbsenceUsesObservedTarget(t *testing.T) {
+	rows, roster := rotationFixture()
+	for i := range rows {
+		r := &rows[i]
+		if r.Date >= "2026-11-06" {
+			switch r.PlayerID {
+			case 101:
+				r.Minutes = 0
+			case 102, 103:
+				r.Minutes = 36
+			}
+		}
+	}
+	f := newRotationForecast(rows, roster, map[int]availability.Status{101: {PlayerID: 101, Name: "Player 101", Status: "Out", At: "2026-11-09T17:00:00Z"}}, nil, map[int]props.GameInfo{9: {Home: 1, Visitor: 2}}, "2026-11-09", true)
+	a := f.teams[1]
+	if !a.Supported || a.MatchedGames != 3 {
+		t.Fatal(a)
+	}
+	p := predictor.Pred{Minutes: 24}
+	p.Rate[0] = .7
+	for i := range p.MinNodes {
+		p.MinNodes[i] = 24
+	}
+	row := &feat.Row{G: data.PlayerGame{TeamID: 1, PlayerID: 103}}
+	got := f.adjust(p, row)
+	if math.Abs(got.Minutes-a.Minutes[103]) > 1e-9 || got.Rate != p.Rate {
+		t.Fatal(got, a)
+	}
+	context := f.context(scored{PlayerID: 103, Stat: data.Points, ProjMin: got.Minutes}, p, row, .5, .5, combo.Corr{})
+	if !context.AllocationApplied || len(context.RelevantOut) != 1 || !context.Supported {
+		t.Fatal(context)
+	}
+}
+
+func TestStrictFallbackCaptureReplaysBaselineWithoutTarget(t *testing.T) {
+	rows, roster := rotationFixture()
+	b := feat.NewBuilder(rows, nil)
+	b.SetRoster(roster)
+	games := map[int]props.GameInfo{9: {ID: 9, Home: 1, Visitor: 2, HomeAbbr: "ATL", VisitorAbbr: "BOS", Start: "2026-11-09T23:00:00Z"}}
+	fresh := map[int]availability.Status{101: {PlayerID: 101, Name: "Player 101", Status: "Out"}}
+	f := newRotationForecast(rows, roster, fresh, map[int]string{101: "Out"}, games, "2026-11-09", true)
+	m := &predictor.Model{Version: 4, Minutes: &glm.Linear{Intercept: 30}, Quant: make([][]float64, 5)}
+	for k := range m.Quant {
+		m.Quant[k] = make([]float64, predictor.Nodes)
+	}
+	for k := range m.Stat {
+		m.Stat[k] = &glm.Model{Intercept: math.Log(.5), Alpha: .05}
+	}
+	r := &feat.Row{G: data.PlayerGame{PlayerID: 103, TeamID: 1, Date: "2026-11-09"}, AvgMin15: 24, Games: 8, X: make([]float64, len(feat.CommonSpecs))}
+	for k := range r.S {
+		r.S[k] = make([]float64, len(feat.StatSpecs[k]))
+	}
+	if !model.Eligible(r.AvgMin15, m.Predict(r).Minutes) {
+		t.Fatal("fixture must be eligible for baseline")
+	}
+	baseline := m.Predict(r)
+	asOf, _ := time.Parse(time.RFC3339, "2026-11-09T18:00:00Z")
+	line := props.Line{GameID: 9, PlayerID: 103, Stat: data.Points, Line: 10.5, OverOdds: -110, UnderOdds: -110, Vendor: "book", CapturedAt: asOf.Format(time.RFC3339), UpdatedAt: asOf.Format(time.RFC3339)}
+	all, records := scoreRotationSingles(f, m, b, []props.Line{line}, games, func(pid int) (int, bool) { tm, ok := roster[pid]; return tm, ok }, func(int, props.GameInfo, int) *feat.Row { return r }, nil, "2026-11-09", .5, 1, asOf)
+	if len(all) != 1 || len(records) != 1 || all[0].ProjMin != baseline.Minutes {
+		t.Fatal("strict fallback must score baseline minutes")
+	}
+	p, err := replay.Recompute(m, records[0])
+	if err != nil || math.Abs(p-records[0].P1) > 1e-10 {
+		t.Fatal("rotation forecast not reproducible", p, err)
+	}
+	if records[0].Row.G.Name == "" || records[0].Rotation == nil || records[0].Policy.TargetMinutes != nil || records[0].Rotation.AllocationApplied || records[0].SelectionPolicy != rotation.StrictPolicy {
 		t.Fatal("incomplete capture")
 	}
 	if m.Predict(r) != baseline {

@@ -30,6 +30,8 @@ type Scenario struct {
 	Probability  *float64 `json:"probability,omitempty"`
 }
 type Context struct {
+	AllocationApplied bool       `json:"allocationApplied"`
+	RelevantOut       []int      `json:"relevantOut,omitempty"`
 	OwnStatus         string     `json:"ownStatus,omitempty"`
 	Policy            string     `json:"policy"`
 	BaselineMinutes   float64    `json:"baselineMinutes"`

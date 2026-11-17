@@ -13,7 +13,7 @@ export default function Rotation({ p }) {
       <div><small>Matching team rotations</small><b>{r.matchedGames}</b></div>
     </div>
     {r.confirmedOut?.length > 0 && <p><b>Confirmed out:</b> {r.confirmedOut.map(x => x.player).join(', ')}.</p>}
-    <p className="small">{r.reason}. {r.teamMinutes > 0 ? `The team allocation totals ${r.teamMinutes.toFixed(0)} regulation minutes.` : 'The baseline forecast is retained.'} Per-minute production is unchanged; extra usage is not assumed.</p>
+    <p className="small">{r.reason}. {r.policy === 'rotation-v2' && !r.allocationApplied ? 'The baseline forecast is retained; the proposed team allocation was not applied.' : r.teamMinutes > 0 ? `The team allocation totals ${r.teamMinutes.toFixed(0)} regulation minutes.` : 'The baseline forecast is retained.'} Per-minute production is unchanged; extra usage is not assumed.</p>
     {r.scenarios?.length > 0 && <>
       <h4>If another teammate sits</h4>
       <p className="small">Uncertain teammates remain in the main allocation. Each scenario removes only the named player alongside confirmed outs; no probability of sitting is assumed.</p>

@@ -23,6 +23,7 @@ import (
 )
 
 type rotationForecast struct {
+	strict    bool
 	teams     map[int]rotation.Allocation
 	scenarios map[int]map[int]rotation.Allocation
 	statuses  map[int]availability.Status
@@ -102,8 +103,9 @@ func freshRotationStatuses(injuryPath, snapDir, date string, now time.Time, b *f
 	return statuses
 }
 
-func newRotationForecast(rows []data.PlayerGame, roster map[int]int, fresh map[int]availability.Status, statuses map[int]string, games map[int]props.GameInfo, date string) *rotationForecast {
+func newRotationForecast(rows []data.PlayerGame, roster map[int]int, fresh map[int]availability.Status, statuses map[int]string, games map[int]props.GameInfo, date string, strict ...bool) *rotationForecast {
 	f := &rotationForecast{teams: map[int]rotation.Allocation{}, scenarios: map[int]map[int]rotation.Allocation{}, statuses: fresh}
+	f.strict = len(strict) > 0 && strict[0]
 	ix := rotation.New(rows)
 	out := map[int]bool{}
 	for pid, s := range fresh {
@@ -140,16 +142,34 @@ func newRotationForecast(rows []data.PlayerGame, roster map[int]int, fresh map[i
 	}
 	return f
 }
+func (f *rotationForecast) policy() string {
+	if f.strict {
+		return rotation.StrictPolicy
+	}
+	return rotation.Policy
+}
+func (f *rotationForecast) target(a rotation.Allocation, pid int) (float64, bool) {
+	if f.strict {
+		return rotation.SupportedTarget(a, pid)
+	}
+	target, ok := a.Minutes[pid]
+	return target, a.Valid && ok
+}
 func (f *rotationForecast) adjust(p predictor.Pred, row *feat.Row) predictor.Pred {
 	a := f.teams[row.G.TeamID]
-	if target, ok := a.Minutes[row.G.PlayerID]; a.Valid && ok {
+	if target, ok := f.target(a, row.G.PlayerID); ok {
 		return p.WithTargetMinutes(target)
 	}
 	return p
 }
 func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row, market, weight float64, corr combo.Corr) *rotation.Context {
 	a := f.teams[row.G.TeamID]
-	c := &rotation.Context{OwnStatus: s.Maybe, Policy: rotation.Policy, BaselineMinutes: base.Minutes, AllocationMinutes: base.Minutes, UsedMinutes: s.ProjMin, TeamGames: a.TeamGames, MatchedGames: a.MatchedGames, Supported: a.Valid && a.Supported, Reason: a.Reason}
+	c := &rotation.Context{OwnStatus: s.Maybe, Policy: f.policy(), RelevantOut: append([]int(nil), a.RelevantOut...), BaselineMinutes: base.Minutes, AllocationMinutes: base.Minutes, UsedMinutes: s.ProjMin, TeamGames: a.TeamGames, MatchedGames: a.MatchedGames, Supported: a.Valid && a.Supported, Reason: a.Reason}
+	_, c.AllocationApplied = f.target(a, s.PlayerID)
+	if f.strict && !c.AllocationApplied {
+		c.Supported = false
+		c.Reason = "baseline retained: no supported joint-absence target; " + a.Reason
+	}
 	if a.Valid {
 		if target, ok := a.Minutes[s.PlayerID]; ok {
 			c.AllocationMinutes = target
@@ -185,8 +205,12 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 			continue
 		}
 		st := f.statuses[pid]
-		p := base.WithTargetMinutes(target)
-		scenario := rotation.Scenario{PlayerID: pid, Player: st.Name, Status: st.Status, Minutes: p.Minutes, MatchedGames: alt.MatchedGames, Supported: alt.Supported}
+		p := base
+		_, applied := f.target(alt, s.PlayerID)
+		if applied {
+			p = base.WithTargetMinutes(target)
+		}
+		scenario := rotation.Scenario{PlayerID: pid, Player: st.Name, Status: st.Status, Minutes: p.Minutes, MatchedGames: alt.MatchedGames, Supported: alt.Supported && (!f.strict || applied)}
 		projection := 0.
 		var raw float64
 		var err error
@@ -309,11 +333,11 @@ func scoreRotationSingles(f *rotationForecast, m *predictor.Model, b *feat.Build
 		if !exists || math.Abs(l.Line-v.Median) < math.Abs(old.Line-v.Median) {
 			policy := predictor.Adjustments{}
 			if a := f.teams[team]; a.Valid {
-				if target, ok := a.Minutes[l.PlayerID]; ok {
+				if target, ok := f.target(a, l.PlayerID); ok {
 					policy.TargetMinutes = &target
 				}
 			}
-			records[mk] = replay.Record{Rotation: s.Rotation, SelectionPolicy: rotation.Policy, ProbabilityMethod: "linear", BlendWeight: weight, Period: "game", BookCount: v.Books, Date: date, At: at, Tip: g.Start, Row: decisionIdentity(row, l.GameID, date, s.Player, tm), Policy: policy, Stat: l.Stat, Line: l.Line, Book: l.Vendor, QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds, Market: market, P1: pOver}
+			records[mk] = replay.Record{Rotation: s.Rotation, SelectionPolicy: f.policy(), ProbabilityMethod: "linear", BlendWeight: weight, Period: "game", BookCount: v.Books, Date: date, At: at, Tip: g.Start, Row: decisionIdentity(row, l.GameID, date, s.Player, tm), Policy: policy, Stat: l.Stat, Line: l.Line, Book: l.Vendor, QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds, Market: market, P1: pOver}
 		}
 	}
 	rs := []replay.Record{}
@@ -333,7 +357,7 @@ func scoreRotationSingles(f *rotationForecast, m *predictor.Model, b *feat.Build
 	return out, rs
 }
 func writeRotationEvidence(dir, date string, at time.Time, f *rotationForecast) error {
-	root := filepath.Join(dir, "v2_rotation")
+	root := filepath.Join(dir, rotation.EvidenceDirectory(f.policy()))
 	if e := os.MkdirAll(root, 0755); e != nil {
 		return e
 	}
@@ -341,7 +365,7 @@ func writeRotationEvidence(dir, date string, at time.Time, f *rotationForecast) 
 		Policy, Date, At string
 		Teams            map[int]rotation.Allocation
 		Scenarios        map[int]map[int]rotation.Allocation
-	}{rotation.Policy, date, at.Format(time.RFC3339Nano), f.teams, f.scenarios}, "", "  ")
+	}{f.policy(), date, at.Format(time.RFC3339Nano), f.teams, f.scenarios}, "", "  ")
 	if e != nil {
 		return e
 	}

@@ -41,8 +41,8 @@ func settle(dir string, legacy bool) {
 				Policy string `json:"policy"`
 			} `json:"info"`
 		}
-		if json.Unmarshal(b, &f) == nil && f.Info.Policy == rotation.Policy {
-			logName, settledName = rotation.LogFile, rotation.SettledFile
+		if json.Unmarshal(b, &f) == nil && rotation.KnownPolicy(f.Info.Policy) {
+			logName, settledName = rotation.Files(f.Info.Policy)
 		}
 	}
 	entries, err := picklog.Load(filepath.Join(dir, logName))

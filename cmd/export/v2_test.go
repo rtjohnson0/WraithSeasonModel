@@ -129,3 +129,23 @@ func verifiedResultFixture(e picklog.Entry, actual, close float64, played bool) 
 	s.SourceDate = e.Date
 	return s
 }
+
+func TestStrictRotationRecordDoesNotInheritPreviousRotationWins(t *testing.T) {
+	dir := t.TempDir()
+	e := picklog.Entry{AuditVersion: 2, Date: "2026-10-28", GameID: 1, PlayerID: 5, Player: "A", Team: "ATL", Stat: "points", Side: "OVER", Line: 20.5, Odds: -110, Prob: .6, Tier: "PAPER"}
+	if _, err := picklog.AppendSettled(filepath.Join(dir, rotation.SettledFile), []picklog.Settled{verifiedResultFixture(e, 24, 0, true)}); err != nil {
+		t.Fatal(err)
+	}
+	b, _ := json.Marshal(v2File{Date: "2026-10-28", Plays: []picklog.Entry{e}, Info: &V2Info{Policy: rotation.StrictPolicy}})
+	os.WriteFile(filepath.Join(dir, "v2.json"), b, 0644)
+	v := buildV2(dir, nil)
+	if v == nil || v.Record.Days != 0 {
+		t.Fatal("new policy inherited old record", v)
+	}
+	_, newResults := rotation.Files(rotation.StrictPolicy)
+	picklog.AppendSettled(filepath.Join(dir, newResults), []picklog.Settled{verifiedResultFixture(e, 24, 0, true)})
+	v = buildV2(dir, nil)
+	if v == nil || v.Record.Days != 1 {
+		t.Fatal("new policy record not loaded", v)
+	}
+}

@@ -145,7 +145,11 @@ func main() {
 	valueMinProb := flag.Float64("valueminprob", .40, "value research: minimum actual model probability; never inflated to 50 percent")
 	valueMinROI := flag.Float64("valueminroi", .04, "value research: minimum forecast return conditional on no push")
 	launchGate := flag.Bool("evidencegate", true, "require recent verified forward evidence for a staked PICK; unproven plays remain visible as PAPER")
+	rotationPolicy := flag.String("rotationpolicy", rotation.Policy, "V2 only: rotation-v1 (legacy) or rotation-v2 (supported joint absences only; separate research history)")
 	flag.Parse()
+	if !rotation.KnownPolicy(*rotationPolicy) {
+		fatal(fmt.Errorf("unknown rotation policy %q", *rotationPolicy))
+	}
 	if *rotationV2 && (math.IsNaN(*v2Weight) || math.IsInf(*v2Weight, 0) || *v2Weight < 0 || *v2Weight > 1) {
 		fatal(fmt.Errorf("V2 rotation blend weight must be between zero and one"))
 	}
@@ -441,8 +445,8 @@ func main() {
 	var rotations *rotationForecast
 	var rotationRecords []replay.Record
 	if *useV2 && *rotationV2 && gid == 0 {
-		rotations = newRotationForecast(d.Games, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date)
-		v2model = rotation.Policy + " · current V1 per-minute rates + joint team allocation; uncalibrated experiment"
+		rotations = newRotationForecast(d.Games, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date, *rotationPolicy == rotation.StrictPolicy)
+		v2model = rotations.policy() + " · current V1 per-minute rates + joint team allocation; uncalibrated experiment"
 	}
 	if *useV2 && !*rotationV2 && gid == 0 {
 		prev, _ := projlog.Load(filepath.Join(*dir, "projlog.jsonl"))
@@ -972,7 +976,7 @@ func main() {
 		v2Meta.Watch = len(v2Overs)
 		v2Meta.Keep, v2Meta.EdgeBar, v2Meta.MaxJuice = *v2Keep, rules.EdgeBar, *v2Juice
 		if rotations != nil {
-			v2Meta.Policy = rotation.Policy
+			v2Meta.Policy = rotations.policy()
 		}
 		printV2(v2fix, v2Meta, v2Plays, v2Combos)
 	}
@@ -1092,7 +1096,7 @@ func main() {
 		if len(pe)+len(ce) > 0 {
 			logName := "v2log.jsonl"
 			if rotations != nil {
-				logName = rotation.LogFile
+				logName, _ = rotation.Files(rotations.policy())
 			}
 			n, err := picklog.Append(filepath.Join(*dir, logName), append(pe, ce...))
 			if err != nil {
@@ -1101,7 +1105,7 @@ func main() {
 			fmt.Printf("Logged %d new V2 plays to %s (graded by `go run ./cmd/v2 settle`; the V2 test page shows them).\n", n, filepath.Join(*dir, logName))
 		}
 		if rotations != nil {
-			captureDir := filepath.Join(*dir, "v2_rotation")
+			captureDir := filepath.Join(*dir, rotation.EvidenceDirectory(rotations.policy()))
 			checkpoint, err := replay.Checkpoint(captureDir, m)
 			if err != nil {
 				fatal(err)

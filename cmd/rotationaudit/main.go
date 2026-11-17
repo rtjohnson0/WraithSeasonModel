@@ -27,6 +27,7 @@ type Slice struct {
 	Stat                                                   string
 	N, Days                                                int
 	BaselineBrier, RotationBrier, BaselineMAE, RotationMAE float64
+	ProtectedBrier, ProtectedMAE                           float64
 }
 type Report struct {
 	Cohort                                 string
@@ -34,6 +35,7 @@ type Report struct {
 	Policy, Note, Through                  string
 	Questions, PlayerGames, Days           int
 	BaselineMinutesMAE, RotationMinutesMAE float64
+	ProtectedMinutesMAE                    float64
 	Slices                                 []Slice
 	Excluded                               map[string]int
 }
@@ -41,14 +43,18 @@ type Report struct {
 func collect(dir, before string) (Report, error) { return collectCohort(dir, before, "all") }
 
 func collectCohort(dir, before, cohort string) (Report, error) {
-	out := Report{Cohort: cohort, ModelVersions: map[int]int{}, Policy: rotation.Policy, Note: "Read-only paired forward diagnostics. Earliest eligible immutable question per player/game/stat. Same frozen model, raw per-minute rates, quote and model/book weight; only team minutes allocation differs. Pushes/DNPs are excluded from binary scores. Minutes count each player/game once. No performance certification or automatic promotion; no live files changed.", Excluded: map[string]int{}}
+	return collectPolicy(dir, before, cohort, rotation.Policy)
+}
+
+func collectPolicy(dir, before, cohort, policy string) (Report, error) {
+	out := Report{Cohort: cohort, ModelVersions: map[int]int{}, Policy: policy, Note: "Read-only paired forward diagnostics. Earliest eligible immutable question per player/game/stat. Same frozen model, raw per-minute rates, quote and model/book weight; only team minutes allocation differs. Pushes/DNPs are excluded from binary scores. Minutes count each player/game once. No performance certification or automatic promotion; no live files changed.", Excluded: map[string]int{}}
 	ix, e := settlement.Load(dir)
 	if e != nil {
 		return out, e
 	}
 	models := map[string]*predictor.Model{}
 	chosen := map[string]replay.Record{}
-	files, _ := filepath.Glob(filepath.Join(dir, "v2_rotation", "replay", "decisions_*.jsonl"))
+	files, _ := filepath.Glob(filepath.Join(dir, rotation.EvidenceDirectory(policy), "replay", "decisions_*.jsonl"))
 	sort.Strings(files)
 	for _, file := range files {
 		f, e := os.Open(file)
@@ -67,7 +73,7 @@ func collectCohort(dir, before, cohort string) (Report, error) {
 				out.Excluded["date not completed"]++
 				continue
 			}
-			if r.SelectionPolicy != rotation.Policy || r.ProbabilityMethod != "linear" || r.Rotation == nil || r.Row.G.GameID <= 0 || r.Row.G.PlayerID <= 0 || r.Row.G.Date != r.Date || r.Row.G.Name == "" || r.Period != "game" || r.BookCount < 3 {
+			if r.SelectionPolicy != policy || r.ProbabilityMethod != "linear" || r.Rotation == nil || r.Row.G.GameID <= 0 || r.Row.G.PlayerID <= 0 || r.Row.G.Date != r.Date || r.Row.G.Name == "" || r.Period != "game" || r.BookCount < 3 {
 				out.Excluded["capture identity or policy metadata"]++
 				continue
 			}
@@ -86,7 +92,7 @@ func collectCohort(dir, before, cohort string) (Report, error) {
 					out.Excluded["checkpoint"]++
 					continue
 				}
-				path := filepath.Join(dir, "v2_rotation", "replay", "model_"+r.ModelID+".json")
+				path := filepath.Join(dir, rotation.EvidenceDirectory(policy), "replay", "model_"+r.ModelID+".json")
 				b, er := os.ReadFile(path)
 				if er != nil {
 					out.Excluded["checkpoint"]++
@@ -157,11 +163,16 @@ func collectCohort(dir, before, cohort string) (Report, error) {
 		m := models[r.ModelID]
 		base := m.Forecast(r.Row.Features(), predictor.Adjustments{})
 		p := m.Forecast(r.Row.Features(), r.Policy)
+		protected := base
+		if group == "supported-joint-absence" {
+			protected = p
+		}
 		pk := fmt.Sprintf("%s/%d/%d", r.Date, entry.GameID, entry.PlayerID)
 		if !players[pk] {
 			players[pk] = true
 			out.BaselineMinutesMAE += math.Abs(base.Minutes - mins)
 			out.RotationMinutesMAE += math.Abs(p.Minutes - mins)
+			out.ProtectedMinutesMAE += math.Abs(protected.Minutes - mins)
 		}
 		dates[r.Date] = true
 		if r.Date > out.Through {
@@ -176,6 +187,11 @@ func collectCohort(dir, before, cohort string) (Report, error) {
 			return out, er
 		}
 		pb := math.Max(.01, math.Min(.99, r.BlendWeight*raw.Over+(1-r.BlendWeight)*r.Market))
+		protectedRaw, er := protected.ProbOver(r.Stat, r.Line)
+		if er != nil {
+			return out, er
+		}
+		protectedProb := math.Max(.01, math.Min(.99, r.BlendWeight*protectedRaw.Over+(1-r.BlendWeight)*r.Market))
 		y := 0.
 		if grade.Result == "WIN" {
 			y = 1
@@ -195,12 +211,15 @@ func collectCohort(dir, before, cohort string) (Report, error) {
 		s.RotationBrier += (r.P1 - y) * (r.P1 - y)
 		s.BaselineMAE += math.Abs(base.Mean(r.Stat) - grade.Actual)
 		s.RotationMAE += math.Abs(p.Mean(r.Stat) - grade.Actual)
+		s.ProtectedBrier += (protectedProb - y) * (protectedProb - y)
+		s.ProtectedMAE += math.Abs(protected.Mean(r.Stat) - grade.Actual)
 	}
 	out.PlayerGames = len(players)
 	out.Days = len(dates)
 	if out.PlayerGames > 0 {
 		out.BaselineMinutesMAE /= float64(out.PlayerGames)
 		out.RotationMinutesMAE /= float64(out.PlayerGames)
+		out.ProtectedMinutesMAE /= float64(out.PlayerGames)
 	}
 	names := []string{}
 	for st := range stats {
@@ -215,6 +234,8 @@ func collectCohort(dir, before, cohort string) (Report, error) {
 		s.RotationBrier /= n
 		s.BaselineMAE /= n
 		s.RotationMAE /= n
+		s.ProtectedBrier /= n
+		s.ProtectedMAE /= n
 		out.Slices = append(out.Slices, *s)
 	}
 	return out, nil
@@ -224,7 +245,11 @@ func main() {
 	dest := flag.String("out", filepath.Join("run_evidence", "rotation-audit"), "private output directory")
 	before := flag.String("before", "", "today Eastern; only earlier dates are graded")
 	cohort := flag.String("cohort", "all", "all, no-confirmed-out, irrelevant-outs, supported-joint-absence, or unsupported-fallback")
+	policy := flag.String("policy", rotation.Policy, "rotation-v1 or rotation-v2; evidence and results remain separate")
 	flag.Parse()
+	if !rotation.KnownPolicy(*policy) {
+		fatal(fmt.Errorf("unknown rotation policy %q", *policy))
+	}
 	if !validCohort(*cohort) {
 		fatal(fmt.Errorf("unknown absence cohort %q", *cohort))
 	}
@@ -235,7 +260,7 @@ func main() {
 	if _, e := time.Parse("2006-01-02", *before); e != nil {
 		fatal(e)
 	}
-	r, e := collectCohort(*dir, *before, *cohort)
+	r, e := collectPolicy(*dir, *before, *cohort, *policy)
 	if e != nil {
 		fatal(e)
 	}
@@ -249,12 +274,13 @@ func main() {
 	var md strings.Builder
 	fmt.Fprintf(&md, "# V2 rotation comparison\n\n%s\n\n", r.Note)
 	fmt.Fprintf(&md, "Cohort: %s. Model versions (binary questions): %v.\n\n", r.Cohort, r.ModelVersions)
+	fmt.Fprintln(&md, "Protected columns are a retrospective supported-only rule applied to the frozen cases. This rule was selected after inspecting earlier results; these columns are diagnostics, not prospective validation of rotation-v2.")
 	if r.PlayerGames == 0 {
 		fmt.Fprintln(&md, "No completed eligible rotation forecasts yet. Accuracy is unavailable, not zero.")
 	} else {
-		fmt.Fprintf(&md, "%d player-games across %d dates; %d binary prop questions. Minutes MAE: baseline %.2f, rotation %.2f.\n\n| Stat | Questions / dates | Baseline Brier | Rotation Brier | Baseline stat MAE | Rotation stat MAE |\n|---|---:|---:|---:|---:|---:|\n", r.PlayerGames, r.Days, r.Questions, r.BaselineMinutesMAE, r.RotationMinutesMAE)
+		fmt.Fprintf(&md, "%d player-games across %d dates; %d binary prop questions. Minutes MAE: baseline %.2f, rotation %.2f, protected %.2f.\n\n| Stat | Questions / dates | Baseline Brier | Rotation Brier | Protected Brier | Baseline stat MAE | Rotation stat MAE | Protected stat MAE |\n|---|---:|---:|---:|---:|---:|---:|---:|\n", r.PlayerGames, r.Days, r.Questions, r.BaselineMinutesMAE, r.RotationMinutesMAE, r.ProtectedMinutesMAE)
 		for _, s := range r.Slices {
-			fmt.Fprintf(&md, "| %s | %d / %d | %.5f | %.5f | %.2f | %.2f |\n", s.Stat, s.N, s.Days, s.BaselineBrier, s.RotationBrier, s.BaselineMAE, s.RotationMAE)
+			fmt.Fprintf(&md, "| %s | %d / %d | %.5f | %.5f | %.5f | %.2f | %.2f | %.2f |\n", s.Stat, s.N, s.Days, s.BaselineBrier, s.RotationBrier, s.ProtectedBrier, s.BaselineMAE, s.RotationMAE, s.ProtectedMAE)
 		}
 	}
 	if e = os.WriteFile(filepath.Join(*dest, "report.md"), []byte(md.String()), 0644); e != nil {
