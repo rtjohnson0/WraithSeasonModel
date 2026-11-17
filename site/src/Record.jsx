@@ -1,5 +1,6 @@
 import GameRecord from './GameRecord.jsx'
 import { useState } from 'react'
+import PlayerPortrait from './PlayerPortrait.jsx'
 import { DayGrid, HitRateBars, UnitsChart } from './Charts.jsx'
 import Lines from './Lines.jsx'
 import { pct, prettyDate, shortDate, statLabel } from './format.js'
@@ -54,71 +55,79 @@ export function DaySummary({ rows }) {
   )
 }
 
-export function ResultList({ rows }) {
-  return (
-    <ul>
-      {rows.map((r, i) => (
-        <li key={`${r.player}-${r.stat}-${r.side}-${i}`} className={r.result.toLowerCase()}>
-          <span className="res">{r.result === 'WIN' ? 'Hit' : r.result === 'LOSS' ? 'Miss' : r.result === 'PUSH' ? 'Push' : 'Void'}</span>
-          <span className="what">
-            {r.player} {r.team && <em>{r.team}</em>}
-            <br />
-            <small>
-              {r.side} {r.line} {statLabel[r.stat] || r.stat}
-              {r.result !== 'VOID' && <>, finished with {r.actual}</>}
-              {r.proj > 0 && <>, model projected {r.proj.toFixed(1)}</>}
-            </small>
-          </span>
-          <span className="tag">{r.label}</span>
-        </li>
-      ))}
-    </ul>
-  )
+export function ResultList({ rows, cards = false }) {
+  if (cards) return <ul className="prop-result-cards">{rows.map((r,i) => <li key={`${r.date}-${r.player}-${r.stat}-${r.side}-${i}`} className={r.result.toLowerCase()}>
+    <PlayerPortrait name={r.player} team={r.team} />
+    <span className="res">{r.result === 'WIN' ? 'Hit' : r.result === 'LOSS' ? 'Miss' : r.result === 'PUSH' ? 'Push' : 'Void'}</span>
+    <span className="what"><strong>{r.player}</strong><small>{r.side === 'OVER' ? 'Over' : 'Under'} {r.line} {statLabel[r.stat] || r.stat}</small></span>
+    <span className="result-matchup">{shortDate(r.date)}{r.matchup ? ` · ${r.matchup}` : r.team ? ` · ${r.team}` : ''}</span>
+    <div className="result-values"><span>Final result<b>{r.result === 'VOID' ? '—' : r.actual}</b></span><span>Model projection<b>{r.proj > 0 ? r.proj.toFixed(1) : '—'}</b></span><span>At posting<b>{r.tier === 'PICK' ? 'Staked' : r.tier === 'LEAN' ? 'Lean' : r.tier === 'CHECK' ? 'Check' : 'Paper'}</b></span></div>
+    <span className="result-stake-note">{r.tier === 'PICK' ? 'Tracked at the posted stake' : 'Not staked · tracked for comparison'}</span>
+  </li>)}</ul>
+  return <ul>{rows.map((r,i) => <li key={`${r.player}-${r.stat}-${r.side}-${i}`} className={r.result.toLowerCase()}>
+    <span className="res">{r.result === 'WIN' ? 'Hit' : r.result === 'LOSS' ? 'Miss' : r.result === 'PUSH' ? 'Push' : 'Void'}</span>
+    <span className="what">{r.player} {r.team && <em>{r.team}</em>}<br /><small>{r.side} {r.line} {statLabel[r.stat] || r.stat}{r.result !== 'VOID' && <>, finished with {r.actual}</>}{r.proj > 0 && <>, model projected {r.proj.toFixed(1)}</>}</small></span><span className="tag">{r.label}</span>
+  </li>)}</ul>
 }
 
 export default function Record({ site }) {
   const current = !!site.record?.tiers?.length
   const historical = !!site.archive?.record?.tiers?.length
-  return <>
-    {!site.hideGameRecord&&<GameRecord rows={site.gameRecord||[]}/>}
-    {current && <RecordBody site={site} />}
-    {historical && <RecordBody site={{...site,record:site.archive.record,lines:null}} title={current ? 'Historical results' : 'The record'} />}
-    {!current && !historical && <p className="notice">No completed results yet.</p>}
-  </>
+  return <div className="record-page">
+    {current ? <RecordBody site={site} /> : <section className="record-intro"><span className="card-eyebrow">THE TRACK RECORD</span><h1>Player prop results</h1><p className="notice">No validated prop results yet. New results appear after games finish and final stats are checked.</p></section>}
+    {!site.hideGameRecord && <GameRecord rows={site.gameRecord || []} />}
+    {historical && <details className="record-archive"><summary>Historical prop archive <span>Separate from the validated record</span></summary><RecordBody site={{...site,record:site.archive.record,lines:null}} title="Historical prop results" archive /></details>}
+  </div>
 }
 
-function RecordBody({ site, title = "The record" }) {
+function PropResults({ rows = [] }) {
+ const dates = [...new Set(rows.map(r => r.date))].sort().reverse()
+ const [date,setDate] = useState('')
+ const [result,setResult] = useState('ALL')
+ const [query,setQuery] = useState('')
+ const activeDate = date === 'ALL' ? 'ALL' : dates.includes(date) ? date : dates[0]
+ const dated = rows.filter(r => activeDate === 'ALL' || r.date === activeDate)
+ const shown = dated.filter(r => (result === 'ALL' || r.result === result) && `${r.player} ${r.team} ${r.stat} ${r.side}`.toLowerCase().includes(query.toLowerCase())).sort((a,b) => b.date.localeCompare(a.date))
+ return <section className="prop-results" aria-label="Individual player prop results">
+   <div className="record-section-head"><div><span className="card-eyebrow">EVERY HIT. EVERY MISS.</span><h2>Player prop results</h2></div><span className="record-count">{shown.length} of {dated.length} results</span></div>
+   <div className="record-controls">
+    <label>Date<select value={activeDate || ''} onChange={e => setDate(e.target.value)}>{dates.map(d => <option key={d} value={d}>{prettyDate(d)}</option>)}<option value="ALL">All available dates</option></select></label>
+    <label>Find a player<input type="search" placeholder="Player, team or stat" value={query} onChange={e => setQuery(e.target.value)} /></label>
+    <div className="record-result-filter" role="group" aria-label="Prop result"><button aria-pressed={result === 'ALL'} onClick={() => setResult('ALL')}>All</button><button aria-pressed={result === 'WIN'} onClick={() => setResult('WIN')}>Hits</button><button aria-pressed={result === 'LOSS'} onClick={() => setResult('LOSS')}>Misses</button><button aria-pressed={result === 'PUSH'} onClick={() => setResult('PUSH')}>Pushes</button><button aria-pressed={result === 'VOID'} onClick={() => setResult('VOID')}>Voids</button></div>
+   </div>
+   <div className="record-day-caption">{activeDate === 'ALL' ? 'All available dates' : activeDate ? prettyDate(activeDate) : 'No completed dates'} <DaySummary rows={dated} /></div>
+   {shown.length ? <ResultList rows={shown} cards /> : <p className="notice" role="status">No prop results match these filters.</p>}
+ </section>
+}
+
+function RecordBody({ site, title = "The prop record", archive = false }) {
   const { record } = site
   if (!record.tiers?.length) {
     return <p className="notice">No plays have been graded yet. New results appear the morning after games finish.</p>
   }
   const staked = record.tiers.find((t) => t.name === 'Max plays (staked)')
   const byDate = {}
-  record.recent.forEach((r) => (byDate[r.date] = byDate[r.date] || []).push(r))
+  ;(record.recent || []).forEach((r) => (byDate[r.date] = byDate[r.date] || []).push(r))
 
+  const overall = record.tiers.find(t => t.name === 'Everything tracked')
+  const wins = overall?.wins ?? (record.stats || []).reduce((n,r) => n+r.wins,0)
+  const losses = overall?.losses ?? (record.stats || []).reduce((n,r) => n+r.losses,0)
   return (
-    <div className="record">
-      <section className="day">
-        <h1>{title}</h1>
-        <p className="counts">
-          {record.since === record.until ? shortDate(record.since) : `${shortDate(record.since)} to ${shortDate(record.until)}`},{' '}
-          {record.days} {record.days === 1 ? 'day' : 'days'} of results
-        </p>
-        <p className="honest">
-          This view includes wins and losses, including tracked plays that were never staked. The same player, stat and
-          side on one day counts once. This is a small sample: a few weeks of results cannot separate skill from luck.
-        </p>
-        {staked && (
-          <p className="headline">
-            <b>
-              Max plays {staked.wins}-{staked.losses}
-              {staked.pushes ? `-${staked.pushes}` : ''}
-            </b>{' '}
-            {staked.wins + staked.losses ? `${pct(staked.hitRate, 1)} hit, model expected ${pct(staked.predicted, 1)}` : ''}
-          </p>
-        )}
+    <div className="record prop-record">
+      <section className="record-intro">
+        <div><span className="card-eyebrow">{archive ? 'HISTORICAL ARCHIVE' : 'THE TRACK RECORD'}</span><h1>{title}</h1><p>{archive ? 'Older results kept separate from the validated prop record.' : 'Player props first. Every result, in the open.'}</p></div>
+        <span className="record-period">{record.since === record.until ? shortDate(record.since) : `${shortDate(record.since)} – ${shortDate(record.until)}`}</span>
       </section>
-
+      <dl className="record-metrics">
+        <div><dt>Prop record</dt><dd><span>{wins}</span><i>–</i>{losses}</dd><small>Wins / losses · all tracked tiers</small></div>
+        <div><dt>Hit rate</dt><dd>{wins+losses ? pct(wins/(wins+losses),1) : '—'}</dd><small>Pushes and voids excluded</small></div>
+        <div><dt>Graded decisions</dt><dd>{wins+losses}</dd><small>Confirmed wins and losses</small></div>
+        <div><dt>Days tracked</dt><dd>{record.days}</dd><small>{staked ? `Staked plays: ${staked.wins}–${staked.losses}` : 'No staked results yet'}</small></div>
+      </dl>
+      <p className="record-disclosure">Includes paper plays and leans, not just staked picks. Each player / stat / side counts once per day. {archive ? 'These historical rows are not part of the validated headline.' : 'Only validated pregame quotes and identity-checked final stats enter this record.'} A short record cannot establish long-term accuracy.</p>
+      <PropResults rows={record.recent || []} />
+      <details className="record-analysis">
+        <summary>Performance breakdown <span>Daily trends, units & calibration</span></summary>
       <h2>Day by day</h2>
       <DayGrid
         days={Object.keys(byDate)
@@ -172,19 +181,7 @@ function RecordBody({ site, title = "The record" }) {
 
       <Lines lines={site.lines} />
 
-      <h2>Results by day</h2>
-      <p className="small">Results from each day. The default record includes only validated pregame quotes with identity-checked final actuals. Inspect Result audit above for corrections and withheld rows.</p>
-      {Object.keys(byDate)
-        .sort()
-        .reverse()
-        .map((d) => (
-          <section key={d} className="resultday">
-            <h3>
-              {prettyDate(d)} <DaySummary rows={byDate[d]} />
-            </h3>
-            <ResultList rows={byDate[d]} />
-          </section>
-        ))}
+      </details>
     </div>
   )
 }
