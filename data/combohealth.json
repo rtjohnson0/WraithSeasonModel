@@ -1,15 +1,15 @@
 {
   "activeStats": [],
-  "at": "2026-11-17T03:01:09Z",
-  "before": "2026-11-16",
+  "at": "2026-11-17T05:08:44Z",
+  "before": "2026-11-17",
   "calibratedLogLoss": 0.7093944891068175,
   "eligibleDates": 6,
   "eligibleRows": 1617,
   "evaluationDates": 3,
   "evaluationRows": 964,
   "excluded": {
-    "final actuals pending or identity review": 97,
-    "model/date/provenance mismatch": 375
+    "final actuals pending or identity review": 455,
+    "model/date/provenance mismatch": 17
   },
   "gainVsBook": -0.017590850975261776,
   "loadedRows": 2089,
