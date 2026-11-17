@@ -11,6 +11,7 @@ import (
 	"propsmodel/internal/combo"
 	"propsmodel/internal/data"
 	"propsmodel/internal/feat"
+	"propsmodel/internal/lineup"
 	"propsmodel/internal/model"
 	"propsmodel/internal/predictor"
 	"propsmodel/internal/props"
@@ -23,9 +24,17 @@ import (
 )
 
 type rotationForecast struct {
-	teams     map[int]rotation.Allocation
-	scenarios map[int]map[int]rotation.Allocation
-	statuses  map[int]availability.Status
+	learnedOwn  bool
+	learnedOpp  bool
+	strict      bool
+	impacts     *lineup.Index
+	impactCache map[int][]lineup.Impact
+	roster      map[int]int
+	opponents   map[int]int
+	date        string
+	teams       map[int]rotation.Allocation
+	scenarios   map[int]map[int]rotation.Allocation
+	statuses    map[int]availability.Status
 }
 
 // Numerical rotation changes require fresh timestamped reports. The existing
@@ -102,8 +111,20 @@ func freshRotationStatuses(injuryPath, snapDir, date string, now time.Time, b *f
 	return statuses
 }
 
-func newRotationForecast(rows []data.PlayerGame, roster map[int]int, fresh map[int]availability.Status, statuses map[int]string, games map[int]props.GameInfo, date string) *rotationForecast {
+func newRotationForecast(rows []data.PlayerGame, roster map[int]int, fresh map[int]availability.Status, statuses map[int]string, games map[int]props.GameInfo, date string, strict ...bool) *rotationForecast {
 	f := &rotationForecast{teams: map[int]rotation.Allocation{}, scenarios: map[int]map[int]rotation.Allocation{}, statuses: fresh}
+	f.strict = len(strict) > 0 && strict[0]
+	if f.strict {
+		f.impacts = lineup.New(rows)
+		f.impactCache = map[int][]lineup.Impact{}
+		f.roster = roster
+		f.date = date
+		f.opponents = map[int]int{}
+		for _, g := range games {
+			f.opponents[g.Home] = g.Visitor
+			f.opponents[g.Visitor] = g.Home
+		}
+	}
 	ix := rotation.New(rows)
 	out := map[int]bool{}
 	for pid, s := range fresh {
@@ -140,16 +161,102 @@ func newRotationForecast(rows []data.PlayerGame, roster map[int]int, fresh map[i
 	}
 	return f
 }
+func (f *rotationForecast) policy() string {
+	if f.strict {
+		return rotation.StrictPolicy
+	}
+	return rotation.Policy
+}
+func (f *rotationForecast) target(a rotation.Allocation, pid int) (float64, bool) {
+	if f.strict {
+		return rotation.SupportedTarget(a, pid)
+	}
+	target, ok := a.Minutes[pid]
+	return target, a.Valid && ok
+}
+
+// Avoid stacking research rates on an already fitted absence-feature model.
+func (f *rotationForecast) configureProduction(m *predictor.Model) {
+	if !f.strict {
+		return
+	}
+	ownDisabled, oppDisabled := false, false
+	for _, group := range m.Disabled {
+		ownDisabled = ownDisabled || group == feat.GroupTeammates
+		oppDisabled = oppDisabled || group == feat.GroupOppOut
+	}
+	f.learnedOwn = !ownDisabled
+	f.learnedOpp = !oppDisabled
+	f.impactCache = map[int][]lineup.Impact{}
+}
+func (f *rotationForecast) rateImpacts(row *feat.Row) []lineup.Impact {
+	if !f.strict || f.impacts == nil {
+		return nil
+	}
+	if found, ok := f.impactCache[row.G.PlayerID]; ok {
+		return found
+	}
+	result := []lineup.Impact{}
+	team := row.G.TeamID
+	if a := f.teams[team]; a.Valid {
+		result = append(result, f.impacts.Estimate(team, row.G.PlayerID, f.date, f.roster, a.Out, false))
+	}
+	opp := f.opponents[team]
+	if a := f.teams[opp]; a.Valid {
+		result = append(result, f.impacts.Estimate(opp, row.G.PlayerID, f.date, f.roster, a.Out, true))
+	}
+	for i := range result {
+		if (result[i].Kind == "teammate-production" && f.learnedOwn) || (result[i].Kind == "opponent-allowance" && f.learnedOpp) {
+			result[i].Reason = "research rates disabled: model already has learned absence features"
+			for j := range result[i].Effects {
+				e := &result[i].Effects[j]
+				e.Applied = false
+				e.Scale = 1
+				e.Reason = result[i].Reason
+			}
+		}
+		for j := range result[i].Missing {
+			p := &result[i].Missing[j]
+			st := f.statuses[p.PlayerID]
+			p.Status = st.Status
+			p.At = st.At
+		}
+	}
+	f.impactCache[row.G.PlayerID] = result
+	return result
+}
+func (f *rotationForecast) adjustments(row *feat.Row) predictor.Adjustments {
+	a := predictor.Adjustments{}
+	if target, ok := f.target(f.teams[row.G.TeamID], row.G.PlayerID); ok {
+		a.TargetMinutes = &target
+	}
+	if f.strict {
+		a.Scale = lineup.Scale(f.rateImpacts(row))
+	}
+	return a
+}
 func (f *rotationForecast) adjust(p predictor.Pred, row *feat.Row) predictor.Pred {
-	a := f.teams[row.G.TeamID]
-	if target, ok := a.Minutes[row.G.PlayerID]; a.Valid && ok {
-		return p.WithTargetMinutes(target)
+	a := f.adjustments(row)
+	if a.TargetMinutes != nil {
+		p = p.WithTargetMinutes(*a.TargetMinutes)
+	}
+	for k, st := range data.Stats {
+		if a.Scale[k] > 0 {
+			p = p.Scaled(st, a.Scale[k])
+		}
 	}
 	return p
 }
 func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row, market, weight float64, corr combo.Corr) *rotation.Context {
 	a := f.teams[row.G.TeamID]
-	c := &rotation.Context{OwnStatus: s.Maybe, Policy: rotation.Policy, BaselineMinutes: base.Minutes, AllocationMinutes: base.Minutes, UsedMinutes: s.ProjMin, TeamGames: a.TeamGames, MatchedGames: a.MatchedGames, Supported: a.Valid && a.Supported, Reason: a.Reason}
+	c := &rotation.Context{OwnStatus: s.Maybe, Policy: f.policy(), RelevantOut: append([]int(nil), a.RelevantOut...), BaselineMinutes: base.Minutes, AllocationMinutes: base.Minutes, UsedMinutes: s.ProjMin, TeamGames: a.TeamGames, MatchedGames: a.MatchedGames, Supported: a.Valid && a.Supported, Reason: a.Reason}
+	c.Production = f.rateImpacts(row)
+	c.RateScale = lineup.Scale(c.Production)
+	_, c.AllocationApplied = f.target(a, s.PlayerID)
+	if f.strict && !c.AllocationApplied {
+		c.Supported = false
+		c.Reason = "baseline minutes retained: no supported joint-absence target; " + a.Reason
+	}
 	if a.Valid {
 		if target, ok := a.Minutes[s.PlayerID]; ok {
 			c.AllocationMinutes = target
@@ -185,8 +292,26 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 			continue
 		}
 		st := f.statuses[pid]
-		p := base.WithTargetMinutes(target)
-		scenario := rotation.Scenario{PlayerID: pid, Player: st.Name, Status: st.Status, Minutes: p.Minutes, MatchedGames: alt.MatchedGames, Supported: alt.Supported}
+		p := base
+		if f.strict {
+			impacts := []lineup.Impact{f.impacts.Estimate(row.G.TeamID, s.PlayerID, f.date, f.roster, alt.Out, false)}
+			for _, impact := range c.Production {
+				if impact.Kind == "opponent-allowance" {
+					impacts = append(impacts, impact)
+				}
+			}
+			if f.learnedOwn {
+				impacts = impacts[1:]
+			}
+			for k, scale := range lineup.Scale(impacts) {
+				p = p.Scaled(data.Stats[k], scale)
+			}
+		}
+		_, applied := f.target(alt, s.PlayerID)
+		if applied {
+			p = p.WithTargetMinutes(target)
+		}
+		scenario := rotation.Scenario{PlayerID: pid, Player: st.Name, Status: st.Status, Minutes: p.Minutes, MatchedGames: alt.MatchedGames, Supported: alt.Supported && (!f.strict || applied)}
 		projection := 0.
 		var raw float64
 		var err error
@@ -216,7 +341,18 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 func (f *rotationForecast) decorate(s scored, base predictor.Pred, row *feat.Row, market, weight float64, corr combo.Corr) scored {
 	s.Availability = nil
 	s.Rotation = f.context(s, base, row, market, weight, corr)
-	s.Why = addWhy(s.Why, fmt.Sprintf("V2 rotation: %.1f baseline minutes → %.1f used; %d earlier complete team games, %d joint-absence matches; %s; per-minute rates unchanged", s.Rotation.BaselineMinutes, s.Rotation.UsedMinutes, s.Rotation.TeamGames, s.Rotation.MatchedGames, s.Rotation.Reason))
+	s.Why = addWhy(s.Why, fmt.Sprintf("V2 rotation: %.1f baseline minutes → %.1f used; %d earlier complete team games, %d joint-absence matches; %s; bounded production adjustments shown separately", s.Rotation.BaselineMinutes, s.Rotation.UsedMinutes, s.Rotation.TeamGames, s.Rotation.MatchedGames, s.Rotation.Reason))
+	for _, impact := range s.Rotation.Production {
+		for _, e := range impact.Effects {
+			relevant := e.Stat == s.Stat
+			for _, part := range s.Stat.Parts() {
+				relevant = relevant || part == e.Stat
+			}
+			if relevant && e.Applied {
+				s.Why = addWhy(s.Why, fmt.Sprintf("V2 %s: %s rate %+.1f%% (%d joint-out / %d present games); experimental", impact.Kind, e.Stat, (e.Scale-1)*100, e.Without, e.With))
+			}
+		}
+	}
 	return s
 }
 func quoteMarket(l props.Line) float64 { return bets.MarketOver(l.OverOdds, l.UnderOdds) }
@@ -307,13 +443,8 @@ func scoreRotationSingles(f *rotationForecast, m *predictor.Model, b *feat.Build
 		mk := marketKey{l.PlayerID, data.StatIndex(l.Stat), l.GameID}
 		old, exists := records[mk]
 		if !exists || math.Abs(l.Line-v.Median) < math.Abs(old.Line-v.Median) {
-			policy := predictor.Adjustments{}
-			if a := f.teams[team]; a.Valid {
-				if target, ok := a.Minutes[l.PlayerID]; ok {
-					policy.TargetMinutes = &target
-				}
-			}
-			records[mk] = replay.Record{Rotation: s.Rotation, SelectionPolicy: rotation.Policy, ProbabilityMethod: "linear", BlendWeight: weight, Period: "game", BookCount: v.Books, Date: date, At: at, Tip: g.Start, Row: decisionIdentity(row, l.GameID, date, s.Player, tm), Policy: policy, Stat: l.Stat, Line: l.Line, Book: l.Vendor, QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds, Market: market, P1: pOver}
+			policy := f.adjustments(row)
+			records[mk] = replay.Record{Rotation: s.Rotation, SelectionPolicy: f.policy(), ProbabilityMethod: "linear", BlendWeight: weight, Period: "game", BookCount: v.Books, Date: date, At: at, Tip: g.Start, Row: decisionIdentity(row, l.GameID, date, s.Player, tm), Policy: policy, Stat: l.Stat, Line: l.Line, Book: l.Vendor, QuoteAt: l.CapturedAt, UpdatedAt: l.UpdatedAt, OverOdds: l.OverOdds, UnderOdds: l.UnderOdds, Market: market, P1: pOver}
 		}
 	}
 	rs := []replay.Record{}
@@ -333,7 +464,7 @@ func scoreRotationSingles(f *rotationForecast, m *predictor.Model, b *feat.Build
 	return out, rs
 }
 func writeRotationEvidence(dir, date string, at time.Time, f *rotationForecast) error {
-	root := filepath.Join(dir, "v2_rotation")
+	root := filepath.Join(dir, rotation.EvidenceDirectory(f.policy()))
 	if e := os.MkdirAll(root, 0755); e != nil {
 		return e
 	}
@@ -341,7 +472,7 @@ func writeRotationEvidence(dir, date string, at time.Time, f *rotationForecast) 
 		Policy, Date, At string
 		Teams            map[int]rotation.Allocation
 		Scenarios        map[int]map[int]rotation.Allocation
-	}{rotation.Policy, date, at.Format(time.RFC3339Nano), f.teams, f.scenarios}, "", "  ")
+	}{f.policy(), date, at.Format(time.RFC3339Nano), f.teams, f.scenarios}, "", "  ")
 	if e != nil {
 		return e
 	}

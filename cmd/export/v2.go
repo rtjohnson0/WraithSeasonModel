@@ -96,8 +96,8 @@ func buildV2(dir string, form Form) *V2Site {
 		return nil
 	}
 	settledName := "v2settled.jsonl"
-	if f.Info != nil && f.Info.Policy == rotation.Policy {
-		settledName = rotation.SettledFile
+	if f.Info != nil && rotation.KnownPolicy(f.Info.Policy) {
+		_, settledName = rotation.Files(f.Info.Policy)
 	}
 	settled, _ := picklog.LoadSettled(filepath.Join(dir, settledName))
 	var verified []picklog.Settled

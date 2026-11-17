@@ -227,7 +227,11 @@ func val(p *float64) float64 {
 }
 
 // LoadStatsFile reads one JSONL stats file. Rows where the player did not play are dropped.
-func LoadStatsFile(path string) ([]PlayerGame, error) {
+func LoadStatsFile(path string) ([]PlayerGame, error) { return loadStatsFile(path, false) }
+
+// Research reads retain only explicit numeric zero-minute rows for observed
+// nonparticipation. Missing/null minutes and omitted players remain unknown.
+func loadStatsFile(path string, research bool) ([]PlayerGame, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -249,7 +253,7 @@ func LoadStatsFile(path string) ([]PlayerGame, error) {
 			continue
 		}
 		mins := ParseMinutes(r.Min)
-		if mins <= 0 || r.Player.ID == 0 || r.Game.ID == 0 {
+		if (mins <= 0 && !(research && explicitZero(r.Min))) || r.Player.ID == 0 || r.Game.ID == 0 {
 			continue
 		}
 		team := r.Team.ID
@@ -294,7 +298,13 @@ func LoadStatsFile(path string) ([]PlayerGame, error) {
 
 // LoadStatsDir reads every stats_*.jsonl file in dir, removes duplicate (player, game)
 // rows, and returns them sorted by date.
-func LoadStatsDir(dir string) ([]PlayerGame, error) {
+func LoadStatsDir(dir string) ([]PlayerGame, error) { return loadStatsDir(dir, false) }
+
+// LoadStatsResearchDir preserves explicit nonparticipation without changing
+// training or normal feature history. Conflicting duplicates are excluded.
+func LoadStatsResearchDir(dir string) ([]PlayerGame, error) { return loadStatsDir(dir, true) }
+
+func loadStatsDir(dir string, research bool) ([]PlayerGame, error) {
 	files, err := filepath.Glob(filepath.Join(dir, "stats_*.jsonl"))
 	if err != nil {
 		return nil, err
@@ -304,17 +314,27 @@ func LoadStatsDir(dir string) ([]PlayerGame, error) {
 	}
 	type key struct{ p, g int }
 	seen := map[key]PlayerGame{}
+	conflicts := map[key]bool{}
 	for _, f := range files {
-		rows, err := LoadStatsFile(f)
+		rows, err := loadStatsFile(f, research)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", f, err)
 		}
 		for _, r := range rows {
-			seen[key{r.PlayerID, r.GameID}] = r
+			k := key{r.PlayerID, r.GameID}
+			if research {
+				if old, ok := seen[k]; ok && old != r {
+					conflicts[k] = true
+				}
+			}
+			seen[k] = r
 		}
 	}
 	out := make([]PlayerGame, 0, len(seen))
-	for _, r := range seen {
+	for k, r := range seen {
+		if conflicts[k] {
+			continue
+		}
 		out = append(out, r)
 	}
 	sort.Slice(out, func(i, j int) bool {
@@ -327,4 +347,25 @@ func LoadStatsDir(dir string) ([]PlayerGame, error) {
 		return out[i].PlayerID < out[j].PlayerID
 	})
 	return out, nil
+}
+
+func explicitZero(raw json.RawMessage) bool {
+	if len(raw) == 0 || string(raw) == "null" {
+		return false
+	}
+	var value string
+	if json.Unmarshal(raw, &value) != nil {
+		value = string(raw)
+	}
+	parts := strings.Split(strings.TrimSpace(value), ":")
+	if len(parts) > 2 {
+		return false
+	}
+	for _, part := range parts {
+		v, e := strconv.ParseFloat(part, 64)
+		if e != nil || v != 0 {
+			return false
+		}
+	}
+	return true
 }
