@@ -1,15 +1,15 @@
 {
   "activeStats": [],
-  "at": "2026-11-17T15:21:05Z",
+  "at": "2026-11-17T16:43:49Z",
   "before": "2026-11-17",
   "eligibleDates": 0,
   "eligibleRows": 0,
   "evaluationDates": 0,
   "evaluationRows": 0,
   "excluded": {
-    "model/date/provenance mismatch": 2269
+    "model/date/provenance mismatch": 2297
   },
-  "loadedRows": 2269,
+  "loadedRows": 2297,
   "qualifiedStats": [],
   "status": "More forward data needed",
   "trainingRows": 0
