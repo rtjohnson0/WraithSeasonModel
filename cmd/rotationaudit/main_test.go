@@ -3,6 +3,9 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"propsmodel/internal/data"
+	"propsmodel/internal/lineup"
+	"propsmodel/internal/predictor"
 	"propsmodel/internal/replay"
 	"propsmodel/internal/rotation"
 	"testing"
@@ -62,5 +65,24 @@ func TestIrrelevantOutsAreNotEvidenceForJointAbsenceAdjustment(t *testing.T) {
 	r.Rotation.ConfirmedOut = nil
 	if group, ok := absenceCohort(r); !ok || group != "no-confirmed-out" {
 		t.Fatal(group, ok)
+	}
+}
+
+func TestProductionCaptureRequiresFreshKnownStatusesAndExactBoundedScales(t *testing.T) {
+	impact := lineup.Impact{Kind: "opponent-allowance", Team: 2, Missing: []lineup.Profile{{PlayerID: 7, Status: "Out", At: "2026-11-16T17:50:00Z"}}, Effects: []lineup.Effect{{Stat: data.Points, Scale: 1.03, Applied: true, Without: 5, With: 5}}}
+	r := replay.Record{At: "2026-11-16T18:00:00Z", Rotation: &rotation.Context{Production: []lineup.Impact{impact}}, Policy: predictor.Adjustments{Scale: lineup.Scale([]lineup.Impact{impact})}}
+	if !validProductionCapture(r) {
+		t.Fatal("valid capture rejected")
+	}
+	for _, stamp := range []string{"", "2026-11-16T19:00:00Z", "2026-11-14T17:50:00Z"} {
+		r.Rotation.Production[0].Missing[0].At = stamp
+		if validProductionCapture(r) {
+			t.Fatal("unavailable status accepted", stamp)
+		}
+	}
+	r.Rotation.Production[0].Missing[0].At = "2026-11-16T17:50:00Z"
+	r.Policy.Scale[0] = 1.08
+	if validProductionCapture(r) {
+		t.Fatal("scale provenance mismatch accepted")
 	}
 }

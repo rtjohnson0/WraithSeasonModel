@@ -145,7 +145,7 @@ func main() {
 	valueMinProb := flag.Float64("valueminprob", .40, "value research: minimum actual model probability; never inflated to 50 percent")
 	valueMinROI := flag.Float64("valueminroi", .04, "value research: minimum forecast return conditional on no push")
 	launchGate := flag.Bool("evidencegate", true, "require recent verified forward evidence for a staked PICK; unproven plays remain visible as PAPER")
-	rotationPolicy := flag.String("rotationpolicy", rotation.Policy, "V2 only: rotation-v1 (legacy) or rotation-v2 (supported joint absences only; separate research history)")
+	rotationPolicy := flag.String("rotationpolicy", rotation.Policy, "V2 only: rotation-v1 (legacy) or rotation-v2 (supported joint absence minutes and production; separate research history)")
 	flag.Parse()
 	if !rotation.KnownPolicy(*rotationPolicy) {
 		fatal(fmt.Errorf("unknown rotation policy %q", *rotationPolicy))
@@ -445,8 +445,19 @@ func main() {
 	var rotations *rotationForecast
 	var rotationRecords []replay.Record
 	if *useV2 && *rotationV2 && gid == 0 {
-		rotations = newRotationForecast(d.Games, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date, *rotationPolicy == rotation.StrictPolicy)
-		v2model = rotations.policy() + " · current V1 per-minute rates + joint team allocation; uncalibrated experiment"
+		rotationRows := d.Games
+		if *rotationPolicy == rotation.StrictPolicy {
+			rotationRows, err = data.LoadStatsResearchDir(*dir)
+			if err != nil {
+				fatal(err)
+			}
+		}
+		rotations = newRotationForecast(rotationRows, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date, *rotationPolicy == rotation.StrictPolicy)
+		rotations.configureProduction(m)
+		v2model = rotations.policy() + " · joint team allocation; uncalibrated experiment"
+		if rotations.strict {
+			v2model += " + bounded teammate/opponent production associations"
+		}
 	}
 	if *useV2 && !*rotationV2 && gid == 0 {
 		prev, _ := projlog.Load(filepath.Join(*dir, "projlog.jsonl"))

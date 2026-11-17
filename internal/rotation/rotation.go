@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"propsmodel/internal/data"
+	"propsmodel/internal/lineup"
 	"sort"
 )
 
@@ -30,20 +31,22 @@ type Scenario struct {
 	Probability  *float64 `json:"probability,omitempty"`
 }
 type Context struct {
-	AllocationApplied bool       `json:"allocationApplied"`
-	RelevantOut       []int      `json:"relevantOut,omitempty"`
-	OwnStatus         string     `json:"ownStatus,omitempty"`
-	Policy            string     `json:"policy"`
-	BaselineMinutes   float64    `json:"baselineMinutes"`
-	AllocationMinutes float64    `json:"allocationMinutes"`
-	UsedMinutes       float64    `json:"usedMinutes"`
-	TeamMinutes       float64    `json:"teamMinutes"`
-	TeamGames         int        `json:"teamGames"`
-	MatchedGames      int        `json:"matchedGames"`
-	Supported         bool       `json:"supported"`
-	Reason            string     `json:"reason"`
-	ConfirmedOut      []Status   `json:"confirmedOut"`
-	Scenarios         []Scenario `json:"scenarios,omitempty"`
+	Production        []lineup.Impact      `json:"production,omitempty"`
+	RateScale         [data.NStats]float64 `json:"rateScale"`
+	AllocationApplied bool                 `json:"allocationApplied"`
+	RelevantOut       []int                `json:"relevantOut,omitempty"`
+	OwnStatus         string               `json:"ownStatus,omitempty"`
+	Policy            string               `json:"policy"`
+	BaselineMinutes   float64              `json:"baselineMinutes"`
+	AllocationMinutes float64              `json:"allocationMinutes"`
+	UsedMinutes       float64              `json:"usedMinutes"`
+	TeamMinutes       float64              `json:"teamMinutes"`
+	TeamGames         int                  `json:"teamGames"`
+	MatchedGames      int                  `json:"matchedGames"`
+	Supported         bool                 `json:"supported"`
+	Reason            string               `json:"reason"`
+	ConfirmedOut      []Status             `json:"confirmedOut"`
+	Scenarios         []Scenario           `json:"scenarios,omitempty"`
 }
 type Allocation struct {
 	Team         int             `json:"team"`

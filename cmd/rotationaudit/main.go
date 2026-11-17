@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"propsmodel/internal/bets"
+	"propsmodel/internal/lineup"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/predictor"
 	"propsmodel/internal/replay"
@@ -47,7 +48,7 @@ func collectCohort(dir, before, cohort string) (Report, error) {
 }
 
 func collectPolicy(dir, before, cohort, policy string) (Report, error) {
-	out := Report{Cohort: cohort, ModelVersions: map[int]int{}, Policy: policy, Note: "Read-only paired forward diagnostics. Earliest eligible immutable question per player/game/stat. Same frozen model, raw per-minute rates, quote and model/book weight; only team minutes allocation differs. Pushes/DNPs are excluded from binary scores. Minutes count each player/game once. No performance certification or automatic promotion; no live files changed.", Excluded: map[string]int{}}
+	out := Report{Cohort: cohort, ModelVersions: map[int]int{}, Policy: policy, Note: "Read-only paired forward diagnostics. Earliest eligible immutable question per player/game/stat. Same frozen model, raw per-minute rates, quote and model/book weight; captured research minutes and production policy differs. Pushes/DNPs are excluded from binary scores. Minutes count each player/game once. No performance certification or automatic promotion; no live files changed.", Excluded: map[string]int{}}
 	ix, e := settlement.Load(dir)
 	if e != nil {
 		return out, e
@@ -143,6 +144,10 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 	statDates := map[string]map[string]bool{}
 	for _, k := range keys {
 		r := chosen[k]
+		if policy == rotation.StrictPolicy && !validProductionCapture(r) {
+			out.Excluded["production provenance unavailable"]++
+			continue
+		}
 		group, valid := absenceCohort(r)
 		if !valid {
 			out.Excluded["absence timestamp/status unavailable"]++
@@ -164,7 +169,7 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		base := m.Forecast(r.Row.Features(), predictor.Adjustments{})
 		p := m.Forecast(r.Row.Features(), r.Policy)
 		protected := base
-		if group == "supported-joint-absence" {
+		if group == "supported-joint-absence" || policy == rotation.StrictPolicy {
 			protected = p
 		}
 		pk := fmt.Sprintf("%s/%d/%d", r.Date, entry.GameID, entry.PlayerID)
@@ -274,7 +279,7 @@ func main() {
 	var md strings.Builder
 	fmt.Fprintf(&md, "# V2 rotation comparison\n\n%s\n\n", r.Note)
 	fmt.Fprintf(&md, "Cohort: %s. Model versions (binary questions): %v.\n\n", r.Cohort, r.ModelVersions)
-	fmt.Fprintln(&md, "Protected columns are a retrospective supported-only rule applied to the frozen cases. This rule was selected after inspecting earlier results; these columns are diagnostics, not prospective validation of rotation-v2.")
+	fmt.Fprintln(&md, "For rotation-v1, protected columns apply a retrospective supported-only minutes rule selected after inspecting earlier results; they are not prospective validation. For rotation-v2, protected columns equal the captured candidate, including production changes.")
 	if r.PlayerGames == 0 {
 		fmt.Fprintln(&md, "No completed eligible rotation forecasts yet. Accuracy is unavailable, not zero.")
 	} else {
@@ -324,4 +329,49 @@ func absenceCohort(r replay.Record) (string, bool) {
 		return "supported-joint-absence", true
 	}
 	return "unsupported-fallback", true
+}
+
+// Production effects retain the fresh confirmed reports and bounded scales
+// used at decision time, independently of the player's own minutes cohort.
+func validProductionCapture(r replay.Record) bool {
+	if r.Rotation == nil {
+		return false
+	}
+	at, err := time.Parse(time.RFC3339Nano, r.At)
+	if err != nil {
+		return false
+	}
+	for _, impact := range r.Rotation.Production {
+		applied := false
+		seen := map[string]bool{}
+		for _, e := range impact.Effects {
+			if !e.Applied {
+				continue
+			}
+			applied = true
+			key := string(e.Stat)
+			if seen[key] || e.Without < 5 || e.With < 5 || math.IsNaN(e.Scale) || math.IsInf(e.Scale, 0) || e.Scale < .95 || e.Scale > 1.05 {
+				return false
+			}
+			seen[key] = true
+		}
+		if !applied {
+			continue
+		}
+		if len(impact.Missing) == 0 || impact.Team <= 0 {
+			return false
+		}
+		for _, p := range impact.Missing {
+			stamp, err := time.Parse(time.RFC3339Nano, p.At)
+			if p.PlayerID <= 0 || !strings.EqualFold(strings.TrimSpace(p.Status), "Out") || err != nil || stamp.After(at) || at.Sub(stamp) > 24*time.Hour {
+				return false
+			}
+		}
+	}
+	for k, x := range lineup.Scale(r.Rotation.Production) {
+		if math.IsNaN(r.Policy.Scale[k]) || math.Abs(x-r.Policy.Scale[k]) > 1e-9 {
+			return false
+		}
+	}
+	return true
 }
