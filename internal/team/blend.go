@@ -52,9 +52,13 @@ func (m *Mix) Weights() (market, proj float64) {
 }
 
 // Calibration is the saved second stage for margins and totals.
+const CurrentGamePolicy = "game-v2"
+
 type Calibration struct {
-	Margin *Mix `json:"margin"`
-	Total  *Mix `json:"total"`
+	Policy        string `json:"policy,omitempty"`
+	TrainedBefore string `json:"trained_before,omitempty"`
+	Margin        *Mix   `json:"margin"`
+	Total         *Mix   `json:"total"`
 	// Z is, per market (spread, total, moneyline), how many standard errors the model beat the
 	// book's own price by in the backtest. A market with Z below 2 has shown no edge, and the
 	// game picks command will not stake it.

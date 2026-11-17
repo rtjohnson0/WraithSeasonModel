@@ -11,12 +11,13 @@ function Run {
         throw "step failed: $Label"
     }
 }
+Run "prepare game-v2 calibration" { python scripts/calibrate_games.py }
 Run "snapshot lines and injuries"  { go run ./cmd/pull snapshot }
 Run "extra books (SportsGameOdds)" { go run ./cmd/sgo snapshot } -Optional
 Run "forward accuracy evaluation" { go run ./cmd/accuracy }
 Run "offline accuracy report" { python scripts/accuracy_report.py }
 Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
-Run "player props"                 { go run ./cmd/predict }
+Run "player props"                 { go run ./cmd/predict -rotationpolicy rotation-v2 }
 Run "minutes and Under-bias audit" { go run ./cmd/minutesaudit -legacy } -Optional
 Run "Over and Under price comparison" { go run ./cmd/priceaudit } -Optional
 Run "V2 rotation comparison" { go run ./cmd/rotationaudit } -Optional

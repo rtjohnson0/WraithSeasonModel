@@ -14,6 +14,8 @@ import time
 from pathlib import Path
 
 STATE_FILES = [
+    "gamecal_research.json", "v2_gamepicklog.jsonl", "v2_gamesettled.jsonl",
+    "v2_rotation_strictlog.jsonl", "v2_rotation_strictsettled.jsonl",
     'v2_rotationlog.jsonl', 'v2_rotationsettled.jsonl', 'v2_rotationsettled_audit.json',
     'settled_audit.json', 'combosettled_audit.json', 'v2settled_audit.json', 'side_audit.json', 'accuracy.json', 'quarterboard.json', 'quarterlog.jsonl', 'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
     'biasfix.json', 'minfix.json', 'wofix.json', 'runs.jsonl', 'more.json',
@@ -22,7 +24,7 @@ STATE_FILES = [
     'gamepicklog.jsonl', 'gamesettled.jsonl', 'combohealth.json', 'combocalibration.json', 'exclusions.jsonl', 'model_tail.json', 'calibration_tail.json',
 ]
 MODEL_BUNDLE = ['data/' + x for x in ('model.json', 'model_v2.json', 'calibration.json',
-                'combocalibration.json', 'gamecal.json', 'biasfix.json', 'minfix.json',
+                'combocalibration.json', 'gamecal.json', 'gamecal_research.json', 'biasfix.json', 'minfix.json',
                 'wofix.json', 'combocorr.json')]
 
 TAIL_BUNDLE = ['data/model_tail.json', 'data/calibration_tail.json']

@@ -54,10 +54,11 @@ type Game struct {
 	Quotes        []Quote       `json:"quotes"`
 }
 type Snapshot struct {
-	Date  string             `json:"date"`
-	At    string             `json:"at"`
-	Games []Game             `json:"games"`
-	Z     map[string]float64 `json:"z"`
+	Policy string             `json:"policy,omitempty"`
+	Date   string             `json:"date"`
+	At     string             `json:"at"`
+	Games  []Game             `json:"games"`
+	Z      map[string]float64 `json:"z"`
 }
 
 func (s Snapshot) Save(dir string) error {

@@ -14,7 +14,7 @@ export default function GameRecord({rows=[]}) {
  const activeDate=date==='ALL'?'ALL':dates.includes(date)?date:(completedDates[0]||dates[0])
  const visible=list.filter(r=>activeDate==='ALL'||r.date===activeDate).sort((a,b)=>b.date.localeCompare(a.date)||`${a.away}${a.home}`.localeCompare(`${b.away}${b.home}`)||a.market.localeCompare(b.market))
  return <section className="record game-record" aria-label="Game market results">
-  <div className="record-section-head"><div><span className="card-eyebrow">THE GAME MARKETS</span><h2>Beyond the props</h2><p>Moneylines, spreads and totals. Tracked separately.</p></div></div>
+  <div className="record-section-head"><div><span className="card-eyebrow">THE GAME MARKETS</span><h2>Beyond the props</h2><p>Moneylines, spreads and totals. Tracked separately.{list.some(r=>r.policy==='game-v2') ? ' Game model v2.' : ''}</p></div></div>
   <div className="record-controls">
    <div className="record-result-filter" role="group" aria-label="Game record scope"><button aria-pressed={!selected} onClick={()=>{setSelected(false);setLimit(12)}}>All model directions</button><button aria-pressed={selected} onClick={()=>{setSelected(true);setLimit(12)}}>Selected plays only</button></div>
   </div>

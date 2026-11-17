@@ -75,7 +75,7 @@ export default function Record({ site }) {
   const historical = !!site.archive?.record?.tiers?.length
   return <div className="record-page">
     {current ? <RecordBody site={site} /> : <section className="record-intro"><span className="card-eyebrow">THE TRACK RECORD</span><h1>Player prop results</h1><p className="notice">No validated prop results yet. New results appear after games finish and final stats are checked.</p></section>}
-    {!site.hideGameRecord && <GameRecord rows={site.gameRecord || []} />}
+    {!site.hideGameRecord && <><GameRecord rows={site.gameRecord || []} />{site.previousGameRecord?.length > 0 && <details className="record-archive"><summary>Previous game-model record <span>Separate from the newly launched model</span></summary><GameRecord rows={site.previousGameRecord} /></details>}</>}
     {historical && <details className="record-archive"><summary>Historical prop archive <span>Separate from the validated record</span></summary><RecordBody site={{...site,record:site.archive.record,lines:null}} title="Historical prop results" archive /></details>}
   </div>
 }
