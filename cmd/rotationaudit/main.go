@@ -29,6 +29,8 @@ type Slice struct {
 	BaselineBrier, RotationBrier, BaselineMAE, RotationMAE float64
 }
 type Report struct {
+	Cohort                                 string
+	ModelVersions                          map[int]int
 	Policy, Note, Through                  string
 	Questions, PlayerGames, Days           int
 	BaselineMinutesMAE, RotationMinutesMAE float64
@@ -36,8 +38,10 @@ type Report struct {
 	Excluded                               map[string]int
 }
 
-func collect(dir, before string) (Report, error) {
-	out := Report{Policy: rotation.Policy, Note: "Read-only paired forward diagnostics. Earliest eligible immutable question per player/game/stat. Same frozen model, raw per-minute rates, quote and model/book weight; only team minutes allocation differs. Pushes/DNPs are excluded from binary scores. Minutes count each player/game once. No performance certification or automatic promotion; no live files changed.", Excluded: map[string]int{}}
+func collect(dir, before string) (Report, error) { return collectCohort(dir, before, "all") }
+
+func collectCohort(dir, before, cohort string) (Report, error) {
+	out := Report{Cohort: cohort, ModelVersions: map[int]int{}, Policy: rotation.Policy, Note: "Read-only paired forward diagnostics. Earliest eligible immutable question per player/game/stat. Same frozen model, raw per-minute rates, quote and model/book weight; only team minutes allocation differs. Pushes/DNPs are excluded from binary scores. Minutes count each player/game once. No performance certification or automatic promotion; no live files changed.", Excluded: map[string]int{}}
 	ix, e := settlement.Load(dir)
 	if e != nil {
 		return out, e
@@ -133,6 +137,15 @@ func collect(dir, before string) (Report, error) {
 	statDates := map[string]map[string]bool{}
 	for _, k := range keys {
 		r := chosen[k]
+		group, valid := absenceCohort(r)
+		if !valid {
+			out.Excluded["absence timestamp/status unavailable"]++
+			continue
+		}
+		if cohort != "all" && cohort != group {
+			out.Excluded["different absence cohort"]++
+			continue
+		}
 		entry := picklog.Entry{Date: r.Date, LoggedAt: r.At, Tip: r.Tip, Period: "game", GameID: r.Row.G.GameID, PlayerID: r.Row.G.PlayerID, Player: r.Row.G.Name, Team: r.Row.G.TeamAbbr, Stat: string(r.Stat), Side: "OVER", Line: r.Line}
 		grade := ix.Grade(entry, 0)
 		actual, ok := ix.Actual(entry.GameID, entry.PlayerID)
@@ -176,6 +189,7 @@ func collect(dir, before string) (Report, error) {
 		}
 		s.N++
 		out.Questions++
+		out.ModelVersions[m.Version]++
 		statDates[st][r.Date] = true
 		s.BaselineBrier += (pb - y) * (pb - y)
 		s.RotationBrier += (r.P1 - y) * (r.P1 - y)
@@ -209,7 +223,11 @@ func main() {
 	dir := flag.String("data", "data", "input directory")
 	dest := flag.String("out", filepath.Join("run_evidence", "rotation-audit"), "private output directory")
 	before := flag.String("before", "", "today Eastern; only earlier dates are graded")
+	cohort := flag.String("cohort", "all", "all, no-confirmed-out, irrelevant-outs, supported-joint-absence, or unsupported-fallback")
 	flag.Parse()
+	if !validCohort(*cohort) {
+		fatal(fmt.Errorf("unknown absence cohort %q", *cohort))
+	}
 	if *before == "" {
 		loc, _ := time.LoadLocation("America/New_York")
 		*before = time.Now().In(loc).Format("2006-01-02")
@@ -217,7 +235,7 @@ func main() {
 	if _, e := time.Parse("2006-01-02", *before); e != nil {
 		fatal(e)
 	}
-	r, e := collect(*dir, *before)
+	r, e := collectCohort(*dir, *before, *cohort)
 	if e != nil {
 		fatal(e)
 	}
@@ -230,6 +248,7 @@ func main() {
 	}
 	var md strings.Builder
 	fmt.Fprintf(&md, "# V2 rotation comparison\n\n%s\n\n", r.Note)
+	fmt.Fprintf(&md, "Cohort: %s. Model versions (binary questions): %v.\n\n", r.Cohort, r.ModelVersions)
 	if r.PlayerGames == 0 {
 		fmt.Fprintln(&md, "No completed eligible rotation forecasts yet. Accuracy is unavailable, not zero.")
 	} else {
@@ -244,3 +263,39 @@ func main() {
 	fmt.Printf("Rotation audit: %d completed player-games / %d dates; %d questions. %s\n", r.PlayerGames, r.Days, r.Questions, filepath.Join(*dest, "report.md"))
 }
 func fatal(e error) { fmt.Fprintln(os.Stderr, e); os.Exit(1) }
+
+// Classify only after selecting the earliest eligible pregame question, so a
+// later status cannot change which forecast is evaluated. Supported here means
+// enough matching rotations, not demonstrated predictive improvement.
+func validCohort(s string) bool {
+	switch s {
+	case "all", "no-confirmed-out", "irrelevant-outs", "supported-joint-absence", "unsupported-fallback":
+		return true
+	}
+	return false
+}
+func absenceCohort(r replay.Record) (string, bool) {
+	if r.Rotation == nil {
+		return "", false
+	}
+	if len(r.Rotation.ConfirmedOut) == 0 {
+		return "no-confirmed-out", true
+	}
+	at, err := time.Parse(time.RFC3339Nano, r.At)
+	if err != nil {
+		return "", false
+	}
+	for _, status := range r.Rotation.ConfirmedOut {
+		reported, err := time.Parse(time.RFC3339Nano, status.At)
+		if status.PlayerID <= 0 || !strings.EqualFold(strings.TrimSpace(status.Status), "out") || err != nil || reported.After(at) || at.Sub(reported) > 24*time.Hour {
+			return "", false
+		}
+	}
+	if strings.Contains(r.Rotation.Reason, "no recent rotation minutes") {
+		return "irrelevant-outs", true
+	}
+	if r.Rotation.Supported && r.Rotation.MatchedGames >= 3 {
+		return "supported-joint-absence", true
+	}
+	return "unsupported-fallback", true
+}
