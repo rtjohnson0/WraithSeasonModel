@@ -1,21 +1,16 @@
 {
   "activeStats": [],
-  "at": "2026-11-17T09:16:15Z",
+  "at": "2026-11-17T15:21:05Z",
   "before": "2026-11-17",
-  "calibratedLogLoss": 0.7124058427434075,
-  "eligibleDates": 7,
-  "eligibleRows": 1959,
-  "evaluationDates": 4,
-  "evaluationRows": 1306,
+  "eligibleDates": 0,
+  "eligibleRows": 0,
+  "evaluationDates": 0,
+  "evaluationRows": 0,
   "excluded": {
-    "final actuals pending or identity review": 113,
-    "model/date/provenance mismatch": 118
+    "model/date/provenance mismatch": 2269
   },
-  "gainVsBook": -0.019672110247716753,
-  "loadedRows": 2190,
+  "loadedRows": 2269,
   "qualifiedStats": [],
-  "rawLogLoss": 0.7263664092194014,
   "status": "More forward data needed",
-  "trainingRows": 653,
-  "zVsBook": -7.62065065373006
+  "trainingRows": 0
 }
