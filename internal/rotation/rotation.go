@@ -30,36 +30,46 @@ type Scenario struct {
 	Projection   *float64 `json:"projection,omitempty"`
 	Probability  *float64 `json:"probability,omitempty"`
 }
+type Replacement struct {
+	PlayerID  int     `json:"playerId"`
+	Player    string  `json:"player"`
+	Position  string  `json:"position"`
+	Baseline  float64 `json:"baseline"`
+	Projected float64 `json:"projected"`
+}
 type Context struct {
-	Production        []lineup.Impact      `json:"production,omitempty"`
-	RateScale         [data.NStats]float64 `json:"rateScale"`
-	AllocationApplied bool                 `json:"allocationApplied"`
-	RelevantOut       []int                `json:"relevantOut,omitempty"`
-	OwnStatus         string               `json:"ownStatus,omitempty"`
-	Policy            string               `json:"policy"`
-	BaselineMinutes   float64              `json:"baselineMinutes"`
-	AllocationMinutes float64              `json:"allocationMinutes"`
-	UsedMinutes       float64              `json:"usedMinutes"`
-	TeamMinutes       float64              `json:"teamMinutes"`
-	TeamGames         int                  `json:"teamGames"`
-	MatchedGames      int                  `json:"matchedGames"`
-	Supported         bool                 `json:"supported"`
-	Reason            string               `json:"reason"`
-	ConfirmedOut      []Status             `json:"confirmedOut"`
-	Scenarios         []Scenario           `json:"scenarios,omitempty"`
+	OwnReplacements      []Replacement        `json:"ownReplacements,omitempty"`
+	OpponentReplacements []Replacement        `json:"opponentReplacements,omitempty"`
+	Production           []lineup.Impact      `json:"production,omitempty"`
+	RateScale            [data.NStats]float64 `json:"rateScale"`
+	AllocationApplied    bool                 `json:"allocationApplied"`
+	RelevantOut          []int                `json:"relevantOut,omitempty"`
+	OwnStatus            string               `json:"ownStatus,omitempty"`
+	Policy               string               `json:"policy"`
+	BaselineMinutes      float64              `json:"baselineMinutes"`
+	AllocationMinutes    float64              `json:"allocationMinutes"`
+	UsedMinutes          float64              `json:"usedMinutes"`
+	TeamMinutes          float64              `json:"teamMinutes"`
+	TeamGames            int                  `json:"teamGames"`
+	MatchedGames         int                  `json:"matchedGames"`
+	Supported            bool                 `json:"supported"`
+	Reason               string               `json:"reason"`
+	ConfirmedOut         []Status             `json:"confirmedOut"`
+	Scenarios            []Scenario           `json:"scenarios,omitempty"`
 }
 type Allocation struct {
-	Team         int             `json:"team"`
-	Date         string          `json:"date"`
-	Minutes      map[int]float64 `json:"minutes"`
-	Baseline     map[int]float64 `json:"baseline"`
-	TeamGames    int             `json:"teamGames"`
-	MatchedGames int             `json:"matchedGames"`
-	Supported    bool            `json:"supported"`
-	Valid        bool            `json:"valid"`
-	Reason       string          `json:"reason"`
-	Out          []int           `json:"out"`
-	RelevantOut  []int           `json:"relevantOut"`
+	RoleProjected bool            `json:"roleProjected"`
+	Team          int             `json:"team"`
+	Date          string          `json:"date"`
+	Minutes       map[int]float64 `json:"minutes"`
+	Baseline      map[int]float64 `json:"baseline"`
+	TeamGames     int             `json:"teamGames"`
+	MatchedGames  int             `json:"matchedGames"`
+	Supported     bool            `json:"supported"`
+	Valid         bool            `json:"valid"`
+	Reason        string          `json:"reason"`
+	Out           []int           `json:"out"`
+	RelevantOut   []int           `json:"relevantOut"`
 }
 type game struct {
 	id      int

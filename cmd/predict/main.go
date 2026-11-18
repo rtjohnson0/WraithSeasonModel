@@ -446,6 +446,7 @@ func main() {
 	var rotations *rotationForecast
 	var rotationRecords []replay.Record
 	var fallbackRecords []replay.Record
+	var roleHistory []data.PlayerGame
 	if *useV2 && *rotationV2 && gid == 0 {
 		rotationRows := d.Games
 		if rotation.ProductionPolicy(*rotationPolicy) {
@@ -454,8 +455,10 @@ func main() {
 				fatal(err)
 			}
 		}
+		roleHistory = rotationRows
 		rotations = newRotationForecast(rotationRows, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date, rotation.ProductionPolicy(*rotationPolicy))
 		rotations.fallback = *rotationPolicy == rotation.FallbackPolicy
+		rotations.configureRoles(rotationRows)
 		rotations.configureProduction(m)
 		v2model = rotations.policy() + " · joint team allocation; uncalibrated experiment"
 		if rotations.strict {
@@ -847,10 +850,11 @@ func main() {
 	if rotations != nil {
 		v2all, rotationRecords = scoreRotationSingles(rotations, m, b, lines, games, teamOf, rowFor, statuses, *date, *v2Weight, *maxGap, runAt)
 		if rotations.policy() == rotation.StrictPolicy && !*noLog {
-			shadow := *rotations
+			shadow := rotations.cloneForRoles()
 			shadow.fallback = true
+			shadow.configureRoles(roleHistory)
 			shadow.impactCache = map[int][]lineup.Impact{}
-			_, fallbackRecords = scoreRotationSingles(&shadow, m, b, lines, games, teamOf, rowFor, statuses, *date, *v2Weight, *maxGap, runAt)
+			_, fallbackRecords = scoreRotationSingles(shadow, m, b, lines, games, teamOf, rowFor, statuses, *date, *v2Weight, *maxGap, runAt)
 		}
 	}
 	var comboWatch []scored

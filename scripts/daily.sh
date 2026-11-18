@@ -41,10 +41,10 @@ echo "== player props =="
 go run ./cmd/accuracy
 python3 scripts/accuracy_report.py
 go run ./cmd/combos calibrate || echo "combo calibration unavailable; comparison mode retained"
-go run ./cmd/predict -rotationpolicy rotation-v2
+go run ./cmd/predict -rotationpolicy rotation-v3
 go run ./cmd/minutesaudit -legacy || echo "Minutes audit unavailable; live model unchanged"
 go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
-go run ./cmd/rotationaudit -policy rotation-v2 || echo "Rotation evaluation unavailable; V1 unchanged"
+go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 || echo "Prior V2 evaluation unavailable"
 go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback || echo "Absence fallback evaluation unavailable"
 echo "== game lines =="
 go run ./cmd/games || echo "game lines skipped"

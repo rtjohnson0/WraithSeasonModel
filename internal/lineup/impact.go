@@ -24,16 +24,17 @@ type Profile struct {
 	Blocks   float64 `json:"blocks"`
 }
 type Effect struct {
-	Stat        data.Stat   `json:"stat"`
-	Scale       float64     `json:"scale"`
-	Applied     bool        `json:"applied"`
-	Without     int         `json:"without"`
-	With        int         `json:"with"`
-	Conditional float64     `json:"conditional"`
-	Reference   float64     `json:"reference"`
-	Reason      string      `json:"reason"`
-	Method      string      `json:"method,omitempty"`
-	Evidence    []Component `json:"evidence,omitempty"`
+	Stat        data.Stat     `json:"stat"`
+	Scale       float64       `json:"scale"`
+	Applied     bool          `json:"applied"`
+	Without     int           `json:"without"`
+	With        int           `json:"with"`
+	Conditional float64       `json:"conditional"`
+	Reference   float64       `json:"reference"`
+	Reason      string        `json:"reason"`
+	Method      string        `json:"method,omitempty"`
+	Evidence    []Component   `json:"evidence,omitempty"`
+	Role        *RoleEvidence `json:"role,omitempty"`
 }
 type Impact struct {
 	Kind     string    `json:"kind"`
@@ -376,4 +377,9 @@ func Scale(impacts []Impact) [data.NStats]float64 {
 		out[k] = math.Max(.92, math.Min(1.08, x))
 	}
 	return out
+}
+
+// Profiles exposes strictly earlier observed role contributions for explanations.
+func (ix *Index) Profiles(team int, date string, roster map[int]int, players []int) []Profile {
+	return ix.profiles(team, date, roster, players)
 }

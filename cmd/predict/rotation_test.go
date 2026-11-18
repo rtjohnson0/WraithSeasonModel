@@ -297,3 +297,13 @@ func TestProductionAdjustmentsReplayExactlyForTeammateAndOpponentAbsences(t *tes
 		f.configureProduction(m)
 	}
 }
+
+func TestRoleCandidateCloneCannotMutateActiveRotations(t *testing.T) {
+	f := &rotationForecast{teams: map[int]rotation.Allocation{1: {Reason: "active"}}, scenarios: map[int]map[int]rotation.Allocation{1: {9: {Reason: "active scenario"}}}}
+	shadow := f.cloneForRoles()
+	shadow.teams[1] = rotation.Allocation{Reason: "shadow"}
+	shadow.scenarios[1][9] = rotation.Allocation{Reason: "shadow scenario"}
+	if f.teams[1].Reason != "active" || f.scenarios[1][9].Reason != "active scenario" {
+		t.Fatal("shadow modified live forecast")
+	}
+}

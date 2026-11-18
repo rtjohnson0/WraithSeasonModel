@@ -115,7 +115,7 @@ function OversWatch({ overs, now }) {
  return <section className="overs" aria-label="Over research comparisons" id="overs-watch">
   <div className="section-heading"><div><span className="card-eyebrow">More to analyze</span><h2>Over comparisons<span className="section-dot">↗</span></h2></div><span className="research-chip">Research · not selected plays</span></div>
   <p className="small">These positive-edge estimates have not cleared every selection check. Each card uses its exact quoted line and the same analytics as the main board.</p>
-  <ul className="plays">{(all?open:open.slice(0,6)).map(o=><PlayRow key={`${o.game_id}|${o.analysis.player}|${o.analysis.stat}`} p={{...o.analysis,research:true}} started={false} game={{matchup:o.matchup,tip:o.tip}} researchNote={o.status}/>)}</ul>
+  <ul className="plays prop-grid over-comparison-grid">{(all?open:open.slice(0,6)).map(o=><PlayRow key={`${o.game_id}|${o.analysis.player}|${o.analysis.stat}`} p={{...o.analysis,research:true}} started={false} game={{matchup:o.matchup,tip:o.tip}} researchNote={o.status}/>)}</ul>
   {open.length>6&&<button type="button" className="morebtn" onClick={()=>setAll(!all)}>{all?'Show fewer':`Show all ${open.length}`}</button>}
  </section>
 }

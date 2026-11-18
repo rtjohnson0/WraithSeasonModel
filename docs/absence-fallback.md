@@ -1,42 +1,47 @@
-# Absence fallback and minutes diagnostics
+# V2 projected lineups and pooled role production
 
-The current rotation-v2 policy requires five earlier games with the whole relevant absence set missing and five with the whole set present before changing a production rate. This often leaves a known absence numerically untreated.
+## What changes
 
-## Candidate policy
+`rotation-v3` is the new V2 experiment. Daily/pre-tip scripts select it after this PR is merged. V1 scoring, its record and visible LEANs remain unchanged. V3 uses separate record files and immutable evidence rather than relabeling prior V2 results. The older `rotation-v2` can still be selected explicitly.
 
-`rotation-v3` preserves supported joint estimates. For an unsupported stat with multiple relevant outs, it computes each absent player's own historical association using the same complete-final-box-score, explicit-zero-minute, roster-coverage, position and date checks. Each individual component still needs five out and five present games. Teammate estimates are specific to the scorer. Opponent estimates normalize historical scorers by their strictly earlier per-minute rates.
+Fresh confirmed outs trigger a projected full-game replacement rotation. Supported historical joint rotations are retained when available. Otherwise vacated workload is distributed toward players with recorded similar positions, using recent same-team workload. No repeated matchup or exact injury combination is required. This is not a confirmed starting five or a stint-level lineup simulation.
 
-Supported individual effects are averaged, never added or multiplied. Weights are the missing players' recent minutes; opponent-rebound weights use their recent rebounding production. These weights measure relevance and do not transfer missing stats to an opponent. Unsupported shares stay neutral instead of being redistributed to supported players. Individual estimates receive another 50% shrinkage and the fallback is capped at ±2.5%. Existing joint components retain their ±5% cap; the existing combined own/opponent ±8% cap remains.
+Replacement allocation conserves 240 regulation minutes, excludes confirmed outs and adds at most 12 minutes per player, with a 40-minute ceiling for increases (a pre-existing higher baseline is retained up to 48). It cannot invent reserves with no observed workload. Missing positions, incomplete team coverage or an infeasible allocation retain the old baseline minutes rather than forcing a replacement estimate. Coarse C/B and F/W compatibility is an explicit heuristic, not a learned coaching rotation.
 
-This does not identify a causal injury effect. Co-absences, historical replacements and game conditions remain confounders. It can increase or decrease a rate. No evidence means no adjustment. There is deliberately no invented rim-protection rating or automatic center-out bonus. Unknown positions remain unsupported. The existing fresh, confirmed-Out requirement and protection against double-counting enabled learned absence features remain.
+## Production model
 
-## Automatic prospective comparison
+A ridge model learns league-wide associations between rotation composition and per-minute points, rebounds, assists and threes relative to each player's strictly earlier per-minute baseline. Each game must be an explicit final with complete player stat fields and complete two-team minute totals. Player profiles use at most ten earlier player appearances within 730 days, carrying player production profiles across trades and the offseason, with three required. Fits use games strictly before the forecast date, from the preceding 730 days.
 
-Daily and pre-tip prediction continue publishing rotation-v2. Beside it, prediction records all eligible rotation-v3 single-stat market questions using the same fresh quotes, frozen model, features and timestamp. Shadow capture does not publish candidate picks or replace active board files. `-nolog` disables this capture. Workflow evidence cache/artifacts already retain the `data/v2_rotation` directory, including the new `fallback/replay` subdirectory. This is needed to evaluate the candidate on later finals without reconstructing what injuries were known.
+Features compare projected and recent-baseline composition: scoring, rebounding, creation, threes, blocks, center/big minutes and guard minutes, separately for teammates and opponents. Teammate exposure excludes the target player's own contribution. Exposures normalize overtime to 240 minutes. Profile coverage must cover at least 90% of the rotation's minutes, with recorded positions; unknown production is never filled with zero. Feature deltas are bounded and ridge regularization is fixed at 100 with a no-change anchor (no intercept). Targets are clipped to [-1, 2] relative rate change to limit extreme low-baseline games.
 
-Daily/pre-tip audits now explicitly evaluate the active rotation-v2 policy (previously they defaulted to legacy rotation-v1), plus the new fallback shadow. Unsupported/empty evidence is reported as unavailable, not 0% accuracy.
+At least 500 pooled player-games and 30 dates are required per stat, not 500 repeated injury matchups. The model may increase or decrease a rate. Missing a center does not automatically grant all his rebounds to his opponent. Opponent rebound capacity and blocks are observed box-score roles, not measured defensive rebound percentage, rim protection, height or defensive rating. Shot-attempt/possession redistribution is not explicitly conserved.
 
-Both reports include an exact signed decomposition:
+Teammate and opponent components are capped at ±5% each and ±8% combined. They replace the older individual/joint production adjustment for this policy, never stack with it. Enabled learned absence feature groups suppress the corresponding extra component. Minutes and production changes remain separate.
 
-- Minutes contribution: `(actual minutes - projected minutes) * projected stat / projected minutes`.
-- Rate contribution: `actual stat - actual minutes * projected stat / projected minutes`.
-- Sum: `actual stat - projected stat`.
+Historical training uses observed final rotation minutes. Live inference uses projected rotations. These historical associations can contain co-absence, coaching, schedule, foul-trouble and game-state confounding; they are not isolated causal injury effects. The cards show projected replacements, baseline/projected minutes, pooled sample sizes, and applied production changes.
 
-They also group minutes bias/MAE by captured pregame spread: 0–3.5, 3.5–7, 7–10, 10+, and unknown. Final margins never define those cohorts. These are diagnostics, not a newly fitted close-game/blowout minutes model.
+## Archived inputs and provenance
 
-## Commands (PowerShell or shell)
+Complete archived finals can train the role model even if their old downloads lack capture timestamps. `BoxScoreComplete` requires explicit points/rebounds/assists/threes/blocks and final scores. This is separate from `AnalyticsReady`: archived rows are not promoted into verified forward evidence or settlement. Fresh injury timestamps, unambiguous identities and paired pregame quote checks remain required for decision captures. Questionable/doubtful players remain in the main scenario, with separate out scenarios.
 
-Normal scheduled runs automatically capture and audit the shadow after this change is merged. Read-only audits:
+## Validation
+
+`go run ./cmd/lineupstudy -before 2026-01-01 -through 2026-07-01` fits earlier games and evaluates later *observed rotations*. The checked-in result is `docs/lineup-study-2026.json`. It is a conditional diagnostic, **not a pregame backtest**: it does not measure whether projected minutes/lineups were correct, pick accuracy, confidence calibration, or ROI.
+
+That initial held-out check is mixed. Points MAE improves marginally (4.22994 to 4.22954); rebounds worsen (1.82071 to 1.83074), assists worsen (1.38808 to 1.39366), and threes worsen (1.02161 to 1.02631). This does not demonstrate an accuracy improvement and does not support a 60–62% claim. The user-requested expansion runs in the separate V2 experiment, not V1 or staked promotion.
+
+The existing rotation audit evaluates immutable pregame decisions against later verified finals. Its baseline and candidate use the same frozen primary model, quote and blend, with minutes/production changes isolated. Daily/pre-tip now audit the active candidate instead of silently auditing legacy rotation-v1. Reports split signed stat residuals into minutes and rate contributions and group minutes errors by the captured pregame spread, not the final margin. The spread breakdown diagnoses competitiveness; it is not a fitted blowout-probability mixture.
+
+Behavioral tests cover temporal exclusion, archived completeness versus provenance, unknown profiles, no-change composition, minute conservation/caps, replacement-role preference, frozen composition provenance, and policy/shadow isolation. Exact input/model captures are retained in the existing workflow evidence cache and artifacts under `data/v2_rotation/fallback/replay`.
+
+## Commands
+
+After merge, normal Daily/pre-tip runs select the new V2 policy automatically. For local testing:
 
 ```powershell
-go run ./cmd/rotationaudit -policy rotation-v2
+go run ./cmd/predict -rotationpolicy rotation-v3
 go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback
+go run ./cmd/lineupstudy -before 2026-01-01 -through 2026-07-01
 ```
 
-Explicit candidate publication for local testing is available with `go run ./cmd/predict -rotationpolicy rotation-v3`. This overwrites the local V2 board, so it is not the normal Daily setting. If explicitly selected, V3 uses separate pick/settlement files and evidence directory; old history is not reassigned.
-
-## Validation and remaining work
-
-Behavioral tests cover missing rows, future/same-day exclusion, duplicate IDs, neutral unknown shares, joint precedence, both production paths, bounded changes, policy isolation and component provenance. A prospective win-rate improvement has **not** been demonstrated. No historical winners were deleted or reclassified.
-
-Next comparisons must use the same earliest pregame questions on later dates and report date-level uncertainty, coverage, stat MAE, Brier score and selected-play results. Separate absence, minutes and joint candidates before combining them. This change does not yet implement cross-team role pooling, an explicit replacement-lineup model, a fitted competitiveness mixture, new three-point calibration or selection changes. Those require separate data and chronological evaluation; passing software tests does not establish a 60–62% hit rate.
+Old V2 can be compared explicitly with `go run ./cmd/predict -rotationpolicy rotation-v2`. That command also captures a role-composition shadow without replacing the old V2 board. `-nolog` disables recording. Directly selecting V3 updates the local V2 board and uses its separate picks/settlement history.
