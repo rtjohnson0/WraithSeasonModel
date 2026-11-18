@@ -23,6 +23,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"math"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -461,7 +462,11 @@ func alreadyPulled(path string) map[int]bool {
 func runProps(c *bdl.Client, args []string) error {
 	fs := flag.NewFlagSet("props", flag.ExitOnError)
 	season := fs.Int("season", 0, "season start year, e.g. 2025")
+	maxMinutes := fs.Float64("maxminutes", 0, "pause between games after this many minutes; 0 downloads all remaining games")
 	fs.Parse(args)
+	if *maxMinutes < 0 || math.IsNaN(*maxMinutes) || math.IsInf(*maxMinutes, 0) {
+		return fmt.Errorf("maxminutes must be finite and nonnegative")
+	}
 	if *season == 0 {
 		return fmt.Errorf("-season is required")
 	}
@@ -486,10 +491,18 @@ func runProps(c *bdl.Client, args []string) error {
 			completed++
 		}
 	}
+	deadline := time.Time{}
+	if *maxMinutes > 0 {
+		deadline = time.Now().Add(time.Duration(*maxMinutes * float64(time.Minute)))
+	}
 	fmt.Printf("Props: %d/%d games already cached; %d remaining\n", completed, len(ids), len(ids)-completed)
 	for _, id := range ids {
 		if done[id] {
 			continue
+		}
+		if !deadline.IsZero() && !time.Now().Before(deadline) {
+			fmt.Printf("Props: backfill budget reached at %d/%d games; saved progress will resume next run.\n", completed, len(ids))
+			return nil
 		}
 		q := url.Values{}
 		q.Set("game_id", strconv.Itoa(id))

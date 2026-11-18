@@ -29,7 +29,7 @@ go run ./cmd/v2 settle || echo "v2 settle skipped"
 echo "== review yesterday (csv) =="
 go run ./cmd/review || echo "review skipped"
 if [ "$SKIP" = 0 ]; then
-  echo "== retrain =="
+  echo "== refresh prop model (bounded historical backfill) =="
   python3 scripts/refresh_models.py --season "$SEASON" ${LINEUP:+--lineup}
 fi
 echo "== calibrate game-v2 =="
