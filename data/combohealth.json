@@ -1,15 +1,59 @@
 {
   "activeStats": [],
-  "at": "2026-11-17T16:43:49Z",
+  "at": "2026-11-18T00:51:18Z",
   "before": "2026-11-17",
+  "byStat": {
+    "pa": {
+      "eligibleDates": 0,
+      "eligibleRows": 0,
+      "evaluationDates": 0,
+      "evaluationRows": 0,
+      "requiredEvaluationDates": 30,
+      "requiredEvaluationRows": 200,
+      "requiredTrainingRows": 300,
+      "trainingRows": 0
+    },
+    "pr": {
+      "eligibleDates": 0,
+      "eligibleRows": 0,
+      "evaluationDates": 0,
+      "evaluationRows": 0,
+      "requiredEvaluationDates": 30,
+      "requiredEvaluationRows": 200,
+      "requiredTrainingRows": 300,
+      "trainingRows": 0
+    },
+    "pra": {
+      "eligibleDates": 0,
+      "eligibleRows": 0,
+      "evaluationDates": 0,
+      "evaluationRows": 0,
+      "requiredEvaluationDates": 30,
+      "requiredEvaluationRows": 200,
+      "requiredTrainingRows": 300,
+      "trainingRows": 0
+    },
+    "ra": {
+      "eligibleDates": 0,
+      "eligibleRows": 0,
+      "evaluationDates": 0,
+      "evaluationRows": 0,
+      "requiredEvaluationDates": 30,
+      "requiredEvaluationRows": 200,
+      "requiredTrainingRows": 300,
+      "trainingRows": 0
+    }
+  },
   "eligibleDates": 0,
   "eligibleRows": 0,
   "evaluationDates": 0,
   "evaluationRows": 0,
+  "evidenceUnit": "date-clustered paired log-loss improvement; each slate counts once",
   "excluded": {
-    "model/date/provenance mismatch": 2297
+    "different model version": 2089,
+    "forecast date not completed": 212
   },
-  "loadedRows": 2297,
+  "loadedRows": 2301,
   "qualifiedStats": [],
   "status": "More forward data needed",
   "trainingRows": 0
