@@ -1,6 +1,6 @@
 {
   "activeStats": [],
-  "at": "2026-11-18T00:51:18Z",
+  "at": "2026-11-18T01:10:36Z",
   "before": "2026-11-17",
   "byStat": {
     "pa": {
@@ -51,9 +51,9 @@
   "evidenceUnit": "date-clustered paired log-loss improvement; each slate counts once",
   "excluded": {
     "different model version": 2089,
-    "forecast date not completed": 212
+    "forecast date not completed": 227
   },
-  "loadedRows": 2301,
+  "loadedRows": 2316,
   "qualifiedStats": [],
   "status": "More forward data needed",
   "trainingRows": 0
