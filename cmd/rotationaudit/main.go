@@ -29,8 +29,15 @@ type Slice struct {
 	N, Days                                                int
 	BaselineBrier, RotationBrier, BaselineMAE, RotationMAE float64
 	ProtectedBrier, ProtectedMAE                           float64
+	MinutesContribution, RateContribution                  float64
+}
+type GameContext struct {
+	PlayerGames int
+	MinutesBias float64
+	MinutesMAE  float64
 }
 type Report struct {
+	GameContexts                           map[string]*GameContext
 	Cohort                                 string
 	ModelVersions                          map[int]int
 	Policy, Note, Through                  string
@@ -48,7 +55,7 @@ func collectCohort(dir, before, cohort string) (Report, error) {
 }
 
 func collectPolicy(dir, before, cohort, policy string) (Report, error) {
-	out := Report{Cohort: cohort, ModelVersions: map[int]int{}, Policy: policy, Note: "Read-only paired forward diagnostics. Earliest eligible immutable question per player/game/stat. Same frozen model, raw per-minute rates, quote and model/book weight; captured research minutes and production policy differs. Pushes/DNPs are excluded from binary scores. Minutes count each player/game once. No performance certification or automatic promotion; no live files changed.", Excluded: map[string]int{}}
+	out := Report{GameContexts: map[string]*GameContext{}, Cohort: cohort, ModelVersions: map[int]int{}, Policy: policy, Note: "Read-only paired forward diagnostics. Earliest eligible immutable question per player/game/stat. Same frozen model, raw per-minute rates, quote and model/book weight; captured research minutes and production policy differs. Pushes/DNPs are excluded from binary scores. Minutes count each player/game once. No performance certification or automatic promotion; no live files changed.", Excluded: map[string]int{}}
 	ix, e := settlement.Load(dir)
 	if e != nil {
 		return out, e
@@ -144,7 +151,7 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 	statDates := map[string]map[string]bool{}
 	for _, k := range keys {
 		r := chosen[k]
-		if policy == rotation.StrictPolicy && !validProductionCapture(r) {
+		if rotation.ProductionPolicy(policy) && !validProductionCapture(r) {
 			out.Excluded["production provenance unavailable"]++
 			continue
 		}
@@ -169,7 +176,7 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		base := m.Forecast(r.Row.Features(), predictor.Adjustments{})
 		p := m.Forecast(r.Row.Features(), r.Policy)
 		protected := base
-		if group == "supported-joint-absence" || policy == rotation.StrictPolicy {
+		if group == "supported-joint-absence" || rotation.ProductionPolicy(policy) {
 			protected = p
 		}
 		pk := fmt.Sprintf("%s/%d/%d", r.Date, entry.GameID, entry.PlayerID)
@@ -178,6 +185,14 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 			out.BaselineMinutesMAE += math.Abs(base.Minutes - mins)
 			out.RotationMinutesMAE += math.Abs(p.Minutes - mins)
 			out.ProtectedMinutesMAE += math.Abs(protected.Minutes - mins)
+			context := spreadGroup(r.Row.Features().AbsSpread())
+			if out.GameContexts[context] == nil {
+				out.GameContexts[context] = &GameContext{}
+			}
+			c := out.GameContexts[context]
+			c.PlayerGames++
+			c.MinutesBias += mins - p.Minutes
+			c.MinutesMAE += math.Abs(mins - p.Minutes)
 		}
 		dates[r.Date] = true
 		if r.Date > out.Through {
@@ -218,6 +233,15 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		s.RotationMAE += math.Abs(p.Mean(r.Stat) - grade.Actual)
 		s.ProtectedBrier += (protectedProb - y) * (protectedProb - y)
 		s.ProtectedMAE += math.Abs(protected.Mean(r.Stat) - grade.Actual)
+		if p.Minutes > 0 {
+			rate := p.Mean(r.Stat) / p.Minutes
+			s.MinutesContribution += (mins - p.Minutes) * rate
+			s.RateContribution += grade.Actual - mins*rate
+		}
+	}
+	for _, c := range out.GameContexts {
+		c.MinutesBias /= float64(c.PlayerGames)
+		c.MinutesMAE /= float64(c.PlayerGames)
 	}
 	out.PlayerGames = len(players)
 	out.Days = len(dates)
@@ -241,6 +265,8 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		s.RotationMAE /= n
 		s.ProtectedBrier /= n
 		s.ProtectedMAE /= n
+		s.MinutesContribution /= n
+		s.RateContribution /= n
 		out.Slices = append(out.Slices, *s)
 	}
 	return out, nil
@@ -250,7 +276,7 @@ func main() {
 	dest := flag.String("out", filepath.Join("run_evidence", "rotation-audit"), "private output directory")
 	before := flag.String("before", "", "today Eastern; only earlier dates are graded")
 	cohort := flag.String("cohort", "all", "all, no-confirmed-out, irrelevant-outs, supported-joint-absence, or unsupported-fallback")
-	policy := flag.String("policy", rotation.Policy, "rotation-v1 or rotation-v2; evidence and results remain separate")
+	policy := flag.String("policy", rotation.Policy, "rotation-v1, rotation-v2 or rotation-v3; evidence and results remain separate")
 	flag.Parse()
 	if !rotation.KnownPolicy(*policy) {
 		fatal(fmt.Errorf("unknown rotation policy %q", *policy))
@@ -279,7 +305,7 @@ func main() {
 	var md strings.Builder
 	fmt.Fprintf(&md, "# V2 rotation comparison\n\n%s\n\n", r.Note)
 	fmt.Fprintf(&md, "Cohort: %s. Model versions (binary questions): %v.\n\n", r.Cohort, r.ModelVersions)
-	fmt.Fprintln(&md, "For rotation-v1, protected columns apply a retrospective supported-only minutes rule selected after inspecting earlier results; they are not prospective validation. For rotation-v2, protected columns equal the captured candidate, including production changes.")
+	fmt.Fprintln(&md, "For rotation-v1, protected columns apply a retrospective supported-only minutes rule selected after inspecting earlier results; they are not prospective validation. For rotation-v2/v3, protected columns equal the captured candidate, including production changes.")
 	if r.PlayerGames == 0 {
 		fmt.Fprintln(&md, "No completed eligible rotation forecasts yet. Accuracy is unavailable, not zero.")
 	} else {
@@ -288,6 +314,17 @@ func main() {
 			fmt.Fprintf(&md, "| %s | %d / %d | %.5f | %.5f | %.5f | %.2f | %.2f | %.2f |\n", s.Stat, s.N, s.Days, s.BaselineBrier, s.RotationBrier, s.ProtectedBrier, s.BaselineMAE, s.RotationMAE, s.ProtectedMAE)
 		}
 	}
+	fmt.Fprintln(&md, "\n## Pregame competitiveness and minutes\n\nGrouped by the captured pregame spread, never the final margin. Positive bias means projected minutes were too low. This diagnoses an association; it does not fit a blowout probability.\n\n| Pregame spread | Player-games | Minutes bias | Minutes MAE |\n|---|---:|---:|---:|")
+	for _, name := range []string{"close (0–3.5)", "competitive (3.5–7)", "wide (7–10)", "blowout risk (10+)", "unknown"} {
+		if c := r.GameContexts[name]; c != nil {
+			fmt.Fprintf(&md, "| %s | %d | %+.2f | %.2f |\n", name, c.PlayerGames, c.MinutesBias, c.MinutesMAE)
+		}
+	}
+	fmt.Fprintln(&md, "\n## Signed stat-error decomposition\n\nPositive means actual exceeded projected. Minutes contribution = (actual minutes - projected minutes) × projected per-minute rate. Rate contribution = actual stat - actual minutes × projected rate. Their sum is actual minus projected; these are accounting diagnostics, not causal injury effects.\n\n| Stat | Minutes contribution | Rate contribution |\n|---|---:|---:|")
+	for _, s := range r.Slices {
+		fmt.Fprintf(&md, "| %s | %+.3f | %+.3f |\n", s.Stat, s.MinutesContribution, s.RateContribution)
+	}
+
 	if e = os.WriteFile(filepath.Join(*dest, "report.md"), []byte(md.String()), 0644); e != nil {
 		fatal(e)
 	}
@@ -350,7 +387,7 @@ func validProductionCapture(r replay.Record) bool {
 			}
 			applied = true
 			key := string(e.Stat)
-			if seen[key] || e.Without < 5 || e.With < 5 || math.IsNaN(e.Scale) || math.IsInf(e.Scale, 0) || e.Scale < .95 || e.Scale > 1.05 {
+			if seen[key] || !validEffectEvidence(e, impact, r.SelectionPolicy) || math.IsNaN(e.Scale) || math.IsInf(e.Scale, 0) || e.Scale < .95 || e.Scale > 1.05 {
 				return false
 			}
 			seen[key] = true
@@ -374,4 +411,45 @@ func validProductionCapture(r replay.Record) bool {
 		}
 	}
 	return true
+}
+
+// A fallback cannot borrow joint sample counts. Verify its component evidence,
+// neutral remainder and captured scale independently before grading it.
+func validEffectEvidence(e lineup.Effect, impact lineup.Impact, policy string) bool {
+	if e.Method != "individual-mixture" {
+		return e.Without >= 5 && e.With >= 5
+	}
+	if policy != rotation.FallbackPolicy || len(e.Evidence) == 0 {
+		return false
+	}
+	missing := map[int]bool{}
+	for _, p := range impact.Missing {
+		missing[p.PlayerID] = true
+	}
+	seen := map[int]bool{}
+	weight, delta := 0., 0.
+	for _, c := range e.Evidence {
+		if !missing[c.PlayerID] || seen[c.PlayerID] || c.Without < 5 || c.With < 5 || math.IsNaN(c.Weight) || math.IsInf(c.Weight, 0) || c.Weight <= 0 || c.Weight > 1 || math.IsNaN(c.Scale) || c.Scale < .975 || c.Scale > 1.025 {
+			return false
+		}
+		seen[c.PlayerID] = true
+		weight += c.Weight
+		delta += c.Weight * (c.Scale - 1)
+	}
+	return weight <= 1+1e-9 && math.Abs(e.Scale-math.Max(.975, math.Min(1.025, 1+delta))) < 1e-9
+}
+
+func spreadGroup(spread float64) string {
+	switch {
+	case math.IsNaN(spread) || math.IsInf(spread, 0):
+		return "unknown"
+	case math.Abs(spread) <= 3.5:
+		return "close (0–3.5)"
+	case math.Abs(spread) <= 7:
+		return "competitive (3.5–7)"
+	case math.Abs(spread) < 10:
+		return "wide (7–10)"
+	default:
+		return "blowout risk (10+)"
+	}
 }

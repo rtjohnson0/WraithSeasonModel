@@ -35,6 +35,7 @@ import (
 	"propsmodel/internal/eval"
 	"propsmodel/internal/feat"
 	"propsmodel/internal/lineslog"
+	"propsmodel/internal/lineup"
 	"propsmodel/internal/model"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/pipeline"
@@ -145,7 +146,7 @@ func main() {
 	valueMinProb := flag.Float64("valueminprob", .40, "value research: minimum actual model probability; never inflated to 50 percent")
 	valueMinROI := flag.Float64("valueminroi", .04, "value research: minimum forecast return conditional on no push")
 	launchGate := flag.Bool("evidencegate", true, "require recent verified forward evidence for a staked PICK; unproven plays remain visible as PAPER")
-	rotationPolicy := flag.String("rotationpolicy", rotation.Policy, "V2 only: rotation-v1 (legacy) or rotation-v2 (supported joint absence minutes and production; separate research history)")
+	rotationPolicy := flag.String("rotationpolicy", rotation.Policy, "V2 only: rotation-v1 (legacy) or rotation-v2 (joint absence) or rotation-v3 (individual fallback; separate research history)")
 	flag.Parse()
 	if !rotation.KnownPolicy(*rotationPolicy) {
 		fatal(fmt.Errorf("unknown rotation policy %q", *rotationPolicy))
@@ -444,15 +445,17 @@ func main() {
 	m2, v2model := m, "the main model"
 	var rotations *rotationForecast
 	var rotationRecords []replay.Record
+	var fallbackRecords []replay.Record
 	if *useV2 && *rotationV2 && gid == 0 {
 		rotationRows := d.Games
-		if *rotationPolicy == rotation.StrictPolicy {
+		if rotation.ProductionPolicy(*rotationPolicy) {
 			rotationRows, err = data.LoadStatsResearchDir(*dir)
 			if err != nil {
 				fatal(err)
 			}
 		}
-		rotations = newRotationForecast(rotationRows, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date, *rotationPolicy == rotation.StrictPolicy)
+		rotations = newRotationForecast(rotationRows, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date, rotation.ProductionPolicy(*rotationPolicy))
+		rotations.fallback = *rotationPolicy == rotation.FallbackPolicy
 		rotations.configureProduction(m)
 		v2model = rotations.policy() + " · joint team allocation; uncalibrated experiment"
 		if rotations.strict {
@@ -843,6 +846,12 @@ func main() {
 
 	if rotations != nil {
 		v2all, rotationRecords = scoreRotationSingles(rotations, m, b, lines, games, teamOf, rowFor, statuses, *date, *v2Weight, *maxGap, runAt)
+		if rotations.policy() == rotation.StrictPolicy && !*noLog {
+			shadow := *rotations
+			shadow.fallback = true
+			shadow.impactCache = map[int][]lineup.Impact{}
+			_, fallbackRecords = scoreRotationSingles(&shadow, m, b, lines, games, teamOf, rowFor, statuses, *date, *v2Weight, *maxGap, runAt)
+		}
 	}
 	var comboWatch []scored
 	var comboPlays []scored
@@ -1126,6 +1135,20 @@ func main() {
 			}
 			if err = replay.Append(captureDir, *date, rotationRecords); err != nil {
 				fatal(err)
+			}
+			if len(fallbackRecords) > 0 {
+				shadowDir := filepath.Join(*dir, rotation.EvidenceDirectory(rotation.FallbackPolicy))
+				id, err := replay.Checkpoint(shadowDir, m)
+				if err != nil {
+					fatal(err)
+				}
+				for i := range fallbackRecords {
+					fallbackRecords[i].ModelID = id
+				}
+				if err := replay.Append(shadowDir, *date, fallbackRecords); err != nil {
+					fatal(err)
+				}
+				fmt.Printf("Captured %d absence-fallback shadow questions; active board unchanged.\n", len(fallbackRecords))
 			}
 			if err = writeRotationEvidence(*dir, *date, runAt, rotations); err != nil {
 				fatal(err)

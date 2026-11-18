@@ -41,3 +41,16 @@ func TestPoliciesHaveIndependentReplayAndResultPaths(t *testing.T) {
 		t.Fatal("unknown policy accepted")
 	}
 }
+
+func TestFallbackPolicyHasIsolatedEvidenceAndRecords(t *testing.T) {
+	if !KnownPolicy(FallbackPolicy) || !ProductionPolicy(FallbackPolicy) {
+		t.Fatal("fallback unsupported")
+	}
+	a, b := Files(FallbackPolicy)
+	for _, p := range []string{Policy, StrictPolicy} {
+		c, d := Files(p)
+		if a == c || b == d || EvidenceDirectory(p) == EvidenceDirectory(FallbackPolicy) {
+			t.Fatal("policy histories mixed")
+		}
+	}
+}

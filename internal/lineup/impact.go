@@ -24,14 +24,16 @@ type Profile struct {
 	Blocks   float64 `json:"blocks"`
 }
 type Effect struct {
-	Stat        data.Stat `json:"stat"`
-	Scale       float64   `json:"scale"`
-	Applied     bool      `json:"applied"`
-	Without     int       `json:"without"`
-	With        int       `json:"with"`
-	Conditional float64   `json:"conditional"`
-	Reference   float64   `json:"reference"`
-	Reason      string    `json:"reason"`
+	Stat        data.Stat   `json:"stat"`
+	Scale       float64     `json:"scale"`
+	Applied     bool        `json:"applied"`
+	Without     int         `json:"without"`
+	With        int         `json:"with"`
+	Conditional float64     `json:"conditional"`
+	Reference   float64     `json:"reference"`
+	Reason      string      `json:"reason"`
+	Method      string      `json:"method,omitempty"`
+	Evidence    []Component `json:"evidence,omitempty"`
 }
 type Impact struct {
 	Kind     string    `json:"kind"`
@@ -211,7 +213,12 @@ func covered(rs map[int]data.PlayerGame, roster map[int]int, team int) bool {
 }
 func (ix *Index) profiles(team int, date string, roster map[int]int, outs []int) []Profile {
 	var ps []Profile
+	seen := map[int]bool{}
 	for _, pid := range outs {
+		if seen[pid] {
+			continue
+		}
+		seen[pid] = true
 		if roster[pid] != team {
 			continue
 		}
@@ -253,6 +260,10 @@ func (ix *Index) profiles(team int, date string, roster map[int]int, outs []int)
 // production uses player-specific rates; opponent impact uses position-specific
 // allowed output relative to each historical scorer's prior per-minute rate.
 func (ix *Index) Estimate(team, player int, date string, roster map[int]int, outs []int, opponent bool) Impact {
+	return ix.estimate(team, player, date, roster, outs, opponent)
+}
+
+func (ix *Index) estimate(team, player int, date string, roster map[int]int, outs []int, opponent bool) Impact {
 	kind := "teammate-production"
 	if opponent {
 		kind = "opponent-allowance"
@@ -331,7 +342,7 @@ func (ix *Index) Estimate(team, player int, date string, roster map[int]int, out
 	}
 	out.Reason = "joint-absence observational rates; research only, not causal or validated"
 	for k, st := range data.Stats {
-		e := Effect{Stat: st, Scale: 1, Without: counts[0][k], With: counts[1][k], Reason: "need five earlier without and five with the joint set present"}
+		e := Effect{Method: "joint", Stat: st, Scale: 1, Without: counts[0][k], With: counts[1][k], Reason: "need five earlier without and five with the joint set present"}
 		if exposure[0][k] > 0 {
 			e.Conditional = totals[0][k] / exposure[0][k]
 		}

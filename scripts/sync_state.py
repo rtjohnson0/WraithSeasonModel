@@ -17,6 +17,7 @@ STATE_FILES = [
     "model_refresh.json",
     "gamecal_research.json", "v2_gamepicklog.jsonl", "v2_gamesettled.jsonl",
     "v2_rotation_strictlog.jsonl", "v2_rotation_strictsettled.jsonl",
+    "v2_rotation_fallbacklog.jsonl", "v2_rotation_fallbacksettled.jsonl",
     'v2_rotationlog.jsonl', 'v2_rotationsettled.jsonl', 'v2_rotationsettled_audit.json',
     'settled_audit.json', 'combosettled_audit.json', 'v2settled_audit.json', 'side_audit.json', 'accuracy.json', 'quarterboard.json', 'quarterlog.jsonl', 'gameboard.json', 'board.json', 'picklog.jsonl', 'settled.jsonl', 'calibration.json', 'gamecal.json',
     'biasfix.json', 'minfix.json', 'wofix.json', 'runs.jsonl', 'more.json',
