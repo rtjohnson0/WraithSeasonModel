@@ -62,6 +62,7 @@ var Stats = []Stat{Points, Rebounds, Assists, Threes}
 
 // PlayerGame is one player's box score line for one game they played.
 type PlayerGame struct {
+	ShootingComplete bool // explicit FGA, 3PA and FTA for opportunity models
 	BoxScoreComplete bool // explicit stat fields and final scores, independent of download provenance
 	AnalyticsReady   bool // explicit final, complete stat fields, download provenance and final scores
 	FinalHomeScore   float64
@@ -78,6 +79,7 @@ type PlayerGame struct {
 	Pts              float64
 	Reb              float64
 	Ast              float64
+	Fta              float64 // free throw attempts (use only when ShootingComplete)
 	Fga              float64 // field goal attempts (0 if the API row did not say)
 	Fgm              float64
 	Fg3a             float64 // three-point attempts (0 if the API row did not say)
@@ -192,6 +194,7 @@ type rawStat struct {
 	Pts       *float64        `json:"pts"`
 	Reb       *float64        `json:"reb"`
 	Ast       *float64        `json:"ast"`
+	Fta       *float64        `json:"fta"`
 	Fga       *float64        `json:"fga"`
 	Fgm       *float64        `json:"fgm"`
 	Fg3a      *float64        `json:"fg3a"`
@@ -269,6 +272,7 @@ func loadStatsFile(path string, research bool) ([]PlayerGame, error) {
 		_, stampErr := time.Parse(time.RFC3339Nano, r.FetchedAt)
 		complete := r.Pts != nil && r.Reb != nil && r.Ast != nil && r.Fg3m != nil && r.Game.HomeScore != nil && r.Game.AwayScore != nil && r.Endpoint == "/nba/v1/stats" && stampErr == nil
 		out = append(out, PlayerGame{
+			ShootingComplete: r.Fga != nil && r.Fg3a != nil && r.Fta != nil,
 			BoxScoreComplete: r.Pts != nil && r.Reb != nil && r.Ast != nil && r.Fg3m != nil && r.Blk != nil && r.Game.HomeScore != nil && r.Game.AwayScore != nil,
 			AnalyticsReady:   complete, FinalHomeScore: val(r.Game.HomeScore), FinalAwayScore: val(r.Game.AwayScore),
 			SourceFinal: strings.EqualFold(strings.TrimSpace(r.Game.Status), "Final") && r.Team.ID != 0 && (r.Team.ID == r.Game.HomeTeamID || r.Team.ID == r.Game.VisitorTeamID),
@@ -283,6 +287,7 @@ func loadStatsFile(path string, research bool) ([]PlayerGame, error) {
 			Pts:         val(r.Pts),
 			Reb:         val(r.Reb),
 			Ast:         val(r.Ast),
+			Fta:         val(r.Fta),
 			Fga:         val(r.Fga),
 			Fgm:         val(r.Fgm),
 			Fg3a:        val(r.Fg3a),

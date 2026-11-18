@@ -94,4 +94,11 @@ check('V2 projected replacements show named roles and baseline/projected minutes
 check('V2 pooled evidence does not masquerade as zero joint-out games',$('#root').textContent.includes('12000 league player-games / 100 dates')&&$('#root').textContent.includes('+3.0%'));
 check('Projected lineups are explicitly distinguished from confirmed starters',$('#root').textContent.includes('not confirmed starters'));
 act(()=>root.unmount());
+const trackingPlay=structuredClone(rolePlay);trackingPlay.rotation.policy='rotation-v4';trackingPlay.rotation.opportunities=[{stat:'assists',games:3,chances:30,minutes:90,conversion:.5,available:true,through:'2026-11-17'},{stat:'rebounds',games:0,chances:0,available:false,reason:'No recent covered games'}];trackingPlay.rotation.pregameLineups=[{game_id:7,team_id:1,teamAbbr:'BOS',status:'expected',lineup:['PG','SG','SF','PF','C'].map((position,i)=>({position,player:{id:i+1,first_name:'Test',last_name:'Player '+i}}))}];
+act(()=>{root=createRoot($('#root'));root.render(React.createElement(Rotation,{p:trackingPlay}));});
+check('V2 tracking distinguishes potential-assist volume from conversion',$('.context-opportunities').textContent.includes('10.0 Potential assists/game')&&$('.context-opportunities').textContent.includes('50.0%'));
+check('Missing rebound tracking stays unavailable',$('.context-opportunities').textContent.includes('No recent covered games')&&$('.context-opportunities').textContent.includes('Unavailable'));
+check('Expected starters are not labelled provider confirmed',$('.context-opportunities').textContent.includes('Expected starters')&&!$('.context-opportunities').textContent.includes('Provider-confirmed starting five'));
+check('Each pregame starter retains a portrait or initials',$$('.context-starters .player-portrait').length===5);
+act(()=>root.unmount());
 console.log(JSON.stringify({passed:checks.length,checks},null,2));fs.rmSync(tempDir,{recursive:true,force:true});dom.window.close();

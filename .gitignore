@@ -79,3 +79,8 @@ forecast_audit/
 
 !data/v2_rotation_fallbacklog.jsonl
 !data/v2_rotation_fallbacksettled.jsonl
+
+!data/v2_contextlog.jsonl
+!data/v2_contextsettled.jsonl
+
+!data/v2_contextsettled_audit.json

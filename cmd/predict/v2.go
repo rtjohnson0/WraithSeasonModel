@@ -429,6 +429,7 @@ type V2Drops struct {
 
 // v2Rules are the knobs of v2Select.
 type v2Rules struct {
+	ProbabilityFirst   bool
 	Hi, MinEdge        float64
 	MaxGame, MaxPlayer int
 	Gates              map[string]V2Gate
@@ -550,6 +551,9 @@ func v2Select(all []scored, r v2Rules) ([]scored, V2Drops) {
 		}
 		if out[i].Tier != out[j].Tier {
 			return picklog.TierRank(out[i].Tier) < picklog.TierRank(out[j].Tier)
+		}
+		if r.ProbabilityFirst && out[i].Prob != out[j].Prob {
+			return out[i].Prob > out[j].Prob
 		}
 		return out[i].Edge > out[j].Edge
 	})

@@ -7,11 +7,17 @@ import "math"
 const StrictPolicy = "rotation-v2"
 
 const FallbackPolicy = "rotation-v3"
+const ContextPolicy = "rotation-v4"
 
-func ProductionPolicy(policy string) bool { return policy == StrictPolicy || policy == FallbackPolicy }
-func KnownPolicy(policy string) bool      { return policy == Policy || ProductionPolicy(policy) }
+func ProductionPolicy(policy string) bool {
+	return policy == StrictPolicy || policy == FallbackPolicy || policy == ContextPolicy
+}
+func KnownPolicy(policy string) bool { return policy == Policy || ProductionPolicy(policy) }
 
 func Files(policy string) (log, settled string) {
+	if policy == ContextPolicy {
+		return "v2_contextlog.jsonl", "v2_contextsettled.jsonl"
+	}
 	if policy == FallbackPolicy {
 		return "v2_rotation_fallbacklog.jsonl", "v2_rotation_fallbacksettled.jsonl"
 	}
@@ -22,6 +28,9 @@ func Files(policy string) (log, settled string) {
 }
 
 func EvidenceDirectory(policy string) string {
+	if policy == ContextPolicy {
+		return "v2_rotation/context"
+	}
 	if policy == FallbackPolicy {
 		return "v2_rotation/fallback"
 	}

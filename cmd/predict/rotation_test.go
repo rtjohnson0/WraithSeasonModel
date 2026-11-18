@@ -8,6 +8,7 @@ import (
 	"propsmodel/internal/data"
 	"propsmodel/internal/feat"
 	"propsmodel/internal/glm"
+	"propsmodel/internal/lineup"
 	"propsmodel/internal/model"
 	"propsmodel/internal/predictor"
 	"propsmodel/internal/props"
@@ -67,6 +68,28 @@ func TestStaleOutReportDoesNotNumericallyAlterRotation(t *testing.T) {
 	p := predictor.Pred{Minutes: 24}
 	if f.adjust(p, &feat.Row{G: data.PlayerGame{TeamID: 1, PlayerID: 103}}).Minutes != 24 {
 		t.Fatal("baseline changed")
+	}
+}
+
+func TestContextAbsenceScenarioRetainsOpportunityRate(t *testing.T) {
+	rows, roster := rotationFixture()
+	fresh := map[int]availability.Status{102: {PlayerID: 102, Status: "Questionable"}}
+	f := newRotationForecast(rows, roster, fresh, map[int]string{102: "Questionable"}, map[int]props.GameInfo{9: {Home: 1, Visitor: 2}}, "2026-11-09", true)
+	f.contextual = true
+	f.impactCache = map[int][]lineup.Impact{103: {{Kind: "opportunity-production", Effects: []lineup.Effect{{Stat: data.Points, Applied: true, Scale: 1.05}}}}}
+	p := predictor.Pred{Minutes: 24}
+	p.Rate[data.StatIndex(data.Points)] = .5
+	for i := range p.MinNodes {
+		p.MinNodes[i] = 24
+	}
+	row := &feat.Row{G: data.PlayerGame{TeamID: 1, PlayerID: 103}}
+	c := f.context(scored{PlayerID: 103, Stat: data.Points, Side: "OVER", Line: 12.5}, p, row, .5, .5, combo.Corr{})
+	if len(c.Scenarios) != 1 || c.Scenarios[0].Projection == nil {
+		t.Fatal("missing questionable-teammate scenario", c)
+	}
+	s := c.Scenarios[0]
+	if math.Abs(*s.Projection-s.Minutes*.5*1.05) > 1e-9 {
+		t.Fatal("scenario dropped opportunity rate", s)
 	}
 }
 

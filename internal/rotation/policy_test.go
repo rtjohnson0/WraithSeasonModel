@@ -54,3 +54,16 @@ func TestFallbackPolicyHasIsolatedEvidenceAndRecords(t *testing.T) {
 		}
 	}
 }
+
+func TestContextPolicyKeepsItsOwnRecord(t *testing.T) {
+	if !KnownPolicy(ContextPolicy) || !ProductionPolicy(ContextPolicy) {
+		t.Fatal("context policy unavailable")
+	}
+	a, b := Files(ContextPolicy)
+	for _, p := range []string{Policy, StrictPolicy, FallbackPolicy} {
+		c, d := Files(p)
+		if a == c || b == d || EvidenceDirectory(p) == EvidenceDirectory(ContextPolicy) {
+			t.Fatal("records mixed")
+		}
+	}
+}

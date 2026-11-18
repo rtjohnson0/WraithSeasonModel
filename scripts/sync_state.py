@@ -14,6 +14,7 @@ import time
 from pathlib import Path
 
 STATE_FILES = [
+ "v2_contextlog.jsonl", "v2_contextsettled.jsonl", "v2_contextsettled_audit.json",
     "model_refresh.json",
     "gamecal_research.json", "v2_gamepicklog.jsonl", "v2_gamesettled.jsonl",
     "v2_rotation_strictlog.jsonl", "v2_rotation_strictsettled.jsonl",

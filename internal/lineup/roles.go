@@ -4,6 +4,7 @@ import (
 	"math"
 	"propsmodel/internal/data"
 	"propsmodel/internal/linalg"
+	"propsmodel/internal/opportunity"
 	"sort"
 	"time"
 )
@@ -14,19 +15,26 @@ const roleFeatures = 14
 // historical rotations are observed box-score exposures, not known starters or
 // on/off stints; live exposures are projected team rotations.
 type RoleEvidence struct {
-	Before       string    `json:"before"`
-	Games        int       `json:"games"`
-	Days         int       `json:"days"`
-	Features     []float64 `json:"features"`
-	Coefficients []float64 `json:"coefficients"`
-	Baseline     []float64 `json:"baseline"`
-	Projected    []float64 `json:"projected"`
+	OpportunityN    [data.NStats]int     `json:"opportunityN"`
+	OpportunityDays [data.NStats]int     `json:"opportunityDays"`
+	Signals         []opportunity.Signal `json:"signals,omitempty"`
+	PriorRates      []float64            `json:"priorRates,omitempty"`
+	Before          string               `json:"before"`
+	Games           int                  `json:"games"`
+	Days            int                  `json:"days"`
+	Features        []float64            `json:"features"`
+	Coefficients    []float64            `json:"coefficients"`
+	Baseline        []float64            `json:"baseline"`
+	Projected       []float64            `json:"projected"`
 }
 type RoleModel struct {
-	Before string
-	N      [data.NStats]int
-	Days   [data.NStats]int
-	Coef   [data.NStats][]float64
+	Features        int
+	OpportunityN    [data.NStats]int
+	OpportunityDays [data.NStats]int
+	Before          string
+	N               [data.NStats]int
+	Days            [data.NStats]int
+	Coef            [data.NStats][]float64
 }
 type roleProfile struct {
 	minutes float64
@@ -107,21 +115,47 @@ func roleDelta(base, used [7]float64) []float64 {
 	}
 	return x
 }
-func (ix *Index) FitRoles(before string) *RoleModel {
-	model := &RoleModel{Before: before}
+func (ix *Index) FitRoles(before string) *RoleModel { return ix.fitRoles(before, roleFeatures) }
+func (ix *Index) FitContext(before string, ops *opportunity.Index) *RoleModel {
+	ix.opportunities = ops
+	return ix.fitRoles(before, roleFeatures+data.NStats)
+}
+func (ix *Index) fitRoles(before string, features int) *RoleModel {
+	model := &RoleModel{Before: before, Features: features}
+	opportunityDates := [data.NStats]map[string]bool{}
+	for k := range opportunityDates {
+		opportunityDates[k] = map[string]bool{}
+	}
 	var a [data.NStats][][]float64
 	var rhs [data.NStats][]float64
 	dates := [data.NStats]map[string]bool{}
 	for k := range data.Stats {
-		a[k] = make([][]float64, roleFeatures)
-		rhs[k] = make([]float64, roleFeatures)
+		a[k] = make([][]float64, features)
+		rhs[k] = make([]float64, features)
 		dates[k] = map[string]bool{}
 		for j := range a[k] {
-			a[k][j] = make([]float64, roleFeatures)
+			a[k][j] = make([]float64, features)
 			a[k][j][j] = 100
 		}
 	}
-	ix.walkRoleSamples(roleHistoryStart(before), before, func(k int, date string, x []float64, raw, exposure float64) {
+	ix.walkRoleSamples(roleHistoryStart(before), before, func(k int, date string, x []float64, raw, exposure float64, player int, rates [data.NStats]float64) {
+		if features > roleFeatures {
+			extra := make([]float64, data.NStats)
+			if ix.opportunities != nil {
+				for j, s := range ix.opportunities.Signals(player, date, rates) {
+					if s.Available {
+						if j == k {
+							extra[j] = s.Delta
+						}
+						if k == 0 {
+							model.OpportunityN[j]++
+							opportunityDates[j][date] = true
+						}
+					}
+				}
+			}
+			x = append(append([]float64(nil), x...), extra...)
+		}
 		y := math.Max(-1, math.Min(2, raw))
 		model.N[k]++
 		dates[k][date] = true
@@ -136,6 +170,16 @@ func (ix *Index) FitRoles(before string) *RoleModel {
 		model.Days[k] = len(dates[k])
 		if model.N[k] >= 500 && model.Days[k] >= 30 {
 			model.Coef[k], _ = linalg.SolveSPD(a[k], rhs[k])
+		}
+	}
+	for j := range model.OpportunityN {
+		model.OpportunityDays[j] = len(opportunityDates[j])
+		if model.OpportunityN[j] < 300 || model.OpportunityDays[j] < 15 {
+			for k := range model.Coef {
+				if len(model.Coef[k]) > roleFeatures+j {
+					model.Coef[k][roleFeatures+j] = 0
+				}
+			}
 		}
 	}
 	return model
@@ -180,11 +224,18 @@ func (ix *Index) RoleImpact(model *RoleModel, team, player int, date string, ros
 	}
 	b, ok1 := roleExposure(profiles, base, exclude)
 	ok1 = ok1 && changedKnown
-	u, ok2 := roleExposure(profiles, used, exclude)
+	projectedProfiles := map[int]roleProfile{}
+	for pid, p := range profiles {
+		if pos := ix.projectedRoles[pid]; pos != "" {
+			p.pos = pos
+		}
+		projectedProfiles[pid] = p
+	}
+	u, ok2 := roleExposure(projectedProfiles, used, exclude)
 	for k, st := range data.Stats {
 		e := Effect{Stat: st, Scale: 1, Method: "pooled-lineup", Reason: "pooled model or projected-lineup coverage unavailable"}
-		if model != nil && model.Before == date && len(model.Coef[k]) == roleFeatures && ok1 && ok2 {
-			x := make([]float64, roleFeatures)
+		if model != nil && model.Before == date && len(model.Coef[k]) >= roleFeatures && ok1 && ok2 {
+			x := make([]float64, len(model.Coef[k]))
 			offset := 0
 			if opponent {
 				offset = 7
@@ -196,7 +247,7 @@ func (ix *Index) RoleImpact(model *RoleModel, team, player int, date string, ros
 			}
 			e.Scale = math.Max(.95, math.Min(1.05, 1+delta))
 			e.Applied = true
-			e.Role = &RoleEvidence{Before: model.Before, Games: model.N[k], Days: model.Days[k], Features: x, Coefficients: append([]float64(nil), model.Coef[k]...), Baseline: append([]float64(nil), b[:]...), Projected: append([]float64(nil), u[:]...)}
+			e.Role = &RoleEvidence{OpportunityN: model.OpportunityN, OpportunityDays: model.OpportunityDays, Before: model.Before, Games: model.N[k], Days: model.Days[k], Features: x, Coefficients: append([]float64(nil), model.Coef[k]...), Baseline: append([]float64(nil), b[:]...), Projected: append([]float64(nil), u[:]...)}
 			e.Reason = "league-pooled composition model; projected minus baseline exposure; capped at ±5%; unvalidated research"
 		}
 		out.Effects = append(out.Effects, e)
@@ -213,7 +264,7 @@ func sortedIDs[T any](m map[int]T) []int {
 	return ids
 }
 
-func (ix *Index) walkRoleSamples(after, before string, visit func(int, string, []float64, float64, float64)) {
+func (ix *Index) walkRoleSamples(after, before string, visit func(int, string, []float64, float64, float64, int, [data.NStats]float64)) {
 	for _, g := range ix.games {
 		if g.date >= before || g.date < after {
 			continue
@@ -264,7 +315,9 @@ func (ix *Index) walkRoleSamples(after, before string, visit func(int, string, [
 					if prior.rate[k] <= 0 {
 						continue
 					}
-					visit(k, g.date, x, r.Value(st)/r.Minutes/prior.rate[k]-1, prior.rate[k]*r.Minutes)
+					rates := [data.NStats]float64{}
+					copy(rates[:], prior.rate[:data.NStats])
+					visit(k, g.date, x, r.Value(st)/r.Minutes/prior.rate[k]-1, prior.rate[k]*r.Minutes, pid, rates)
 				}
 			}
 		}
@@ -292,8 +345,21 @@ func (ix *Index) StudyRoles(m *RoleModel, through string) []RoleStudy {
 		out[k].Stat = st
 		dates[k] = map[string]bool{}
 	}
-	ix.walkRoleSamples(m.Before, through, func(k int, date string, x []float64, y, exposure float64) {
-		if len(m.Coef[k]) != roleFeatures {
+	ix.walkRoleSamples(m.Before, through, func(k int, date string, x []float64, y, exposure float64, player int, rates [data.NStats]float64) {
+		if len(m.Coef[k]) == roleFeatures+data.NStats {
+			extra := make([]float64, data.NStats)
+			if ix.opportunities != nil {
+				for j, s := range ix.opportunities.Signals(player, date, rates) {
+					if s.Available && m.OpportunityN[j] >= 300 && m.OpportunityDays[j] >= 15 {
+						if j == k {
+							extra[j] = s.Delta
+						}
+					}
+				}
+			}
+			x = append(append([]float64(nil), x...), extra...)
+		}
+		if len(m.Coef[k]) != len(x) {
 			return
 		}
 		delta := 0.
@@ -325,4 +391,79 @@ func NewRoles(rows []data.PlayerGame) *Index {
 		copied[i].AnalyticsReady = copied[i].BoxScoreComplete
 	}
 	return New(copied)
+}
+
+// OpportunityImpact is one component of the joint pooled regression, not an
+// independent bonus. Features use only the scorer's earlier opportunity history.
+func (ix *Index) OpportunityImpact(model *RoleModel, player int, date string) Impact {
+	out := Impact{Kind: "opportunity-production", Reason: "prior opportunity volume and conversion, jointly fitted with lineup composition"}
+	if model == nil || model.Features != roleFeatures+data.NStats || ix.opportunities == nil {
+		return out
+	}
+	// The same per-minute baseline used by the fit; no current game's tracking.
+	prior := ix.roleProfile(player, 0, date)
+	rates := [data.NStats]float64{}
+	copy(rates[:], prior.rate[:data.NStats])
+	signals := ix.opportunities.Signals(player, date, rates)
+	for k, st := range data.Stats {
+		e := Effect{Stat: st, Scale: 1, Method: "pooled-opportunity", Reason: "historical opportunity model unavailable"}
+		if len(model.Coef[k]) == model.Features {
+			x := make([]float64, model.Features)
+			available := false
+			for j, s := range signals {
+				if j == k && s.Available && model.OpportunityN[j] >= 300 && model.OpportunityDays[j] >= 15 {
+					x[roleFeatures+j] = s.Delta
+					available = true
+				}
+			}
+			if available {
+				delta := 0.
+				for j, v := range x {
+					delta += v * model.Coef[k][j]
+				}
+				e.Scale = math.Max(.95, math.Min(1.05, 1+delta))
+				e.Applied = true
+				e.Reason = "pooled opportunity association; no same-game tracking; capped ±5%"
+				e.Role = &RoleEvidence{OpportunityN: model.OpportunityN, OpportunityDays: model.OpportunityDays, Before: model.Before, Games: model.N[k], Days: model.Days[k], Features: x, Coefficients: append([]float64(nil), model.Coef[k]...), Baseline: make([]float64, 7), Projected: make([]float64, 7), Signals: signals, PriorRates: append([]float64(nil), rates[:]...)}
+			}
+		}
+		out.Effects = append(out.Effects, e)
+	}
+	return out
+}
+
+func (ix *Index) SignalsFor(player int, date string) []opportunity.Signal {
+	if ix.opportunities == nil {
+		return nil
+	}
+	prior := ix.roleProfile(player, 0, date)
+	rates := [data.NStats]float64{}
+	copy(rates[:], prior.rate[:data.NStats])
+	return ix.opportunities.Signals(player, date, rates)
+}
+
+// ScaleContext combines components of a jointly fitted linear rate adjustment.
+// It does not multiply separately estimated bonuses and retains the ±8% cap.
+func ScaleContext(impacts []Impact) [data.NStats]float64 {
+	out := [data.NStats]float64{1, 1, 1, 1}
+	for _, i := range impacts {
+		for _, e := range i.Effects {
+			if e.Applied {
+				out[data.StatIndex(e.Stat)] += e.Scale - 1
+			}
+		}
+	}
+	for k, x := range out {
+		out[k] = math.Max(.92, math.Min(1.08, x))
+	}
+	return out
+}
+
+func (ix *Index) SetProjectedRoles(roles map[int]string) { ix.projectedRoles = roles }
+
+func (ix *Index) StylesFor(player int, date string) []opportunity.Metric {
+	if ix.opportunities == nil {
+		return nil
+	}
+	return ix.opportunities.Styles(player, date)
 }

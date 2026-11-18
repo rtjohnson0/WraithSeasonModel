@@ -325,3 +325,12 @@ func TestEdgeRouteLetsInAPlusMoneyOverButNotAThinFavourite(t *testing.T) {
 		t.Errorf("rank by edge, not probability: %+v", got)
 	}
 }
+
+func TestContextRanksProbabilityFirstWithoutRemovingRiskLeans(t *testing.T) {
+	a, b := play(4, data.Rebounds, "UNDER", .70), play(5, data.Rebounds, "OVER", .58)
+	a.Edge, b.Edge = .03, .06
+	got, _ := v2Select([]scored{b, a}, v2Rules{ProbabilityFirst: true, Hi: .55, MinEdge: .01, MaxGame: 4, MaxPlayer: 2})
+	if len(got) != 2 || got[0].PlayerID != 4 {
+		t.Fatal("probability ranking lost candidates", got)
+	}
+}

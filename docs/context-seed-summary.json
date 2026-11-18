@@ -1,0 +1,25 @@
+{
+  "capturedAt": "2026-11-18T17:54:15.932607+00:00",
+  "partial": true,
+  "rawRowsByFile": {
+    "catchshoot_2025.jsonl": 0,
+    "catchshoot_2026.jsonl": 100,
+    "defense_rim_2026.jsonl": 100,
+    "defense_threes_2026.jsonl": 100,
+    "drives_2025.jsonl": 0,
+    "drives_2026.jsonl": 100,
+    "lineup_stats_2026.jsonl": 100,
+    "passing_2025.jsonl": 500,
+    "passing_2026.jsonl": 1100,
+    "possessions_2025.jsonl": 0,
+    "possessions_2026.jsonl": 100,
+    "pullupshot_2025.jsonl": 0,
+    "pullupshot_2026.jsonl": 100,
+    "rebounding_2025.jsonl": 500,
+    "rebounding_2026.jsonl": 1100,
+    "shooting_distance_2026.jsonl": 100
+  },
+  "rawRows": 4000,
+  "projectedLineupReports": 24,
+  "note": "Partial supplemental cache. Rows span different feed types and are not independent player-games. Feed loaders deduplicate. No API keys, models or pick records included."
+}

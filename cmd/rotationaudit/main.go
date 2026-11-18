@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"propsmodel/internal/bets"
+	"propsmodel/internal/data"
 	"propsmodel/internal/lineup"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/predictor"
@@ -378,6 +379,19 @@ func validProductionCapture(r replay.Record) bool {
 	if err != nil {
 		return false
 	}
+	if r.SelectionPolicy == rotation.ContextPolicy {
+		if !validGameContext(r) {
+			return false
+		}
+		for _, p := range r.Rotation.PregameLineups {
+			captured, ec := time.Parse(time.RFC3339Nano, p.Captured)
+			updated, eu := time.Parse(time.RFC3339Nano, p.Updated)
+			tip, et := time.Parse(time.RFC3339Nano, r.Tip)
+			if ec != nil || eu != nil || et != nil || p.Game != r.Row.G.GameID || captured.After(at) || !captured.Before(tip) || updated.After(captured) || len(p.Lineup) != 5 || p.Status != "expected" && p.Status != "confirmed" {
+				return false
+			}
+		}
+	}
 	for _, impact := range r.Rotation.Production {
 		applied := false
 		seen := map[string]bool{}
@@ -398,6 +412,28 @@ func validProductionCapture(r replay.Record) bool {
 		if !applied {
 			continue
 		}
+		if impact.Kind == "opportunity-production" && r.SelectionPolicy == rotation.ContextPolicy {
+			for _, e := range impact.Effects {
+				if !e.Applied || e.Role == nil {
+					continue
+				}
+				for k, s := range e.Role.Signals {
+					if e.Role.Features[14+k] == 0 {
+						continue
+					}
+					if s.Through == "" || s.Through >= r.Date {
+						return false
+					}
+					if k == 1 || k == 2 {
+						stamp, er := time.Parse(time.RFC3339Nano, s.LatestCapture)
+						if er != nil || stamp.After(at) {
+							return false
+						}
+					}
+				}
+			}
+			continue
+		}
 		if len(impact.Missing) == 0 || impact.Team <= 0 {
 			return false
 		}
@@ -408,7 +444,11 @@ func validProductionCapture(r replay.Record) bool {
 			}
 		}
 	}
-	for k, x := range lineup.Scale(r.Rotation.Production) {
+	scales := lineup.Scale(r.Rotation.Production)
+	if r.SelectionPolicy == rotation.ContextPolicy {
+		scales = lineup.ScaleContext(r.Rotation.Production)
+	}
+	for k, x := range scales {
 		if math.IsNaN(r.Policy.Scale[k]) || math.Abs(x-r.Policy.Scale[k]) > 1e-9 {
 			return false
 		}
@@ -419,8 +459,15 @@ func validProductionCapture(r replay.Record) bool {
 // A fallback cannot borrow joint sample counts. Verify its component evidence,
 // neutral remainder and captured scale independently before grading it.
 func validEffectEvidence(e lineup.Effect, impact lineup.Impact, policy string) bool {
+	if e.Method == "pooled-opportunity" {
+		return validOpportunity(e, policy)
+	}
 	if e.Method == "pooled-lineup" {
-		if policy != rotation.FallbackPolicy || e.Role == nil || e.Role.Games < 500 || e.Role.Days < 30 || len(e.Role.Features) != 14 || len(e.Role.Coefficients) != 14 || len(e.Role.Baseline) != 7 || len(e.Role.Projected) != 7 {
+		features := 14
+		if policy == rotation.ContextPolicy {
+			features = 18
+		}
+		if (policy != rotation.FallbackPolicy && policy != rotation.ContextPolicy) || e.Role == nil || e.Role.Games < 500 || e.Role.Days < 30 || len(e.Role.Features) != features || len(e.Role.Coefficients) != features || len(e.Role.Baseline) != 7 || len(e.Role.Projected) != 7 {
 			return false
 		}
 		delta := 0.
@@ -439,6 +486,13 @@ func validEffectEvidence(e lineup.Effect, impact lineup.Impact, policy string) b
 			expected := math.Max(-1, math.Min(1, (u-b)/math.Max(floors[k], b)))
 			if math.Abs(e.Role.Features[offset+k]-expected) > 1e-9 || e.Role.Features[(7-offset)+k] != 0 {
 				return false
+			}
+		}
+		if policy == rotation.ContextPolicy {
+			for _, x := range e.Role.Features[14:] {
+				if x != 0 {
+					return false
+				}
 			}
 		}
 		for i, x := range e.Role.Features {
@@ -486,4 +540,58 @@ func spreadGroup(spread float64) string {
 	default:
 		return "blowout risk (10+)"
 	}
+}
+
+func validOpportunity(e lineup.Effect, policy string) bool {
+	if policy != rotation.ContextPolicy || e.Role == nil || e.Role.Games < 500 || e.Role.Days < 30 || len(e.Role.Features) != 18 || len(e.Role.Coefficients) != 18 || len(e.Role.Signals) != 4 || len(e.Role.PriorRates) != 4 {
+		return false
+	}
+	delta := 0.
+	for i, x := range e.Role.Features {
+		b := e.Role.Coefficients[i]
+		if math.IsNaN(x) || math.IsInf(x, 0) || math.IsNaN(b) || math.IsInf(b, 0) || math.Abs(x) > 1 {
+			return false
+		}
+		if i < 14 && x != 0 {
+			return false
+		}
+		delta += x * b
+	}
+	for k, s := range e.Role.Signals {
+		x := e.Role.Features[14+k]
+		if x != 0 && k != data.StatIndex(e.Stat) {
+			return false
+		}
+		if x == 0 {
+			continue
+		}
+		if !s.Available || s.Games < 3 || s.Minutes <= 0 || s.Chances < 0 || s.Conversion < 0 || math.IsNaN(s.Rate) || e.Role.PriorRates[k] <= 0 || e.Role.OpportunityN[k] < 300 || e.Role.OpportunityDays[k] < 15 {
+			return false
+		}
+		expectedRate := s.Chances / s.Minutes * s.Conversion
+		expected := math.Max(-1, math.Min(1, expectedRate/e.Role.PriorRates[k]-1))
+		if math.Abs(s.Rate-expectedRate) > 1e-9 || math.Abs(x-expected) > 1e-9 {
+			return false
+		}
+	}
+	return math.Abs(e.Scale-math.Max(.95, math.Min(1.05, 1+delta))) < 1e-9
+}
+func validGameContext(r replay.Record) bool {
+	e := r.Rotation.GameContext
+	if e == nil || !e.Applied {
+		return true
+	}
+	if e.Before != r.Date || e.N < 1000 || e.Days < 30 || len(e.Coefficients) != 3 || math.Abs(e.Spread) > 30 || e.Typical <= 0 {
+		return false
+	}
+	x := []float64{math.Abs(e.Spread) / 10, math.Abs(e.Spread) / 10 * e.Typical / 36, e.Spread / 10}
+	ref := []float64{e.Reference / 10, e.Reference / 10 * e.Typical / 36, e.ReferenceSigned / 10}
+	delta := 0.
+	for i, c := range e.Coefficients {
+		if math.IsNaN(c) || math.IsInf(c, 0) {
+			return false
+		}
+		delta += (x[i] - ref[i]) * c
+	}
+	return !math.IsNaN(e.Shift) && math.Abs(e.Shift-math.Max(-3, math.Min(3, delta))) < 1e-9
 }

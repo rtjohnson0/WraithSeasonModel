@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"math"
 	"propsmodel/internal/data"
+	"propsmodel/internal/gamecontext"
 	"propsmodel/internal/lineup"
+	"propsmodel/internal/opportunity"
 	"sort"
 )
 
@@ -38,24 +40,29 @@ type Replacement struct {
 	Projected float64 `json:"projected"`
 }
 type Context struct {
-	OwnReplacements      []Replacement        `json:"ownReplacements,omitempty"`
-	OpponentReplacements []Replacement        `json:"opponentReplacements,omitempty"`
-	Production           []lineup.Impact      `json:"production,omitempty"`
-	RateScale            [data.NStats]float64 `json:"rateScale"`
-	AllocationApplied    bool                 `json:"allocationApplied"`
-	RelevantOut          []int                `json:"relevantOut,omitempty"`
-	OwnStatus            string               `json:"ownStatus,omitempty"`
-	Policy               string               `json:"policy"`
-	BaselineMinutes      float64              `json:"baselineMinutes"`
-	AllocationMinutes    float64              `json:"allocationMinutes"`
-	UsedMinutes          float64              `json:"usedMinutes"`
-	TeamMinutes          float64              `json:"teamMinutes"`
-	TeamGames            int                  `json:"teamGames"`
-	MatchedGames         int                  `json:"matchedGames"`
-	Supported            bool                 `json:"supported"`
-	Reason               string               `json:"reason"`
-	ConfirmedOut         []Status             `json:"confirmedOut"`
-	Scenarios            []Scenario           `json:"scenarios,omitempty"`
+	TrackingProfile      []opportunity.Metric    `json:"trackingProfile,omitempty"`
+	GameContext          *gamecontext.Estimate   `json:"gameContext,omitempty"`
+	WorkloadScenarios    []Scenario              `json:"workloadScenarios,omitempty"`
+	Opportunities        []opportunity.Signal    `json:"opportunities,omitempty"`
+	PregameLineups       []opportunity.Projected `json:"pregameLineups,omitempty"`
+	OwnReplacements      []Replacement           `json:"ownReplacements,omitempty"`
+	OpponentReplacements []Replacement           `json:"opponentReplacements,omitempty"`
+	Production           []lineup.Impact         `json:"production,omitempty"`
+	RateScale            [data.NStats]float64    `json:"rateScale"`
+	AllocationApplied    bool                    `json:"allocationApplied"`
+	RelevantOut          []int                   `json:"relevantOut,omitempty"`
+	OwnStatus            string                  `json:"ownStatus,omitempty"`
+	Policy               string                  `json:"policy"`
+	BaselineMinutes      float64                 `json:"baselineMinutes"`
+	AllocationMinutes    float64                 `json:"allocationMinutes"`
+	UsedMinutes          float64                 `json:"usedMinutes"`
+	TeamMinutes          float64                 `json:"teamMinutes"`
+	TeamGames            int                     `json:"teamGames"`
+	MatchedGames         int                     `json:"matchedGames"`
+	Supported            bool                    `json:"supported"`
+	Reason               string                  `json:"reason"`
+	ConfirmedOut         []Status                `json:"confirmedOut"`
+	Scenarios            []Scenario              `json:"scenarios,omitempty"`
 }
 type Allocation struct {
 	RoleProjected bool            `json:"roleProjected"`
