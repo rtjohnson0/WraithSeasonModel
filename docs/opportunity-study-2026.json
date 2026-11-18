@@ -1,0 +1,59 @@
+{
+  "Note": "Held-out conditional study uses observed later rotation minutes. NOT a pregame backtest, injury-effect validation, or evidence of pick accuracy. Live uses projected rotations; error there is not measured here.",
+  "FitBefore": "2026-01-01",
+  "Through": "2026-07-01",
+  "TrainingPlayerGames": [
+    36504,
+    36500,
+    36419,
+    33202
+  ],
+  "TrainingDates": [
+    410,
+    410,
+    410,
+    410
+  ],
+  "OpportunityTrainingPlayerGames": [
+    33903,
+    0,
+    0,
+    30894
+  ],
+  "OpportunityTrainingDates": [
+    398,
+    0,
+    0,
+    398
+  ],
+  "Stats": [
+    {
+      "stat": "points",
+      "playerGames": 13834,
+      "dates": 139,
+      "baselineMae": 4.22994061146014,
+      "compositionMae": 4.18294611031851
+    },
+    {
+      "stat": "rebounds",
+      "playerGames": 13832,
+      "dates": 139,
+      "baselineMae": 1.820710161460624,
+      "compositionMae": 1.8307409764777998
+    },
+    {
+      "stat": "assists",
+      "playerGames": 13813,
+      "dates": 139,
+      "baselineMae": 1.3880832929395641,
+      "compositionMae": 1.3936589986753314
+    },
+    {
+      "stat": "threes",
+      "playerGames": 12595,
+      "dates": 139,
+      "baselineMae": 1.0216127703121973,
+      "compositionMae": 1.013400530416884
+    }
+  ]
+}

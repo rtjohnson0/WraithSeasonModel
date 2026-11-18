@@ -199,3 +199,11 @@ main,.top,.foot,.sample { width:min(100% - 56px,1280px); }
 #overs-watch .recent-form {flex-wrap:wrap;}
 #overs-watch .section-heading {flex-wrap:wrap;gap:12px;}
 @media(max-width:1000px) {#overs-watch > .over-comparison-grid {grid-template-columns:minmax(0,1fr);}}
+
+.context-opportunities {margin:18px 0;border-top:1px solid #b18ac229;padding-top:12px;min-width:0;}
+.context-starters {display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin:12px 0;}
+.context-starters>div {display:flex;align-items:center;gap:8px;min-width:0;}
+.context-starters .player-portrait {width:36px;height:44px;flex:none;}
+.context-starters>div>span:last-child {font-size:11px;overflow-wrap:anywhere;}
+.context-starters small {display:block;color:#bca6d6;font-size:9px;}
+.context-opportunities table td small {display:block;font-size:9px;max-width:220px;}

@@ -65,6 +65,8 @@ func main() {
 	switch cmd {
 	case "stats":
 		err = runStats(c, args)
+	case "context":
+		err = runContext(c, args)
 	case "advanced":
 		err = runAdvanced(c, args)
 	case "props":
@@ -96,6 +98,8 @@ func usage() {
 commands:
   players                          current team of every active player (fixes trades and free agency)
   stats     -seasons 2022,2023     per-game player stats (minutes, pts, reb, ast); add -new for a fast daily refresh
+  context -seasons 2026,2025 -maxminutes 3  resumable tracking, shot defense, shooting and lineup-stat downloads
+  context -live [-date D]           pregame expected/confirmed starting lineups
   advanced  -seasons 2022,2023     per-game advanced stats (usage, pace, shares); add -new for a fast daily refresh
   props     -season 2025           opening player-prop lines for that season's games
   gameodds  -season 2025           opening spread, moneyline and total for that season's games

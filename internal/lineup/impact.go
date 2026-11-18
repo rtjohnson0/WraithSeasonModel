@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"propsmodel/internal/data"
+	"propsmodel/internal/opportunity"
 )
 
 type Profile struct {
@@ -51,8 +52,10 @@ type game struct {
 	valid bool
 }
 type Index struct {
-	games   []*game
-	history map[int][]data.PlayerGame
+	opportunities  *opportunity.Index
+	projectedRoles map[int]string
+	games          []*game
+	history        map[int][]data.PlayerGame
 }
 
 func finite(x float64) bool { return !math.IsNaN(x) && !math.IsInf(x, 0) }

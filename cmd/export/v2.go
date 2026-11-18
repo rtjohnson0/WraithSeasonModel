@@ -135,6 +135,13 @@ func buildV2(dir string, form Form) *V2Site {
 		site.Archive = &ArchiveData{Record: buildRecord(oldSingles, 600)}
 	}
 	site.HistoricalCombos = buildComboRecord(oldCombos, 120)
+	if f.Info != nil && f.Info.Policy == rotation.ContextPolicy {
+		for gi := range site.Board.Games {
+			for pi := range site.Board.Games[gi].Plays {
+				site.Board.Games[gi].Plays[pi].ProbabilityBasis = "estimate"
+			}
+		}
+	}
 	site.Record.ProvenanceNote = "Verified pregame quotes and identity-checked final actuals only. V2 remains an experimental model."
 	site.Board.Overs = f.Overs
 	if site.Info != nil && site.Info.Gates == nil {

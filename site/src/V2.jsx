@@ -21,7 +21,7 @@ export default function V2({ site }) {
       <section className="day">
         <h1>V2 test</h1>
         <p className="small">Experimental model · separate picks and record · paper tracking.</p>
-        {['rotation-v1','rotation-v2','rotation-v3'].includes(v2.info?.policy) && <p className="notice">Rotation research evaluates confirmed absences and team minutes. {v2.info?.policy === 'rotation-v3' ? 'The lineup-composition experiment projects replacement minutes and learns production associations across teams.' : 'The supported-only policy retains baseline minutes when evidence is insufficient.'} Questionable-player scenarios appear inside each play. This version has a fresh, separate record.</p>}
+        {['rotation-v1','rotation-v2','rotation-v3','rotation-v4'].includes(v2.info?.policy) && <p className="notice">Rotation research evaluates confirmed absences and team minutes. {['rotation-v3','rotation-v4'].includes(v2.info?.policy) ? 'The lineup-composition experiment projects replacement minutes and learns production associations across teams.' : 'The supported-only policy retains baseline minutes when evidence is insufficient.'} Questionable-player scenarios appear inside each play. This version has a fresh, separate record.</p>}
         <div className="v2-status"><span><b>{v2.board?.plays||0}</b> plays on this board</span><span><b>{v2.info?.strong||0}</b> strong</span><span><b>{v2.info?.lean||0}</b> leans</span><a href="#/about">How V2 works ↗</a></div>
         <Seg
           label="V2 section"

@@ -457,8 +457,12 @@ func main() {
 		}
 		roleHistory = rotationRows
 		rotations = newRotationForecast(rotationRows, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date, rotation.ProductionPolicy(*rotationPolicy))
-		rotations.fallback = *rotationPolicy == rotation.FallbackPolicy
+		rotations.fallback = *rotationPolicy == rotation.FallbackPolicy || *rotationPolicy == rotation.ContextPolicy
+		rotations.contextual = *rotationPolicy == rotation.ContextPolicy
 		rotations.configureRoles(rotationRows)
+		if err := rotations.configureContext(*dir, rotationRows, games, runAt); err != nil {
+			fatal(err)
+		}
 		rotations.configureProduction(m)
 		v2model = rotations.policy() + " · joint team allocation; uncalibrated experiment"
 		if rotations.strict {
@@ -989,7 +993,7 @@ func main() {
 	var v2Overs []OverWatch
 	var v2Meta *V2Info
 	if *useV2 && gid == 0 {
-		rules := v2Rules{Hi: *hi, MinEdge: *minEdge, MaxGame: *maxGame, MaxPlayer: *maxPlayer, Gates: v2gates, MinBooks: *v2Books, KeepDisagree: *v2Keep, EdgeBar: *v2Edge, MaxJuice: *v2Juice}
+		rules := v2Rules{ProbabilityFirst: rotations != nil && rotations.contextual, Hi: *hi, MinEdge: *minEdge, MaxGame: *maxGame, MaxPlayer: *maxPlayer, Gates: v2gates, MinBooks: *v2Books, KeepDisagree: *v2Keep, EdgeBar: *v2Edge, MaxJuice: *v2Juice}
 		if rotations != nil {
 			rules.EdgeBar = 0
 		}

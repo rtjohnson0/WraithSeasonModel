@@ -28,6 +28,7 @@ on:
         options: [bootstrap, daily, pretip, site]
 
 permissions:
+  actions: read
   contents: write
   pages: write
   id-token: write
@@ -95,6 +96,7 @@ jobs:
           path: |
             data/stats_*.jsonl
             data/advanced_*.jsonl
+            data/context
             data/snapshots
             data/players_active.jsonl
             data/opening_props_*.jsonl
@@ -102,6 +104,12 @@ jobs:
             data/opening_games_*.jsonl
           key: inputs-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: inputs-v2-${{ github.ref_name }}-
+
+      - name: Import latest background tracking batch
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/import_context_artifact.py || echo "Background context import unavailable; cached inputs retained"
 
       - name: Restore immutable pregame decision evidence
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
@@ -243,6 +251,7 @@ jobs:
           path: |
             data/stats_*.jsonl
             data/advanced_*.jsonl
+            data/context
             data/snapshots
             data/players_active.jsonl
             data/opening_props_*.jsonl

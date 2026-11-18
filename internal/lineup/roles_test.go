@@ -1,6 +1,7 @@
 package lineup
 
 import (
+	"math"
 	"propsmodel/internal/data"
 	"reflect"
 	"testing"
@@ -54,5 +55,12 @@ func TestPooledRoleFitExcludesSameDayAndFutureAndDoesNotNeedMatchingAbsences(t *
 		if e.Applied {
 			t.Fatal("unknown replacement changed rates", got)
 		}
+	}
+}
+
+func TestContextComponentsAddWithoutMultiplyingBonuses(t *testing.T) {
+	impacts := []Impact{{Effects: []Effect{{Stat: data.Points, Scale: .97, Applied: true}}}, {Effects: []Effect{{Stat: data.Points, Scale: 1.04, Applied: true}}}}
+	if got := ScaleContext(impacts)[0]; math.Abs(got-1.01) > 1e-9 {
+		t.Fatal(got)
 	}
 }

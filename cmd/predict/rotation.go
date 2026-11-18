@@ -11,8 +11,11 @@ import (
 	"propsmodel/internal/combo"
 	"propsmodel/internal/data"
 	"propsmodel/internal/feat"
+	"propsmodel/internal/gamecontext"
 	"propsmodel/internal/lineup"
 	"propsmodel/internal/model"
+	"propsmodel/internal/opportunity"
+	"propsmodel/internal/pipeline"
 	"propsmodel/internal/predictor"
 	"propsmodel/internal/props"
 	"propsmodel/internal/replay"
@@ -28,6 +31,10 @@ type rotationForecast struct {
 	learnedOpp  bool
 	strict      bool
 	fallback    bool
+	contextual  bool
+	gameMinutes *gamecontext.Model
+	primary     *predictor.Model
+	pregame     map[int]opportunity.Projected
 	roleModel   *lineup.RoleModel
 	positions   map[int]string
 	impacts     *lineup.Index
@@ -165,6 +172,9 @@ func newRotationForecast(rows []data.PlayerGame, roster map[int]int, fresh map[i
 	return f
 }
 func (f *rotationForecast) policy() string {
+	if f.contextual {
+		return rotation.ContextPolicy
+	}
 	if f.fallback {
 		return rotation.FallbackPolicy
 	}
@@ -195,6 +205,7 @@ func (f *rotationForecast) target(a rotation.Allocation, pid int) (float64, bool
 
 // Avoid stacking research rates on an already fitted absence-feature model.
 func (f *rotationForecast) configureProduction(m *predictor.Model) {
+	f.primary = m
 	if !f.strict {
 		return
 	}
@@ -232,6 +243,9 @@ func (f *rotationForecast) rateImpacts(row *feat.Row) []lineup.Impact {
 	if a := f.teams[opp]; a.Valid {
 		result = append(result, f.estimateImpact(opp, row.G.PlayerID, f.date, f.roster, a.Out, true))
 	}
+	if f.contextual {
+		result = append(result, f.impacts.OpportunityImpact(f.roleModel, row.G.PlayerID, f.date))
+	}
 	for i := range result {
 		if (result[i].Kind == "teammate-production" && f.learnedOwn) || (result[i].Kind == "opponent-allowance" && f.learnedOpp) {
 			result[i].Reason = "research rates disabled: model already has learned absence features"
@@ -258,7 +272,18 @@ func (f *rotationForecast) adjustments(row *feat.Row) predictor.Adjustments {
 		a.TargetMinutes = &target
 	}
 	if f.strict {
-		a.Scale = lineup.Scale(f.rateImpacts(row))
+		a.Scale = f.rateScale(f.rateImpacts(row))
+	}
+	if f.contextual && f.primary != nil && f.gameMinutes != nil {
+		e := f.gameEstimate(row)
+		if e.Applied {
+			target := f.primary.Forecast(row, predictor.Adjustments{}).Minutes
+			if a.TargetMinutes != nil {
+				target = *a.TargetMinutes
+			}
+			target = math.Max(1, math.Min(48, target+e.Shift))
+			a.TargetMinutes = &target
+		}
 	}
 	return a
 }
@@ -281,8 +306,20 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 		c.OwnReplacements = f.replacements(row.G.TeamID)
 		c.OpponentReplacements = f.replacements(f.opponents[row.G.TeamID])
 	}
+	if f.contextual {
+		c.Opportunities = f.impacts.SignalsFor(row.G.PlayerID, f.date)
+		c.TrackingProfile = f.impacts.StylesFor(row.G.PlayerID, f.date)
+		e := f.gameEstimate(row)
+		c.GameContext = &e
+		c.WorkloadScenarios = f.workloadScenarios(s, base, row, market, weight)
+		for _, team := range []int{row.G.TeamID, f.opponents[row.G.TeamID]} {
+			if p, ok := f.pregame[team]; ok {
+				c.PregameLineups = append(c.PregameLineups, p)
+			}
+		}
+	}
 	c.Production = f.rateImpacts(row)
-	c.RateScale = lineup.Scale(c.Production)
+	c.RateScale = f.rateScale(c.Production)
 	_, c.AllocationApplied = f.target(a, s.PlayerID)
 	if f.strict && !c.AllocationApplied {
 		c.Supported = false
@@ -334,20 +371,25 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 			}
 			impacts := []lineup.Impact{ownImpact}
 			for _, impact := range c.Production {
-				if impact.Kind == "opponent-allowance" {
+				if impact.Kind == "opponent-allowance" || (f.contextual && impact.Kind == "opportunity-production") {
 					impacts = append(impacts, impact)
 				}
 			}
 			if f.learnedOwn {
 				impacts = impacts[1:]
 			}
-			for k, scale := range lineup.Scale(impacts) {
+			for k, scale := range f.rateScale(impacts) {
 				p = p.Scaled(data.Stats[k], scale)
 			}
 		}
 		_, applied := f.target(alt, s.PlayerID)
 		if applied {
 			p = p.WithTargetMinutes(target)
+		}
+		if f.contextual {
+			if e := f.gameEstimate(row); e.Applied {
+				p = p.WithTargetMinutes(math.Max(1, math.Min(48, p.Minutes+e.Shift)))
+			}
 		}
 		scenario := rotation.Scenario{PlayerID: pid, Player: st.Name, Status: st.Status, Minutes: p.Minutes, MatchedGames: alt.MatchedGames, Supported: alt.Supported && (!f.strict || applied)}
 		projection := 0.
@@ -387,7 +429,9 @@ func (f *rotationForecast) decorate(s scored, base predictor.Pred, row *feat.Row
 				relevant = relevant || part == e.Stat
 			}
 			if relevant && e.Applied {
-				if e.Method == "pooled-lineup" && e.Role != nil {
+				if e.Method == "pooled-opportunity" && e.Role != nil {
+					s.Why = addWhy(s.Why, fmt.Sprintf("V2 opportunity component: %s rate %+.1f%% from earlier chances and conversion; experimental", e.Stat, (e.Scale-1)*100))
+				} else if e.Method == "pooled-lineup" && e.Role != nil {
 					s.Why = addWhy(s.Why, fmt.Sprintf("V2 %s: %s rate %+.1f%% (league-pooled projected rotation; %d training player-games / %d dates); experimental", impact.Kind, e.Stat, (e.Scale-1)*100, e.Role.Games, e.Role.Days))
 				} else if e.Method == "individual-mixture" {
 					s.Why = addWhy(s.Why, fmt.Sprintf("V2 %s: %s rate %+.1f%% (individual-absence mixture; %d supported components; no stacking); experimental", impact.Kind, e.Stat, (e.Scale-1)*100, len(e.Evidence)))
@@ -590,5 +634,123 @@ func (f *rotationForecast) replacements(team int) []rotation.Replacement {
 		}
 		return out[i].PlayerID < out[j].PlayerID
 	})
+	return out
+}
+
+func (f *rotationForecast) rateScale(impacts []lineup.Impact) [data.NStats]float64 {
+	if f.contextual {
+		return lineup.ScaleContext(impacts)
+	}
+	return lineup.Scale(impacts)
+}
+func (f *rotationForecast) configureContext(dir string, rows []data.PlayerGame, games map[int]props.GameInfo, asof time.Time) error {
+	if !f.contextual {
+		return nil
+	}
+	op, e := opportunity.Load(dir, rows)
+	if e != nil {
+		return e
+	}
+	op.AsOf = asof
+	f.roleModel = f.impacts.FitContext(f.date, op)
+	f.gameMinutes = gamecontext.Fit(rows, pipeline.LoadGameLines(dir, rows), f.date)
+	f.pregame, e = opportunity.LoadPregame(filepath.Join(dir, "snapshots", "projected_lineups_"+f.date+".jsonl"), games, f.roster, asof)
+	if e != nil {
+		return e
+	}
+	for team, p := range f.pregame {
+		conflict := false
+		for _, s := range p.Lineup {
+			if st, ok := f.statuses[s.Player.ID]; ok && strings.EqualFold(strings.TrimSpace(st.Status), "out") {
+				conflict = true
+			}
+		}
+		if conflict {
+			delete(f.pregame, team)
+		}
+	}
+	for _, p := range f.pregame {
+		for _, s := range p.Lineup {
+			f.positions[s.Player.ID] = lineup.Position(s.Position)
+		}
+	}
+	for team, a := range f.teams {
+		f.teams[team] = rotation.ProjectRoles(a, f.positions)
+	}
+	for team, ss := range f.scenarios {
+		for pid, a := range ss {
+			f.scenarios[team][pid] = rotation.ProjectRoles(a, f.positions)
+		}
+	}
+	f.impactCache = map[int][]lineup.Impact{}
+	f.impacts.SetProjectedRoles(f.positions)
+	fmt.Printf("Context opportunities loaded: %v; projected/confirmed pregame lineups: %d teams.\n", op.Coverage, len(f.pregame))
+	return nil
+}
+
+func (f *rotationForecast) gameEstimate(row *feat.Row) gamecontext.Estimate {
+	if f.gameMinutes == nil {
+		return gamecontext.Estimate{Reason: "historical pregame spread model unavailable"}
+	}
+	signed := row.AbsSpread()
+	ci, _ := feat.FeatureIndex("fav_spread", data.Points)
+	if ci >= 0 && ci < len(row.X) {
+		signed = row.X[ci]
+	}
+	e := f.gameMinutes.Estimate(f.date, signed, row.TypicalMinutes())
+	if f.primary != nil && f.primary.Minutes != nil {
+		for i, name := range f.primary.Minutes.Names {
+			if (name == "abs_spread" || name == "fav_spread" || name == "star_spread") && i < len(f.primary.Minutes.Coef) && math.Abs(f.primary.Minutes.Coef[i]) > 1e-8 {
+				e.Applied = false
+				e.Shift = 0
+				e.Reason = "primary minutes model already includes a fitted spread effect; extra adjustment suppressed"
+				break
+			}
+		}
+	}
+	return e
+}
+
+// These are sensitivity scenarios from the existing minutes distribution, not
+// independent probabilities of a blowout or confidence intervals on hit rate.
+func (f *rotationForecast) workloadScenarios(s scored, base predictor.Pred, row *feat.Row, market, weight float64) []rotation.Scenario {
+	if s.Stat.IsCombo() {
+		return nil
+	}
+	p := f.adjust(base, row)
+	type node struct{ minutes, weight float64 }
+	var nodes []node
+	for i, m := range p.MinNodes {
+		nodes = append(nodes, node{m, p.NodeWeight(i)})
+	}
+	sort.Slice(nodes, func(i, j int) bool { return nodes[i].minutes < nodes[j].minutes })
+	quant := func(q float64) float64 {
+		sum := 0.
+		for _, n := range nodes {
+			sum += n.weight
+			if sum >= q {
+				return n.minutes
+			}
+		}
+		return p.Minutes
+	}
+	var out []rotation.Scenario
+	for i, minutes := range []float64{quant(.1), quant(.9)} {
+		label := "Lower minutes scenario"
+		if i == 1 {
+			label = "Higher minutes scenario"
+		}
+		trial := p.WithMinutes(minutes)
+		prob, e := trial.ProbOver(s.Stat, s.Line)
+		if e != nil {
+			continue
+		}
+		value := blend(prob.Over, market, weight)
+		if s.Side == "UNDER" {
+			value = 1 - value
+		}
+		projection := trial.Mean(s.Stat)
+		out = append(out, rotation.Scenario{Player: label, Minutes: trial.Minutes, Projection: &projection, Probability: &value})
+	}
 	return out
 }
