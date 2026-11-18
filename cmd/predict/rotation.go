@@ -28,6 +28,8 @@ type rotationForecast struct {
 	learnedOpp  bool
 	strict      bool
 	fallback    bool
+	roleModel   *lineup.RoleModel
+	positions   map[int]string
 	impacts     *lineup.Index
 	impactCache map[int][]lineup.Impact
 	roster      map[int]int
@@ -172,6 +174,18 @@ func (f *rotationForecast) policy() string {
 	return rotation.Policy
 }
 func (f *rotationForecast) target(a rotation.Allocation, pid int) (float64, bool) {
+	if f.fallback {
+		if !a.Valid || len(a.RelevantOut) == 0 || (!a.RoleProjected && a.MatchedGames < 3) {
+			return 0, false
+		}
+		for _, p := range a.Out {
+			if p == pid {
+				return 0, false
+			}
+		}
+		target, ok := a.Minutes[pid]
+		return target, ok && target > 0 && target <= 48
+	}
 	if f.strict {
 		return rotation.SupportedTarget(a, pid)
 	}
@@ -195,7 +209,10 @@ func (f *rotationForecast) configureProduction(m *predictor.Model) {
 }
 func (f *rotationForecast) estimateImpact(team, player int, date string, roster map[int]int, outs []int, opponent bool) lineup.Impact {
 	if f.fallback {
-		return f.impacts.EstimateFallback(team, player, date, roster, outs, opponent)
+		a := f.teams[team]
+		if a.Valid {
+			return f.impacts.RoleImpact(f.roleModel, team, player, date, roster, outs, opponent, a.Baseline, a.Minutes)
+		}
 	}
 	return f.impacts.Estimate(team, player, date, roster, outs, opponent)
 }
@@ -260,12 +277,19 @@ func (f *rotationForecast) adjust(p predictor.Pred, row *feat.Row) predictor.Pre
 func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row, market, weight float64, corr combo.Corr) *rotation.Context {
 	a := f.teams[row.G.TeamID]
 	c := &rotation.Context{OwnStatus: s.Maybe, Policy: f.policy(), RelevantOut: append([]int(nil), a.RelevantOut...), BaselineMinutes: base.Minutes, AllocationMinutes: base.Minutes, UsedMinutes: s.ProjMin, TeamGames: a.TeamGames, MatchedGames: a.MatchedGames, Supported: a.Valid && a.Supported, Reason: a.Reason}
+	if f.fallback {
+		c.OwnReplacements = f.replacements(row.G.TeamID)
+		c.OpponentReplacements = f.replacements(f.opponents[row.G.TeamID])
+	}
 	c.Production = f.rateImpacts(row)
 	c.RateScale = lineup.Scale(c.Production)
 	_, c.AllocationApplied = f.target(a, s.PlayerID)
 	if f.strict && !c.AllocationApplied {
 		c.Supported = false
 		c.Reason = "baseline minutes retained: no supported joint-absence target; " + a.Reason
+		if f.fallback {
+			c.Reason = "baseline minutes retained: no usable projected replacement target; " + a.Reason
+		}
 	}
 	if a.Valid {
 		if target, ok := a.Minutes[s.PlayerID]; ok {
@@ -304,7 +328,11 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 		st := f.statuses[pid]
 		p := base
 		if f.strict {
-			impacts := []lineup.Impact{f.estimateImpact(row.G.TeamID, s.PlayerID, f.date, f.roster, alt.Out, false)}
+			ownImpact := f.estimateImpact(row.G.TeamID, s.PlayerID, f.date, f.roster, alt.Out, false)
+			if f.fallback {
+				ownImpact = f.impacts.RoleImpact(f.roleModel, row.G.TeamID, s.PlayerID, f.date, f.roster, alt.Out, false, alt.Baseline, alt.Minutes)
+			}
+			impacts := []lineup.Impact{ownImpact}
 			for _, impact := range c.Production {
 				if impact.Kind == "opponent-allowance" {
 					impacts = append(impacts, impact)
@@ -359,7 +387,9 @@ func (f *rotationForecast) decorate(s scored, base predictor.Pred, row *feat.Row
 				relevant = relevant || part == e.Stat
 			}
 			if relevant && e.Applied {
-				if e.Method == "individual-mixture" {
+				if e.Method == "pooled-lineup" && e.Role != nil {
+					s.Why = addWhy(s.Why, fmt.Sprintf("V2 %s: %s rate %+.1f%% (league-pooled projected rotation; %d training player-games / %d dates); experimental", impact.Kind, e.Stat, (e.Scale-1)*100, e.Role.Games, e.Role.Days))
+				} else if e.Method == "individual-mixture" {
 					s.Why = addWhy(s.Why, fmt.Sprintf("V2 %s: %s rate %+.1f%% (individual-absence mixture; %d supported components; no stacking); experimental", impact.Kind, e.Stat, (e.Scale-1)*100, len(e.Evidence)))
 				} else {
 					s.Why = addWhy(s.Why, fmt.Sprintf("V2 %s: %s rate %+.1f%% (%d joint-out / %d present games); experimental", impact.Kind, e.Stat, (e.Scale-1)*100, e.Without, e.With))
@@ -491,4 +521,74 @@ func writeRotationEvidence(dir, date string, at time.Time, f *rotationForecast) 
 		return e
 	}
 	return os.WriteFile(filepath.Join(root, "rotation_"+date+".json"), b, 0644)
+}
+
+// Configure the candidate once per run. The historical fit ends strictly before
+// the forecast date and is reused across all quotes and uncertain-out scenarios.
+func (f *rotationForecast) configureRoles(rows []data.PlayerGame) {
+	if !f.fallback {
+		return
+	}
+	f.impacts = lineup.NewRoles(rows)
+	f.roleModel = f.impacts.FitRoles(f.date)
+	f.positions = map[int]string{}
+	latest := map[int]string{}
+	for _, r := range rows {
+		if r.Date < f.date && r.Minutes > 0 && r.Date >= latest[r.PlayerID] && f.roster[r.PlayerID] == r.TeamID {
+			f.positions[r.PlayerID] = lineup.Position(r.Pos)
+			latest[r.PlayerID] = r.Date
+		}
+	}
+	for team, a := range f.teams {
+		f.teams[team] = rotation.ProjectRoles(a, f.positions)
+	}
+	for team, ss := range f.scenarios {
+		for pid, a := range ss {
+			f.scenarios[team][pid] = rotation.ProjectRoles(a, f.positions)
+		}
+	}
+	f.impactCache = map[int][]lineup.Impact{}
+}
+
+func (f *rotationForecast) cloneForRoles() *rotationForecast {
+	shadow := *f
+	shadow.teams = map[int]rotation.Allocation{}
+	for team, a := range f.teams {
+		shadow.teams[team] = a
+	}
+	shadow.scenarios = map[int]map[int]rotation.Allocation{}
+	for team, ss := range f.scenarios {
+		shadow.scenarios[team] = map[int]rotation.Allocation{}
+		for pid, a := range ss {
+			shadow.scenarios[team][pid] = a
+		}
+	}
+	shadow.impactCache = map[int][]lineup.Impact{}
+	return &shadow
+}
+
+func (f *rotationForecast) replacements(team int) []rotation.Replacement {
+	a := f.teams[team]
+	if !a.Valid {
+		return nil
+	}
+	var out []rotation.Replacement
+	for pid, baseline := range a.Baseline {
+		used := a.Minutes[pid]
+		if math.Abs(used-baseline) < .25 {
+			continue
+		}
+		name := ""
+		for _, p := range f.impacts.Profiles(team, f.date, f.roster, []int{pid}) {
+			name = p.Player
+		}
+		out = append(out, rotation.Replacement{PlayerID: pid, Player: name, Position: f.positions[pid], Baseline: baseline, Projected: used})
+	}
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].Projected-out[i].Baseline != out[j].Projected-out[j].Baseline {
+			return out[i].Projected-out[i].Baseline > out[j].Projected-out[j].Baseline
+		}
+		return out[i].PlayerID < out[j].PlayerID
+	})
+	return out
 }

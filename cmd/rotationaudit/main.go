@@ -387,6 +387,9 @@ func validProductionCapture(r replay.Record) bool {
 			}
 			applied = true
 			key := string(e.Stat)
+			if e.Role != nil && e.Role.Before != r.Date {
+				return false
+			}
 			if seen[key] || !validEffectEvidence(e, impact, r.SelectionPolicy) || math.IsNaN(e.Scale) || math.IsInf(e.Scale, 0) || e.Scale < .95 || e.Scale > 1.05 {
 				return false
 			}
@@ -416,6 +419,37 @@ func validProductionCapture(r replay.Record) bool {
 // A fallback cannot borrow joint sample counts. Verify its component evidence,
 // neutral remainder and captured scale independently before grading it.
 func validEffectEvidence(e lineup.Effect, impact lineup.Impact, policy string) bool {
+	if e.Method == "pooled-lineup" {
+		if policy != rotation.FallbackPolicy || e.Role == nil || e.Role.Games < 500 || e.Role.Days < 30 || len(e.Role.Features) != 14 || len(e.Role.Coefficients) != 14 || len(e.Role.Baseline) != 7 || len(e.Role.Projected) != 7 {
+			return false
+		}
+		delta := 0.
+		offset := 0
+		if impact.Kind == "opponent-allowance" {
+			offset = 7
+		} else if impact.Kind != "teammate-production" {
+			return false
+		}
+		floors := []float64{40, 20, 10, 5, 3, 48, 48}
+		for k := 0; k < 7; k++ {
+			b, u := e.Role.Baseline[k], e.Role.Projected[k]
+			if math.IsNaN(b) || math.IsNaN(u) || math.IsInf(b, 0) || math.IsInf(u, 0) || b < 0 || u < 0 {
+				return false
+			}
+			expected := math.Max(-1, math.Min(1, (u-b)/math.Max(floors[k], b)))
+			if math.Abs(e.Role.Features[offset+k]-expected) > 1e-9 || e.Role.Features[(7-offset)+k] != 0 {
+				return false
+			}
+		}
+		for i, x := range e.Role.Features {
+			b := e.Role.Coefficients[i]
+			if math.IsNaN(x) || math.IsInf(x, 0) || math.Abs(x) > 1 || math.IsNaN(b) || math.IsInf(b, 0) {
+				return false
+			}
+			delta += x * b
+		}
+		return math.Abs(e.Scale-math.Max(.95, math.Min(1.05, 1+delta))) < 1e-9
+	}
 	if e.Method != "individual-mixture" {
 		return e.Without >= 5 && e.With >= 5
 	}

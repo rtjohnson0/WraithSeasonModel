@@ -58,10 +58,10 @@ Run "extra books (SportsGameOdds)" { go run ./cmd/sgo snapshot } -Optional
 Run "forward accuracy evaluation" { go run ./cmd/accuracy }
 Run "offline accuracy report" { python scripts/accuracy_report.py }
 Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
-Run "player props"                 { go run ./cmd/predict -rotationpolicy rotation-v2 }
+Run "player props"                 { go run ./cmd/predict -rotationpolicy rotation-v3 }
 Run "minutes and Under-bias audit" { go run ./cmd/minutesaudit -legacy } -Optional
 Run "Over and Under price comparison" { go run ./cmd/priceaudit } -Optional
-Run "V2 rotation comparison" { go run ./cmd/rotationaudit -policy rotation-v2 } -Optional
+Run "prior V2 rotation comparison" { go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 } -Optional
 Run "absence fallback comparison" { go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback } -Optional
 Run "game lines"                   { go run ./cmd/games } -Optional
 

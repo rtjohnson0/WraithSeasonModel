@@ -185,3 +185,17 @@ main,.top,.foot,.sample { width:min(100% - 56px,1280px); }
 
 .combopage .timed-game>ul.combo-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start;}
 @media(max-width:800px) {.combopage .timed-game>ul.combo-grid {grid-template-columns:minmax(0,1fr);}}
+
+// Research cards reuse the full prop-card layout. The old four-column header
+// was wider than the three-column comparison tiles and collapsed player names.
+#overs-watch > .over-comparison-grid {
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:18px;
+ align-items:start;
+}
+#overs-watch > .over-comparison-grid > .play {padding:0;border-left-width:1px;}
+#overs-watch .playbtn .who .name {overflow-wrap:break-word;word-break:normal;}
+#overs-watch .strip-wrap {grid-row:2;min-width:0;flex-wrap:wrap;}
+#overs-watch .recent-form {flex-wrap:wrap;}
+#overs-watch .section-heading {flex-wrap:wrap;gap:12px;}
+@media(max-width:1000px) {#overs-watch > .over-comparison-grid {grid-template-columns:minmax(0,1fr);}}

@@ -15,6 +15,7 @@ export default function Rotation({ p }) {
     </div>
     {r.confirmedOut?.length > 0 && <p><b>Confirmed out:</b> {r.confirmedOut.map(x => x.player).join(', ')}.</p>}
     <p className="small">{r.reason}. {['rotation-v2','rotation-v3'].includes(r.policy) && !r.allocationApplied ? 'Baseline minutes are retained; the proposed team allocation was not applied.' : r.teamMinutes > 0 ? `The team allocation totals ${r.teamMinutes.toFixed(0)} regulation minutes.` : 'Baseline minutes are retained.'} {['rotation-v2','rotation-v3'].includes(r.policy) ? 'Supported production-rate effects are shown separately below.' : 'Per-minute production is unchanged; extra usage is not assumed.'}</p>
+    {r.policy === 'rotation-v3' && [ ['Projected teammate replacements', r.ownReplacements], ['Projected opponent replacements', r.opponentReplacements] ].map(([label, rows]) => rows?.length > 0 && <div key={label}><h4>{label}</h4><p className="small">Projected full-game rotation, not confirmed starters. Positions are the recorded roster roles.</p><div className="availability-table-wrap"><table><thead><tr><th>Player / role</th><th>Recent baseline</th><th>Projected minutes</th></tr></thead><tbody>{rows.map(x => <tr key={x.playerId}><td>{x.player || 'Player'} · {x.position || 'unknown'}</td><td>{x.baseline.toFixed(1)}</td><td>{x.projected.toFixed(1)}</td></tr>)}</tbody></table></div></div>)}
     <LineupImpact impacts={r.production} scale={r.rateScale} />
     {r.scenarios?.length > 0 && <>
       <h4>If another teammate sits</h4>
