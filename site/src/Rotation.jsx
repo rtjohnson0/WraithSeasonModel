@@ -14,7 +14,7 @@ export default function Rotation({ p }) {
       <div><small>Matching team rotations</small><b>{r.matchedGames}</b></div>
     </div>
     {r.confirmedOut?.length > 0 && <p><b>Confirmed out:</b> {r.confirmedOut.map(x => x.player).join(', ')}.</p>}
-    <p className="small">{r.reason}. {r.policy === 'rotation-v2' && !r.allocationApplied ? 'Baseline minutes are retained; the proposed team allocation was not applied.' : r.teamMinutes > 0 ? `The team allocation totals ${r.teamMinutes.toFixed(0)} regulation minutes.` : 'Baseline minutes are retained.'} {r.policy === 'rotation-v2' ? 'Supported production-rate effects are shown separately below.' : 'Per-minute production is unchanged; extra usage is not assumed.'}</p>
+    <p className="small">{r.reason}. {['rotation-v2','rotation-v3'].includes(r.policy) && !r.allocationApplied ? 'Baseline minutes are retained; the proposed team allocation was not applied.' : r.teamMinutes > 0 ? `The team allocation totals ${r.teamMinutes.toFixed(0)} regulation minutes.` : 'Baseline minutes are retained.'} {['rotation-v2','rotation-v3'].includes(r.policy) ? 'Supported production-rate effects are shown separately below.' : 'Per-minute production is unchanged; extra usage is not assumed.'}</p>
     <LineupImpact impacts={r.production} scale={r.rateScale} />
     {r.scenarios?.length > 0 && <>
       <h4>If another teammate sits</h4>

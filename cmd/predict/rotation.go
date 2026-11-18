@@ -27,6 +27,7 @@ type rotationForecast struct {
 	learnedOwn  bool
 	learnedOpp  bool
 	strict      bool
+	fallback    bool
 	impacts     *lineup.Index
 	impactCache map[int][]lineup.Impact
 	roster      map[int]int
@@ -162,6 +163,9 @@ func newRotationForecast(rows []data.PlayerGame, roster map[int]int, fresh map[i
 	return f
 }
 func (f *rotationForecast) policy() string {
+	if f.fallback {
+		return rotation.FallbackPolicy
+	}
 	if f.strict {
 		return rotation.StrictPolicy
 	}
@@ -189,6 +193,12 @@ func (f *rotationForecast) configureProduction(m *predictor.Model) {
 	f.learnedOpp = !oppDisabled
 	f.impactCache = map[int][]lineup.Impact{}
 }
+func (f *rotationForecast) estimateImpact(team, player int, date string, roster map[int]int, outs []int, opponent bool) lineup.Impact {
+	if f.fallback {
+		return f.impacts.EstimateFallback(team, player, date, roster, outs, opponent)
+	}
+	return f.impacts.Estimate(team, player, date, roster, outs, opponent)
+}
 func (f *rotationForecast) rateImpacts(row *feat.Row) []lineup.Impact {
 	if !f.strict || f.impacts == nil {
 		return nil
@@ -199,11 +209,11 @@ func (f *rotationForecast) rateImpacts(row *feat.Row) []lineup.Impact {
 	result := []lineup.Impact{}
 	team := row.G.TeamID
 	if a := f.teams[team]; a.Valid {
-		result = append(result, f.impacts.Estimate(team, row.G.PlayerID, f.date, f.roster, a.Out, false))
+		result = append(result, f.estimateImpact(team, row.G.PlayerID, f.date, f.roster, a.Out, false))
 	}
 	opp := f.opponents[team]
 	if a := f.teams[opp]; a.Valid {
-		result = append(result, f.impacts.Estimate(opp, row.G.PlayerID, f.date, f.roster, a.Out, true))
+		result = append(result, f.estimateImpact(opp, row.G.PlayerID, f.date, f.roster, a.Out, true))
 	}
 	for i := range result {
 		if (result[i].Kind == "teammate-production" && f.learnedOwn) || (result[i].Kind == "opponent-allowance" && f.learnedOpp) {
@@ -294,7 +304,7 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 		st := f.statuses[pid]
 		p := base
 		if f.strict {
-			impacts := []lineup.Impact{f.impacts.Estimate(row.G.TeamID, s.PlayerID, f.date, f.roster, alt.Out, false)}
+			impacts := []lineup.Impact{f.estimateImpact(row.G.TeamID, s.PlayerID, f.date, f.roster, alt.Out, false)}
 			for _, impact := range c.Production {
 				if impact.Kind == "opponent-allowance" {
 					impacts = append(impacts, impact)
@@ -349,7 +359,11 @@ func (f *rotationForecast) decorate(s scored, base predictor.Pred, row *feat.Row
 				relevant = relevant || part == e.Stat
 			}
 			if relevant && e.Applied {
-				s.Why = addWhy(s.Why, fmt.Sprintf("V2 %s: %s rate %+.1f%% (%d joint-out / %d present games); experimental", impact.Kind, e.Stat, (e.Scale-1)*100, e.Without, e.With))
+				if e.Method == "individual-mixture" {
+					s.Why = addWhy(s.Why, fmt.Sprintf("V2 %s: %s rate %+.1f%% (individual-absence mixture; %d supported components; no stacking); experimental", impact.Kind, e.Stat, (e.Scale-1)*100, len(e.Evidence)))
+				} else {
+					s.Why = addWhy(s.Why, fmt.Sprintf("V2 %s: %s rate %+.1f%% (%d joint-out / %d present games); experimental", impact.Kind, e.Stat, (e.Scale-1)*100, e.Without, e.With))
+				}
 			}
 		}
 	}

@@ -10,7 +10,8 @@ go run ./cmd/combos calibrate || echo "combo calibration unavailable; comparison
 go run ./cmd/predict -rotationpolicy rotation-v2
 go run ./cmd/minutesaudit -legacy || echo "Minutes audit unavailable; live model unchanged"
 go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
-go run ./cmd/rotationaudit || echo "Rotation evaluation unavailable; V1 unchanged"
+go run ./cmd/rotationaudit -policy rotation-v2 || echo "Rotation evaluation unavailable; V1 unchanged"
+go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback || echo "Absence fallback evaluation unavailable"
 go run ./cmd/games || echo "game lines skipped"
 
 go run ./cmd/quarter || echo "quarter comparisons unavailable; full-game data was not substituted"

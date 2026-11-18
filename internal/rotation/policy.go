@@ -6,9 +6,15 @@ import "math"
 // must not replace the existing forecast merely because they sum to 240 minutes.
 const StrictPolicy = "rotation-v2"
 
-func KnownPolicy(policy string) bool { return policy == Policy || policy == StrictPolicy }
+const FallbackPolicy = "rotation-v3"
+
+func ProductionPolicy(policy string) bool { return policy == StrictPolicy || policy == FallbackPolicy }
+func KnownPolicy(policy string) bool      { return policy == Policy || ProductionPolicy(policy) }
 
 func Files(policy string) (log, settled string) {
+	if policy == FallbackPolicy {
+		return "v2_rotation_fallbacklog.jsonl", "v2_rotation_fallbacksettled.jsonl"
+	}
 	if policy == StrictPolicy {
 		return "v2_rotation_strictlog.jsonl", "v2_rotation_strictsettled.jsonl"
 	}
@@ -16,6 +22,9 @@ func Files(policy string) (log, settled string) {
 }
 
 func EvidenceDirectory(policy string) string {
+	if policy == FallbackPolicy {
+		return "v2_rotation/fallback"
+	}
 	if policy == StrictPolicy {
 		return "v2_rotation/strict"
 	}
