@@ -14,6 +14,8 @@ import (
 	"propsmodel/internal/props"
 	"propsmodel/internal/replay"
 	"propsmodel/internal/rotation"
+	"reflect"
+	"strings"
 	"testing"
 	"time"
 )
@@ -28,6 +30,39 @@ func rotationFixture() ([]data.PlayerGame, map[int]int) {
 		}
 	}
 	return rows, roster
+}
+
+func TestStarterSlotsCannotOverrideIncompatibleRosterRole(t *testing.T) {
+	for _, pair := range [][2]string{{"G", "C"}, {"B", "G"}, {"C", "G"}} {
+		if compatibleStarterRole(pair[0], pair[1]) {
+			t.Fatal("contradictory lineup accepted", pair)
+		}
+	}
+	for _, pair := range [][2]string{{"B", "F"}, {"C", "F"}, {"G", "G"}, {"", "C"}} {
+		if !compatibleStarterRole(pair[0], pair[1]) {
+			t.Fatal("compatible or unknown role rejected", pair)
+		}
+	}
+}
+
+func TestComboWorkloadScenariosShareMinutesAndKeepSide(t *testing.T) {
+	f := &rotationForecast{teams: map[int]rotation.Allocation{}}
+	p := predictor.Pred{}
+	for i := range p.MinNodes {
+		p.MinNodes[i] = float64(18 + 3*i)
+		p.Minutes += p.MinNodes[i] * p.NodeWeight(i)
+	}
+	p.Rate[data.StatIndex(data.Points)] = .7
+	p.Rate[data.StatIndex(data.Rebounds)] = .3
+	s := scored{PlayerID: 7, GameID: 9, Stat: data.PR, Side: "UNDER", Line: 30.5}
+	row := &feat.Row{}
+	got := f.workloadScenarios(s, p, row, .5, .5, combo.Default)
+	if len(got) != 2 || got[0].Minutes >= got[1].Minutes || *got[0].Projection >= *got[1].Projection || *got[0].Probability <= *got[1].Probability {
+		t.Fatal(got)
+	}
+	if !reflect.DeepEqual(got, f.workloadScenarios(s, p, row, .5, .5, combo.Default)) {
+		t.Fatal("non-reproducible sensitivity")
+	}
 }
 func TestQuestionableTeammateIsScenarioNotAssumedOut(t *testing.T) {
 	rows, roster := rotationFixture()
@@ -120,6 +155,9 @@ func TestRotationCanScoreNewBenchOpportunityAndReplayExactly(t *testing.T) {
 	all, records := scoreRotationSingles(f, m, b, []props.Line{line}, games, func(pid int) (int, bool) { tm, ok := roster[pid]; return tm, ok }, func(int, props.GameInfo, int) *feat.Row { return r }, nil, "2026-11-09", .5, 1, asOf)
 	if len(all) != 1 || len(records) != 1 || all[0].ProjMin <= 18 {
 		t.Fatal("new bench opportunity was filtered by baseline eligibility")
+	}
+	if !strings.Contains(all[0].Why, "opponent-defense rate features are disabled") {
+		t.Fatal("V2 omitted fitted defense explanation", all[0].Why)
 	}
 	p, err := replay.Recompute(m, records[0])
 	if err != nil || math.Abs(p-records[0].P1) > 1e-10 {

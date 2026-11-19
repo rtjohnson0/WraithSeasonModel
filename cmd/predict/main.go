@@ -919,6 +919,7 @@ func main() {
 				d2.scale = func(data.Stat, *feat.Row) float64 { return 1 }
 			}
 			v2Combos, v2ComboSummary = scoreCombos(d2, comboLines)
+			v2ComboSummary.Loaded, v2ComboSummary.Fresh, v2ComboSummary.Usable = loadedCombos, len(freshCombos), len(comboLines)
 			if rotations != nil {
 				for i, s := range v2Combos {
 					team, _ := teamOf(s.PlayerID)

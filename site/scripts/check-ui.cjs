@@ -48,6 +48,17 @@ click($$('.filter-summary button').find(b=>b.textContent==='Clear filters'));che
 const closed=structuredClone(fixture);closed.board.games[0].tip=new Date(Date.now()-3600000).toISOString();for(const p of closed.board.games[0].plays)p.tip=closed.board.games[0].tip;
 act(()=>root.render(React.createElement(Board,{site:closed})));check('Started games retain cards with closed labels',$$('.timed-game .prop-grid>.play').length===5&&$$('.card-quote-state').some(el=>el.textContent.includes('Game started')));
 act(()=>root.unmount());root=createRoot($('#root'));
+const v2Board=structuredClone(fixture);v2Board.modelLabel='V2';v2Board.board.games=[{...v2Board.board.games[0],more:[],plays:v2Board.board.games[0].plays.slice(0,2)}];v2Board.board.overs=[];
+v2Board.board.games[0].plays[0].tier='V2LEAN';v2Board.board.games[0].plays[0].prob=.56;v2Board.board.games[0].plays[1].tier='CHECK';v2Board.board.games[0].plays[1].prob=.69;
+act(()=>root.render(React.createElement(Board,{site:v2Board})));
+check('V2 board identifies its own model',$('.hero-copy').textContent.includes('NBA INTELLIGENCE / V2'));
+check('V2 defaults to backend model order',$('select').value==='model'&&$('.timed-game .prop-grid>.play').textContent.includes(v2Board.board.games[0].plays[0].player));
+check('V2 board leans are counted separately from extra leans',$('.hero-stats').textContent.includes('Leans on board01')&&$('.sort-control').parentElement.textContent.includes('1 board leans · 0 extra leans'));
+act(()=>{$('select').value='probability';$('select').dispatchEvent(new window.Event('change',{bubbles:true}));});
+check('Optional probability sorting remains available',$('.timed-game .prop-grid>.play').textContent.includes(v2Board.board.games[0].plays[1].player));
+input($('input[type="search"]'),v2Board.board.games[0].plays[1].player);
+check('Filtered V2 lean counts describe the visible cards',$('.sort-control').parentElement.textContent.includes('0 board leans · 0 extra leans'));
+act(()=>root.unmount());root=createRoot($('#root'));
 act(()=>root.render(React.createElement(Combos,{site:fixture})));
 check('Every selected combo card has a player image URL',$$('.combo-grid .player-portrait img').length===2);
 click($('.combo-summary'));check('Expanded combo retains charts',$('.combo-grid>.combo-row').querySelectorAll('.combo-expanded .bars').length===2);

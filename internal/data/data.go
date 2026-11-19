@@ -62,9 +62,11 @@ var Stats = []Stat{Points, Rebounds, Assists, Threes}
 
 // PlayerGame is one player's box score line for one game they played.
 type PlayerGame struct {
-	ShootingComplete bool // explicit FGA, 3PA and FTA for opportunity models
-	BoxScoreComplete bool // explicit stat fields and final scores, independent of download provenance
-	AnalyticsReady   bool // explicit final, complete stat fields, download provenance and final scores
+	RawPosition      string `json:"raw_position,omitempty"`
+	PositionSource   string `json:"position_source,omitempty"`
+	ShootingComplete bool   // explicit FGA, 3PA and FTA for opportunity models
+	BoxScoreComplete bool   // explicit stat fields and final scores, independent of download provenance
+	AnalyticsReady   bool   // explicit final, complete stat fields, download provenance and final scores
 	FinalHomeScore   float64
 	FinalAwayScore   float64
 	SourceFinal      bool `json:"source_final,omitempty"` // explicit Final status and game/team membership; used by availability history only
@@ -299,6 +301,9 @@ func loadStatsFile(path string, research bool) ([]PlayerGame, error) {
 			HomeTeamID:    r.Game.HomeTeamID,
 			VisitorTeamID: r.Game.VisitorTeamID,
 		})
+		g := &out[len(out)-1]
+		g.RawPosition = g.Pos
+		g.Pos, g.PositionSource = CorrectPosition(g.PlayerID, g.Name, g.Pos)
 	}
 	return out, sc.Err()
 }

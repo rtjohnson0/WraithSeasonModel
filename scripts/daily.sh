@@ -29,6 +29,7 @@ go run ./cmd/combos settle || echo "combo settle skipped"
 go run ./cmd/games -settle || echo "game settlement unavailable"
 go run ./cmd/lines || echo "lines report skipped"
 go run ./cmd/v2 settle || echo "v2 settle skipped"
+go run ./cmd/comboaudit || echo "Combo diagnostic unavailable; forecasts unchanged"
 echo "== review yesterday (csv) =="
 go run ./cmd/review || echo "review skipped"
 if [ "$SKIP" = 0 ]; then

@@ -318,7 +318,8 @@ export default function Board({ site }) {
   const [label, setLabel] = useState('all')
   const [side, setSide] = useState('ALL')
   const [q, setQ] = useState('')
-  const [sort, setSort] = useState('value')
+  const isV2 = site.modelLabel === 'V2'
+  const [sort, setSort] = useState(isV2 ? 'model' : 'value')
   const [repeatsOnly, setRepeatsOnly] = useState(false)
   const now = useNow()
 
@@ -327,6 +328,7 @@ export default function Board({ site }) {
   const currentStaked = current.filter((p) => p.tier === 'PICK' && p.units > 0).length
   const extras = (board.games || []).flatMap(g => g.more || []).filter(p => visibleQuote(p))
   const available = [...current, ...extras]
+  const boardLeans = current.filter(p => ['LEAN', 'V2LEAN'].includes(p.tier)).length
   const count = (f) => available.filter(f).length
 
   const games = useMemo(
@@ -358,17 +360,18 @@ export default function Board({ site }) {
     [board, stat, label, side, q, repeatsOnly, now],
   )
   const shown = games.reduce((n, g) => n + g.plays.length, 0)
+  const shownLeans = games.reduce((n,g) => n + g.plays.filter(p => ['LEAN','V2LEAN'].includes(p.tier)).length,0)
 
   const cards = games.flatMap(g => [...g.plays.map(p=>({p,g,extra:false})), ...g.more.map(p=>({p,g,extra:true}))])
-  const groups = groupTimedCards(cards,row=>row.g,(a,b)=>sort==='probability' ? b.p.prob-a.p.prob : Number(a.extra)-Number(b.extra)||comparePlayValue(a.p,b.p))
+  const groups = groupTimedCards(cards,row=>row.g,(a,b)=>sort==='probability' ? b.p.prob-a.p.prob : Number(a.extra)-Number(b.extra)||(sort==='model' ? 0 : comparePlayValue(a.p,b.p)))
   const unlistedGames = remainingSlate(board.games,site.gameMarkets?.games).sort(compareGameTip)
 
   return (
     <div className="boardpage">
       <section className="board-hero">
-        <div className="hero-copy"><span className="card-eyebrow"><span className="live-dot"/> NBA INTELLIGENCE / V1</span><h1>Find your<br/><em>edge.</em></h1><p>Player props. A clearer perspective.</p><span className="hero-date">{prettyDate(board.date)} <span>· Updated {updatedText(site.generatedAt) || 'pending'}</span></span></div>
+        <div className="hero-copy"><span className="card-eyebrow"><span className="live-dot"/> NBA INTELLIGENCE / {site.modelLabel || 'V1'}</span><h1>Find your<br/><em>edge.</em></h1><p>Player props. A clearer perspective.</p><span className="hero-date">{prettyDate(board.date)} <span>· Updated {updatedText(site.generatedAt) || 'pending'}</span></span></div>
         <div className="hero-art" aria-hidden="true"><img src="./brand/logo.jpg" alt=""/><span className="hero-orbit orbit-one"/><span className="hero-orbit orbit-two"/><span className="art-caption">WRAITHSZN / THE DAILY BOARD</span></div>
-        <dl className="hero-stats"><div><dt>On the board</dt><dd>{current.length.toString().padStart(2,'0')}</dd></div><div><dt>Max plays</dt><dd>{currentStaked.toString().padStart(2,'0')}</dd></div><div><dt>Extra leans</dt><dd>{extras.length.toString().padStart(2,'0')}</dd></div><div><dt>{site.status?.scheduleComplete?'Scheduled games':'Games with data'}</dt><dd>{board.games.length.toString().padStart(2,'0')}</dd></div></dl>
+        <dl className="hero-stats"><div><dt>On the board</dt><dd>{current.length.toString().padStart(2,'0')}</dd></div><div><dt>Max plays</dt><dd>{currentStaked.toString().padStart(2,'0')}</dd></div><div><dt>Leans on board</dt><dd>{(boardLeans+extras.length).toString().padStart(2,'0')}</dd></div><div><dt>{site.status?.scheduleComplete?'Scheduled games':'Games with data'}</dt><dd>{board.games.length.toString().padStart(2,'0')}</dd></div></dl>
       </section>
 
       <RunStatus site={site} />
@@ -409,8 +412,8 @@ export default function Board({ site }) {
       </section>
 
       <div className="filter-summary" aria-live="polite">
-        <label className="sort-control">Within each game <select value={sort} onChange={e=>setSort(e.target.value)}><option value="value">Model value</option><option value="probability">Probability</option></select></label>
-        <span>{shown} main {shown === 1 ? 'play' : 'plays'} · {games.reduce((n,g)=>n+g.more.length,0)} available leans</span>
+        <label className="sort-control">Within each game <select value={sort} onChange={e=>setSort(e.target.value)}>{isV2 && <option value="model">Model order</option>}<option value="value">Model value</option><option value="probability">Probability</option></select></label>
+        <span>{shown} main {shown === 1 ? 'play' : 'plays'} · {shownLeans} board leans · {games.reduce((n,g)=>n+g.more.length,0)} extra leans</span>
         {(stat !== 'all' || label !== 'all' || side !== 'ALL' || q || repeatsOnly) && <button type="button" onClick={()=>{setStat('all');setLabel('all');setSide('ALL');setQ('');setRepeatsOnly(false)}}>Clear filters</button>}
       </div>
       {cards.length === 0 && (
