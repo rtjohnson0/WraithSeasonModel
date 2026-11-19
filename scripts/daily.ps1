@@ -45,6 +45,7 @@ Run "grade game markets" { go run ./cmd/games -settle } -Optional
 Run "grade combo plays"            { go run ./cmd/combos settle } -Optional
 Run "grade every logged line"      { go run ./cmd/lines } -Optional
 Run "grade the V2 challenger"      { go run ./cmd/v2 settle } -Optional
+Run "combo projection diagnostic" { go run ./cmd/comboaudit } -Optional
 Run "review yesterday (csv)"        { go run ./cmd/review } -Optional
 
 if (-not $SkipTrain) {

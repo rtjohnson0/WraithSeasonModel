@@ -24,10 +24,13 @@ function ComboCard({ c, now, site }) {
  const confidence=rawComparison?(c.probRaw??c.prob):c.prob
  const game=(site.board.games||[]).find(g=>(c.gameId!=null&&g.id!=null&&String(g.id)===String(c.gameId))||g.matchup===c.matchup)||{id:c.gameId,matchup:c.matchup,tip:c.tip}
  const quote=quoteState(c,now)
+ const workload=c.projMin-c.minTypical
+ const workloadRisk=Number.isFinite(workload)&&Math.abs(workload)>=4
  return <li className={`combo-row ${c.side==='OVER'?'over':'under'}`}><div className="card-matchup"><span>{c.matchup}</span><span>{tipState(c.tip,now).label || 'Tip pending'}</span></div><details>
   <summary className="combo-summary"><span className="combo-player"><PlayerPortrait name={c.player} team={c.team}/><span><small className="card-eyebrow">{comparison?'Research comparison':'Selected combo'}</small><b>{c.player} <small className="team-chip">{c.team}</small></b><PropTicket p={c}/><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} · {bookName(c.book)}</small>{c.availability&&<small className="availability-hint">Availability watch · Compare minutes</small>}</span></span>
    <span className="combo-strip"><span className="form-caption">Recent form<small>At this line</small></span><RecentForm p={c}/></span><span className="combo-prob">{comparison ? c.projStat.toFixed(1) : pct(confidence,1)}<small>{comparison ? 'Projected total' : 'Model probability'}</small><small className="expand-hint">View analysis <span aria-hidden="true">⌄</span></small></span></summary>
   <div className="combo-expanded"><QuoteDetails p={c} compact/>
+   {workloadRisk&&<p className="notice">Workload-sensitive comparison: projected {Math.round(c.projMin)} minutes versus {Math.round(c.minTypical)} typical. The total depends on that minutes change. {c.rotation?.workloadScenarios?.length>0?'Compare the lower and higher workload scenarios below.':'Review recent workload before relying on the total.'}</p>}
    {comparison && <p className="small">{rawComparison?'Raw simulation':'Experimental model/book estimate'}: {pct(confidence,1)} for this side. This has not been calibrated or demonstrated as a hit rate; it has not cleared the combo selection rules.</p>}
    <p>Projected <b>{c.projStat.toFixed(1)}</b> in {Math.round(c.projMin)} minutes · {c.matchup}</p>
    {c.last5?.length>0 && <div className="charts"><figure><figcaption>{statLabel[c.stat]} · last {c.last5.length} games</figcaption><FormBars games={c.last5} line={c.line} side={c.side} lineLabel={`line ${c.line}`}/></figure><figure><figcaption>Minutes played</figcaption><FormBars games={c.last5.map(g=>({...g,value:g.minutes}))} line={c.projMin} side={c.side} tone="minutes" lineLabel={`projected ${Math.round(c.projMin)}`}/></figure></div>}
@@ -66,6 +69,7 @@ export default function Combos({ site }) {
           ['comparisons', 'Line comparisons', groups.comparisons.length],
         ]}/>
         {!groups.picks.length && groups.comparisons.length>0 && <p className="small">Showing available projections while the combo selection checks gather evidence.</p>}
+        {site.modelLabel==='V2' && <p className="small">V2 combos remain tracked research comparisons. Clearing a model estimate or price check does not promote them to selected plays; their probabilities need separate combo validation.</p>}
         {view === 'comparisons' && <p className="small">Research comparisons, not selected bets. Projections and recent games are available below; raw simulations have not earned a reliable hit-rate estimate.</p>}
 
         {!plays.length && <p className="notice">{view === 'picks' ? 'No combo currently clears the calibrated selection rules. Line comparisons remain available in the next tab.' : 'No combo line comparisons are available for this slate.'}</p>}
@@ -116,7 +120,7 @@ export default function Combos({ site }) {
             </p>
             <p className="small">
               Every graded combo play, wins and losses. One play per player, combo and side per day. Units are a flat 1 per play for comparison, since combos are never
-              staked. Treat anything under about 100 graded plays as noise.
+              staked. These are research comparisons, separate from selected singles. Results span all posted runs, including later-dropped plays; correlated lines from one night do not establish a stable hit rate.
             </p>
             <Table rows={rows} />
             {rec.buckets?.length > 0 && (

@@ -124,7 +124,7 @@ function RecordBody({ site, title = "The prop record", archive = false }) {
         <div><dt>Graded decisions</dt><dd>{wins+losses}</dd><small>Confirmed wins and losses</small></div>
         <div><dt>Days tracked</dt><dd>{record.days}</dd><small>{staked ? `Staked plays: ${staked.wins}–${staked.losses}` : 'No staked results yet'}</small></div>
       </dl>
-      <p className="record-disclosure">Includes paper plays and leans, not just staked picks. Each player / stat / side counts once per day. {archive ? 'These historical rows are not part of the validated headline.' : 'Only validated pregame quotes and identity-checked final stats enter this record.'} A short record cannot establish long-term accuracy.</p>
+      <p className="record-disclosure">Includes paper plays and leans, not just staked picks. Includes every run, including plays later dropped from the board. Each player / stat / side counts once per day: the highest tracked tier, then its earliest posted quote. {archive ? 'These historical rows are not part of the validated headline.' : 'Only validated pregame quotes and identity-checked final stats enter this record.'} A short record cannot establish long-term accuracy.</p>
       <PropResults rows={record.recent || []} />
       <details className="record-analysis">
         <summary>Performance breakdown <span>Daily trends, units & calibration</span></summary>

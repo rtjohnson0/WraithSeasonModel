@@ -311,7 +311,7 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 		c.TrackingProfile = f.impacts.StylesFor(row.G.PlayerID, f.date)
 		e := f.gameEstimate(row)
 		c.GameContext = &e
-		c.WorkloadScenarios = f.workloadScenarios(s, base, row, market, weight)
+		c.WorkloadScenarios = f.workloadScenarios(s, base, row, market, weight, corr)
 		for _, team := range []int{row.G.TeamID, f.opponents[row.G.TeamID]} {
 			if p, ok := f.pregame[team]; ok {
 				c.PregameLineups = append(c.PregameLineups, p)
@@ -525,6 +525,7 @@ func scoreRotationSingles(f *rotationForecast, m *predictor.Model, b *feat.Build
 			s.Far = true
 		}
 		s.Why = why(b, b.Index(), row, l.PlayerID, l.Stat, p, team, opp, confirmed, date)
+		s.Why = addWhy(s.Why, m.ExplainContext(row, l.Stat))
 		s.Why = addWhy(s.Why, fmt.Sprintf("V2 rotation experiment: current model per-minute rates; model/book blend %.0f/%.0f; no fitted probability calibration for this new policy", 100*weight, 100*(1-weight)))
 		s = f.decorate(s, base, row, market, weight, combo.Corr{})
 		out = append(out, s)
@@ -661,6 +662,11 @@ func (f *rotationForecast) configureContext(dir string, rows []data.PlayerGame, 
 	for team, p := range f.pregame {
 		conflict := false
 		for _, s := range p.Lineup {
+			// A starter slot cannot silently turn a recorded big into a guard
+			// (or vice versa). Reject the conflicting report, not the roster role.
+			if !compatibleStarterRole(f.positions[s.Player.ID], lineup.Position(s.Position)) {
+				conflict = true
+			}
 			if st, ok := f.statuses[s.Player.ID]; ok && strings.EqualFold(strings.TrimSpace(st.Status), "out") {
 				conflict = true
 			}
@@ -688,6 +694,11 @@ func (f *rotationForecast) configureContext(dir string, rows []data.PlayerGame, 
 	return nil
 }
 
+func compatibleStarterRole(roster, slot string) bool {
+	big := func(s string) bool { return s == "C" || s == "B" }
+	return !(roster == "G" && big(slot) || slot == "G" && big(roster))
+}
+
 func (f *rotationForecast) gameEstimate(row *feat.Row) gamecontext.Estimate {
 	if f.gameMinutes == nil {
 		return gamecontext.Estimate{Reason: "historical pregame spread model unavailable"}
@@ -713,10 +724,7 @@ func (f *rotationForecast) gameEstimate(row *feat.Row) gamecontext.Estimate {
 
 // These are sensitivity scenarios from the existing minutes distribution, not
 // independent probabilities of a blowout or confidence intervals on hit rate.
-func (f *rotationForecast) workloadScenarios(s scored, base predictor.Pred, row *feat.Row, market, weight float64) []rotation.Scenario {
-	if s.Stat.IsCombo() {
-		return nil
-	}
+func (f *rotationForecast) workloadScenarios(s scored, base predictor.Pred, row *feat.Row, market, weight float64, corr combo.Corr) []rotation.Scenario {
 	p := f.adjust(base, row)
 	type node struct{ minutes, weight float64 }
 	var nodes []node
@@ -741,15 +749,25 @@ func (f *rotationForecast) workloadScenarios(s scored, base predictor.Pred, row 
 			label = "Higher minutes scenario"
 		}
 		trial := p.WithMinutes(minutes)
-		prob, e := trial.ProbOver(s.Stat, s.Line)
-		if e != nil {
-			continue
+		projection, raw := 0., 0.
+		if s.Stat.IsCombo() {
+			dist := combo.Simulate(trial, corr, 2000, int64(s.PlayerID)*1000003+int64(s.GameID))
+			prob, err := dist.ProbOver(s.Stat, s.Line)
+			if err != nil {
+				continue
+			}
+			raw, projection = prob.Over, dist.Mean(s.Stat)
+		} else {
+			prob, err := trial.ProbOver(s.Stat, s.Line)
+			if err != nil {
+				continue
+			}
+			raw, projection = prob.Over, trial.Mean(s.Stat)
 		}
-		value := blend(prob.Over, market, weight)
+		value := blend(raw, market, weight)
 		if s.Side == "UNDER" {
 			value = 1 - value
 		}
-		projection := trial.Mean(s.Stat)
 		out = append(out, rotation.Scenario{Player: label, Minutes: trial.Minutes, Projection: &projection, Probability: &value})
 	}
 	return out

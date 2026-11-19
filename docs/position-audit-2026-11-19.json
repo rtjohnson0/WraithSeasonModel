@@ -1,0 +1,19 @@
+{
+  "referencePlayers": 528,
+  "matchedByNameAndTeam": 514,
+  "conflicts": [
+    {
+      "player_id": 17895854,
+      "name": "Charles Bassey",
+      "feed": "G",
+      "reference": {
+        "name": "Charles Bassey",
+        "position": "C",
+        "team": "GS",
+        "source": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/9/roster"
+      }
+    }
+  ],
+  "checkedDate": "2026-11-19",
+  "method": "Exact normalized unique name plus matching team, with ESPN abbreviation aliases. Only guard vs center/big disagreements are flagged; this is not proof that every hybrid role is correct. Unmatched identities are not corrected."
+}
