@@ -1,60 +1,61 @@
 {
   "activeStats": [],
-  "at": "2026-11-19T08:52:38Z",
+  "at": "2026-11-19T14:35:08Z",
   "before": "2026-11-19",
   "byStat": {
     "pa": {
-      "eligibleDates": 1,
-      "eligibleRows": 50,
+      "eligibleDates": 2,
+      "eligibleRows": 175,
       "evaluationDates": 1,
-      "evaluationRows": 50,
+      "evaluationRows": 125,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
-      "trainingRows": 0
+      "trainingRows": 50
     },
     "pr": {
-      "eligibleDates": 1,
-      "eligibleRows": 62,
+      "eligibleDates": 2,
+      "eligibleRows": 209,
       "evaluationDates": 1,
-      "evaluationRows": 62,
+      "evaluationRows": 147,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
-      "trainingRows": 0
+      "trainingRows": 62
     },
     "pra": {
-      "eligibleDates": 1,
-      "eligibleRows": 54,
+      "eligibleDates": 2,
+      "eligibleRows": 188,
       "evaluationDates": 1,
-      "evaluationRows": 54,
+      "evaluationRows": 134,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
-      "trainingRows": 0
+      "trainingRows": 54
     },
     "ra": {
-      "eligibleDates": 1,
-      "eligibleRows": 52,
+      "eligibleDates": 2,
+      "eligibleRows": 177,
       "evaluationDates": 1,
-      "evaluationRows": 52,
+      "evaluationRows": 125,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
-      "trainingRows": 0
+      "trainingRows": 52
     }
   },
-  "eligibleDates": 1,
-  "eligibleRows": 218,
+  "eligibleDates": 2,
+  "eligibleRows": 749,
   "evaluationDates": 0,
-  "evaluationRows": 218,
+  "evaluationRows": 531,
   "evidenceUnit": "date-clustered paired log-loss improvement; each slate counts once",
   "excluded": {
     "different model version": 2089,
-    "final actuals pending or identity review": 577
+    "final actuals pending or identity review": 46,
+    "forecast date not completed": 83
   },
-  "loadedRows": 2884,
+  "loadedRows": 2967,
   "qualifiedStats": [],
   "status": "More forward data needed",
-  "trainingRows": 0
+  "trainingRows": 218
 }
