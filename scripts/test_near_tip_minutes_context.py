@@ -1,4 +1,7 @@
 import unittest
+import tempfile
+from pathlib import Path
+from merge_near_tip_snapshots import merge
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
@@ -58,6 +61,32 @@ class QuoteScheduleTests(unittest.TestCase):
         self.assertTrue(in_window(datetime(2026, 11, 20, 23, 30, tzinfo=ny)))
         self.assertFalse(in_window(datetime(2026, 11, 20, 13, 0, tzinfo=ny)))
         self.assertFalse(in_window(datetime(2026, 11, 20, 2, 0, tzinfo=ny)))
+
+
+class MergeQuoteEvidenceTests(unittest.TestCase):
+    def test_merge_keeps_previous_rows_and_deduplicates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "near_tip"
+            target = root / "snapshots"
+            source.mkdir()
+            target.mkdir()
+            name = "sgo_2026-11-20.jsonl"
+            (target / name).write_text('{"capture":"original"}\n')
+            (source / name).write_text('{"capture":"original"}\n{"capture":"later"}\n{"capture":"later"}\n')
+            self.assertEqual(merge(source, target)["new_rows"], 1)
+            self.assertEqual(merge(source, target)["new_rows"], 0)
+            self.assertEqual((target / name).read_text().splitlines(),
+                             ['{"capture":"original"}', '{"capture":"later"}'])
+
+    def test_merge_ignores_other_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "near_tip"
+            target = Path(tmp) / "snapshots"
+            source.mkdir()
+            (source / "picks.json").write_text("sensitive")
+            self.assertEqual(merge(source, target)["new_rows"], 0)
+            self.assertFalse((target / "picks.json").exists())
 
 
 if __name__ == "__main__":
