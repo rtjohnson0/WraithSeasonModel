@@ -105,6 +105,21 @@ jobs:
           key: inputs-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: inputs-v2-${{ github.ref_name }}-
 
+      # Separate, resumable historical sportsbook openings; never restores an
+      # old model or calibration. Raw opening prices stay in ignored caches.
+      - name: Restore independent historical prop odds backfill
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        uses: actions/cache/restore@v4
+        with:
+          path: data/prop_backfill
+          key: prop-history-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            prop-history-v1-${{ github.ref_name }}-
+
+      - name: Import immutable opening odds without replacing existing originals
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        run: python3 scripts/prop_history_cache.py --mode import
+
       # Merge the quote-only near-tip snapshot cache after regular inputs. This
       # never overwrites tracked prediction logs or changes the selection policy.
       - name: Restore near-tip quote evidence

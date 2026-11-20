@@ -1,0 +1,91 @@
+name: Historical opening props backfill (read-only for live model)
+
+on:
+  schedule:
+    # 03:15 ET in winter; 04:15 ET in summer. One bounded download daily.
+    - cron: '15 8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prop-odds-backfill
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Seed from the same original input-cache key/path layout as the daily
+      # workflow, so already-downloaded games are not needlessly re-requested.
+      - name: Restore current downloaded inputs
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/stats_*.jsonl
+            data/advanced_*.jsonl
+            data/context
+            data/snapshots
+            data/players_active.jsonl
+            data/opening_props_*.jsonl
+            data/opening_odds_*.jsonl
+            data/opening_games_*.jsonl
+          key: inputs-v2-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: inputs-v2-${{ github.ref_name }}-
+
+      - name: Restore dedicated opening odds progress
+        uses: actions/cache/restore@v4
+        with:
+          path: data/prop_backfill
+          key: prop-history-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            prop-history-v1-${{ github.ref_name }}-
+
+      - name: Merge previously downloaded openings without replacing prices
+        run: python3 scripts/prop_history_cache.py --mode import
+
+      - name: Continue bounded historical download (no model training or picks)
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          WRAITH_PROP_BACKFILL_MINUTES: ${{ vars.WRAITH_PROP_BACKFILL_MINUTES || '15' }}
+        run: |
+          test -n "$BALLDONTLIE_API_KEY" || { echo "BALLDONTLIE_API_KEY missing"; exit 1; }
+          if ! [[ "$WRAITH_PROP_BACKFILL_MINUTES" =~ ^[0-9]+$ ]] || [ "$WRAITH_PROP_BACKFILL_MINUTES" -lt 1 ] || [ "$WRAITH_PROP_BACKFILL_MINUTES" -gt 24 ]; then
+            echo "WRAITH_PROP_BACKFILL_MINUTES must be an integer from 1 to 24"; exit 1
+          fi
+          if [ ! -f data/stats_2025.jsonl ]; then
+            echo "Required season stats unavailable; refuse to fabricate game IDs"; exit 1
+          fi
+          go run ./cmd/pull props -season 2025 -maxminutes "$WRAITH_PROP_BACKFILL_MINUTES"
+
+      - name: Stage downloaded evidence for next run
+        if: always()
+        run: python3 scripts/prop_history_cache.py --mode stage
+
+      - name: Save dedicated historical odds cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/prop_backfill
+          key: prop-history-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Upload aggregate coverage only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-prop-coverage-${{ github.run_id }}
+          path: run_evidence/backfill/coverage.json
+          if-no-files-found: ignore
+          retention-days: 30

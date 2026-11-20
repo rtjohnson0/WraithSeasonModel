@@ -6,6 +6,11 @@ on:
       - 'scripts/closing_line_audit.py'
       - 'scripts/test_forward_clv_audits.py'
       - 'scripts/phase3_v2_shadow.py'
+      - 'scripts/prop_history_cache.py'
+      - 'scripts/refresh_models.py'
+      - 'scripts/test_prop_history_cache.py'
+      - 'scripts/test_model_refresh.py'
+      - '.github/workflows/prop-history-backfill.yml'
       - 'cmd/rotationaudit/**'
       - 'scripts/test_phase3_v2_shadow.py'
       - 'scripts/daily.sh'
@@ -41,3 +46,5 @@ jobs:
           python3 -m unittest discover -s scripts -p 'test_*audit*.py' -v
           python3 -m unittest discover -s scripts -p test_near_tip_minutes_context.py -v
           python3 -m unittest discover -s scripts -p test_phase3_v2_shadow.py -v
+          python3 -m unittest discover -s scripts -p test_prop_history_cache.py -v
+          python3 -m unittest discover -s scripts -p test_model_refresh.py -v
