@@ -13,8 +13,10 @@ America/New_York time (17:00–00:59 ET). The extra UTC hours account for DST.
 GitHub scheduled jobs may be delayed, dropped, or run after the last usable quote.
 
 Snapshot history is retained in a dedicated rolling GitHub Actions cache and
-30-day artifacts. The regular daily workflow restores the rolling quote cache
-**after** its usual input restore; the existing CLV script still refuses a
+30-day artifacts. The regular daily workflow restores the isolated
+`data/near_tip_snapshots` cache **after** its usual input restore and runs an
+idempotent append-only merge into `data/snapshots`. This prevents replacing
+an earlier market capture with a newer copy. The existing CLV script still refuses a
 snapshot at/after tip, more than 45 minutes before tip, stale over 15 minutes,
 wrong sportsbook, wrong player, or different handicap.
 
@@ -60,10 +62,9 @@ The existing production tests are unchanged. Do not merge until the
 
 * The quote-only job does not backfill gaps or prove that a captured quote was
   the final sportsbook quote; compare actual quote coverage before claiming CLV.
-* The daily workflow's input cache and quote cache are restored as directories.
-  The most recent quote-cache copy of a same-named snapshot can supersede an
-  input-cache copy. Historical input snapshots should be treated as backups,
-  not as an append-only immutable event store.
+* GitHub cache retention/eviction or concurrent scheduled runs may leave gaps.
+  Snapshot lines are deduplicated when imported; cache presence is not proof of
+  complete market coverage.
 * The context analysis does not capture player-level opportunity changes
   (e.g. potential assists/touches) unless present in the frozen audit report.
   These should be tracked prospectively before any usage correction is tested.
