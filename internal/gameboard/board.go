@@ -7,11 +7,13 @@ import (
 	"os"
 	"path/filepath"
 	"propsmodel/internal/bets"
+	"propsmodel/internal/gamepace"
 	"propsmodel/internal/matchup"
 	"propsmodel/internal/team"
 )
 
 type Side struct {
+	Raw         float64 `json:"raw,omitempty"`
 	Label       string  `json:"label"`
 	Odds        int     `json:"odds"`
 	Win         float64 `json:"win"`
@@ -33,35 +35,42 @@ type Quote struct {
 	Sides           []Side  `json:"sides"`
 }
 type Game struct {
-	HomeID        int           `json:"homeId"`
-	AwayID        int           `json:"awayId"`
-	HomeContext   *matchup.Team `json:"homeContext,omitempty"`
-	AwayContext   *matchup.Team `json:"awayContext,omitempty"`
-	RatingsMargin *float64      `json:"ratingsMargin,omitempty"`
-	RatingsTotal  *float64      `json:"ratingsTotal,omitempty"`
-	MarketMargin  *float64      `json:"marketMargin,omitempty"`
-	MarketTotal   *float64      `json:"marketTotal,omitempty"`
-	ID            int           `json:"id"`
-	Home          string        `json:"home"`
-	Away          string        `json:"away"`
-	Tip           string        `json:"tip"`
-	HomeScore     float64       `json:"homeScore"`
-	AwayScore     float64       `json:"awayScore"`
-	Margin        float64       `json:"margin"`
-	Total         float64       `json:"total"`
-	TotalLow      float64       `json:"totalLow"`
-	TotalHigh     float64       `json:"totalHigh"`
-	Quotes        []Quote       `json:"quotes"`
+	PaceContext   *gamepace.Context `json:"paceContext,omitempty"`
+	HomeID        int               `json:"homeId"`
+	AwayID        int               `json:"awayId"`
+	HomeContext   *matchup.Team     `json:"homeContext,omitempty"`
+	AwayContext   *matchup.Team     `json:"awayContext,omitempty"`
+	RatingsMargin *float64          `json:"ratingsMargin,omitempty"`
+	RatingsTotal  *float64          `json:"ratingsTotal,omitempty"`
+	MarketMargin  *float64          `json:"marketMargin,omitempty"`
+	MarketTotal   *float64          `json:"marketTotal,omitempty"`
+	ID            int               `json:"id"`
+	Home          string            `json:"home"`
+	Away          string            `json:"away"`
+	Tip           string            `json:"tip"`
+	HomeScore     float64           `json:"homeScore"`
+	AwayScore     float64           `json:"awayScore"`
+	Margin        float64           `json:"margin"`
+	Total         float64           `json:"total"`
+	TotalLow      float64           `json:"totalLow"`
+	TotalHigh     float64           `json:"totalHigh"`
+	Quotes        []Quote           `json:"quotes"`
 }
 type Snapshot struct {
-	Policy string             `json:"policy,omitempty"`
-	Date   string             `json:"date"`
-	At     string             `json:"at"`
-	Games  []Game             `json:"games"`
-	Z      map[string]float64 `json:"z"`
+	Evaluation  map[string]gamepace.MarketScore `json:"evaluation,omitempty"`
+	Note        string                          `json:"note,omitempty"`
+	Calibration map[string]gamepace.MarketFit   `json:"calibration,omitempty"`
+	Policy      string                          `json:"policy,omitempty"`
+	Date        string                          `json:"date"`
+	At          string                          `json:"at"`
+	Games       []Game                          `json:"games"`
+	Z           map[string]float64              `json:"z"`
 }
 
 func (s Snapshot) Save(dir string) error {
+	return s.SaveNamed(dir, "gameboard.json")
+}
+func (s Snapshot) SaveNamed(dir, name string) error {
 	if s.Games == nil {
 		s.Games = []Game{}
 	}
@@ -69,14 +78,17 @@ func (s Snapshot) Save(dir string) error {
 	if err != nil {
 		return err
 	}
-	path := filepath.Join(dir, "gameboard.json")
+	path := filepath.Join(dir, name)
 	if err = os.WriteFile(path+".tmp", b, 0644); err != nil {
 		return err
 	}
 	return os.Rename(path+".tmp", path)
 }
 func Load(dir, date string) (*Snapshot, error) {
-	b, e := os.ReadFile(filepath.Join(dir, "gameboard.json"))
+	return LoadNamed(dir, date, "gameboard.json")
+}
+func LoadNamed(dir, date, name string) (*Snapshot, error) {
+	b, e := os.ReadFile(filepath.Join(dir, name))
 	if os.IsNotExist(e) {
 		return nil, nil
 	}

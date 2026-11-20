@@ -18,6 +18,7 @@ go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 || 
 go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback || echo "Absence fallback evaluation unavailable"
 go run ./cmd/rotationaudit -policy rotation-v4 -out run_evidence/context-audit || echo "Context evaluation unavailable"
 go run ./cmd/games || echo "game lines skipped"
+go run ./cmd/gamepace || echo "Game challenger unavailable; original game board retained"
 
 go run ./cmd/quarter || echo "quarter comparisons unavailable; full-game data was not substituted"
 

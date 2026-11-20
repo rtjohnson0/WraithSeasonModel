@@ -14,6 +14,7 @@ import time
 from pathlib import Path
 
 STATE_FILES = [
+ "gamechallenger.json", "gamepace_picklog.jsonl", "gamepace_settled.jsonl",
  "v2_contextlog.jsonl", "v2_contextsettled.jsonl", "v2_contextsettled_audit.json",
     "model_refresh.json",
     "gamecal_research.json", "v2_gamepicklog.jsonl", "v2_gamesettled.jsonl",
@@ -76,7 +77,7 @@ def record_key(name, row):
         return json.dumps(row, sort_keys=True, separators=(',', ':'))
     if name.endswith('exclusions.jsonl'):
         return row.get('id', json.dumps(row, sort_keys=True))
-    if name.endswith(('gamepicklog.jsonl', 'gamesettled.jsonl')):
+    if name.endswith(('gamepicklog.jsonl', 'gamesettled.jsonl', 'gamepace_picklog.jsonl', 'gamepace_settled.jsonl')):
         return (row.get('date'), row.get('game_id'), row.get('market'))
     return (row.get('date'), row.get('game_id', row.get('game')),
             row.get('player_id', row.get('pid')), row.get('stat'), row.get('side'),
@@ -113,6 +114,10 @@ def records(name, content):
         elif name.endswith('projlog.jsonl') or '/lines/market_' in name:
             if row.get('at', '') >= prev.get('at', ''):
                 result[key] = row
+        elif name.endswith('gamepace_picklog.jsonl'):
+            result[key] = min((prev,row),key=lambda r:r.get('at',''))
+        elif name.endswith('gamepace_settled.jsonl'):
+            result[key] = min((prev,row),key=lambda r:r.get('at','')) if prev.get('at') != row.get('at') else prefer_input(prev,row,field='sourceAt')
         elif row.get('logged_at', '') < prev.get('logged_at', ''):
             result[key] = row
     return result
@@ -134,9 +139,11 @@ def merge_jsonl(name, base, ours, theirs):
             value = ov
         elif is_input(name):
             value = prefer_input(ov, tv)
+        elif name.endswith('gamepace_settled.jsonl'):
+            value = min((ov, tv), key=lambda r: r.get('at', '')) if ov.get('at') != tv.get('at') else prefer_input(ov, tv, field='sourceAt')
         elif name.endswith('gamesettled.jsonl'):
             value = prefer_input(ov, tv, field='sourceAt')
-        elif name.endswith('gamepicklog.jsonl'):
+        elif name.endswith(('gamepicklog.jsonl','gamepace_picklog.jsonl')):
             value = min((ov, tv), key=lambda r: r.get('at', ''))
         elif name.endswith('settled.jsonl'):
             value = prefer_input(ov, tv, field='source_fetched_at')
@@ -228,7 +235,7 @@ def sync(branch, message, attempts=5, delay=2):
                 else:
                     # Remote explicitly changed configuration; keep that change.
                     content = upstream
-                    if (name.startswith('data/quarter_games/') or name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json', 'data/side_audit.json', 'data/accuracy.json', 'data/quarterboard.json', 'data/gameboard.json', 'data/board.json', 'data/more.json', 'data/v2.json'}) and local and upstream:
+                    if (name.startswith('data/quarter_games/') or name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json', 'data/side_audit.json', 'data/accuracy.json', 'data/quarterboard.json', 'data/gameboard.json', 'data/gamechallenger.json', 'data/board.json', 'data/more.json', 'data/v2.json'}) and local and upstream:
                         a, b = json.loads(local), json.loads(upstream)
                         if a.get('at', '') > b.get('at', ''):
                             content = local

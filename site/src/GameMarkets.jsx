@@ -8,7 +8,7 @@ import { oddsText } from './format.js'
 
 const pc = (p) => `${(p * 100).toFixed(1)}%`
 const signed = (n) => `${n >= 0 ? '+' : ''}${n.toFixed(1)}`
-function Market({ game, market, now, evidence }) {
+function Market({ game, market, now, evidence, experimental=false }) {
   const quotes = (game.quotes || []).filter((q) => q.market === market && visibleQuote(q))
   const [book, setBook] = useState('')
   const q = quotes.find((q) => q.book === book) || bestGameQuote(game, quotes, now)
@@ -16,7 +16,7 @@ function Market({ game, market, now, evidence }) {
   const e = explainGame(game,q)
   const qualifies=e.primary.conditional>=.55 && e.primary.edge>=.01 && (evidence?.[market]||0)>=2
   const far=market==='total'?Math.abs(game.total-game.marketTotal)>7:Math.abs(game.margin-game.marketMargin)>4
-  const status=qualifies&&!far?'Selected play':e.primary.edge>0?'Value lean':'Model direction'
+  const status=experimental?'Research direction':qualifies&&!far?'Selected play':e.primary.edge>0?'Value lean':'Model direction'
   return <details className="market-play">
     <summary><span><small>{market === 'total' ? 'Game total' : market === 'spread' ? 'Spread' : 'Moneyline'}</small><b>{e.choice}</b><small>{status} · {e.shortPrice}</small><span className="expand-hint">View analysis <span aria-hidden="true">⌄</span></span></span><span className="market-prob">{pc(e.primary.conditional)}<small>{oddsText(e.primary.odds)} · {bookName(q.book)}</small></span></summary>
     <div className="market-expanded"><div className="game-margin-chart"><span>{game.away} {game.awayScore.toFixed(1)}</span><div><i style={{width:`${100*game.awayScore/(game.homeScore+game.awayScore)}%`}}/></div><span>{game.home} {game.homeScore.toFixed(1)}</span></div>
@@ -37,7 +37,7 @@ export default function GameMarkets({ data }) {
  return <section className="game-markets"><div className="game-market-heading"><h2>Moneyline, spreads & totals</h2></div><p className="small">Model picks and score projections · updated {clock(data.at)}. Tap a pick for the numbers behind it.</p>
  {data.games.map((g) => <article className="game-market-card" key={g.id}><header className="matchup-header"><div><span className="card-eyebrow">NBA · Full game</span><h3><span>{g.away}</span><small>AT</small><span>{g.home}</span></h3></div><span className="tip-chip">{clock(g.tip)}</span></header>
  <div className="projection-summary"><span>Projected score<b>{g.away} {g.awayScore.toFixed(1)} · {g.home} {g.homeScore.toFixed(1)}</b></span><span>Projected total<b>{g.total.toFixed(1)}</b></span></div>
- <details className="team-context"><summary>Team comparison & defensive rankings <span aria-hidden="true">⌄</span></summary><TeamRanks teams={[g.awayContext,g.homeContext]}/></details><Market game={g} market="moneyline" now={now} evidence={data.z}/><Market game={g} market="spread" now={now} evidence={data.z}/><Market game={g} market="total" now={now} evidence={data.z}/></article>)}
+ <details className="team-context"><summary>Team comparison & defensive rankings <span aria-hidden="true">⌄</span></summary><TeamRanks teams={[g.awayContext,g.homeContext]}/></details><Market game={g} market="moneyline" now={now} evidence={data.z} experimental={data.policy==='game-pace-v1'}/><Market game={g} market="spread" now={now} evidence={data.z} experimental={data.policy==='game-pace-v1'}/><Market game={g} market="total" now={now} evidence={data.z} experimental={data.policy==='game-pace-v1'}/></article>)}
  </section>
 }
 
@@ -47,6 +47,6 @@ export function MatchupDetails({ game, data }) {
  const g=findGameMarket(game,data?.games)
  return <details className="matchup-lens"><summary><span>↗ <b>{game.matchup || (g ? `${g.away} @ ${g.home}` : 'Game context')}</b><small>Matchup & game markets</small></span><span aria-hidden="true">+</span></summary><div className="matchup-lens-body">
  {game.news?.length>0 && <div className="lens-news">{game.news.map(n=><p key={n.team}><b>{n.team}</b>{n.out?.length>0?` · Out: ${n.out.join(', ')}`:''}{n.maybe?.length>0?` · Uncertain: ${n.maybe.join(', ')}`:''}</p>)}</div>}
- {g ? <><div className="projection-summary"><span>Projected score<b>{g.away} {g.awayScore.toFixed(1)} · {g.home} {g.homeScore.toFixed(1)}</b></span><span>Projected total<b>{g.total.toFixed(1)}</b></span></div><details className="team-context"><summary>Team comparison & rankings</summary><TeamRanks teams={[g.awayContext,g.homeContext]}/></details><Market game={g} market="moneyline" now={now} evidence={data.z}/><Market game={g} market="spread" now={now} evidence={data.z}/><Market game={g} market="total" now={now} evidence={data.z}/></> : game.ctx ? <><p>Game total <b>{game.ctx.total}</b> · {game.ctx.favorite ? `${game.ctx.favorite} -${game.ctx.spread}` : "Pick’em"}</p>{game.ctx.reads?.map(r=><p className="small" key={r}>{r}</p>)}</> : <p className="small">Game-market projections are unavailable for this matchup.</p>}
+ {g ? <><div className="projection-summary"><span>Projected score<b>{g.away} {g.awayScore.toFixed(1)} · {g.home} {g.homeScore.toFixed(1)}</b></span><span>Projected total<b>{g.total.toFixed(1)}</b></span></div><details className="team-context"><summary>Team comparison & rankings</summary><TeamRanks teams={[g.awayContext,g.homeContext]}/></details><Market game={g} market="moneyline" now={now} evidence={data.z} experimental={data.policy==='game-pace-v1'}/><Market game={g} market="spread" now={now} evidence={data.z} experimental={data.policy==='game-pace-v1'}/><Market game={g} market="total" now={now} evidence={data.z} experimental={data.policy==='game-pace-v1'}/></> : game.ctx ? <><p>Game total <b>{game.ctx.total}</b> · {game.ctx.favorite ? `${game.ctx.favorite} -${game.ctx.spread}` : "Pick’em"}</p>{game.ctx.reads?.map(r=><p className="small" key={r}>{r}</p>)}</> : <p className="small">Game-market projections are unavailable for this matchup.</p>}
  </div></details>
 }

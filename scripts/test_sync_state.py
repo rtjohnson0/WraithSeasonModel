@@ -70,6 +70,20 @@ class MergeTests(unittest.TestCase):
         result = json.loads(merge_jsonl('data/settled.jsonl', base, fresh, review))
         self.assertEqual(result['result'],'REVIEW')
 
+    def test_game_challenger_keeps_first_question_and_latest_matching_final(self):
+        first=dict(date='2026-11-19',game_id=9,market='spread',at='2026-11-19T18:00:00Z',side='BOS',line=-3.5,book='a')
+        later=dict(first,at='2026-11-19T19:00:00Z',side='NYK',line=-4.5,book='b')
+        text=lambda r:json.dumps(r)+'\n'
+        result=merge_jsonl('data/gamepace_picklog.jsonl','',text(later),text(first))
+        self.assertEqual(json.loads(result)['at'],first['at'])
+        old=dict(first,result='WIN',sourceAt='2026-11-20T06:00:00Z')
+        new=dict(first,result='LOSS',sourceAt='2026-11-20T07:00:00Z')
+        result=merge_jsonl('data/gamepace_settled.jsonl','',text(new),text(old))
+        self.assertEqual(json.loads(result)['result'],'LOSS')
+        wrong=dict(later,result='WIN',sourceAt='2026-11-20T08:00:00Z')
+        result=merge_jsonl('data/gamepace_settled.jsonl','',text(wrong),text(new))
+        self.assertEqual(json.loads(result)['at'],first['at'])
+
     def test_union_and_remote_correction(self):
         base = line(1, result='LOSS')
         ours = base + line(2)

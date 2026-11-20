@@ -4,6 +4,7 @@ import (
 	"math"
 	"propsmodel/internal/data"
 	"propsmodel/internal/picklog"
+	"propsmodel/internal/rotation"
 	"testing"
 )
 
@@ -32,5 +33,26 @@ func TestFrozenErrorDecompositionDedupAndIdentity(t *testing.T) {
 	final.Pts = 12
 	if len(Build([]picklog.Settled{s}, []data.PlayerGame{final}, "").Rows) != 0 {
 		t.Fatal("revised actual silently mixed with frozen settlement")
+	}
+}
+
+func TestSingleStatAuditKeepsCombosSeparateAndFrozenAllocationShift(t *testing.T) {
+	s := picklog.Settled{Entry: picklog.Entry{Date: "2026-11-19", PlayerID: 1, GameID: 9, Player: "Test", Stat: "points", Side: "OVER", Line: 20.5, Tier: "CHECK", ProjMin: 30, ProjMean: 30, Prob: .65, AuditVersion: 2, LoggedAt: "2026-11-19T18:00:00Z", QuoteAt: "2026-11-19T17:59:00Z", Tip: "2026-11-19T23:00:00Z", Rotation: &rotation.Context{BaselineMinutes: 40}}, Result: "LOSS", Actual: 10, SettlementVersion: 1, SourceHash: "hash", SourceFetchedAt: "2026-11-20T08:00:00Z", SourcePlayerID: 1, SourcePlayer: "Test", SourceGameID: 9, SourceTeamID: 2, SourceDate: "2026-11-19"}
+	final := data.PlayerGame{PlayerID: 1, GameID: 9, TeamID: 2, Date: s.Date, Minutes: 20, Pts: 10, Reb: 5, SourceFinal: true, BoxScoreComplete: true}
+	combined := s
+	combined.Stat = "pr"
+	combined.Actual = 15
+	report := BuildSingles([]picklog.Settled{s, combined}, []data.PlayerGame{final}, s.Date)
+	if len(report.Rows) != 1 || report.Rows[0].WorkloadShift == nil || *report.Rows[0].WorkloadShift != -10 {
+		t.Fatal(report)
+	}
+	found := false
+	for _, slice := range report.Slices {
+		if slice.Name == "allocation cut 6+ min" {
+			found = slice.N == 1 && slice.Wins == 0
+		}
+	}
+	if !found {
+		t.Fatal("missing allocation-risk diagnostic", report)
 	}
 }

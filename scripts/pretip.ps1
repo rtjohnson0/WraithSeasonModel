@@ -28,6 +28,7 @@ Run "prior V2 rotation comparison" { go run ./cmd/rotationaudit -policy rotation
 Run "absence fallback comparison" { go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback } -Optional
 Run "V2 context comparison" { go run ./cmd/rotationaudit -policy rotation-v4 -out run_evidence/context-audit } -Optional
 Run "game lines"                   { go run ./cmd/games } -Optional
+Run "separate game challenger"     { go run ./cmd/gamepace } -Optional
 
 Run "first-quarter points comparisons" { go run ./cmd/quarter } -Optional
 
