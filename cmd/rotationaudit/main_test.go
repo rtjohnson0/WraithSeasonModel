@@ -1,6 +1,8 @@
 package main
 
 import (
+    "encoding/json"
+    "strings"
 	"os"
 	"path/filepath"
 	"propsmodel/internal/data"
@@ -85,4 +87,18 @@ func TestProductionCaptureRequiresFreshKnownStatusesAndExactBoundedScales(t *tes
 	if validProductionCapture(r) {
 		t.Fatal("scale provenance mismatch accepted")
 	}
+}
+
+func TestPhase3QuestionLevelDetailsCannotSerializeInNormalReport(t *testing.T) {
+    report := Report{Phase3: []Phase3Question{{
+        Date: "2026-11-18", Stat: "points", ModelID: "private-checkpoint",
+        Line: 987.5, OverOdds: -130, UnderOdds: 110,
+    }}}
+    b, err := json.Marshal(report)
+    if err != nil { t.Fatal(err) }
+    for _, sensitive := range []string{"987.5", "private-checkpoint", "over_odds", "phase3"} {
+        if strings.Contains(strings.ToLower(string(b)), sensitive) {
+            t.Fatalf("question-level private data leaked to default report: %s", sensitive)
+        }
+    }
 }
