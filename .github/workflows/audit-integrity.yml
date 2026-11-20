@@ -1,0 +1,43 @@
+name: Audit integrity checks
+on:
+  pull_request:
+    paths:
+      - 'scripts/archive_forward_evidence.py'
+      - 'scripts/closing_line_audit.py'
+      - 'scripts/test_forward_clv_audits.py'
+      - 'scripts/phase3_v2_shadow.py'
+      - 'cmd/rotationaudit/**'
+      - 'scripts/test_phase3_v2_shadow.py'
+      - 'scripts/daily.sh'
+      - 'scripts/pretip.sh'
+      - 'scripts/test_near_tip_minutes_context.py'
+      - 'scripts/near_tip_window.py'
+      - 'scripts/merge_near_tip_snapshots.py'
+      - 'scripts/minutes_context_diagnostic.py'
+      - '.github/workflows/near-tip-odds.yml'
+      - '.github/workflows/daily.yml'
+      - '.github/workflows/audit-integrity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Validate rotation-v4 Go audit and private serialization
+        run: go test ./cmd/rotationaudit
+      - name: Run synthetic audit tests (no customer data)
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_*audit*.py' -v
+          python3 -m unittest discover -s scripts -p test_near_tip_minutes_context.py -v
+          python3 -m unittest discover -s scripts -p test_phase3_v2_shadow.py -v

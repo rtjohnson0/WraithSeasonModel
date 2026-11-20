@@ -48,12 +48,19 @@ go run ./cmd/accuracy
 python3 scripts/accuracy_report.py
 go run ./cmd/combos calibrate || echo "combo calibration unavailable; comparison mode retained"
 go run ./cmd/predict -rotationpolicy rotation-v4
+# Read-only evidence: neither command changes picks, prices, or public site data.
+python3 scripts/archive_forward_evidence.py || echo "Versioned evidence archive unavailable"
+python3 scripts/closing_line_audit.py || echo "Closing-line coverage audit unavailable"
 go run ./cmd/minutesaudit -legacy || echo "Minutes audit unavailable; live model unchanged"
+python3 scripts/minutes_context_diagnostic.py || echo "Minutes context diagnostic unavailable; live model unchanged"
+# Fixed, zero-stake V2 research challenger; never publishes per-pick predictions.
 go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
 go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 || echo "Prior V2 evaluation unavailable"
 go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback || echo "Absence fallback evaluation unavailable"
 echo "== game lines =="
-go run ./cmd/rotationaudit -policy rotation-v4 -out run_evidence/context-audit || echo "Context evaluation unavailable"
+go run ./cmd/rotationaudit -policy rotation-v4 -phase3 -out run_evidence/context-audit || echo "Context evaluation unavailable"
+# The private question file is consumed and deleted by the following aggregate-only shadow report.
+python3 scripts/phase3_v2_shadow.py || echo "Phase 3 shadow unavailable; production board unchanged"
 go run ./cmd/games || echo "game lines skipped"
 go run ./cmd/gamepace || echo "Game challenger unavailable; original game board retained"
 
