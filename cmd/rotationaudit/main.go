@@ -25,6 +25,29 @@ import (
 	"time"
 )
 
+// Phase3Question is produced only after the existing rotation-v4 replay checks
+// and final identity/settlement verification. Never publish question-level rows.
+type Phase3Question struct {
+    Date string `json:"date"`
+    Stat string `json:"stat"`
+    ModelID string `json:"model_id"`
+    POver float64 `json:"p_over"`
+    Market float64 `json:"market"`
+    OverOdds int `json:"over_odds"`
+    UnderOdds int `json:"under_odds"`
+    Line float64 `json:"line"`
+    Actual float64 `json:"actual"`
+    Projected float64 `json:"projected"`
+    ProjectedMinutes float64 `json:"projected_minutes"`
+    ActualMinutes float64 `json:"actual_minutes"`
+    ConfirmedOut int `json:"confirmed_out"`
+    RelevantOut int `json:"relevant_out"`
+    MatchedGames int `json:"matched_games"`
+    AllocationApplied bool `json:"allocation_applied"`
+    RotationSupported bool `json:"rotation_supported"`
+    OwnStatus string `json:"own_status,omitempty"`
+    PregameLineups int `json:"pregame_lineups"`
+}
 type Slice struct {
 	Stat                                                   string
 	N, Days                                                int
@@ -38,6 +61,7 @@ type GameContext struct {
 	MinutesMAE  float64
 }
 type Report struct {
+	Phase3 []Phase3Question `json:"-"`
 	GameContexts                           map[string]*GameContext
 	Cohort                                 string
 	ModelVersions                          map[int]int
@@ -234,6 +258,18 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		s.RotationMAE += math.Abs(p.Mean(r.Stat) - grade.Actual)
 		s.ProtectedBrier += (protectedProb - y) * (protectedProb - y)
 		s.ProtectedMAE += math.Abs(protected.Mean(r.Stat) - grade.Actual)
+        if policy == rotation.ContextPolicy && p.Minutes > 0 && mins > 0 && grade.Actual != r.Line {
+            out.Phase3 = append(out.Phase3, Phase3Question{
+                Date: r.Date, Stat: st, ModelID: r.ModelID,
+                POver: r.P1, Market: r.Market, OverOdds: r.OverOdds, UnderOdds: r.UnderOdds,
+                Line: r.Line, Actual: grade.Actual, Projected: p.Mean(r.Stat),
+                ProjectedMinutes: p.Minutes, ActualMinutes: mins,
+                ConfirmedOut: len(r.Rotation.ConfirmedOut), RelevantOut: len(r.Rotation.RelevantOut),
+                MatchedGames: r.Rotation.MatchedGames,
+                AllocationApplied: r.Rotation.AllocationApplied, RotationSupported: r.Rotation.Supported,
+                OwnStatus: r.Rotation.OwnStatus, PregameLineups: len(r.Rotation.PregameLineups),
+            })
+        }
 		if p.Minutes > 0 {
 			rate := p.Mean(r.Stat) / p.Minutes
 			s.MinutesContribution += (mins - p.Minutes) * rate
@@ -277,7 +313,8 @@ func main() {
 	dest := flag.String("out", filepath.Join("run_evidence", "rotation-audit"), "private output directory")
 	before := flag.String("before", "", "today Eastern; only earlier dates are graded")
 	cohort := flag.String("cohort", "all", "all, no-confirmed-out, irrelevant-outs, supported-joint-absence, or unsupported-fallback")
-	policy := flag.String("policy", rotation.Policy, "rotation-v1, rotation-v2 or rotation-v3; evidence and results remain separate")
+	policy := flag.String("policy", rotation.Policy, "rotation-v1, rotation-v2, rotation-v3 or rotation-v4; evidence and results remain separate")
+	phase3 := flag.Bool("phase3", false, "write verified rotation-v4 questions to gitignored private/ for an aggregate-only shadow audit")
 	flag.Parse()
 	if !rotation.KnownPolicy(*policy) {
 		fatal(fmt.Errorf("unknown rotation policy %q", *policy))
@@ -296,6 +333,24 @@ func main() {
 	if e != nil {
 		fatal(e)
 	}
+    if *phase3 {
+        if *policy != rotation.ContextPolicy {
+            fatal(fmt.Errorf("-phase3 requires -policy rotation-v4"))
+        }
+        if e = os.MkdirAll("private", 0700); e != nil {
+            fatal(e)
+        }
+        // Fixed ignored path outside data/ and run_evidence/.
+        path := filepath.Join("private", "phase3_rotation_v4.jsonl")
+        file, er := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+        if er != nil { fatal(er) }
+        enc := json.NewEncoder(file)
+        for _, question := range r.Phase3 {
+            if er = enc.Encode(question); er != nil { break }
+        }
+        if closeErr := file.Close(); er == nil { er = closeErr }
+        if er != nil { fatal(er) }
+    }
 	if e = os.MkdirAll(*dest, 0755); e != nil {
 		fatal(e)
 	}
