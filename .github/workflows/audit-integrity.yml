@@ -5,6 +5,10 @@ on:
       - 'scripts/archive_forward_evidence.py'
       - 'scripts/closing_line_audit.py'
       - 'scripts/test_forward_clv_audits.py'
+      - 'scripts/phase3_v2_shadow.py'
+      - 'scripts/test_phase3_v2_shadow.py'
+      - 'scripts/daily.sh'
+      - 'scripts/pretip.sh'
       - 'scripts/test_near_tip_minutes_context.py'
       - 'scripts/near_tip_window.py'
       - 'scripts/merge_near_tip_snapshots.py'
@@ -29,3 +33,4 @@ jobs:
         run: |
           python3 -m unittest discover -s scripts -p 'test_*audit*.py' -v
           python3 -m unittest discover -s scripts -p test_near_tip_minutes_context.py -v
+          python3 -m unittest discover -s scripts -p test_phase3_v2_shadow.py -v
