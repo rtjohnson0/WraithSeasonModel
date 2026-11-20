@@ -26,5 +26,6 @@ jobs:
         with:
           python-version: '3.11'
       - name: Run synthetic audit tests (no customer data)
-        run: python3 -m unittest discover -s scripts -p 'test_*audit*.py' -v
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_*audit*.py' -v
           python3 -m unittest discover -s scripts -p test_near_tip_minutes_context.py -v
