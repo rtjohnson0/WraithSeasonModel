@@ -36,7 +36,7 @@ if ($Full) { $newFlag = @() }
 
 Run "refresh box scores ($Season)" { go run ./cmd/pull stats -seasons $Season @newFlag }
 Run "refresh advanced stats"       { go run ./cmd/pull advanced -seasons $Season @newFlag } -Optional
-Run "tracking opportunities" { go run ./cmd/pull context -seasons "$Season,$($Season - 1)" -feeds passing,rebounding -maxminutes 2 } -Optional
+Run "tracking opportunities" { go run ./cmd/pull context -seasons "$Season,$($Season - 1)" -feeds passing,rebounding -recentonly -maxminutes 2 } -Optional
 Run "shooting and defense context" { go run ./cmd/pull context -seasons "$Season,$($Season - 1)" -feeds possessions,drives,catchshoot,pullupshot,defense_rim,defense_threes,shooting_distance,lineup_stats,matchups -maxminutes 1 } -Optional
 Run "current rosters"              { go run ./cmd/pull players }
 Run "audit quote provenance"       { python scripts/audit_quotes.py --data data --apply }

@@ -17,6 +17,7 @@ import (
 	"propsmodel/internal/predictor"
 	"propsmodel/internal/projlog"
 	"propsmodel/internal/props"
+	"propsmodel/internal/rotation"
 )
 
 // V2 is a challenger that runs beside the real model on every run and is judged separately. It never
@@ -478,6 +479,9 @@ func v2Tier(s scored, r v2Rules) (tier, drop string) {
 	if g.State == gateFailed {
 		return "", "failed"
 	}
+	if workloadDirectionChanges(s) {
+		return tierLean, ""
+	}
 	gap := s.ProbRaw - s.Mkt
 	switch {
 	case s.Rotation != nil && !s.Rotation.Supported:
@@ -564,6 +568,10 @@ func v2Select(all []scored, r v2Rules) ([]scored, V2Drops) {
 func v2LeanWhy(s scored, gates map[string]V2Gate) string {
 	g := gateOf(gates, string(s.Stat), s.Side)
 	var parts []string
+	if workloadDirectionChanges(s) {
+		r := s.Rotation.WorkloadReview
+		parts = append(parts, fmt.Sprintf("this side falls to %.1f%% at the primary minutes forecast of %.1f; direction depends on the V2 workload change", 100*r.BaselineProbability, r.BaselineMinutes))
+	}
 	if s.V1Prob < v2AgreeBar {
 		parts = append(parts, fmt.Sprintf("the real model gives this side %.0f%%, short of the %.0f%% that counts as agreeing", 100*s.V1Prob, 100*v2AgreeBar))
 	}
@@ -574,6 +582,14 @@ func v2LeanWhy(s scored, gates map[string]V2Gate) string {
 		return "V2 LEAN"
 	}
 	return "V2 LEAN, not Strong: " + strings.Join(parts, "; ")
+}
+
+func workloadDirectionChanges(s scored) bool {
+	if s.Rotation == nil || s.Rotation.Policy != rotation.ContextPolicy || s.Rotation.WorkloadReview == nil {
+		return false
+	}
+	r := s.Rotation.WorkloadReview
+	return r.Policy == "minutes-sensitivity-v1" && r.DirectionChanges && r.BaselineMinutes > 0 && r.BaselineMinutes <= 48 && !math.IsNaN(r.BaselineProbability) && r.BaselineProbability >= 0 && r.BaselineProbability < .5
 }
 
 // v2Anchor is the level correction for one stat: the slate's average median line over the model's

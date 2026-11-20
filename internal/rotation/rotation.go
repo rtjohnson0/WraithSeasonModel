@@ -40,6 +40,7 @@ type Replacement struct {
 	Projected float64 `json:"projected"`
 }
 type Context struct {
+	WorkloadReview       *WorkloadReview         `json:"workloadReview,omitempty"`
 	TrackingProfile      []opportunity.Metric    `json:"trackingProfile,omitempty"`
 	GameContext          *gamecontext.Estimate   `json:"gameContext,omitempty"`
 	WorkloadScenarios    []Scenario              `json:"workloadScenarios,omitempty"`
@@ -63,6 +64,15 @@ type Context struct {
 	Reason               string                  `json:"reason"`
 	ConfirmedOut         []Status                `json:"confirmedOut"`
 	Scenarios            []Scenario              `json:"scenarios,omitempty"`
+}
+
+// WorkloadReview is a pregame sensitivity check, not another calibrated forecast.
+// A tier change is versioned independently of the unchanged rotation-v4 forecast.
+type WorkloadReview struct {
+	Policy              string  `json:"policy"`
+	BaselineMinutes     float64 `json:"baselineMinutes"`
+	BaselineProbability float64 `json:"baselineProbability"`
+	DirectionChanges    bool    `json:"directionChanges"`
 }
 type Allocation struct {
 	RoleProjected bool            `json:"roleProjected"`

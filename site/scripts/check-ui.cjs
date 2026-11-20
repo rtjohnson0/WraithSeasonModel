@@ -107,11 +107,13 @@ check('V2 pooled evidence does not masquerade as zero joint-out games',$('#root'
 check('Projected lineups are explicitly distinguished from confirmed starters',$('#root').textContent.includes('not confirmed starters'));
 act(()=>root.unmount());
 const trackingPlay=structuredClone(rolePlay);trackingPlay.rotation.policy='rotation-v4';trackingPlay.rotation.opportunities=[{stat:'assists',games:3,chances:30,minutes:90,conversion:.5,available:true,through:'2026-11-17'},{stat:'rebounds',games:0,chances:0,available:false,reason:'No recent covered games'}];trackingPlay.rotation.pregameLineups=[{game_id:7,team_id:1,teamAbbr:'BOS',status:'expected',lineup:['PG','SG','SF','PF','C'].map((position,i)=>({position,player:{id:i+1,first_name:'Test',last_name:'Player '+i}}))}];
+trackingPlay.rotation.workloadReview={policy:'minutes-sensitivity-v1',directionChanges:true,baselineMinutes:30,baselineProbability:.43};trackingPlay.rotation.workloadScenarios=[{player:'Primary minutes forecast',minutes:30,projection:8,probability:.43}];
 act(()=>{root=createRoot($('#root'));root.render(React.createElement(Rotation,{p:trackingPlay}));});
 check('V2 tracking distinguishes potential-assist volume from conversion',$('.context-opportunities').textContent.includes('10.0 Potential assists/game')&&$('.context-opportunities').textContent.includes('50.0%'));
 check('Missing rebound tracking stays unavailable',$('.context-opportunities').textContent.includes('No recent covered games')&&$('.context-opportunities').textContent.includes('Unavailable'));
 check('Expected starters are not labelled provider confirmed',$('.context-opportunities').textContent.includes('Expected starters')&&!$('.context-opportunities').textContent.includes('Provider-confirmed starting five'));
 check('Each pregame starter retains a portrait or initials',$$('.context-starters .player-portrait').length===5);
+check('A minutes-sensitive lean explains its direction reversal and alternative estimate',$('.context-opportunities').textContent.includes('Minutes-sensitive lean')&&$('.context-opportunities').textContent.includes('43.0%')&&$('.context-opportunities').textContent.includes('Primary minutes forecast'));
 act(()=>root.unmount());
 const GamePace=require(path.join(tempDir,'GamePace.cjs')).default;
 const paceFixture=structuredClone(fixture);paceFixture.gameChallenger={policy:'game-pace-v1',date:paceFixture.board.date,at:new Date().toISOString(),z:{},calibration:{moneyline:{N:12,Dates:2,Ready:false}},games:[{...paceFixture.gameMarkets.games[0],paceContext:{forecast:{Pace:99,HomeEff:1.15,AwayEff:1.1},lineupApplied:true,reason:'Fresh projected rotation',scenarios:[{team:1,playerId:7,player:'Test Guard',margin:4,total:224}]}}]};
