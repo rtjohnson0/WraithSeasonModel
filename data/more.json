@@ -1,6 +1,6 @@
 {
  "date": "2026-11-19",
- "at": "2026-11-20T01:50:19.846548238Z",
+ "at": "2026-11-20T04:03:52.148515214Z",
  "plays": null,
  "news": [
   {
@@ -18,25 +18,30 @@
    "team": "MEM",
    "out": [
     "Ty Jerome",
-    "GG Jackson",
-    "Zach Edey"
+    "GG Jackson"
+   ],
+   "maybe": [
+    "Jerami Grant (day-to-day)",
+    "Zach Edey (day-to-day)"
    ]
   },
   {
    "game_id": 21718144,
    "team": "POR",
-   "out": [
-    "Robert Williams III",
-    "Deni Avdija"
+   "maybe": [
+    "Robert Williams III (day-to-day)",
+    "Deni Avdija (day-to-day)"
    ]
   },
   {
    "game_id": 21718144,
    "team": "MIL",
    "out": [
-    "Kyle Kuzma",
-    "Myles Turner",
     "Ryan Rollins"
+   ],
+   "maybe": [
+    "Kyle Kuzma (day-to-day)",
+    "Myles Turner (day-to-day)"
    ]
   },
   {
@@ -65,6 +70,6 @@
   "tracked": 0,
   "bar": 0.55,
   "basis": "No priceable combo quotes passed freshness, consensus, availability and history checks",
-  "at": "2026-11-20T01:50:35Z"
+  "at": "2026-11-20T04:04:08Z"
  }
 }
