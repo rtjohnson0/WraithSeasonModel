@@ -7,6 +7,7 @@ on:
       - 'scripts/test_forward_clv_audits.py'
       - 'scripts/test_near_tip_minutes_context.py'
       - 'scripts/near_tip_window.py'
+      - 'scripts/merge_near_tip_snapshots.py'
       - 'scripts/minutes_context_diagnostic.py'
       - '.github/workflows/near-tip-odds.yml'
       - '.github/workflows/daily.yml'
