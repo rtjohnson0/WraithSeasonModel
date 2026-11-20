@@ -52,6 +52,7 @@ go run ./cmd/predict -rotationpolicy rotation-v4
 python3 scripts/archive_forward_evidence.py || echo "Versioned evidence archive unavailable"
 python3 scripts/closing_line_audit.py || echo "Closing-line coverage audit unavailable"
 go run ./cmd/minutesaudit -legacy || echo "Minutes audit unavailable; live model unchanged"
+python3 scripts/minutes_context_diagnostic.py || echo "Minutes context diagnostic unavailable; live model unchanged"
 go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
 go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 || echo "Prior V2 evaluation unavailable"
 go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback || echo "Absence fallback evaluation unavailable"

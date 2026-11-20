@@ -5,6 +5,12 @@ on:
       - 'scripts/archive_forward_evidence.py'
       - 'scripts/closing_line_audit.py'
       - 'scripts/test_forward_clv_audits.py'
+      - 'scripts/test_near_tip_minutes_context.py'
+      - 'scripts/near_tip_window.py'
+      - 'scripts/merge_near_tip_snapshots.py'
+      - 'scripts/minutes_context_diagnostic.py'
+      - '.github/workflows/near-tip-odds.yml'
+      - '.github/workflows/daily.yml'
       - '.github/workflows/audit-integrity.yml'
   workflow_dispatch:
 
@@ -20,4 +26,6 @@ jobs:
         with:
           python-version: '3.11'
       - name: Run synthetic audit tests (no customer data)
-        run: python3 -m unittest discover -s scripts -p test_forward_clv_audits.py -v
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_*audit*.py' -v
+          python3 -m unittest discover -s scripts -p test_near_tip_minutes_context.py -v
