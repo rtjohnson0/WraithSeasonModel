@@ -28,7 +28,7 @@ jobs:
       - name: Restore previous evidence snapshots
         uses: actions/cache/restore@v4
         with:
-          path: data/snapshots
+          path: data/near_tip_snapshots
           key: close-quotes-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             close-quotes-v1-${{ github.ref_name }}-
@@ -42,17 +42,18 @@ jobs:
           fi
           python3 scripts/near_tip_window.py || exit 0
           go run ./cmd/sgo snapshot
+          python3 scripts/merge_near_tip_snapshots.py --source data/snapshots --target data/near_tip_snapshots
       - name: Save near-tip snapshot evidence
         if: always()
         uses: actions/cache/save@v4
         with:
-          path: data/snapshots
+          path: data/near_tip_snapshots
           key: close-quotes-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Retain private evidence artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: near-tip-quotes-${{ github.run_id }}
-          path: data/snapshots/sgo_*.jsonl
+          path: data/near_tip_snapshots/sgo_*.jsonl
           if-no-files-found: ignore
           retention-days: 30
