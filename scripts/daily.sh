@@ -53,6 +53,8 @@ python3 scripts/archive_forward_evidence.py || echo "Versioned evidence archive 
 python3 scripts/closing_line_audit.py || echo "Closing-line coverage audit unavailable"
 go run ./cmd/minutesaudit -legacy || echo "Minutes audit unavailable; live model unchanged"
 python3 scripts/minutes_context_diagnostic.py || echo "Minutes context diagnostic unavailable; live model unchanged"
+# Fixed, zero-stake V2 research challenger; never publishes per-pick predictions.
+python3 scripts/phase3_v2_shadow.py || echo "Phase 3 research audit unavailable; production picks unchanged"
 go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
 go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 || echo "Prior V2 evaluation unavailable"
 go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback || echo "Absence fallback evaluation unavailable"
