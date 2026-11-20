@@ -52,6 +52,25 @@ class ChallengerTests(unittest.TestCase):
         self.assertNotIn("player", row)
         self.assertEqual(loss_summary([row])["loss_patterns"], {})
 
+    def test_precision_filter_only_affects_shadow_research(self):
+        # A supported, reasonably stable minutes projection can qualify at 62%.
+        stable = make_question(
+            p_over=.7, relevant_out=1, rotation_supported=True,
+            allocation_applied=True, matched_games=4,
+            projected_minutes=30, actual_minutes=30, actual=22.0)
+        result = assess(stable)
+        self.assertTrue(result["selected"])
+        self.assertTrue(result["precision_research_selected"])
+        # An unsupported teammate-absence workload still remains part of the
+        # baseline comparison but cannot qualify for the research precision filter.
+        unsupported = make_question(p_over=.7, actual=22.0)
+        result = assess(unsupported)
+        self.assertTrue(result["selected"])
+        self.assertFalse(result["precision_research_selected"])
+        # More conservative published picks remain untouched in either case.
+        self.assertTrue(assess(make_question())["selected"])
+        self.assertFalse(assess(make_question())["precision_research_selected"])
+
     def test_outcomes_are_scored_only_for_matching_available_quotes(self):
         self.assertTrue(valid_question(make_question(), "2026-11-20"))
         self.assertFalse(valid_question(make_question(market=.7), "2026-11-20"))
