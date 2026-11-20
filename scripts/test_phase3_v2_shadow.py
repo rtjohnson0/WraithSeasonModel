@@ -1,146 +1,132 @@
-"""Synthetic phase-3 safety tests. No proprietary pick rows or API calls."""
+"""Synthetic tests for actual V2 rotation-v4 shadow analysis."""
 import hashlib
 import json
-import math
 import tempfile
 import unittest
 from pathlib import Path
 
-from phase3_v2_shadow import (assess, challenger, live_shadow, loss_summary,
-                              matched_rows, replay_index, replay_key, run,
-                              summarize)
+from phase3_v2_shadow import (
+    assess, challenger, live_shadow, loss_summary, metrics,
+    read_go_verified, run, summarize, valid_question,
+)
+
+
+def make_question(**changes):
+    original = {
+        "date": "2026-11-18", "stat": "points", "model_id": "a" * 64,
+        "p_over": 0.64, "market": 0.5,
+        "over_odds": -110, "under_odds": -110,
+        "line": 15.5, "actual": 12.0, "projected": 19.0,
+        "projected_minutes": 32.0, "actual_minutes": 25.0,
+        "confirmed_out": 1, "relevant_out": 1,
+        "matched_games": 2, "allocation_applied": False,
+        "rotation_supported": False, "own_status": "",
+        "pregame_lineups": 1,
+    }
+    original.update(changes)
+    # Go's devigged -110/-110 market is exactly 0.5.
+    return original
 
 
 class ChallengerTests(unittest.TestCase):
-    def test_shadow_shrinks_disagreement_without_side_quota(self):
-        self.assertAlmostEqual(challenger(0.7, 0.5, {}), 0.65)
-        self.assertAlmostEqual(challenger(0.3, 0.5, {}), 0.35)
-        self.assertAlmostEqual(challenger(0.7, 0.5, {"questionable": 1}), 0.61)
-        self.assertAlmostEqual(challenger(0.3, 0.5, {"returning": True}), 0.39)
-        self.assertAlmostEqual(challenger(0.5, 0.5, None), 0.5)
+    def test_fixed_market_residual_and_no_over_quota(self):
+        self.assertAlmostEqual(challenger(.7, .5, {}), .65)
+        self.assertAlmostEqual(challenger(.3, .5, {}), .35)
+        uncertain = {"confirmed_out": 1, "allocation_applied": False,
+                     "rotation_supported": False}
+        self.assertAlmostEqual(challenger(.7, .5, uncertain), .61)
+        self.assertAlmostEqual(challenger(.3, .5, uncertain), .39)
+        self.assertAlmostEqual(challenger(.5, .5, uncertain), .5)
         with self.assertRaises(ValueError):
-            challenger(float("nan"), 0.5, None)
+            challenger(float("nan"), .5, {})
 
-    def test_loss_factors_are_descriptive_and_overlap(self):
-        o = {"cohort": "verified replay", "date": "2026-11-18",
-             "stat": "points", "line": 15.5, "finalOver": 0.64,
-             "actual": 12, "projection": 19,
-             "projectedMinutes": 32, "actualMinutes": 25,
-             "context": {"confirmedOut": 1, "questionable": 1, "b2b": True,
-                         "spread": 12}}
-        r = {"market": 0.5, "p1": 0.64, "over_odds": -110,
-             "under_odds": -110, "model_id": "a" * 64}
-        row = assess({"obs": o, "quote": r})
+    def test_loss_attribution_is_arithmetic_not_causal(self):
+        row = assess(make_question())
         self.assertTrue(row["selected"])
         self.assertFalse(row["won"])
-        self.assertTrue(row["indicators"]["miss_direction_minutes"])
-        self.assertTrue(row["indicators"]["miss_direction_rate"])
-        self.assertTrue(row["indicators"]["pregame_confirmed_teammate_out"])
-        self.assertTrue(row["indicators"]["pregame_uncertain_rotation"])
-        self.assertAlmostEqual(row["minute_term"] + row["rate_term"],
-                               o["actual"] - o["projection"])
+        self.assertTrue(row["indicators"]["minutes_error_in_miss_direction"])
+        self.assertTrue(row["indicators"]["rate_error_in_miss_direction"])
+        self.assertTrue(row["indicators"]["pregame_relevant_teammate_out"])
+        self.assertTrue(row["indicators"]["pregame_unsupported_rotation"])
+        self.assertAlmostEqual(row["minute_term"] + row["rate_term"], 12 - 19)
         self.assertNotIn("player", row)
         self.assertEqual(loss_summary([row])["loss_patterns"], {})
 
-    def test_future_shadow_only_counts_not_recommendations(self):
-        a = {"date": "2026-11-21", "at": "2026-11-20T22:30:00Z",
-             "tip": "2026-11-21T00:00:00Z", "market": 0.5, "p1": 0.65,
-             "audit_context": {"returning": True}}
-        b = dict(a, at="2026-11-20T23:00:00Z", p1=0.8)
-        key1 = ("2026-11-21", 12, 34, "points", 19.5,
-                __import__("datetime").datetime.fromisoformat("2026-11-20T22:30:00+00:00"))
-        key2 = ("2026-11-21", 12, 34, "points", 19.5,
-                __import__("datetime").datetime.fromisoformat("2026-11-20T23:00:00+00:00"))
-        report = live_shadow({key1: [a], key2: [b]}, "2026-11-20")
-        self.assertEqual(report["ungraded_shadow_questions"], 1)
-        self.assertAlmostEqual(report["mean_abs_probability_change"], 0.0675)
-        self.assertNotIn("player", json.dumps(report).lower())
-        self.assertTrue(report["not_evidence_of_results"])
+    def test_outcomes_are_scored_only_for_matching_available_quotes(self):
+        self.assertTrue(valid_question(make_question(), "2026-11-20"))
+        self.assertFalse(valid_question(make_question(market=.7), "2026-11-20"))
+        self.assertFalse(valid_question(make_question(over_odds=0), "2026-11-20"))
+        self.assertFalse(valid_question(make_question(actual=15.5), "2026-11-20"))
+        self.assertFalse(valid_question(make_question(actual_minutes=0), "2026-11-20"))
+        self.assertFalse(valid_question(make_question(date="2026-11-20"), "2026-11-20"))
+
+    def test_multiple_losses_grouped_but_no_individual_pick_exposed(self):
+        sample = [make_question() for _ in range(8)]
+        analyzed = [assess(x) for x in sample]
+        report = summarize(sample, {}, {"questions_ungraded": 0})
+        self.assertEqual(report["verified_questions"], 8)
+        self.assertEqual(report["loss_analysis"]["loss_count"], 8)
+        self.assertEqual(report["loss_analysis"]["loss_patterns"]["all_losses"]["indicators"]
+                         ["minutes_error_in_miss_direction"], 8)
+        self.assertEqual(report["same_fixed_rule_subset"]["n"], 8)
+        self.assertLess(report["same_fixed_rule_subset"]["shadow_v2"]["log_loss"],
+                        report["same_fixed_rule_subset"]["current_v2"]["log_loss"])
+        payload = json.dumps(report)
+        self.assertNotIn('"over_odds"', payload)
+        self.assertNotIn('"line"', payload)
+        self.assertNotIn('"player_id"', payload)
+        self.assertNotIn('"actual"', payload)
+        self.assertEqual(len(analyzed), 8)
 
 
-class ReplayJoinTests(unittest.TestCase):
-    def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
-        self.data = Path(self.tmp.name) / "data"
-        (self.data / "replay").mkdir(parents=True)
-        self.model = b'{"Version":6,"TrainedBefore":"2026-10-30"}'
-        self.mid = hashlib.sha256(self.model).hexdigest()
-        (self.data / "replay" / f"model_{self.mid}.json").write_bytes(self.model)
-        self.records = []
-        self.obs = []
-        for i in range(8):
-            rid = 100 + i
-            r = {"date": "2026-11-18", "at": "2026-11-18T21:00:00Z",
-                 "tip": "2026-11-19T00:00:00Z",
-                 "quote_at": "2026-11-18T20:57:00Z",
-                 "updated_at": "2026-11-18T20:55:00Z",
-                 "calibration_before": "2026-11-01",
-                 "selection_policy": "confidence", "period": "game",
-                 "book_count": 3, "book": "sgo/book-a", "line": 15.5,
-                 "stat": "points", "p1": 0.64, "market": 0.5,
-                 "over_odds": -110, "under_odds": -110,
-                 "model_id": self.mid,
-                 "row": {"identity": {"GameID": 200, "PlayerID": rid}}}
-            o = {"cohort": "verified replay", "date": r["date"],
-                 "gameId": 200, "playerId": rid, "stat": "points",
-                 "at": r["at"], "line": r["line"], "finalOver": r["p1"],
-                 "actual": 12, "projection": 19, "projectedMinutes": 32,
-                 "actualMinutes": 25, "context": {"confirmedOut": 1}}
-            self.records.append(r)
-            self.obs.append(o)
+class VerifiedInputTests(unittest.TestCase):
+    def test_temporary_verified_input_removed_after_aggregation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "private" / "phase3_rotation_v4.jsonl"
+            source.parent.mkdir()
+            source.write_text("".join(json.dumps(make_question()) + "\n" for _ in range(8)))
+            out = root / "run_evidence" / "phase3" / "aggregate.json"
+            report = run(root / "data", source, out, "2026-11-20")
+            self.assertEqual(report["verified_questions"], 8)
+            self.assertTrue(out.exists())
+            self.assertFalse(source.exists())
+            self.assertNotIn('"line"', out.read_text())
 
-    def tearDown(self):
-        self.tmp.cleanup()
+    def test_unknown_input_yields_no_fabricated_results(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "missing.jsonl"
+            rows, errors = read_go_verified(source, "2026-11-20")
+            self.assertEqual(rows, [])
+            self.assertEqual(errors["go_verified_private_input_missing"], 1)
 
-    def write_replays(self):
-        (self.data / "replay" / "decisions_2026-11-18.jsonl").write_text(
-            "".join(json.dumps(r) + "\n" for r in self.records))
-
-    def test_exact_join_and_loss_summary(self):
-        self.write_replays()
-        index = replay_index(self.data)
-        joined, drops = matched_rows({"observations": self.obs}, index)
-        self.assertEqual(len(joined), 8)
-        self.assertEqual(sum(drops.values()), 0)
-        result = summarize({"observations": self.obs}, index, today="2026-11-19")
-        self.assertEqual(result["same_baseline_selected"]["n"], 8)
-        self.assertEqual(result["loss_analysis"]["loss_count"], 8)
-        self.assertEqual(result["loss_analysis"]["loss_patterns"]["all_losses"]["indicators"]
-                         ["miss_direction_minutes"], 8)
-        self.assertLess(result["same_baseline_selected"]["challenger"]["log_loss"],
-                        result["same_baseline_selected"]["production"]["log_loss"])
-        text = json.dumps(result).lower()
-        self.assertNotIn("sgo/book-a", text)
-        self.assertNotIn("playerid", text)
-        self.assertNotIn("15.5", text)
-
-    def test_wrong_quote_and_model_hash_fail_closed(self):
-        self.records[0]["book"] = "sgo/book-b"
-        self.records.append(dict(self.records[0], book="sgo/book-c"))
-        self.write_replays()
-        joined, drops = matched_rows({"observations": self.obs}, replay_index(self.data))
-        self.assertEqual(len(joined), 7)
-        self.assertEqual(drops["missing_or_ambiguous_original_quote"], 1)
-        # Corrupt the frozen checkpoint; no unverified result is accepted.
-        (self.data / "replay" / f"model_{self.mid}.json").write_bytes(b"tampered")
-        self.assertEqual(replay_index(self.data), {})
-
-    def test_experimental_and_post_tip_quote_rejected(self):
-        self.records[0]["selection_policy"] = "value"
-        self.records[1]["quote_at"] = "2026-11-19T00:01:00Z"
-        self.write_replays()
-        joined, _ = matched_rows({"observations": self.obs}, replay_index(self.data))
-        self.assertEqual(len(joined), 6)
-
-    def test_only_aggregate_report_is_written(self):
-        self.write_replays()
-        audit = Path(self.tmp.name) / "minutes.json"
-        audit.write_text(json.dumps({"observations": self.obs}))
-        out = Path(self.tmp.name) / "private" / "phase3.json"
-        summary = run(self.data, audit, out)
-        self.assertTrue(out.exists())
-        self.assertEqual(summary["loss_analysis"]["selected_count"], 8)
-        self.assertNotIn("playerId", out.read_text())
+    def test_future_live_only_uses_hashed_rotation_v4_checkpoint(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp) / "v2_rotation" / "context" / "replay"
+            folder.mkdir(parents=True)
+            model = b'{"version":6,"trainedBefore":"2026-11-01"}'
+            digest = hashlib.sha256(model).hexdigest()
+            (folder / f"model_{digest}.json").write_bytes(model)
+            r = {
+                "date": "2026-11-21",
+                "at": "2026-11-20T22:30:00Z",
+                "tip": "2026-11-21T00:00:00Z",
+                "quote_at": "2026-11-20T22:27:00Z",
+                "updated_at": "2026-11-20T22:25:00Z",
+                "selection_policy": "rotation-v4", "probability_method": "linear",
+                "period": "game", "model_id": digest,
+                "stat": "points", "p1": 0.65, "market": 0.5,
+                "row": {"identity": {"GameID": 22, "PlayerID": 33}},
+                "rotation": {"confirmedOut": [], "supported": True,
+                             "allocationApplied": True},
+            }
+            (folder / "decisions_2026-11-21.jsonl").write_text(json.dumps(r) + "\n")
+            report = live_shadow(Path(tmp), "2026-11-20")
+            self.assertEqual(report["questions_ungraded"], 1)
+            self.assertIsNone(report["mean_absolute_probability_adjustment"])
+            # Checkpoint mismatch must fail closed.
+            (folder / f"model_{digest}.json").write_bytes(b"changed")
+            self.assertEqual(live_shadow(Path(tmp), "2026-11-20")["questions_ungraded"], 0)
 
 
 if __name__ == "__main__":
