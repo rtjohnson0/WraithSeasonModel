@@ -266,7 +266,37 @@ def loss_summary(rows):
     return output
 
 
-def summarize(report, index):
+def live_shadow(index, today):
+    """Shadow-only checks on ungraded pregame decisions, never player-level exports."""
+    originals = {}
+    for key, records in index.items():
+        date, game, player, stat, line, at = key
+        if date < today:
+            continue
+        for r in records:
+            tip = when(r.get("tip"))
+            if not tip or not at < tip:
+                continue
+            # A future market/question can be captured repeatedly. Keep the first
+            # recorded decision; do not manufacture a new post-selection line.
+            identity = (date, game, player, stat)
+            current = originals.get(identity)
+            if current is None or at < current[0]:
+                originals[identity] = (at, r)
+    probs = []
+    for _, r in originals.values():
+        p, market = r["p1"], r["market"]
+        cand = challenger(p, market, r.get("audit_context"))
+        probs.append((p, cand))
+    n = len(probs)
+    return {
+        "ungraded_shadow_questions": n,
+        "mean_abs_probability_change": round(sum(abs(p - c) for p, c in probs) / n, 6) if n else None,
+        "over_side_flips": sum((p >= 0.5) != (c >= 0.5) for p, c in probs),
+        "not_evidence_of_results": True,
+    }
+
+def summarize(report, index, today=None):
     matched, rejected = matched_rows(report, index)
     assessed = [assess(row) for row in matched]
     selected = [r for r in assessed if r["selected"]]
@@ -276,9 +306,12 @@ def summarize(report, index):
         if len(part) >= MIN_GROUP:
             by_group[stat] = metrics(part)
     checkpoint_counts = Counter(r["checkpoint"] for r in selected)
+    if today is None:
+        today = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
     return {
         "schema": 1,
         "policy_id": POLICY_ID,
+        "ungraded_live_shadow": live_shadow(index, today),
         "mode": "frozen_read_only_research",
         "fixed_challenger": {"method": "shrink_final_model_market_residual",
                              "normal_retain": BASELINE_RESIDUAL_RETAIN,
