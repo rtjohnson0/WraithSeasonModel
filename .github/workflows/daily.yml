@@ -111,10 +111,14 @@ jobs:
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
         uses: actions/cache/restore@v4
         with:
-          path: data/snapshots
+          path: data/near_tip_snapshots
           key: close-quotes-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             close-quotes-v1-${{ github.ref_name }}-
+
+      - name: Merge independent near-tip quotes without replacing old evidence
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        run: python3 scripts/merge_near_tip_snapshots.py --source data/near_tip_snapshots --target data/snapshots
 
       - name: Import latest background tracking batch
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
