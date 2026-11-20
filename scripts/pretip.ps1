@@ -14,7 +14,7 @@ function Run {
 Run "prepare game-v2 calibration" { python scripts/calibrate_games.py }
 $now = Get-Date
 $Season = if ($now.Month -ge 8) { $now.Year } else { $now.Year - 1 }
-Run "tracking opportunities" { go run ./cmd/pull context -seasons "$Season" -feeds passing,rebounding -maxminutes 1 } -Optional
+Run "tracking opportunities" { go run ./cmd/pull context -seasons "$Season" -feeds passing,rebounding -recentonly -maxminutes 1 } -Optional
 Run "snapshot lines and injuries"  { go run ./cmd/pull snapshot }
 Run "pregame projected lineups" { go run ./cmd/pull context -live } -Optional
 Run "extra books (SportsGameOdds)" { go run ./cmd/sgo snapshot } -Optional

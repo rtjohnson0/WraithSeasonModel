@@ -64,6 +64,25 @@ func TestComboWorkloadScenariosShareMinutesAndKeepSide(t *testing.T) {
 		t.Fatal("non-reproducible sensitivity")
 	}
 }
+
+func TestPrimaryMinutesScenarioKeepsV2RatesAndUnchangedCentralForecast(t *testing.T) {
+	f := &rotationForecast{contextual: true, teams: map[int]rotation.Allocation{1: {Valid: true, Minutes: map[int]float64{7: 18}}}}
+	base := predictor.Pred{Minutes: 30}
+	base.Rate[data.StatIndex(data.Points)] = .7
+	for i := range base.MinNodes {
+		base.MinNodes[i] = 30
+	}
+	s := scored{PlayerID: 7, GameID: 9, Stat: data.Points, Side: "UNDER", Line: 15.5}
+	row := &feat.Row{G: data.PlayerGame{TeamID: 1, PlayerID: 7}}
+	central := f.adjust(base, row)
+	got := f.workloadScenarios(s, base, row, .5, .5, combo.Corr{})
+	if len(got) != 3 || got[2].Player != "Primary minutes forecast" || math.Abs(got[2].Minutes-30) > 1e-8 || math.Abs(*got[2].Projection-21) > 1e-8 || *got[2].Probability >= .5 {
+		t.Fatal(got)
+	}
+	if f.adjust(base, row) != central || central.Rate != base.Rate || math.Abs(central.Minutes-18) > 1e-8 {
+		t.Fatal("scenario modified main forecast")
+	}
+}
 func TestQuestionableTeammateIsScenarioNotAssumedOut(t *testing.T) {
 	rows, roster := rotationFixture()
 	fresh := map[int]availability.Status{101: {PlayerID: 101, Name: "Player 101", Status: "Out"}, 102: {PlayerID: 102, Name: "Player 102", Status: "Questionable"}}

@@ -174,7 +174,7 @@ function PlayRow({ p, started, game, markets, researchNote }) {
       </button>
       <div className="card-metrics"><span>Projection<b>{p.projStat.toFixed(1)}</b></span><span>Minutes<b>{Math.round(p.projMin)}</b></span><span>Price edge<b className={p.edge>0?'positive':''}>{p.edge>0?'+':''}{(100*p.edge).toFixed(1)}<small> pp</small></b></span><span>Last {p.last5?.length || 5} hits<b>{p.last5?.length ? `${p.l5Hits}/${p.last5.length}` : '—'}</b></span></div>
       {quote.key !== 'recent' && <p className="card-quote-state">{quote.label}</p>}
-	  {p.rotation&&Number.isFinite(p.minTypical)&&Math.abs(p.projMin-p.minTypical)>=6&&<p className="card-quote-state minutes-watch">Minutes watch: {Math.round(p.projMin)} projected versus {Math.round(p.minTypical)} recent typical. This estimate depends on that workload change.</p>}
+	  {p.rotation?.workloadReview?.directionChanges?<p className="card-quote-state minutes-watch">Minutes-sensitive lean: this side falls to {(100*p.rotation.workloadReview.baselineProbability).toFixed(1)}% at {Math.round(p.rotation.workloadReview.baselineMinutes)} minutes. Compare the workload forecasts in analysis.</p>:p.rotation&&Number.isFinite(p.minTypical)&&Math.abs(p.projMin-p.minTypical)>=6&&<p className="card-quote-state minutes-watch">Minutes watch: {Math.round(p.projMin)} projected versus {Math.round(p.minTypical)} recent typical. This estimate depends on that workload change.</p>}
       {researchNote&&<p className="card-quote-state">{researchNote}</p>}
       {game && markets && <MatchupDetails game={game} data={markets}/>}
       {open && (

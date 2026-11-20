@@ -4,7 +4,7 @@ set -euo pipefail
 python3 scripts/calibrate_games.py
 YEAR=$(date +%Y); MONTH=$(date +%m)
 if [ "$((10#$MONTH))" -ge 8 ]; then SEASON=$YEAR; else SEASON=$((YEAR-1)); fi
-go run ./cmd/pull context -seasons "$SEASON" -feeds passing,rebounding -maxminutes 1 || echo "Tracking refresh incomplete"
+go run ./cmd/pull context -seasons "$SEASON" -feeds passing,rebounding -recentonly -maxminutes 1 || echo "Tracking refresh incomplete"
 go run ./cmd/pull snapshot
 go run ./cmd/pull context -live || echo "Projected lineups unavailable; no post-start lineups substituted"
 go run ./cmd/sgo snapshot || echo "sgo snapshot skipped"

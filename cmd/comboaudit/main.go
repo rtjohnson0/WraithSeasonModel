@@ -8,8 +8,10 @@ import (
 	"path/filepath"
 	"propsmodel/internal/comboaudit"
 	"propsmodel/internal/data"
+	"propsmodel/internal/opportunity"
 	"propsmodel/internal/picklog"
 	"propsmodel/internal/rotation"
+	"strings"
 )
 
 func main() {
@@ -34,7 +36,11 @@ func main() {
 	var report comboaudit.Report
 	kind := "combo"
 	if *singles {
-		report = comboaudit.BuildSingles(settled, finals, *date)
+		tracking, loadErr := opportunity.Load(*dir, finals)
+		if loadErr != nil {
+			fail(loadErr)
+		}
+		report = comboaudit.BuildSinglesWithOpportunities(settled, finals, *date, tracking)
 		kind = "single-stat"
 	} else {
 		report = comboaudit.Build(settled, finals, *date)
@@ -56,5 +62,10 @@ func main() {
 	}
 	fmt.Println(report.Note)
 	fmt.Println("Saved", *dest)
+	md := strings.TrimSuffix(*dest, filepath.Ext(*dest)) + ".md"
+	if err = os.WriteFile(md, []byte(report.Markdown()), 0644); err != nil {
+		fail(err)
+	}
+	fmt.Println("Opportunity and workload review:", md)
 }
 func fail(err error) { fmt.Fprintln(os.Stderr, err); os.Exit(1) }

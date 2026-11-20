@@ -17,7 +17,7 @@ echo "== refresh box scores ($SEASON) =="
 go run ./cmd/pull stats -seasons "$SEASON" $NEW
 go run ./cmd/pull advanced -seasons "$SEASON" $NEW || echo "advanced refresh skipped"
 echo "== tracking opportunities (bounded, resumable) =="
-go run ./cmd/pull context -seasons "$SEASON,$((SEASON-1))" -feeds passing,rebounding -maxminutes 2 || echo "Tracking refresh incomplete; cached data retained"
+go run ./cmd/pull context -seasons "$SEASON,$((SEASON-1))" -feeds passing,rebounding -recentonly -maxminutes 2 || echo "Tracking refresh incomplete; cached data retained"
 go run ./cmd/pull context -seasons "$SEASON,$((SEASON-1))" -feeds possessions,drives,catchshoot,pullupshot,defense_rim,defense_threes,shooting_distance,lineup_stats,matchups -maxminutes 1 || echo "Additional context refresh incomplete"
 echo "== current rosters =="
 go run ./cmd/pull players

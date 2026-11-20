@@ -9,7 +9,31 @@ import (
 	"propsmodel/internal/lineslog"
 	"propsmodel/internal/predictor"
 	"propsmodel/internal/projlog"
+	"propsmodel/internal/rotation"
 )
+
+func TestWorkloadReversalRemainsLeanWithoutChangingForecast(t *testing.T) {
+	for _, side := range []string{"UNDER", "OVER"} {
+		s := play(1, data.Rebounds, side, .66)
+		s.Rotation = &rotation.Context{Policy: rotation.ContextPolicy, Supported: true, WorkloadReview: &rotation.WorkloadReview{Policy: "minutes-sensitivity-v1", BaselineMinutes: 30, BaselineProbability: .43, DirectionChanges: true}}
+		rules := v2Rules{Hi: .55, MinEdge: .01, MaxGame: 4, MaxPlayer: 2, Gates: provenGates(data.Rebounds, side)}
+		got, _ := v2Select([]scored{s}, rules)
+		if len(got) != 1 || got[0].Tier != tierLean || got[0].Prob != s.Prob || got[0].ProjMean != s.ProjMean || !strings.Contains(got[0].Why, "direction depends") {
+			t.Fatal("sensitive play hidden, promoted or numerically changed", got)
+		}
+		s.Rotation.WorkloadReview.BaselineProbability = .57
+		s.Rotation.WorkloadReview.DirectionChanges = false
+		if tier, _ := v2Tier(s, rules); tier != tierStrong {
+			t.Fatal("stable direction demoted", tier)
+		}
+		s.Rotation.Policy = rotation.StrictPolicy
+		s.Rotation.WorkloadReview.BaselineProbability = .43
+		s.Rotation.WorkloadReview.DirectionChanges = true
+		if workloadDirectionChanges(s) {
+			t.Fatal("V2 context selection leaked into earlier policy")
+		}
+	}
+}
 
 func TestFitV2UsesOnlyEarlierDaysAndShrinks(t *testing.T) {
 	var entries []projlog.Entry
