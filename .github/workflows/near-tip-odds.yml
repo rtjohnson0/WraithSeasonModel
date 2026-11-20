@@ -1,0 +1,58 @@
+name: Near-tip odds evidence (no predictions)
+
+on:
+  schedule:
+    # Every 20 minutes during 17:00-00:59 ET (both DST offsets covered).
+    # GitHub cron is best-effort and may be delayed or skipped.
+    - cron: '*/20 21-23,0-5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wraith-near-tip-evidence
+  cancel-in-progress: false
+
+jobs:
+  quotes:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Restore previous evidence snapshots
+        uses: actions/cache/restore@v4
+        with:
+          path: data/snapshots
+          key: close-quotes-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            close-quotes-v1-${{ github.ref_name }}-
+      - name: Capture sportsbook quotes without generating picks
+        env:
+          SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
+          TZ: America/New_York
+        run: |
+          if [ -z "$SPORTSGAMEODDS_API_KEY" ]; then
+            echo "SPORTSGAMEODDS_API_KEY missing"; exit 1
+          fi
+          python3 scripts/near_tip_window.py || exit 0
+          go run ./cmd/sgo snapshot
+      - name: Save near-tip snapshot evidence
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/snapshots
+          key: close-quotes-v1-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Retain private evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: near-tip-quotes-${{ github.run_id }}
+          path: data/snapshots/sgo_*.jsonl
+          if-no-files-found: ignore
+          retention-days: 30
