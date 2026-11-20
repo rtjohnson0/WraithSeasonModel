@@ -124,6 +124,14 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
+	site.GameChallenger, err = gameboard.LoadNamed(*dir, *date, "gamechallenger.json")
+	if err != nil {
+		fatal(err)
+	}
+	site.GameChallengerRecord, err = gameboard.LoadPolicyResults(*dir, "game-pace-v1")
+	if err != nil {
+		fatal(err)
+	}
 	if snapshot != nil && snapshot.Date == *date {
 		site.Status = &snapshot.Status
 	}

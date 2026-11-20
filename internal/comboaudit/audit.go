@@ -11,19 +11,20 @@ import (
 )
 
 type Row struct {
-	Date             string  `json:"date"`
-	Player           string  `json:"player"`
-	Stat             string  `json:"stat"`
-	Side             string  `json:"side"`
-	Result           string  `json:"result"`
-	Projection       float64 `json:"projection"`
-	Actual           float64 `json:"actual"`
-	ProjectedMinutes float64 `json:"projectedMinutes"`
-	ActualMinutes    float64 `json:"actualMinutes"`
-	MinutesError     float64 `json:"minutesError"`
-	MinutesComponent float64 `json:"minutesComponent"`
-	RateComponent    float64 `json:"rateComponent"`
-	Estimate         float64 `json:"estimate"`
+	WorkloadShift    *float64 `json:"workloadShift,omitempty"`
+	Date             string   `json:"date"`
+	Player           string   `json:"player"`
+	Stat             string   `json:"stat"`
+	Side             string   `json:"side"`
+	Result           string   `json:"result"`
+	Projection       float64  `json:"projection"`
+	Actual           float64  `json:"actual"`
+	ProjectedMinutes float64  `json:"projectedMinutes"`
+	ActualMinutes    float64  `json:"actualMinutes"`
+	MinutesError     float64  `json:"minutesError"`
+	MinutesComponent float64  `json:"minutesComponent"`
+	RateComponent    float64  `json:"rateComponent"`
+	Estimate         float64  `json:"estimate"`
 }
 type Slice struct {
 	Name             string  `json:"name"`
@@ -47,10 +48,16 @@ type Report struct {
 }
 
 func Build(settled []picklog.Settled, finals []data.PlayerGame, date string) Report {
+	return build(settled, finals, date, true)
+}
+func BuildSingles(settled []picklog.Settled, finals []data.PlayerGame, date string) Report {
+	return build(settled, finals, date, false)
+}
+func build(settled []picklog.Settled, finals []data.PlayerGame, date string, combos bool) Report {
 	out := Report{Note: "Frozen pregame estimates, verified settlements, matched final identities. Actual minus projection = minutes component + rate component. Arithmetic decomposition, not causal attribution. No corrections fitted.", Excluded: map[string]int{}}
 	var eligible []picklog.Settled
 	for _, s := range settled {
-		if !data.Stat(s.Stat).IsCombo() || (date != "" && s.Date != date) {
+		if data.Stat(s.Stat).IsCombo() != combos || (date != "" && s.Date != date) {
 			continue
 		}
 		if !s.Verified() || (s.Result != "WIN" && s.Result != "LOSS") || !strings.EqualFold(strings.TrimSpace(s.SourcePlayer), strings.TrimSpace(s.Player)) || picklog.Grade(s.Entry, s.Actual, 0, true).Result != s.Result {
@@ -78,10 +85,30 @@ func Build(settled []picklog.Settled, finals []data.PlayerGame, date string) Rep
 		}
 		minutes := (g.Minutes - s.ProjMin) * s.ProjMean / s.ProjMin
 		out.Rows = append(out.Rows, Row{Date: s.Date, Player: s.Player, Stat: s.Stat, Side: s.Side, Result: s.Result, Projection: s.ProjMean, Actual: s.Actual, ProjectedMinutes: s.ProjMin, ActualMinutes: g.Minutes, MinutesError: g.Minutes - s.ProjMin, MinutesComponent: minutes, RateComponent: s.Actual - s.ProjMean - minutes, Estimate: s.Prob})
+		if s.Rotation != nil && finite(s.Rotation.BaselineMinutes) && s.Rotation.BaselineMinutes > 0 {
+			shift := s.ProjMin - s.Rotation.BaselineMinutes
+			out.Rows[len(out.Rows)-1].WorkloadShift = &shift
+		}
 	}
 	groups := map[string][]Row{}
 	for _, r := range out.Rows {
 		for _, key := range []string{"all", r.Side, r.Stat, r.Stat + " " + r.Side} {
+			groups[key] = append(groups[key], r)
+		}
+		band := "estimate below 60%"
+		if r.Estimate >= .65 {
+			band = "estimate 65%+"
+		} else if r.Estimate >= .60 {
+			band = "estimate 60-65%"
+		}
+		groups[band] = append(groups[band], r)
+		if r.WorkloadShift != nil {
+			key := "allocation within 6 min"
+			if *r.WorkloadShift <= -6 {
+				key = "allocation cut 6+ min"
+			} else if *r.WorkloadShift >= 6 {
+				key = "allocation rise 6+ min"
+			}
 			groups[key] = append(groups[key], r)
 		}
 	}

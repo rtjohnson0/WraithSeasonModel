@@ -62,32 +62,35 @@ var Stats = []Stat{Points, Rebounds, Assists, Threes}
 
 // PlayerGame is one player's box score line for one game they played.
 type PlayerGame struct {
-	RawPosition      string `json:"raw_position,omitempty"`
-	PositionSource   string `json:"position_source,omitempty"`
-	ShootingComplete bool   // explicit FGA, 3PA and FTA for opportunity models
-	BoxScoreComplete bool   // explicit stat fields and final scores, independent of download provenance
-	AnalyticsReady   bool   // explicit final, complete stat fields, download provenance and final scores
-	FinalHomeScore   float64
-	FinalAwayScore   float64
-	SourceFinal      bool `json:"source_final,omitempty"` // explicit Final status and game/team membership; used by availability history only
-	PlayerID         int
-	Name             string
-	TeamID           int
-	TeamAbbr         string // BOS, if the API row carried it (display only)
-	GameID           int
-	Date             string // YYYY-MM-DD
-	Season           int    // start year, 2025 = the 2025-26 season
-	Minutes          float64
-	Pts              float64
-	Reb              float64
-	Ast              float64
-	Fta              float64 // free throw attempts (use only when ShootingComplete)
-	Fga              float64 // field goal attempts (0 if the API row did not say)
-	Fgm              float64
-	Fg3a             float64 // three-point attempts (0 if the API row did not say)
-	Fg3m             float64 // three-pointers made
-	Blk              float64 // blocks (0 if the API row did not say)
-	Pos              string  // G, F, C or a mix such as G-F (empty if the API row did not say)
+	PossessionComplete bool
+	Oreb               float64
+	Turnover           float64
+	RawPosition        string `json:"raw_position,omitempty"`
+	PositionSource     string `json:"position_source,omitempty"`
+	ShootingComplete   bool   // explicit FGA, 3PA and FTA for opportunity models
+	BoxScoreComplete   bool   // explicit stat fields and final scores, independent of download provenance
+	AnalyticsReady     bool   // explicit final, complete stat fields, download provenance and final scores
+	FinalHomeScore     float64
+	FinalAwayScore     float64
+	SourceFinal        bool `json:"source_final,omitempty"` // explicit Final status and game/team membership; used by availability history only
+	PlayerID           int
+	Name               string
+	TeamID             int
+	TeamAbbr           string // BOS, if the API row carried it (display only)
+	GameID             int
+	Date               string // YYYY-MM-DD
+	Season             int    // start year, 2025 = the 2025-26 season
+	Minutes            float64
+	Pts                float64
+	Reb                float64
+	Ast                float64
+	Fta                float64 // free throw attempts (use only when ShootingComplete)
+	Fga                float64 // field goal attempts (0 if the API row did not say)
+	Fgm                float64
+	Fg3a               float64 // three-point attempts (0 if the API row did not say)
+	Fg3m               float64 // three-pointers made
+	Blk                float64 // blocks (0 if the API row did not say)
+	Pos                string  // G, F, C or a mix such as G-F (empty if the API row did not say)
 
 	Day           int // days since 1970-01-01, for date arithmetic
 	HomeTeamID    int // 0 if the API row did not say
@@ -197,6 +200,8 @@ type rawStat struct {
 	Reb       *float64        `json:"reb"`
 	Ast       *float64        `json:"ast"`
 	Fta       *float64        `json:"fta"`
+	Oreb      *float64        `json:"oreb"`
+	Turnover  *float64        `json:"turnover"`
 	Fga       *float64        `json:"fga"`
 	Fgm       *float64        `json:"fgm"`
 	Fg3a      *float64        `json:"fg3a"`
@@ -302,6 +307,8 @@ func loadStatsFile(path string, research bool) ([]PlayerGame, error) {
 			VisitorTeamID: r.Game.VisitorTeamID,
 		})
 		g := &out[len(out)-1]
+		g.Oreb, g.Turnover = val(r.Oreb), val(r.Turnover)
+		g.PossessionComplete = r.Fga != nil && r.Fta != nil && r.Oreb != nil && r.Turnover != nil
 		g.RawPosition = g.Pos
 		g.Pos, g.PositionSource = CorrectPosition(g.PlayerID, g.Name, g.Pos)
 	}

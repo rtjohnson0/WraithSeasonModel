@@ -84,3 +84,7 @@ forecast_audit/
 !data/v2_contextsettled.jsonl
 
 !data/v2_contextsettled_audit.json
+
+!data/gamechallenger.json
+!data/gamepace_picklog.jsonl
+!data/gamepace_settled.jsonl

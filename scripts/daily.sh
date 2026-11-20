@@ -30,6 +30,7 @@ go run ./cmd/games -settle || echo "game settlement unavailable"
 go run ./cmd/lines || echo "lines report skipped"
 go run ./cmd/v2 settle || echo "v2 settle skipped"
 go run ./cmd/comboaudit || echo "Combo diagnostic unavailable; forecasts unchanged"
+go run ./cmd/comboaudit -singles -out run_evidence/v2-singles-audit/report.json || echo "V2 single-stat diagnostic unavailable"
 echo "== review yesterday (csv) =="
 go run ./cmd/review || echo "review skipped"
 if [ "$SKIP" = 0 ]; then
@@ -54,6 +55,7 @@ go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallbac
 echo "== game lines =="
 go run ./cmd/rotationaudit -policy rotation-v4 -out run_evidence/context-audit || echo "Context evaluation unavailable"
 go run ./cmd/games || echo "game lines skipped"
+go run ./cmd/gamepace || echo "Game challenger unavailable; original game board retained"
 
 go run ./cmd/quarter || echo "quarter comparisons unavailable; full-game data was not substituted"
 

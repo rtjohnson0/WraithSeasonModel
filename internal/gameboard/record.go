@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"propsmodel/internal/data"
+	"propsmodel/internal/gamepace"
 	"propsmodel/internal/marketperiod"
 	"propsmodel/internal/team"
 	"sort"
@@ -18,24 +19,28 @@ import (
 // Decision freezes the first visible pregame direction and exact quote per game/market.
 // Leans stay separate from selected plays; neither can be relabelled after the result.
 type Decision struct {
-	Policy    string  `json:"policy,omitempty"`
-	Date      string  `json:"date"`
-	At        string  `json:"at"`
-	GameID    int     `json:"game_id"`
-	HomeID    int     `json:"home_id"`
-	AwayID    int     `json:"away_id"`
-	Home      string  `json:"home"`
-	Away      string  `json:"away"`
-	Tip       string  `json:"tip"`
-	Market    string  `json:"market"`
-	Side      string  `json:"side"`
-	Line      float64 `json:"line"`
-	Odds      int     `json:"odds"`
-	Book      string  `json:"book"`
-	QuoteAt   string  `json:"quote_at"`
-	UpdatedAt string  `json:"updated_at"`
-	Prob      float64 `json:"prob"`
-	Tier      string  `json:"tier"`
+	BookCount  int               `json:"bookCount,omitempty"`
+	RawProb    float64           `json:"rawProb,omitempty"`
+	MarketProb float64           `json:"marketProb,omitempty"`
+	Context    *gamepace.Context `json:"context,omitempty"`
+	Policy     string            `json:"policy,omitempty"`
+	Date       string            `json:"date"`
+	At         string            `json:"at"`
+	GameID     int               `json:"game_id"`
+	HomeID     int               `json:"home_id"`
+	AwayID     int               `json:"away_id"`
+	Home       string            `json:"home"`
+	Away       string            `json:"away"`
+	Tip        string            `json:"tip"`
+	Market     string            `json:"market"`
+	Side       string            `json:"side"`
+	Line       float64           `json:"line"`
+	Odds       int               `json:"odds"`
+	Book       string            `json:"book"`
+	QuoteAt    string            `json:"quote_at"`
+	UpdatedAt  string            `json:"updated_at"`
+	Prob       float64           `json:"prob"`
+	Tier       string            `json:"tier"`
 }
 type Result struct {
 	Decision
@@ -141,6 +146,15 @@ func Log(dir string, s Snapshot, hi, edge float64) error {
 				tier = "CHECK"
 			}
 			d := Decision{Policy: s.Policy, Date: s.Date, At: s.At, GameID: g.ID, HomeID: g.HomeID, AwayID: g.AwayID, Home: g.Home, Away: g.Away, Tip: g.Tip, Market: market, Side: chosen.Label, Line: best.Line, Odds: chosen.Odds, Book: best.Book, QuoteAt: best.QuoteAt, UpdatedAt: best.SourceUpdatedAt, Prob: chosen.Conditional, Tier: tier}
+			if s.Policy == gamepace.Policy {
+				if d.Tier == "PICK" {
+					d.Tier = "PAPER"
+				} // challenger estimates never become selected stakes
+				d.BookCount = best.BookCount
+				d.RawProb = chosen.Raw
+				d.MarketProb = chosen.Market
+				d.Context = g.PaceContext
+			}
 			if validDecision(d) && !seen[decisionKey(d)] {
 				rows = append(rows, d)
 				seen[decisionKey(d)] = true
@@ -167,7 +181,7 @@ type finalRow struct {
 
 // Settle uses the provider's explicit final game scores, never sums an incomplete player download.
 func Settle(dir string) error {
-	for _, p := range []string{"legacy", team.CurrentGamePolicy} {
+	for _, p := range []string{"legacy", team.CurrentGamePolicy, gamepace.Policy} {
 		log, settled := recordFiles(p)
 		if err := settleFiles(dir, log, settled); err != nil {
 			return err
@@ -308,10 +322,18 @@ func LoadResults(dir string) ([]Result, error) {
 }
 
 func recordFiles(policy string) (string, string) {
+	if policy == gamepace.Policy {
+		return "gamepace_picklog.jsonl", "gamepace_settled.jsonl"
+	}
 	if policy == team.CurrentGamePolicy {
 		return "v2_gamepicklog.jsonl", "v2_gamesettled.jsonl"
 	}
 	return "gamepicklog.jsonl", "gamesettled.jsonl"
+}
+
+func LoadPolicyResults(dir, policy string) ([]Result, error) {
+	_, name := recordFiles(policy)
+	return readJSONL[Result](filepath.Join(dir, name))
 }
 
 func LoadPreviousResults(dir string) ([]Result, error) {

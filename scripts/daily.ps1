@@ -46,6 +46,7 @@ Run "grade combo plays"            { go run ./cmd/combos settle } -Optional
 Run "grade every logged line"      { go run ./cmd/lines } -Optional
 Run "grade the V2 challenger"      { go run ./cmd/v2 settle } -Optional
 Run "combo projection diagnostic" { go run ./cmd/comboaudit } -Optional
+Run "V2 single-stat diagnostic" { go run ./cmd/comboaudit -singles -out run_evidence/v2-singles-audit/report.json } -Optional
 Run "review yesterday (csv)"        { go run ./cmd/review } -Optional
 
 if (-not $SkipTrain) {
@@ -69,6 +70,7 @@ Run "prior V2 rotation comparison" { go run ./cmd/rotationaudit -policy rotation
 Run "absence fallback comparison" { go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback } -Optional
 Run "V2 context comparison" { go run ./cmd/rotationaudit -policy rotation-v4 -out run_evidence/context-audit } -Optional
 Run "game lines"                   { go run ./cmd/games } -Optional
+Run "separate game challenger"     { go run ./cmd/gamepace } -Optional
 
 Write-Host ""
 Write-Host "Done. Props: data\picks_<date>.csv   Game lines: data\gamepicks_<date>.csv"

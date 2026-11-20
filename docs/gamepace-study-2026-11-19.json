@@ -1,0 +1,26 @@
+{
+  "excluded": {
+    "incomplete or conflicting box score": 16,
+    "team workload incomplete": 972
+  },
+  "note": "Possessions are estimated from complete box scores. Monthly fits use earlier dates and earlier projected workloads. This study does not reconstruct historical injuries or validate sportsbook edge.",
+  "pairedBaseline": {
+    "baselineMarginMAE": 11.190129864370524,
+    "baselineTotalMAE": 14.8337169402073,
+    "challengerMarginMAE": 11.341679178771788,
+    "challengerTotalMAE": 14.993911828688583,
+    "games": 3687,
+    "note": "Same-game monthly raw point projections. Not market-blended probabilities, not sportsbook-edge evidence; live injury overrides were not reconstructed."
+  },
+  "study": {
+    "policy": "game-pace-v1",
+    "before": "2026-11-19",
+    "Games": 3687,
+    "Dates": 711,
+    "MarginMAE": 11.341679178771788,
+    "TotalMAE": 14.993911828688583,
+    "MarginSigma": 14.50836600469176,
+    "TotalSigma": 18.912602853918614
+  },
+  "historicalMarketValidation": "Unavailable: this study evaluates raw points only, not exact historical sportsbook lines or prices. Forward probability evaluation uses this challenger\u2019s own immutable pregame decisions."
+}

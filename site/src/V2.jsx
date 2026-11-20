@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Board, { Seg } from './Board.jsx'
 import Combos from './Combos.jsx'
 import Record from './Record.jsx'
+import GamePace from './GamePace.jsx'
 
 // The challenger model: the same board, combos and record pages, fed with V2's plays and results.
 export default function V2({ site }) {
@@ -15,7 +16,7 @@ export default function V2({ site }) {
       </section>
     )
   }
-  const view = { ...site, modelLabel: 'V2', hideGameRecord:true, gameRecord:[], gameMarkets:null, comboHealth:null, board: v2.board, record: v2.record, archive:v2.archive, historicalCombos:v2.historicalCombos, combos: v2.combos, lines: null }
+  const view = { ...site, modelLabel: 'V2', hideGameRecord:true, gameRecord:[], gameMarkets:site.gameMarkets, comboHealth:null, board: v2.board, record: v2.record, archive:v2.archive, historicalCombos:v2.historicalCombos, combos: v2.combos, lines: null }
   return (
     <div className="v2page">
       <section className="day">
@@ -31,12 +32,14 @@ export default function V2({ site }) {
             ['board', 'Board'],
             ['combos', 'Combos'],
             ['record', 'Record'],
+            ['games', 'Game markets'],
           ]}
         />
       </section>
       {tab === 'board' && <Board site={view} />}
       {tab === 'combos' && <Combos site={view} />}
       {tab === 'record' && <Record site={view} />}
+      {tab === 'games' && <GamePace site={site} />}
     </div>
   )
 }
