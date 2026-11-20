@@ -211,6 +211,9 @@ jobs:
             data/replay
             data/v2_rotation
             data/*audit*.json
+            data/context/passing_*.jsonl
+            data/context/rebounding_*.jsonl
+            data/context/progress.json
             data/*before-result-*
             data/exclusions.jsonl
             data/gamepicklog.jsonl

@@ -41,6 +41,7 @@ func runContext(c *bdl.Client, args []string) error {
 	live := fs.Bool("live", false, "only capture pregame projected lineups")
 	date := fs.String("date", todayEastern(), "projected-lineup date")
 	only := fs.String("feeds", "", "optional comma-separated feed names")
+	recentOnly := fs.Bool("recentonly", false, "refresh only the latest three completed dates; leave historical cursors for backfill")
 	if e := fs.Parse(args); e != nil {
 		return e
 	}
@@ -81,9 +82,9 @@ func runContext(c *bdl.Client, args []string) error {
 			}
 		}
 	}
-	return pullContextPages(c, seasons, feeds, time.Duration(*budget*float64(time.Minute)), time.Now())
+	return pullContextPages(c, seasons, feeds, time.Duration(*budget*float64(time.Minute)), time.Now(), *recentOnly)
 }
-func pullContextPages(c *bdl.Client, seasons []int, feeds []contextFeed, budget time.Duration, now time.Time) error {
+func pullContextPages(c *bdl.Client, seasons []int, feeds []contextFeed, budget time.Duration, now time.Time, recentOnly ...bool) error {
 	root := filepath.Join(dataDir, "context")
 	if e := os.MkdirAll(root, 0755); e != nil {
 		return e
@@ -116,6 +117,9 @@ func pullContextPages(c *bdl.Client, seasons []int, feeds []contextFeed, budget 
 	end := now.In(eastern()).AddDate(0, 0, -1).Format("2006-01-02")
 	recent := now.In(eastern()).AddDate(0, 0, -3).Format("2006-01-02")
 	for _, mode := range []string{"recent", "history"} {
+		if mode == "history" && len(recentOnly) > 0 && recentOnly[0] {
+			continue
+		}
 		for _, season := range seasons {
 			if mode == "recent" && season != data.SeasonOf(end) {
 				continue

@@ -70,3 +70,29 @@ func dataSeasonForContext(now time.Time) int {
 	}
 	return y
 }
+
+func TestRecentOnlyCannotSpendBudgetOnHistoricalWindows(t *testing.T) {
+	old, _ := os.Getwd()
+	defer os.Chdir(old)
+	os.Chdir(t.TempDir())
+	now := time.Date(2026, 11, 20, 12, 0, 0, 0, time.UTC)
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		if r.URL.Query().Get("start_date") != "2026-11-17" || r.URL.Query().Get("end_date") != "2026-11-19" {
+			t.Error("non-recent request", r.URL)
+		}
+		w.Write([]byte(`{"data":[],"meta":{}}`))
+	}))
+	defer server.Close()
+	c := bdl.New("test")
+	c.BaseURL = server.URL
+	c.Sleep = 0
+	feeds := []contextFeed{{"passing", "/nba/v1/stats/tracking", "passing"}, {"rebounding", "/nba/v1/stats/tracking", "rebounding"}}
+	if e := pullContextPages(c, []int{2026, 2025}, feeds, 0, now, true); e != nil {
+		t.Fatal(e)
+	}
+	if requests != 2 {
+		t.Fatal("historical backfill ran during recent-only refresh", requests)
+	}
+}

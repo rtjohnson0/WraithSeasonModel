@@ -312,6 +312,11 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 		e := f.gameEstimate(row)
 		c.GameContext = &e
 		c.WorkloadScenarios = f.workloadScenarios(s, base, row, market, weight, corr)
+		for _, scenario := range c.WorkloadScenarios {
+			if scenario.Player == "Primary minutes forecast" && scenario.Probability != nil && !s.Stat.IsCombo() {
+				c.WorkloadReview = &rotation.WorkloadReview{Policy: "minutes-sensitivity-v1", BaselineMinutes: scenario.Minutes, BaselineProbability: *scenario.Probability, DirectionChanges: *scenario.Probability < .5}
+			}
+		}
 		for _, team := range []int{row.G.TeamID, f.opponents[row.G.TeamID]} {
 			if p, ok := f.pregame[team]; ok {
 				c.PregameLineups = append(c.PregameLineups, p)
@@ -742,13 +747,24 @@ func (f *rotationForecast) workloadScenarios(s scored, base predictor.Pred, row 
 		}
 		return p.Minutes
 	}
+	trials := []struct {
+		label string
+		pred  predictor.Pred
+	}{
+		{"Lower minutes scenario", p.WithMinutes(quant(.1))},
+		{"Higher minutes scenario", p.WithMinutes(quant(.9))},
+	}
+	// Keep the V2 per-minute rates and quote unchanged. Only replace the
+	// allocation's minutes distribution with the primary model's workload.
+	if f.contextual && base.Minutes > 0 && base.Minutes <= 48 && math.Abs(p.Minutes-base.Minutes) > 1e-6 {
+		trials = append(trials, struct {
+			label string
+			pred  predictor.Pred
+		}{"Primary minutes forecast", p.WithTargetMinutes(base.Minutes)})
+	}
 	var out []rotation.Scenario
-	for i, minutes := range []float64{quant(.1), quant(.9)} {
-		label := "Lower minutes scenario"
-		if i == 1 {
-			label = "Higher minutes scenario"
-		}
-		trial := p.WithMinutes(minutes)
+	for _, node := range trials {
+		label, trial := node.label, node.pred
 		projection, raw := 0., 0.
 		if s.Stat.IsCombo() {
 			dist := combo.Simulate(trial, corr, 2000, int64(s.PlayerID)*1000003+int64(s.GameID))
