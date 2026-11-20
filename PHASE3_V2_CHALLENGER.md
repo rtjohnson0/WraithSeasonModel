@@ -41,6 +41,17 @@ verified questions** using log loss and Brier score against the same de-vigged
 market baseline. By-stat and loss groups with fewer than eight observations
 are suppressed.
 
+To directly test whether **fewer, better-filtered plays** improve accuracy, the
+shadow report also compares a predeclared **precision research filter**:
+at least 62% predicted confidence, at least 3 percentage points advantage
+over the original price, at least 22 projected minutes, no uncertain own
+status, and verified rotation support when a relevant teammate is out.
+It reports its selection count versus the fixed baseline and hides its hit
+rate/ROI until at least eight questions qualify. It is NOT the live model's
+selection logic and is not applied automatically. A higher historical hit
+rate could be selection noise, so any promising filter requires a later,
+prospective holdout and a comparison with market break-even prices.
+
 The hypothetical baseline selection filter is confidence >=55% and at least
 one percentage point edge at the recorded quote. It is **not the full live
 V2 selection/ranking policy** (which has its own gates). The resulting flat ROI

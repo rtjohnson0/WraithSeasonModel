@@ -109,6 +109,19 @@ def assess(row):
     side_p = p if side == "OVER" else 1 - p
     odds = row["over_odds"] if side == "OVER" else row["under_odds"]
     selected = side_p >= .55 and side_p - implied(odds) >= .01
+    # Predeclared high-selectivity RESEARCH filter, never used for live picks.
+    # Avoid moving to juiced favorites simply to inflate the raw hit rate.
+    # Absence-driven rotations need direct matched-game support.
+    relevant_out = row.get("relevant_out", 0)
+    has_supported_absence = (not relevant_out or
+                             (row.get("rotation_supported") is True and
+                              row.get("allocation_applied") is True and
+                              row.get("matched_games", 0) >= 3))
+    precision = (side_p >= .62 and side_p - implied(odds) >= .03 and
+                 row["projected_minutes"] >= 22 and
+                 has_supported_absence and
+                 str(row.get("own_status") or "").strip().lower() not in
+                 {"questionable", "doubtful", "day-to-day"})
     over_won = row["actual"] > row["line"]
     won = over_won if side == "OVER" else not over_won
     minutes_delta = row["actual_minutes"] - row["projected_minutes"]
@@ -135,7 +148,8 @@ def assess(row):
     return {"date": row["date"], "stat": row["stat"], "side": side,
             "checkpoint": row["model_id"], "p": p, "market": m,
             "challenger": shadow, "outcome": int(over_won),
-            "selected": selected, "won": won, "payoff": payout,
+            "selected": selected, "precision_research_selected": precision,
+            "won": won, "payoff": payout,
             "minute_delta": minutes_delta,
             "minute_term": minute_term, "rate_term": rate_term,
             "indicators": indicators}
@@ -187,6 +201,29 @@ def loss_summary(items):
             "indicators": {k: sum(bool(r["indicators"][k]) for r in subset)
                            for k in sorted(subset[0]["indicators"])},
         }
+    return out
+
+
+
+def precision_summary(items):
+    """A frozen high-selectivity candidate, not a guaranteed winning system."""
+    picked = [r for r in items if r["precision_research_selected"]]
+    n, days = len(picked), len({r["date"] for r in picked})
+    out = {
+        "predeclared_policy": "p>=.62, quoted edge>=.03, projected minutes>=22, supported absence allocation, no uncertain own status",
+        "qualified_count": n,
+        "evaluation_days": days,
+        "retained_fraction_vs_fixed_baseline": (
+            round(n / sum(bool(r["selected"]) for r in items), 5)
+            if any(r["selected"] for r in items) else None),
+        "status": "small_cohort_suppressed" if n < MIN_GROUP else
+                  "research_only_future_holdout_required",
+    }
+    if n < MIN_GROUP:
+        return out
+    out["hit_rate"] = round(sum(bool(r["won"]) for r in picked) / n, 5)
+    out["flat_roi_at_recorded_quotes"] = round(sum(r["payoff"] for r in picked) / n, 5)
+    out["score_on_same_picks"] = metrics(picked)
     return out
 
 
@@ -262,6 +299,7 @@ def summarize(questions, rejected, live):
         "checkpoint_counts_at_least_8": {k[:12]: v for k,v in sorted(counts.items()) if v >= MIN_GROUP},
         "all_same_questions": metrics(assessed),
         "same_fixed_rule_subset": metrics(selected),
+        "fixed_precision_research_gate": precision_summary(assessed),
         "by_stat_fixed_rule_subset": by_stat,
         "loss_analysis": loss_summary(assessed),
         "ungraded_live_shadow": live,
@@ -269,6 +307,7 @@ def summarize(questions, rejected, live):
             "Actual V2 rotation-v4 provenance, not main-model replay or a legacy retrospective pick log.",
             "Go rotationaudit validates pregame checkpoint identity/recompute, quote, policy, captured rotation effects, final source and team identity before exporting to temporary private storage.",
             "Fixed illustrative selection >=55% probability and >=1 percentage point vs recorded offered odds is NOT the actual V2 posting/ranking policy; ROI is hypothetical and cannot be advertised as track record.",
+            "A separately frozen >=62% and >=3pp research precision filter tests hit rate vs pick volume; it is not installed, retrospectively optimized, or validated as a winning strategy.",
             "The shadow variant never changes posted selections, minutes forecasts or stake units. No model is refitted using these outcomes.",
             "The pregame rotation context used for shadow confidence is frozen; actual minutes and realized stat rates are used only for retrospective arithmetic attribution.",
             "Injury, minute, and rate indicators overlap and do not establish causes. Groups smaller than 8 are suppressed.",
