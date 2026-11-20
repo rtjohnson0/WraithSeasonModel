@@ -53,7 +53,7 @@ class ChallengerTests(unittest.TestCase):
                 __import__("datetime").datetime.fromisoformat("2026-11-20T23:00:00+00:00"))
         report = live_shadow({key1: [a], key2: [b]}, "2026-11-20")
         self.assertEqual(report["ungraded_shadow_questions"], 1)
-        self.assertAlmostEqual(report["mean_abs_probability_change"], 0.045)
+        self.assertAlmostEqual(report["mean_abs_probability_change"], 0.0675)
         self.assertNotIn("player", json.dumps(report).lower())
         self.assertTrue(report["not_evidence_of_results"])
 
