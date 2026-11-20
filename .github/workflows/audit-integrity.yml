@@ -6,6 +6,7 @@ on:
       - 'scripts/closing_line_audit.py'
       - 'scripts/test_forward_clv_audits.py'
       - 'scripts/phase3_v2_shadow.py'
+      - 'cmd/rotationaudit/**'
       - 'scripts/test_phase3_v2_shadow.py'
       - 'scripts/daily.sh'
       - 'scripts/pretip.sh'
@@ -29,6 +30,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Validate rotation-v4 Go audit and private serialization
+        run: go test ./cmd/rotationaudit
       - name: Run synthetic audit tests (no customer data)
         run: |
           python3 -m unittest discover -s scripts -p 'test_*audit*.py' -v
