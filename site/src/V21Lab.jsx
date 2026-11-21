@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { validateV21Summary, scoresVisible, lowestMinutesMAE } from './v21LabData.js'
+import GameMarketLab from './GameMarketLab.jsx'
 
 const EXPLANATIONS = {
   'base-minutes': 'Keep the original minutes estimate while holding V2 production rates constant.',
@@ -41,6 +42,7 @@ function ScoreCard({ candidate, minimum }) {
 }
 
 export default function V21Lab() {
+  const [section, setSection] = useState('minutes')
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function V21Lab() {
         <div>
           <p className="v21-eyebrow">WRAITH RESEARCH / VERSION 2.1</p>
           <h1>THE MODEL LAB<span>.</span></h1>
-          <p className="v21-intro">We're testing the minutes assumptions behind every projection. Same games. Same market prices. Four separate approaches. Only the evidence decides what gets better.</p>
+          <p className="v21-intro">Same pregame evidence. Independent challengers for player minutes, moneylines, spreads and game totals. We only promote what wins a fair future comparison.</p>
           <div className="v21-pills"><span>Forward replay</span><span>No auto-promotion</span><span>0 experimental units</span></div>
         </div>
         <div className="v21-mark" aria-hidden="true">V2<span>.1</span></div>
@@ -82,6 +84,12 @@ export default function V21Lab() {
         <span>These are retrospective comparisons on frozen pregame forecasts, not today's new picks or a verified winning system. A challenger must succeed on new, independent dates before any production change.</span>
       </div>
 
+      <div className="v21-lab-switch" role="group" aria-label="Research category">
+        <button type="button" className={section === 'minutes' ? 'is-active' : ''} aria-pressed={section === 'minutes'} onClick={() => setSection('minutes')}>Player props & minutes</button>
+        <button type="button" className={section === 'games' ? 'is-active' : ''} aria-pressed={section === 'games'} onClick={() => setSection('games')}>Moneylines · Spreads · O/U</button>
+      </div>
+
+      {section === 'minutes' && <>
       {error && <p className="notice" role="status">{error} The live V2 Board remains available in <a href="#/v2">V2 test</a>.</p>}
       {!error && !data && <p className="notice" role="status">Loading the V2.1 research scorecard…</p>}
       {data && <>
@@ -108,9 +116,12 @@ export default function V21Lab() {
         </div>
       </>}
 
+      </>}
+      {section === 'games' && <GameMarketLab/>}
+
       <footer className="v21-footer">
         <h2>How it works</h2>
-        <p>Game outcomes are used only <strong>after</strong> games finish to score frozen pregame forecasts. The lab varies minutes while holding V2's production rates and recorded market assumptions fixed, so it tests the effect of the minutes decision rather than mixing in a new offensive model.</p>
+        <p>Game outcomes are used only <strong>after</strong> games finish to score frozen pregame forecasts. Player minutes, moneylines, spreads and totals are independently evaluated against their original market prices.</p>
         <p>Results are aggregate-only; no experimental per-player picks or private betting lines are published by this tab.</p>
         <a href="#/v2" className="v21-back">← Back to today's V2 picks</a>
       </footer>

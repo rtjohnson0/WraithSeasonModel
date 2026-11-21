@@ -4,6 +4,12 @@ on:
     paths:
       - 'scripts/archive_forward_evidence.py'
       - 'scripts/publish_v21_lab.py'
+      - 'scripts/publish_v21_games.py'
+      - 'scripts/test_publish_v21_games.py'
+      - 'site/src/GameMarketLab.jsx'
+      - 'site/src/gameLabData.js'
+      - 'site/src/gameLabData.test.js'
+      - 'site/src/v21-games.scss'
       - 'scripts/test_publish_v21_lab.py'
       - 'scripts/sync_state.py'
       - 'site/src/V21Lab.jsx'
@@ -60,6 +66,7 @@ jobs:
           python3 -m unittest discover -s scripts -p test_prop_history_cache.py -v
           python3 -m unittest discover -s scripts -p test_model_refresh.py -v
           python3 -m unittest discover -s scripts -p test_publish_v21_lab.py -v
+          python3 -m unittest discover -s scripts -p test_publish_v21_games.py -v
       - uses: actions/setup-node@v4
         with:
           node-version: 22
