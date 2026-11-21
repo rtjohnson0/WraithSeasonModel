@@ -327,7 +327,9 @@ jobs:
       # copies per-pick research files, original quotes or any Whop data.
       - name: Publish allowlisted V2.1 research scorecard
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
-        run: python3 scripts/publish_v21_lab.py
+        run: |
+          python3 scripts/publish_v21_lab.py
+          python3 scripts/publish_v21_games.py
 
       - name: Deliver board through the protected gateway
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY == 'whop'
