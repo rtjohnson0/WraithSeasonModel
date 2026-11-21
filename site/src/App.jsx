@@ -105,6 +105,7 @@ export default function App() {
         {site && page === 'combos' && <Combos site={site} />}
         {site && page === 'record' && <Record site={site} />}
         {site && page === 'v2' && <V2 site={site} />}
+        {site && page === 'lab' && <V21Lab />}
         {site && page === 'about' && <About site={site} />}
       </main>
 
