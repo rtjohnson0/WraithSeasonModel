@@ -11,7 +11,8 @@ go run ./cmd/sgo snapshot || echo "sgo snapshot skipped"
 go run ./cmd/accuracy
 python3 scripts/accuracy_report.py
 go run ./cmd/combos calibrate || echo "combo calibration unavailable; comparison mode retained"
-go run ./cmd/predict -rotationpolicy rotation-v4
+# V2.2 rotation-v5 actually changes V2 projections; revert with WRAITH_V2_ROTATION_POLICY=rotation-v4.
+go run ./cmd/predict -rotationpolicy "${WRAITH_V2_ROTATION_POLICY:-rotation-v5}"
 # Read-only evidence: neither command changes picks, prices, or public site data.
 python3 scripts/archive_forward_evidence.py || echo "Versioned evidence archive unavailable"
 python3 scripts/closing_line_audit.py || echo "Closing-line coverage audit unavailable"
@@ -22,6 +23,8 @@ go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
 go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 || echo "Prior V2 evaluation unavailable"
 go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback || echo "Absence fallback evaluation unavailable"
 go run ./cmd/rotationaudit -policy rotation-v4 -phase3 -v21lab -out run_evidence/context-audit || echo "Context evaluation unavailable"
+# Independent v5 cohort: don't mix it with the three-date v4 evaluation.
+go run ./cmd/rotationaudit -policy rotation-v5 -out run_evidence/guarded-v5 || echo "Guarded V5 evaluation unavailable"
 # The private question file is consumed and deleted by the following aggregate-only shadow report.
 python3 scripts/phase3_v2_shadow.py || echo "Phase 3 shadow unavailable; production board unchanged"
 go run ./cmd/games || echo "game lines skipped"
