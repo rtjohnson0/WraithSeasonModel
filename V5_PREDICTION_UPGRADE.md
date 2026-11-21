@@ -55,6 +55,15 @@ V5 has its own frozen decision path `data/v2_rotation/guarded/` and
 `data/v2_guardedlog.jsonl`, `data/v2_guardedsettled.jsonl`.
 Older V4 checkpoints remain untouched.
 
+The existing V2.1 Lab now includes an independent `Guarded V2 predictions`
+panel sourced from `run_evidence/guarded-v5/report.json`. The public
+`scripts/publish_v5_lab.py` exports only aggregate counts and >=5-date
+error scores to `site/public/data/v5-lab.json`. It never copies specific
+player/game lines, bookmaker odds, bets or rotation records. The historical
+four-variant V4 cards are explicitly relabeled as a **prior V4 sample**,
+not the new live V5 sample. These cannot be compared as if their evaluation
+dates were matched.
+
 After merge, current V2 website picks will use the V5 projections. This
 is a deliberate experimental live V2 rollout, **not** a claim of proven
 profitable selections; no primary-model selection, Whop data delivery,
