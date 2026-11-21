@@ -9,7 +9,6 @@ import (
     "strings"
     "time"
 
-    "propsmodel/internal/data"
     "propsmodel/internal/predictor"
     "propsmodel/internal/replay"
 )
@@ -167,4 +166,3 @@ func (lab *minutesLab) snapshot(through string) *LabSummary {
     return result
 }
 
-var _ data.Stat // Keep this module bound to the same prediction stat enum.
