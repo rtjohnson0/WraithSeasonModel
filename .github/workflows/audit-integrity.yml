@@ -3,6 +3,11 @@ on:
   pull_request:
     paths:
       - 'scripts/archive_forward_evidence.py'
+      - 'cmd/predict/**'
+      - 'internal/opportunity/**'
+      - 'internal/rotation/**'
+      - 'site/src/V2Methodology.jsx'
+      - 'V5_PREDICTION_UPGRADE.md'
       - 'scripts/publish_v21_lab.py'
       - 'scripts/publish_v21_games.py'
       - 'scripts/test_publish_v21_games.py'
@@ -57,7 +62,7 @@ jobs:
           go-version-file: go.mod
           cache: false
       - name: Validate rotation-v4 Go audit and private serialization
-        run: go test ./cmd/rotationaudit
+        run: go test ./...
       - name: Run synthetic audit tests (no customer data)
         run: |
           python3 -m unittest discover -s scripts -p 'test_*audit*.py' -v
