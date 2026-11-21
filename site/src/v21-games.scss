@@ -1,0 +1,20 @@
+/* Independent game-market scorecards inside the V2.1 research laboratory. */
+.v21-lab-switch {display:flex;flex-wrap:wrap;gap:8px;background:#17111f;border:1px solid #38294b;padding:5px;border-radius:12px;margin:20px 0 23px;}
+.v21-lab-switch button {border:1px solid transparent;border-radius:9px;flex:1;min-width:180px;padding:12px 16px;background:transparent;color:#c9b5d9;cursor:pointer;font-size:12px;font-weight:770;}
+.v21-lab-switch button.is-active {background:#b994ee;color:#1a1027;box-shadow:0 4px 15px #0003;}
+.v21-lab-switch button:focus-visible {outline:2px solid #e9d7ff;outline-offset:2px;}
+.v21-game-cards {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:22px 0 28px;}
+.v21-game-card {border:1px solid #40304c;border-radius:14px;background:linear-gradient(150deg,#21172d,#15101d);padding:22px 18px;display:flex;flex-direction:column;gap:15px;min-width:0;}
+.v21-game-card-head {display:flex;align-items:start;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.v21-game-card h3 {font-size:21px;letter-spacing:-.02em;margin:0;}
+.v21-game-count {display:flex;align-items:baseline;gap:7px;border-top:1px solid #44334f;padding-top:18px;}
+.v21-game-count strong {font-size:36px;line-height:1;font-weight:850;}
+.v21-game-count span {font-size:10px;color:#bbaacc;}
+.v21-game-count b {font-size:10px;color:#d3bcf5;margin-left:auto;}
+.v21-game-scores {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:2px 0 7px;}
+.v21-game-scores>div {background:#120d19;border:1px solid #352443;border-radius:9px;padding:12px 10px;display:flex;gap:7px;flex-direction:column;}
+.v21-game-scores small,.v21-game-label {font-size:10px;color:#b39dc6;margin:0;}
+.v21-game-scores strong {font-size:22px;color:#eee3fa;letter-spacing:-.02em;}
+.v21-game-cal {font-size:10px;line-height:1.6;color:#b8a1c8;}
+@media(max-width:900px){.v21-game-cards{grid-template-columns:1fr;}.v21-game-card{padding:20px;}.v21-game-card>.v21-caption{min-height:0;}}
+@media(max-width:500px){.v21-lab-switch button{min-width:0;flex-basis:100%;}.v21-game-count{flex-wrap:wrap;}.v21-game-count b{margin-left:0;}}
