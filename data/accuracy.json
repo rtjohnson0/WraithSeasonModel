@@ -5,14 +5,14 @@
     "testDays": 0,
     "byStat": null
   },
-  "at": "2026-11-21T16:37:05Z",
+  "at": "2026-11-21T20:56:16Z",
   "through": "2026-11-20",
   "config": "pregame-7af6e4",
   "modelVersion": 6,
   "accepted": 1374,
   "excluded": {
     "final_identity_or_source_unverified": 71,
-    "not_completed_date": 435,
+    "not_completed_date": 668,
     "training_cutoff_or_configuration_invalid": 6411
   },
   "slices": [
