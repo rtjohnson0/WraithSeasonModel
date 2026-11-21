@@ -40,6 +40,8 @@ concurrency:
 
 env:
   TZ: America/New_York
+  # One-variable rollback without changing models or old evidence.
+  WRAITH_V2_ROTATION_POLICY: ${{ vars.WRAITH_V2_ROTATION_POLICY || 'rotation-v5' }}
 
 jobs:
   run:
