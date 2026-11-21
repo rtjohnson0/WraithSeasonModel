@@ -3,6 +3,7 @@ import Board from './Board.jsx'
 import Record from './Record.jsx'
 import Combos from './Combos.jsx'
 import V2 from './V2.jsx'
+import V21Lab from './V21Lab.jsx'
 import About from './About.jsx'
 
 const PRIVATE_BOARD = import.meta.env.VITE_PRIVATE_BOARD === 'true'
