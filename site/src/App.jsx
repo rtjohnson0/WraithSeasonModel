@@ -14,6 +14,7 @@ const PAGES = [
   ['combos', 'Combos'],
   ['record', 'Record'],
   ['v2', 'V2 test'],
+  ['lab', 'V2.1 Lab'],
   ['about', 'How it works'],
 ]
 
