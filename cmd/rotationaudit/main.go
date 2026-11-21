@@ -61,6 +61,7 @@ type GameContext struct {
 	MinutesMAE  float64
 }
 type Report struct {
+	Lab *LabSummary `json:"-"`
 	Phase3 []Phase3Question `json:"-"`
 	GameContexts                           map[string]*GameContext
 	Cohort                                 string
@@ -174,6 +175,7 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 	dates := map[string]bool{}
 	stats := map[string]*Slice{}
 	statDates := map[string]map[string]bool{}
+	lab := newMinutesLab()
 	for _, k := range keys {
 		r := chosen[k]
 		if rotation.ProductionPolicy(policy) && !validProductionCapture(r) {
@@ -204,9 +206,16 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		if group == "supported-joint-absence" || rotation.ProductionPolicy(policy) {
 			protected = p
 		}
+		var shadow [4]predictor.Pred
+		if policy == rotation.ContextPolicy {
+			shadow = labPredictions(r, p, base.Minutes)
+		}
 		pk := fmt.Sprintf("%s/%d/%d", r.Date, entry.GameID, entry.PlayerID)
 		if !players[pk] {
 			players[pk] = true
+			if policy == rotation.ContextPolicy && grade.Result != "VOID" {
+				lab.observePlayer(r.Date, shadow, mins)
+			}
 			out.BaselineMinutesMAE += math.Abs(base.Minutes - mins)
 			out.RotationMinutesMAE += math.Abs(p.Minutes - mins)
 			out.ProtectedMinutesMAE += math.Abs(protected.Minutes - mins)
@@ -258,6 +267,9 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		s.RotationMAE += math.Abs(p.Mean(r.Stat) - grade.Actual)
 		s.ProtectedBrier += (protectedProb - y) * (protectedProb - y)
 		s.ProtectedMAE += math.Abs(protected.Mean(r.Stat) - grade.Actual)
+		if policy == rotation.ContextPolicy {
+			lab.observeQuestion(r, shadow, grade.Actual)
+		}
         if policy == rotation.ContextPolicy && p.Minutes > 0 && mins > 0 && grade.Actual != r.Line {
             out.Phase3 = append(out.Phase3, Phase3Question{
                 Date: r.Date, Stat: st, ModelID: r.ModelID,
@@ -306,6 +318,7 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		s.RateContribution /= n
 		out.Slices = append(out.Slices, *s)
 	}
+	if policy == rotation.ContextPolicy { out.Lab = lab.snapshot(out.Through) }
 	return out, nil
 }
 func main() {
@@ -315,6 +328,7 @@ func main() {
 	cohort := flag.String("cohort", "all", "all, no-confirmed-out, irrelevant-outs, supported-joint-absence, or unsupported-fallback")
 	policy := flag.String("policy", rotation.Policy, "rotation-v1, rotation-v2, rotation-v3 or rotation-v4; evidence and results remain separate")
 	phase3 := flag.Bool("phase3", false, "write verified rotation-v4 questions to gitignored private/ for an aggregate-only shadow audit")
+	v21lab := flag.Bool("v21lab", false, "write aggregate-only V2.1 minutes experiment to data/v21_lab.json; never change picks")
 	flag.Parse()
 	if !rotation.KnownPolicy(*policy) {
 		fatal(fmt.Errorf("unknown rotation policy %q", *policy))
@@ -333,6 +347,12 @@ func main() {
 	if e != nil {
 		fatal(e)
 	}
+    if *v21lab {
+        if *policy != rotation.ContextPolicy || r.Lab == nil { fatal(fmt.Errorf("-v21lab requires rotation-v4")) }
+        content, err := json.MarshalIndent(r.Lab, "", "  ")
+        if err != nil { fatal(err) }
+        if err = os.WriteFile(filepath.Join(*dir, "v21_lab.json"), append(content, '\n'), 0644); err != nil { fatal(err) }
+    }
     if *phase3 {
         if *policy != rotation.ContextPolicy {
             fatal(fmt.Errorf("-phase3 requires -policy rotation-v4"))
