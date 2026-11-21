@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { validateV21Summary, scoresVisible, lowestMinutesMAE } from './v21LabData.js'
 import GameMarketLab from './GameMarketLab.jsx'
+import V5LiveEvidence from './V5LiveEvidence.jsx'
 
 const EXPLANATIONS = {
   'base-minutes': 'Keep the original minutes estimate while holding V2 production rates constant.',
-  'rotation-v4': 'The current live V2 allocation. Existing predictions are not changed.',
+  'rotation-v4': 'Historical rotation-v4 baseline. This is the earlier cohort; V5 results are evaluated separately.',
   'supported-only': 'Use the rotation shift only with fresh, supported absence evidence and at least three matching past rotations.',
   'capped-shift': 'Use supported rotation shifts but limit the minutes change to 2.5 minutes in either direction.',
 }
@@ -20,7 +21,7 @@ function ScoreCard({ candidate, minimum }) {
     <article className={`v21-candidate ${isCurrent ? 'v21-live' : ''}`}>
       <div className="v21-candidate-head">
         <h3>{candidate.label}</h3>
-        <span className="v21-chip">{isCurrent ? 'LIVE BASELINE' : 'SHADOW ONLY'}</span>
+        <span className="v21-chip">{isCurrent ? 'PRIOR V4' : 'SHADOW ONLY'}</span>
       </div>
       <p className="v21-caption">{EXPLANATIONS[candidate.id]}</p>
       {enabled ? (
@@ -90,6 +91,7 @@ export default function V21Lab() {
       </div>
 
       {section === 'minutes' && <>
+      <V5LiveEvidence/>
       {error && <p className="notice" role="status">{error} The live V2 Board remains available in <a href="#/v2">V2 test</a>.</p>}
       {!error && !data && <p className="notice" role="status">Loading the V2.1 research scorecard…</p>}
       {data && <>

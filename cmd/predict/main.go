@@ -146,7 +146,7 @@ func main() {
 	valueMinProb := flag.Float64("valueminprob", .40, "value research: minimum actual model probability; never inflated to 50 percent")
 	valueMinROI := flag.Float64("valueminroi", .04, "value research: minimum forecast return conditional on no push")
 	launchGate := flag.Bool("evidencegate", true, "require recent verified forward evidence for a staked PICK; unproven plays remain visible as PAPER")
-	rotationPolicy := flag.String("rotationpolicy", rotation.Policy, "V2 only: rotation-v1 (legacy) or rotation-v2 (joint absence) or rotation-v3 (individual fallback; separate research history)")
+	rotationPolicy := flag.String("rotationpolicy", rotation.Policy, "V2: rotation-v1/v2/v3/v4 or rotation-v5 (guarded minutes and 3PA-based threes; independently tracked)")
 	flag.Parse()
 	if !rotation.KnownPolicy(*rotationPolicy) {
 		fatal(fmt.Errorf("unknown rotation policy %q", *rotationPolicy))
@@ -457,8 +457,9 @@ func main() {
 		}
 		roleHistory = rotationRows
 		rotations = newRotationForecast(rotationRows, active, freshRotationStatuses(injPath, snapDir, *date, runAt, b, active, games), statuses, games, *date, rotation.ProductionPolicy(*rotationPolicy))
-		rotations.fallback = *rotationPolicy == rotation.FallbackPolicy || *rotationPolicy == rotation.ContextPolicy
-		rotations.contextual = *rotationPolicy == rotation.ContextPolicy
+		rotations.fallback = *rotationPolicy == rotation.FallbackPolicy || *rotationPolicy == rotation.ContextPolicy || *rotationPolicy == rotation.GuardedPolicy
+		rotations.contextual = *rotationPolicy == rotation.ContextPolicy || *rotationPolicy == rotation.GuardedPolicy
+		rotations.guarded = *rotationPolicy == rotation.GuardedPolicy
 		rotations.configureRoles(rotationRows)
 		if err := rotations.configureContext(*dir, rotationRows, games, runAt); err != nil {
 			fatal(err)

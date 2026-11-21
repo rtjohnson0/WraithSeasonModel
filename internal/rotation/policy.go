@@ -8,13 +8,19 @@ const StrictPolicy = "rotation-v2"
 
 const FallbackPolicy = "rotation-v3"
 const ContextPolicy = "rotation-v4"
+// GuardedPolicy is a new, independently logged V2 policy with bounded minutes
+// shifts and attempt-aware threes. Historical rotation-v4 evidence stays frozen.
+const GuardedPolicy = "rotation-v5"
 
 func ProductionPolicy(policy string) bool {
-	return policy == StrictPolicy || policy == FallbackPolicy || policy == ContextPolicy
+	return policy == StrictPolicy || policy == FallbackPolicy || policy == ContextPolicy || policy == GuardedPolicy
 }
 func KnownPolicy(policy string) bool { return policy == Policy || ProductionPolicy(policy) }
 
 func Files(policy string) (log, settled string) {
+	if policy == GuardedPolicy {
+		return "v2_guardedlog.jsonl", "v2_guardedsettled.jsonl"
+	}
 	if policy == ContextPolicy {
 		return "v2_contextlog.jsonl", "v2_contextsettled.jsonl"
 	}
@@ -28,6 +34,9 @@ func Files(policy string) (log, settled string) {
 }
 
 func EvidenceDirectory(policy string) string {
+	if policy == GuardedPolicy {
+		return "v2_rotation/guarded"
+	}
 	if policy == ContextPolicy {
 		return "v2_rotation/context"
 	}

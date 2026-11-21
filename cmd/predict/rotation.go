@@ -32,6 +32,7 @@ type rotationForecast struct {
 	strict      bool
 	fallback    bool
 	contextual  bool
+	guarded     bool // rotation-v5: supported-only capped minutes and 3PA-based 3PM
 	gameMinutes *gamecontext.Model
 	primary     *predictor.Model
 	pregame     map[int]opportunity.Projected
@@ -172,6 +173,7 @@ func newRotationForecast(rows []data.PlayerGame, roster map[int]int, fresh map[i
 	return f
 }
 func (f *rotationForecast) policy() string {
+	if f.guarded { return rotation.GuardedPolicy }
 	if f.contextual {
 		return rotation.ContextPolicy
 	}
@@ -184,6 +186,7 @@ func (f *rotationForecast) policy() string {
 	return rotation.Policy
 }
 func (f *rotationForecast) target(a rotation.Allocation, pid int) (float64, bool) {
+	if f.guarded { return rotation.SupportedTarget(a,pid) }
 	if f.fallback {
 		if !a.Valid || len(a.RelevantOut) == 0 || (!a.RoleProjected && a.MatchedGames < 3) {
 			return 0, false
@@ -271,10 +274,45 @@ func (f *rotationForecast) adjustments(row *feat.Row) predictor.Adjustments {
 	if target, ok := f.target(f.teams[row.G.TeamID], row.G.PlayerID); ok {
 		a.TargetMinutes = &target
 	}
-	if f.strict {
-		a.Scale = f.rateScale(f.rateImpacts(row))
+	if f.guarded {
+		if status, ok := f.statuses[row.G.PlayerID]; ok && props.IsUncertain(status.Status) {
+			a.TargetMinutes = nil // uncertain own availability: no extra minutes
+		}
 	}
-	if f.contextual && f.primary != nil && f.gameMinutes != nil {
+	if f.strict {
+		impacts := f.rateImpacts(row)
+		if f.guarded {
+			// V5 replaces the uncalibrated 3PM opportunity impact with a
+			// bounded, opportunity-volume × shooting-conversion adjustment.
+			// Team/opponent effects for other stats remain unchanged.
+			isolated := append([]lineup.Impact(nil), impacts...)
+			for i := range isolated {
+				if isolated[i].Kind != "opportunity-production" { continue }
+				isolated[i].Effects = append([]lineup.Effect(nil), isolated[i].Effects...)
+				for k := range isolated[i].Effects {
+					if isolated[i].Effects[k].Stat == data.Threes { isolated[i].Effects[k].Applied = false }
+				}
+			}
+			a.Scale = f.rateScale(isolated)
+			if f.primary != nil && f.impacts != nil {
+				signals := f.impacts.SignalsFor(row.G.PlayerID, f.date)
+				for _, signal := range signals {
+					if signal.Stat != data.Threes { continue }
+					baseRate := f.primary.Forecast(row, predictor.Adjustments{}).Rate[data.StatIndex(data.Threes)]
+					a.Scale[data.StatIndex(data.Threes)] *= opportunity.ThreeAttemptFactor(baseRate, signal)
+				}
+			}
+			a.Scale[data.StatIndex(data.Threes)] = math.Max(.88, math.Min(1.12, a.Scale[data.StatIndex(data.Threes)]))
+		} else {
+			a.Scale = f.rateScale(impacts)
+		}
+	}
+	if f.guarded && a.TargetMinutes != nil && f.primary != nil {
+		baseline := f.primary.Forecast(row, predictor.Adjustments{}).Minutes
+		target := math.Max(baseline-2.5, math.Min(baseline+2.5, *a.TargetMinutes))
+		a.TargetMinutes = &target
+	}
+	if f.contextual && !f.guarded && f.primary != nil && f.gameMinutes != nil {
 		e := f.gameEstimate(row)
 		if e.Applied {
 			target := f.primary.Forecast(row, predictor.Adjustments{}).Minutes
@@ -324,8 +362,9 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 		}
 	}
 	c.Production = f.rateImpacts(row)
-	c.RateScale = f.rateScale(c.Production)
+	c.RateScale = f.adjustments(row).Scale
 	_, c.AllocationApplied = f.target(a, s.PlayerID)
+	if f.guarded { c.AllocationApplied = f.adjustments(row).TargetMinutes != nil }
 	if f.strict && !c.AllocationApplied {
 		c.Supported = false
 		c.Reason = "baseline minutes retained: no supported joint-absence target; " + a.Reason

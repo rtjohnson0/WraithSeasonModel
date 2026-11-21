@@ -387,3 +387,39 @@ func TestRoleCandidateCloneCannotMutateActiveRotations(t *testing.T) {
 		t.Fatal("shadow modified live forecast")
 	}
 }
+
+
+func TestV5VersionedGuardCapsSupportedAbsencesAndRetainsReplayMath(t *testing.T) {
+    // Synthetic pregame checkpoint, not the outcome of any real pick.
+    m:=&predictor.Model{Version: predictor.CurrentVersion, Minutes: &glm.Linear{Intercept: 30}, Quant: make([][]float64,5)}
+    for k:=range m.Quant {m.Quant[k]=make([]float64,predictor.Nodes)}
+    for k:=range m.Stat {m.Stat[k]=&glm.Model{Intercept:math.Log(.08),Alpha:.15}}
+    r:=&feat.Row{G:data.PlayerGame{PlayerID:103,TeamID:1,Date:"2026-11-21"},Games:8,AvgMin15:30,X:make([]float64,len(feat.CommonSpecs))}
+    for k:=range r.S {r.S[k]=make([]float64,len(feat.StatSpecs[k]))}
+    a:=rotation.Allocation{Valid:true,Supported:true,MatchedGames:4,RelevantOut:[]int{101},Out:[]int{101},Minutes:map[int]float64{103:40}}
+    f:=&rotationForecast{strict:true,contextual:true,fallback:true,guarded:true,primary:m,date:"2026-11-21",teams:map[int]rotation.Allocation{1:a}}
+    if f.policy()!=rotation.GuardedPolicy {t.Fatal("V5 version missing")}
+    baseline:=m.Forecast(r,predictor.Adjustments{})
+    got:=f.adjustments(r)
+    if got.TargetMinutes==nil || math.Abs(*got.TargetMinutes-(baseline.Minutes+2.5))>1e-6 {
+        t.Fatalf("supported +10-minute allocation must cap to +2.5, got target=%v baseline=%.2f",got.TargetMinutes,baseline.Minutes)
+    }
+    scored:=f.adjust(baseline,r)
+    replayed:=m.Forecast(r,got)
+    if math.Abs(scored.Minutes-replayed.Minutes)>1e-8 ||
+        scored.Rate!=replayed.Rate {t.Fatal("frozen adjustment cannot replay the V5 forecast")}
+    a.MatchedGames=1
+    f.teams[1]=a
+    unsupported:=f.adjustments(r)
+    if unsupported.TargetMinutes!=nil {t.Fatal("unsupported teammates cannot change minutes")}
+    a.MatchedGames=4
+    a.Supported=true
+    f.teams[1]=a
+    f.statuses=map[int]availability.Status{103:{PlayerID:103,Status:"Questionable"}}
+    if f.adjustments(r).TargetMinutes!=nil {t.Fatal("questionable own status cannot raise supported minutes")}
+    f.statuses=nil
+    own:=f.adjustments(r)
+    if own.Scale[data.StatIndex(data.Threes)]<.88-1e-8 || own.Scale[data.StatIndex(data.Threes)]>1.12+1e-8 {
+        t.Fatalf("V5 threes factor outside bounded guard: %v",own.Scale)
+    }
+}
