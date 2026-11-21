@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "policy": "v21-minute-guard-and-cap-20261121",
+  "generatedAt": "2026-11-21T21:07:52Z",
+  "through": "2026-11-20",
+  "model": "rotation-v4",
+  "status": "insufficient_evaluation_dates",
+  "dates": 3,
+  "playerGames": 319,
+  "questions": 1138,
+  "candidates": [
+    {
+      "id": "base-minutes",
+      "label": "Baseline minutes",
+      "playerGames": 319,
+      "questions": 1138,
+      "minutesMAE": 4.1069202858385685,
+      "minutesBias": 0.659664933545628,
+      "brier": 0.24623289900525297,
+      "logLoss": 0.6856166584679511,
+      "statMAE": 2.645935723162045
+    },
+    {
+      "id": "rotation-v4",
+      "label": "Current V2 rotation-v4",
+      "playerGames": 319,
+      "questions": 1138,
+      "minutesMAE": 4.560639969136535,
+      "minutesBias": 0.12214779457977432,
+      "brier": 0.24857091480266616,
+      "logLoss": 0.6904315362096277,
+      "statMAE": 2.728805210019507
+    },
+    {
+      "id": "supported-only",
+      "label": "Supported absences only",
+      "playerGames": 319,
+      "questions": 1138,
+      "minutesMAE": 4.304378681432674,
+      "minutesBias": 0.7786804029316905,
+      "brier": 0.2481126092304448,
+      "logLoss": 0.6894985250097594,
+      "statMAE": 2.6852731509404566
+    },
+    {
+      "id": "capped-shift",
+      "label": "Supported + capped ±2.5m",
+      "playerGames": 319,
+      "questions": 1138,
+      "minutesMAE": 4.1681937812380125,
+      "minutesBias": 0.6013556142449353,
+      "brier": 0.24679806768056378,
+      "logLoss": 0.686733802487288,
+      "statMAE": 2.665320759957309
+    }
+  ],
+  "note": "Four shadow-only minutes variants on identical verified pregame rotation-v4 questions. All share rotation-v4's production-rate model and recorded quotes. Differences here are not independent forward validation or evidence of profitable picks. Do not automatically promote any variant."
+}
