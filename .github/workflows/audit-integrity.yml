@@ -4,6 +4,11 @@ on:
     paths:
       - 'scripts/archive_forward_evidence.py'
       - 'cmd/predict/**'
+      - 'scripts/publish_v5_lab.py'
+      - 'scripts/test_publish_v5_lab.py'
+      - 'site/src/V5LiveEvidence.jsx'
+      - 'site/src/V21Lab.jsx'
+      - 'site/src/v21-lab.scss'
       - 'internal/opportunity/**'
       - 'internal/rotation/**'
       - 'site/src/V2Methodology.jsx'
@@ -72,6 +77,7 @@ jobs:
           python3 -m unittest discover -s scripts -p test_model_refresh.py -v
           python3 -m unittest discover -s scripts -p test_publish_v21_lab.py -v
           python3 -m unittest discover -s scripts -p test_publish_v21_games.py -v
+          python3 -m unittest discover -s scripts -p test_publish_v5_lab.py -v
       - uses: actions/setup-node@v4
         with:
           node-version: 22
