@@ -51,3 +51,16 @@
 .v21-back {display:inline-block;margin-top:16px;color:#c9a1f6;font-size:12px;font-weight:750;text-decoration:none;}
 @media(max-width:1000px){.v21-cards {grid-template-columns:repeat(2,minmax(0,1fr));}.v21-caption{min-height:0;}.v21-candidate-head h3{min-height:0;}}
 @media(max-width:650px){.v21-hero{padding:27px 21px;min-height:235px;}.v21-mark{display:none;}.v21-hero h1{font-size:40px;}.v21-overview{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}.v21-overview>div{padding:15px;}.v21-overview strong{font-size:27px;}.v21-overview strong.v21-date{font-size:16px;}.v21-cards{grid-template-columns:minmax(0,1fr);}.v21-candidate{padding:20px;}.v21-section-head h2{font-size:23px;}.v21-attention{padding:14px;}.v21-verdict{gap:10px;padding:18px;}.v21-verdict-symbol{font-size:26px;}}
+
+
+/* Rotation-v5: independent prospective cohort, never pooled with the V4 panel. */
+.v21-v5-evidence{margin:22px 0 35px;padding:20px 22px;background:linear-gradient(155deg,#24172d,#15111c);border:1px solid #644277;border-radius:14px;}
+.v21-v5-evidence .v21-section-head{margin-top:0;}
+.v21-v5-evidence>.v21-caption{max-width:860px;margin-bottom:20px;}
+.v21-v5-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:5px 0 16px;}
+.v21-v5-stats>div{display:flex;flex-direction:column;gap:6px;background:#150f1d;border:1px solid #3d3049;border-radius:9px;padding:13px;}
+.v21-v5-stats b{font-size:12px;text-transform:capitalize;color:#e9d7fc;}
+.v21-v5-stats small{font-size:10px;color:#ad9bb9;}
+.v21-v5-stats span{font-size:11px;color:#c8b3da;line-height:1.5;}
+@media(max-width:900px){.v21-v5-stats{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:500px){.v21-v5-evidence{padding:14px;}.v21-v5-stats{grid-template-columns:1fr;}}
