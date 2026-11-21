@@ -235,7 +235,7 @@ def sync(branch, message, attempts=5, delay=2):
                 else:
                     # Remote explicitly changed configuration; keep that change.
                     content = upstream
-                    if (name.startswith('data/quarter_games/') or name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json', 'data/side_audit.json', 'data/accuracy.json', 'data/quarterboard.json', 'data/gameboard.json', 'data/gamechallenger.json', 'data/board.json', 'data/more.json', 'data/v2.json'}) and local and upstream:
+                    if (name.startswith('data/quarter_games/') or name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json', 'data/side_audit.json', 'data/accuracy.json', 'data/quarterboard.json', 'data/gameboard.json', 'data/gamechallenger.json', 'data/board.json', 'data/more.json', 'data/v2.json', 'data/v21_lab.json'}) and local and upstream:
                         a, b = json.loads(local), json.loads(upstream)
                         if a.get('at', '') > b.get('at', ''):
                             content = local
