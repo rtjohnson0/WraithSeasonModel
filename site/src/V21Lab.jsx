@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { validateV21Summary, scoresVisible, lowestMinutesMAE } from './v21LabData.js'
 
 const EXPLANATIONS = {
   'base-minutes': 'Keep the original minutes estimate while holding V2 production rates constant.',
@@ -8,12 +9,10 @@ const EXPLANATIONS = {
 }
 
 const number = (value, digits = 2) => Number.isFinite(value) ? value.toFixed(digits) : '—'
-const valid = (score) => score?.playerGames >= 30 && score?.questions >= 30
 const fmtDate = (date) => date || 'Not available'
-const minOf = (items, field) => Math.min(...items.filter(valid).map(x => x[field]).filter(Number.isFinite))
 
 function ScoreCard({ candidate, minimum }) {
-  const enabled = valid(candidate)
+  const enabled = scoresVisible(candidate)
   const isCurrent = candidate.id === 'rotation-v4'
   const best = enabled && Number.isFinite(minimum) && candidate.minutesMAE <= minimum + 1e-6
   return (
@@ -53,9 +52,7 @@ export default function V21Lab() {
         url.searchParams.set('t', Date.now())
         const response = await fetch(url, { cache: 'no-store', signal: controller.signal })
         if (!response.ok) throw new Error('No verified V2.1 report has been published yet.')
-        const result = await response.json()
-        if (result.schema !== 1 || result.policy !== 'v21-minute-guard-and-cap-20261121' || !Array.isArray(result.candidates))
-          throw new Error('The V2.1 research report is unavailable or has an unsupported format.')
+        const result = validateV21Summary(await response.json())
         if (live) { setData(result); setError('') }
       } catch (err) {
         if (live && err.name !== 'AbortError') setError(err.message)
@@ -67,7 +64,7 @@ export default function V21Lab() {
   }, [])
 
   const candidates = data?.candidates || []
-  const minimum = minOf(candidates, 'minutesMAE')
+  const minimum = lowestMinutesMAE(candidates)
   return (
     <section className="v21-page">
       <header className="v21-hero">
