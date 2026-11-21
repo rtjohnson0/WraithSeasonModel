@@ -16,7 +16,7 @@ from pathlib import Path
 STATE_FILES = [
  "gamechallenger.json", "gamepace_picklog.jsonl", "gamepace_settled.jsonl",
  "v2_contextlog.jsonl", "v2_contextsettled.jsonl", "v2_contextsettled_audit.json",
-    "model_refresh.json",
+    "model_refresh.json", "v21_lab.json",
     "gamecal_research.json", "v2_gamepicklog.jsonl", "v2_gamesettled.jsonl",
     "v2_rotation_strictlog.jsonl", "v2_rotation_strictsettled.jsonl",
     "v2_rotation_fallbacklog.jsonl", "v2_rotation_fallbacksettled.jsonl",
@@ -235,10 +235,12 @@ def sync(branch, message, attempts=5, delay=2):
                 else:
                     # Remote explicitly changed configuration; keep that change.
                     content = upstream
-                    if (name.startswith('data/quarter_games/') or name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json', 'data/side_audit.json', 'data/accuracy.json', 'data/quarterboard.json', 'data/gameboard.json', 'data/gamechallenger.json', 'data/board.json', 'data/more.json', 'data/v2.json'}) and local and upstream:
+                    if (name.startswith('data/quarter_games/') or name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json', 'data/side_audit.json', 'data/accuracy.json', 'data/quarterboard.json', 'data/gameboard.json', 'data/gamechallenger.json', 'data/board.json', 'data/more.json', 'data/v2.json', 'data/v21_lab.json'}) and local and upstream:
                         a, b = json.loads(local), json.loads(upstream)
                         if a.get('at', '') > b.get('at', ''):
                             content = local
+                        if name == 'data/v21_lab.json' and local and upstream:
+                            content = local if json.loads(local).get('generatedAt','') > json.loads(upstream).get('generatedAt','') else upstream
                         if name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json'}:
                             content = merge_result_audit(local, upstream)
                 if content is None:

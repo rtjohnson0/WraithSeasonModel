@@ -76,6 +76,8 @@ forecast_audit/
 !data/v2_rotation_strictsettled.jsonl
 
 !data/model_refresh.json
+# Aggregate-only V2.1 lab evidence; no player/odds/line-level inputs.
+!data/v21_lab.json
 
 !data/v2_rotation_fallbacklog.jsonl
 !data/v2_rotation_fallbacksettled.jsonl

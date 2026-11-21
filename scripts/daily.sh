@@ -58,7 +58,7 @@ go run ./cmd/priceaudit || echo "Price audit unavailable; live model unchanged"
 go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 || echo "Prior V2 evaluation unavailable"
 go run ./cmd/rotationaudit -policy rotation-v3 -out run_evidence/absence-fallback || echo "Absence fallback evaluation unavailable"
 echo "== game lines =="
-go run ./cmd/rotationaudit -policy rotation-v4 -phase3 -out run_evidence/context-audit || echo "Context evaluation unavailable"
+go run ./cmd/rotationaudit -policy rotation-v4 -phase3 -v21lab -out run_evidence/context-audit || echo "Context evaluation unavailable"
 # The private question file is consumed and deleted by the following aggregate-only shadow report.
 python3 scripts/phase3_v2_shadow.py || echo "Phase 3 shadow unavailable; production board unchanged"
 go run ./cmd/games || echo "game lines skipped"
