@@ -415,6 +415,9 @@ func TestV5VersionedGuardCapsSupportedAbsencesAndRetainsReplayMath(t *testing.T)
     a.MatchedGames=4
     a.Supported=true
     f.teams[1]=a
+    f.statuses=map[int]availability.Status{103:{PlayerID:103,Status:"Questionable"}}
+    if f.adjustments(r).TargetMinutes!=nil {t.Fatal("questionable own status cannot raise supported minutes")}
+    f.statuses=nil
     own:=f.adjustments(r)
     if own.Scale[data.StatIndex(data.Threes)]<.88-1e-8 || own.Scale[data.StatIndex(data.Threes)]>1.12+1e-8 {
         t.Fatalf("V5 threes factor outside bounded guard: %v",own.Scale)
