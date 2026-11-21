@@ -3,6 +3,17 @@ on:
   pull_request:
     paths:
       - 'scripts/archive_forward_evidence.py'
+      - 'scripts/publish_v21_lab.py'
+      - 'scripts/test_publish_v21_lab.py'
+      - 'scripts/sync_state.py'
+      - 'site/src/V21Lab.jsx'
+      - 'site/src/v21LabData.js'
+      - 'site/src/v21LabData.test.js'
+      - 'site/src/v21-lab.scss'
+      - 'site/src/App.jsx'
+      - 'site/src/main.jsx'
+      - 'site/src/V2.jsx'
+      - '.gitignore'
       - 'scripts/closing_line_audit.py'
       - 'scripts/test_forward_clv_audits.py'
       - 'scripts/phase3_v2_shadow.py'
@@ -48,3 +59,16 @@ jobs:
           python3 -m unittest discover -s scripts -p test_phase3_v2_shadow.py -v
           python3 -m unittest discover -s scripts -p test_prop_history_cache.py -v
           python3 -m unittest discover -s scripts -p test_model_refresh.py -v
+          python3 -m unittest discover -s scripts -p test_publish_v21_lab.py -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Verify V2.1 tab and public/private builds
+        working-directory: site
+        run: |
+          npm ci
+          npm test
+          npm run build
+          npm run build:private

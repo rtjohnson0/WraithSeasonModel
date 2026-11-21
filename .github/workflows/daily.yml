@@ -142,7 +142,7 @@ jobs:
         run: python3 scripts/import_context_artifact.py || echo "Background context import unavailable; cached inputs retained"
 
       - name: Restore immutable pregame decision evidence
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        if: steps.mode.outputs.active == 'true'
         uses: actions/cache/restore@v4
         with:
           path: |
@@ -216,6 +216,11 @@ jobs:
             echo "Saved board is missing; generating a fresh slate before publication."
             bash scripts/pretip.sh
           fi
+
+      - name: Rebuild aggregate-only V2.1 Lab during site-only deployments
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'site'
+        run: |
+          go run ./cmd/rotationaudit -policy rotation-v4 -v21lab -out run_evidence/context-audit || echo "V2.1 evidence unavailable; publish last verified aggregate if present"
 
       # Runs even after a failed model step/push. These are actual recoverable run
       # outputs, including quote evidence; a failed push must never lose the logs.
@@ -317,6 +322,12 @@ jobs:
             go run ./cmd/export
             python3 -c 'import json; p=json.load(open("site/public/data/picks.json")); assert not p.get("sample"), "Refusing sample data"'
           fi
+
+      # The lab export accepts ONLY four aggregate metrics objects. It never
+      # copies per-pick research files, original quotes or any Whop data.
+      - name: Publish allowlisted V2.1 research scorecard
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && (vars.WRAITH_DELIVERY || 'public') == 'public'
+        run: python3 scripts/publish_v21_lab.py
 
       - name: Deliver board through the protected gateway
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY == 'whop'

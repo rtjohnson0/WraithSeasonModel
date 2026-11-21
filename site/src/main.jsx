@@ -4,6 +4,7 @@ import App from './App.jsx'
 import './styles.scss'
 import './board-design.scss'
 import './record-design.scss'
+import './v21-lab.scss'
 
 // A render error should show a message, not a blank page.
 class Boundary extends React.Component {
