@@ -1,13 +1,903 @@
 {
  "date": "2026-11-21",
- "at": "2026-11-21T13:27:41.69368202Z",
+ "at": "2026-11-21T16:37:17.340096553Z",
  "plays": [
   {
    "availability": {
     "version": 1,
-    "asOf": "2026-11-21T13:27:41Z",
-    "baselineMinutes": 33.55399284950565,
-    "baselineProbability": 0.5204683225142068,
+    "asOf": "2026-11-21T16:37:17Z",
+    "baselineMinutes": 30.36847875360941,
+    "baselineProbability": 0.6188742270255307,
+    "teammates": [
+     {
+      "samples": [
+       {
+        "date": "2026-11-02",
+        "gameId": 21718023,
+        "minutes": 30.05,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-04",
+        "gameId": 21718037,
+        "minutes": 32.75,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-06",
+        "gameId": 21718050,
+        "minutes": 37.28333333333333,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-07",
+        "gameId": 21718058,
+        "minutes": 19.683333333333334,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-10",
+        "gameId": 21718080,
+        "minutes": 23.5,
+        "teammatePlayed": false
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 666786,
+      "player": "Ja Morant",
+      "status": "Out",
+      "confirmedOut": true,
+      "assumedOut": true,
+      "withN": 0,
+      "withoutN": 5,
+      "withAvg": 0,
+      "withoutAvg": 28.65333333333333,
+      "supported": false
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-11-02",
+        "gameId": 21718023,
+        "minutes": 30.05,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-04",
+        "gameId": 21718037,
+        "minutes": 32.75,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-06",
+        "gameId": 21718050,
+        "minutes": 37.28333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-07",
+        "gameId": 21718058,
+        "minutes": 19.683333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-10",
+        "gameId": 21718080,
+        "minutes": 23.5,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718090,
+        "minutes": 31.733333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718102,
+        "minutes": 33,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-16",
+        "gameId": 21718123,
+        "minutes": 23.6,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-17",
+        "gameId": 21718127,
+        "minutes": 31.45,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-19",
+        "gameId": 21718144,
+        "minutes": 34.65,
+        "teammatePlayed": false
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 3547242,
+      "player": "Deni Avdija",
+      "status": "Questionable",
+      "confirmedOut": false,
+      "withN": 8,
+      "withoutN": 2,
+      "withAvg": 28.95,
+      "withoutAvg": 33.05,
+      "supported": false
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-11-02",
+        "gameId": 21718023,
+        "minutes": 30.05,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-04",
+        "gameId": 21718037,
+        "minutes": 32.75,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-06",
+        "gameId": 21718050,
+        "minutes": 37.28333333333333,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-07",
+        "gameId": 21718058,
+        "minutes": 19.683333333333334,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-10",
+        "gameId": 21718080,
+        "minutes": 23.5,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718090,
+        "minutes": 31.733333333333334,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718102,
+        "minutes": 33,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-16",
+        "gameId": 21718123,
+        "minutes": 23.6,
+        "teammatePlayed": false
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 4197387,
+      "player": "Vit Krejci",
+      "status": "Out",
+      "confirmedOut": true,
+      "assumedOut": true,
+      "withN": 2,
+      "withoutN": 6,
+      "withAvg": 31.4,
+      "withoutAvg": 28.13333333333333,
+      "supported": false
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-11-02",
+        "gameId": 21718023,
+        "minutes": 30.05,
+        "teammatePlayed": false
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 38017690,
+      "player": "Shaedon Sharpe",
+      "status": "Out",
+      "confirmedOut": true,
+      "assumedOut": true,
+      "withN": 0,
+      "withoutN": 1,
+      "withAvg": 0,
+      "withoutAvg": 30.05,
+      "supported": false
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-11-06",
+        "gameId": 21718050,
+        "minutes": 37.28333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-07",
+        "gameId": 21718058,
+        "minutes": 19.683333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-10",
+        "gameId": 21718080,
+        "minutes": 23.5,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718090,
+        "minutes": 31.733333333333334,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718102,
+        "minutes": 33,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-16",
+        "gameId": 21718123,
+        "minutes": 23.6,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-17",
+        "gameId": 21718127,
+        "minutes": 31.45,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-19",
+        "gameId": 21718144,
+        "minutes": 34.65,
+        "teammatePlayed": false
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 1057849685,
+      "player": "Chris Youngblood",
+      "status": "Out",
+      "confirmedOut": true,
+      "assumedOut": true,
+      "withN": 3,
+      "withoutN": 5,
+      "withAvg": 26.822222222222223,
+      "withoutAvg": 30.886666666666667,
+      "supported": false
+     }
+    ]
+   },
+   "market_median": 3,
+   "book_count": 8,
+   "book_quotes": [
+    {
+     "book": "betmgm",
+     "source": "BALLDONTLIE",
+     "line": 3.5,
+     "overOdds": 115,
+     "underOdds": -155,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:23.702Z"
+    },
+    {
+     "book": "betparx",
+     "source": "BALLDONTLIE",
+     "line": 3.5,
+     "overOdds": 128,
+     "underOdds": -175,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:34:48.797Z"
+    },
+    {
+     "book": "betrivers",
+     "source": "BALLDONTLIE",
+     "line": 3.5,
+     "overOdds": 128,
+     "underOdds": -177,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:24.445Z"
+    },
+    {
+     "book": "bovada",
+     "source": "SportsGameOdds",
+     "line": 2.5,
+     "overOdds": -170,
+     "underOdds": 130,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:21.000Z"
+    },
+    {
+     "book": "caesars",
+     "source": "SportsGameOdds",
+     "line": 2.5,
+     "overOdds": -176,
+     "underOdds": 131,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:34:37.000Z"
+    },
+    {
+     "book": "draftkings",
+     "source": "SportsGameOdds",
+     "line": 2.5,
+     "overOdds": -173,
+     "underOdds": 130,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
+    },
+    {
+     "book": "espnbet",
+     "source": "SportsGameOdds",
+     "line": 2.5,
+     "overOdds": -170,
+     "underOdds": 130,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:30.000Z"
+    },
+    {
+     "book": "fanduel",
+     "source": "SportsGameOdds",
+     "line": 3.5,
+     "overOdds": 142,
+     "underOdds": -192,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
+    }
+   ],
+   "capture_max_age_seconds": 1800,
+   "price_max_age_seconds": 21600,
+   "audit_version": 2,
+   "quote_at": "2026-11-21T16:35:02Z",
+   "source_updated_at": "2026-11-21T16:30:23.702Z",
+   "period": "game",
+   "logged_at": "2026-11-21T16:47:29Z",
+   "date": "2026-11-21",
+   "game_id": 21718157,
+   "player_id": 278,
+   "player": "Damian Lillard",
+   "team": "POR",
+   "stat": "threes",
+   "side": "UNDER",
+   "line": 3.5,
+   "odds": -155,
+   "book": "betmgm",
+   "prob": 0.6188742270255307,
+   "prob_raw": 0.6854965652735384,
+   "proj_mean": 2.8154180768621377,
+   "proj_min": 30.36847875360941,
+   "units": 0,
+   "tier": "PAPER",
+   "why": "out: Chris Youngblood; defense vs guards: 14th-most 3-pointers allowed (+4%, of 30 teams); rolling defense inputs: overall allowance -0.9% versus its league baseline, position-specific allowance -6.5% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -0.7% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +2.2 min, last-game minutes +1.6 min, longer-run minutes +1.6 min (before residual mixing and post-fit adjustments); teammates uncertain: Deni Avdija (questionable)",
+   "matchup": "POR @ NYK",
+   "tip": "2026-11-22T00:30:00Z",
+   "edge": 0.011031089770628832,
+   "dist": [
+    0.075,
+    0.179,
+    0.227,
+    0.204,
+    0.146,
+    0.087,
+    0.046,
+    0.021,
+    0.009,
+    0.004,
+    0.001
+   ]
+  },
+  {
+   "availability": {
+    "version": 1,
+    "asOf": "2026-11-21T16:37:17Z",
+    "baselineMinutes": 28.121428298691157,
+    "baselineProbability": 0.5823508656466774,
+    "teammates": [
+     {
+      "samples": [
+       {
+        "date": "2026-05-25",
+        "gameId": 21713901,
+        "minutes": 23,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-03",
+        "gameId": 21716134,
+        "minutes": 27,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-05",
+        "gameId": 21716135,
+        "minutes": 18,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-08",
+        "gameId": 21716136,
+        "minutes": 35,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-10",
+        "gameId": 21716137,
+        "minutes": 33,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-13",
+        "gameId": 21716138,
+        "minutes": 39,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-20",
+        "gameId": 21717856,
+        "minutes": 30.266666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-23",
+        "gameId": 21717862,
+        "minutes": 36.016666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-25",
+        "gameId": 21717957,
+        "minutes": 34.5,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-27",
+        "gameId": 21717972,
+        "minutes": 27.266666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-28",
+        "gameId": 21717980,
+        "minutes": 35.733333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-30",
+        "gameId": 21717994,
+        "minutes": 30.966666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-02",
+        "gameId": 21718015,
+        "minutes": 26.9,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718082,
+        "minutes": 25.65,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718095,
+        "minutes": 23.216666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-15",
+        "gameId": 21718114,
+        "minutes": 26.25,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-17",
+        "gameId": 21718126,
+        "minutes": 31.416666666666668,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-19",
+        "gameId": 21718145,
+        "minutes": 28.333333333333332,
+        "teammatePlayed": true
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 18,
+      "player": "OG Anunoby",
+      "status": "Doubtful",
+      "confirmedOut": false,
+      "withN": 18,
+      "withoutN": 0,
+      "withAvg": 29.528703703703698,
+      "withoutAvg": 0,
+      "supported": false
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-05-25",
+        "gameId": 21713901,
+        "minutes": 23,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-03",
+        "gameId": 21716134,
+        "minutes": 27,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-05",
+        "gameId": 21716135,
+        "minutes": 18,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-06-08",
+        "gameId": 21716136,
+        "minutes": 35,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-10",
+        "gameId": 21716137,
+        "minutes": 33,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-13",
+        "gameId": 21716138,
+        "minutes": 39,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-20",
+        "gameId": 21717856,
+        "minutes": 30.266666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-23",
+        "gameId": 21717862,
+        "minutes": 36.016666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-25",
+        "gameId": 21717957,
+        "minutes": 34.5,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-27",
+        "gameId": 21717972,
+        "minutes": 27.266666666666666,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-10-28",
+        "gameId": 21717980,
+        "minutes": 35.733333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-30",
+        "gameId": 21717994,
+        "minutes": 30.966666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-02",
+        "gameId": 21718015,
+        "minutes": 26.9,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718082,
+        "minutes": 25.65,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718095,
+        "minutes": 23.216666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-15",
+        "gameId": 21718114,
+        "minutes": 26.25,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-17",
+        "gameId": 21718126,
+        "minutes": 31.416666666666668,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-19",
+        "gameId": 21718145,
+        "minutes": 28.333333333333332,
+        "teammatePlayed": false
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 100,
+      "player": "Jordan Clarkson",
+      "status": "Out",
+      "confirmedOut": true,
+      "assumedOut": true,
+      "withN": 14,
+      "withoutN": 4,
+      "withAvg": 30.87619047619047,
+      "withoutAvg": 24.812499999999996,
+      "supported": true,
+      "withMinutes": 30.876190476190462,
+      "withoutMinutes": 24.812499999999993,
+      "withProjection": 1.4371821915418772,
+      "withoutProjection": 1.1549379174588055,
+      "withProbability": 0.5680080818739677,
+      "withoutProbability": 0.6010992484851323,
+      "through": "2026-11-19"
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-05-25",
+        "gameId": 21713901,
+        "minutes": 23,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-03",
+        "gameId": 21716134,
+        "minutes": 27,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-05",
+        "gameId": 21716135,
+        "minutes": 18,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-08",
+        "gameId": 21716136,
+        "minutes": 35,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-10",
+        "gameId": 21716137,
+        "minutes": 33,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-13",
+        "gameId": 21716138,
+        "minutes": 39,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-20",
+        "gameId": 21717856,
+        "minutes": 30.266666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-23",
+        "gameId": 21717862,
+        "minutes": 36.016666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-25",
+        "gameId": 21717957,
+        "minutes": 34.5,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-27",
+        "gameId": 21717972,
+        "minutes": 27.266666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-28",
+        "gameId": 21717980,
+        "minutes": 35.733333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-30",
+        "gameId": 21717994,
+        "minutes": 30.966666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-02",
+        "gameId": 21718015,
+        "minutes": 26.9,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718082,
+        "minutes": 25.65,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718095,
+        "minutes": 23.216666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-15",
+        "gameId": 21718114,
+        "minutes": 26.25,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-17",
+        "gameId": 21718126,
+        "minutes": 31.416666666666668,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-19",
+        "gameId": 21718145,
+        "minutes": 28.333333333333332,
+        "teammatePlayed": true
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 447,
+      "player": "Karl-Anthony Towns",
+      "status": "Questionable",
+      "confirmedOut": false,
+      "withN": 18,
+      "withoutN": 0,
+      "withAvg": 29.528703703703698,
+      "withoutAvg": 0,
+      "supported": false
+     }
+    ]
+   },
+   "market_median": 1.5,
+   "book_count": 8,
+   "book_quotes": [
+    {
+     "book": "betmgm",
+     "source": "BALLDONTLIE",
+     "line": 1.5,
+     "overOdds": 110,
+     "underOdds": -150,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:23.702Z"
+    },
+    {
+     "book": "betparx",
+     "source": "BALLDONTLIE",
+     "line": 1.5,
+     "overOdds": 104,
+     "underOdds": -139,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:34:48.797Z"
+    },
+    {
+     "book": "betrivers",
+     "source": "BALLDONTLIE",
+     "line": 1.5,
+     "overOdds": 105,
+     "underOdds": -141,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:24.445Z"
+    },
+    {
+     "book": "bovada",
+     "source": "SportsGameOdds",
+     "line": 1.5,
+     "overOdds": 103,
+     "underOdds": -133,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:13.473Z"
+    },
+    {
+     "book": "caesars",
+     "source": "SportsGameOdds",
+     "line": 1.5,
+     "overOdds": 101,
+     "underOdds": -134,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:34:37.000Z"
+    },
+    {
+     "book": "draftkings",
+     "source": "SportsGameOdds",
+     "line": 1.5,
+     "overOdds": 102,
+     "underOdds": -134,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
+    },
+    {
+     "book": "espnbet",
+     "source": "SportsGameOdds",
+     "line": 1.5,
+     "overOdds": 100,
+     "underOdds": -130,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:30.000Z"
+    },
+    {
+     "book": "fanduel",
+     "source": "SportsGameOdds",
+     "line": 1.5,
+     "overOdds": 102,
+     "underOdds": -136,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
+    }
+   ],
+   "capture_max_age_seconds": 1800,
+   "price_max_age_seconds": 21600,
+   "audit_version": 2,
+   "quote_at": "2026-11-21T16:37:04Z",
+   "source_updated_at": "2026-11-21T16:36:13.473Z",
+   "period": "game",
+   "logged_at": "2026-11-21T16:47:29Z",
+   "date": "2026-11-21",
+   "game_id": 21718157,
+   "player_id": 202,
+   "player": "Josh Hart",
+   "team": "NYK",
+   "stat": "threes",
+   "side": "UNDER",
+   "line": 1.5,
+   "odds": -133,
+   "book": "sgo/bovada",
+   "prob": 0.5823508656466774,
+   "prob_raw": 0.637856756395587,
+   "proj_mean": 1.3089573334108815,
+   "proj_min": 28.121428298691157,
+   "units": 0,
+   "tier": "PAPER",
+   "why": "opponent out: Chris Youngblood; defense vs guards: 7th-fewest 3-pointers allowed (-11%, of 30 teams); rolling defense inputs: overall allowance -6.7% versus its league baseline, position-specific allowance -22.2% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -4.3% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: longer-run minutes +1.2 min, recent minutes trend +0.8 min, past blowout cuts +0.7 min (before residual mixing and post-fit adjustments); teammates uncertain: OG Anunoby (doubtful), Karl-Anthony Towns (questionable)",
+   "matchup": "POR @ NYK",
+   "tip": "2026-11-22T00:30:00Z",
+   "edge": 0.011535415002900562,
+   "dist": [
+    0.314,
+    0.324,
+    0.201,
+    0.097,
+    0.041,
+    0.015,
+    0.005,
+    0.002,
+    0.001
+   ]
+  },
+  {
+   "availability": {
+    "version": 1,
+    "asOf": "2026-11-21T16:37:17Z",
+    "baselineMinutes": 33.7589279453869,
+    "baselineProbability": 0.5726925129694355,
     "teammates": [
      {
       "samples": [
@@ -138,10 +1028,10 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 18,
       "player": "OG Anunoby",
-      "status": "Questionable",
+      "status": "Doubtful",
       "confirmedOut": false,
       "withN": 21,
       "withoutN": 0,
@@ -278,7 +1168,7 @@
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 100,
       "player": "Jordan Clarkson",
       "status": "Out",
@@ -289,90 +1179,239 @@
       "withAvg": 35.15588235294118,
       "withoutAvg": 36.162499999999994,
       "supported": true,
-      "withMinutes": 35.15588235294117,
-      "withoutMinutes": 36.16249999999999,
-      "withProjection": 5.03954458317305,
-      "withoutProjection": 5.183841758241314,
-      "withProbability": 0.5136970139628514,
-      "withoutProbability": 0.5095679010981446,
+      "withMinutes": 35.15588235294118,
+      "withoutMinutes": 36.162499999999994,
+      "withProjection": 4.991762283758843,
+      "withoutProjection": 5.134691309243362,
+      "withProbability": 0.5664848720189011,
+      "withoutProbability": 0.5621521883554028,
       "through": "2026-11-19"
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-05-25",
+        "gameId": 21713901,
+        "minutes": 31,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-03",
+        "gameId": 21716134,
+        "minutes": 37,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-05",
+        "gameId": 21716135,
+        "minutes": 38,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-08",
+        "gameId": 21716136,
+        "minutes": 35,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-10",
+        "gameId": 21716137,
+        "minutes": 44,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-06-13",
+        "gameId": 21716138,
+        "minutes": 41,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-20",
+        "gameId": 21717856,
+        "minutes": 34.083333333333336,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-23",
+        "gameId": 21717862,
+        "minutes": 37.233333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-25",
+        "gameId": 21717957,
+        "minutes": 32.483333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-27",
+        "gameId": 21717972,
+        "minutes": 36.416666666666664,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-28",
+        "gameId": 21717980,
+        "minutes": 35.31666666666667,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-30",
+        "gameId": 21717994,
+        "minutes": 35.35,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-02",
+        "gameId": 21718015,
+        "minutes": 33.5,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-04",
+        "gameId": 21718031,
+        "minutes": 28.216666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-07",
+        "gameId": 21718054,
+        "minutes": 34.3,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-10",
+        "gameId": 21718074,
+        "minutes": 27.816666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718082,
+        "minutes": 34.8,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718095,
+        "minutes": 35.95,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-15",
+        "gameId": 21718114,
+        "minutes": 40.96666666666667,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-17",
+        "gameId": 21718126,
+        "minutes": 34.43333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-19",
+        "gameId": 21718145,
+        "minutes": 35.43333333333333,
+        "teammatePlayed": true
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 447,
+      "player": "Karl-Anthony Towns",
+      "status": "Questionable",
+      "confirmedOut": false,
+      "withN": 21,
+      "withoutN": 0,
+      "withAvg": 35.34761904761905,
+      "withoutAvg": 0,
+      "supported": false
      }
     ]
    },
-   "market_median": 5.5,
-   "book_count": 7,
+   "market_median": 6.5,
+   "book_count": 8,
    "book_quotes": [
+    {
+     "book": "betmgm",
+     "source": "BALLDONTLIE",
+     "line": 5.5,
+     "overOdds": -135,
+     "underOdds": 100,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:23.702Z"
+    },
     {
      "book": "betparx",
      "source": "BALLDONTLIE",
-     "line": 5.5,
-     "overOdds": -148,
-     "underOdds": 107,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:24:47.836Z"
+     "line": 6.5,
+     "overOdds": -115,
+     "underOdds": -117,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:34:48.797Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
-     "line": 5.5,
-     "overOdds": -148,
-     "underOdds": 107,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T12:54:09.165Z"
+     "line": 6.5,
+     "overOdds": -110,
+     "underOdds": -122,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:24.445Z"
     },
     {
      "book": "bovada",
      "source": "SportsGameOdds",
      "line": 5.5,
-     "overOdds": -145,
-     "underOdds": 110,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:25:50.000Z"
+     "overOdds": -147,
+     "underOdds": 113,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:13.473Z"
     },
     {
      "book": "caesars",
      "source": "SportsGameOdds",
-     "line": 5.5,
-     "overOdds": -136,
-     "underOdds": 103,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:23:20.000Z"
+     "line": 6.5,
+     "overOdds": -107,
+     "underOdds": -125,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:34:36.000Z"
     },
     {
      "book": "draftkings",
      "source": "SportsGameOdds",
-     "line": 5.5,
-     "overOdds": -145,
-     "underOdds": 110,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:27:25.690Z"
+     "line": 6.5,
+     "overOdds": -114,
+     "underOdds": -115,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
     },
     {
      "book": "espnbet",
      "source": "SportsGameOdds",
-     "line": 5.5,
-     "overOdds": -130,
-     "underOdds": 100,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:23:37.000Z"
+     "line": 6.5,
+     "overOdds": -115,
+     "underOdds": -115,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:30.000Z"
     },
     {
      "book": "fanduel",
      "source": "SportsGameOdds",
-     "line": 5.5,
-     "overOdds": -122,
-     "underOdds": -108,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:25:35.557Z"
+     "line": 6.5,
+     "overOdds": -108,
+     "underOdds": -122,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-21T13:27:30Z",
-   "source_updated_at": "2026-11-21T13:25:35.557Z",
+   "quote_at": "2026-11-21T16:37:04Z",
+   "source_updated_at": "2026-11-21T16:34:36.000Z",
    "period": "game",
-   "logged_at": "2026-11-21T13:33:06Z",
+   "logged_at": "2026-11-21T16:47:29Z",
    "date": "2026-11-21",
    "game_id": 21718157,
    "player_id": 73,
@@ -380,31 +1419,31 @@
    "team": "NYK",
    "stat": "assists",
    "side": "UNDER",
-   "line": 5.5,
-   "odds": -108,
-   "book": "sgo/fanduel",
-   "prob": 0.5204683225142068,
-   "prob_raw": 0.6458280368538835,
-   "proj_mean": 4.809916053619022,
-   "proj_min": 33.55399284950565,
+   "line": 6.5,
+   "odds": -125,
+   "book": "sgo/caesars",
+   "prob": 0.5726925129694355,
+   "prob_raw": 0.7729986896580182,
+   "proj_mean": 4.793409579828579,
+   "proj_min": 33.7589279453869,
    "units": 0,
-   "tier": "LEAN",
-   "why": "opponent out: Chris Youngblood; defense vs guards: 1st-fewest assists allowed (-14%, of 30 teams); rolling defense inputs: overall allowance -8.6% versus its league baseline, position-specific allowance -13.4% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -7.8% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +4.0 min, longer-run minutes +2.4 min, last-game minutes +1.8 min (before residual mixing and post-fit adjustments); teammates uncertain: OG Anunoby (questionable)",
+   "tier": "PAPER",
+   "why": "opponent out: Chris Youngblood; defense vs guards: 1st-fewest assists allowed (-14%, of 30 teams); rolling defense inputs: overall allowance -8.6% versus its league baseline, position-specific allowance -13.4% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -7.8% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +4.0 min, longer-run minutes +2.4 min, last-game minutes +1.8 min (before residual mixing and post-fit adjustments); market line moved against the pick 5.5 to 6.5 since 3:20 am (5 of 5 books changed, 5 up 0 down; up); teammates uncertain: OG Anunoby (doubtful), Karl-Anthony Towns (questionable)",
    "matchup": "POR @ NYK",
    "tip": "2026-11-22T00:30:00Z",
-   "edge": 0.0012375532834375536,
+   "edge": 0.017136957413879883,
    "dist": [
     0.014,
     0.054,
-    0.107,
-    0.15,
-    0.166,
+    0.108,
+    0.151,
+    0.167,
     0.154,
     0.125,
-    0.091,
-    0.06,
+    0.09,
+    0.059,
     0.036,
-    0.021,
+    0.02,
     0.011,
     0.006,
     0.003,
@@ -415,9 +1454,9 @@
   {
    "availability": {
     "version": 1,
-    "asOf": "2026-11-21T13:27:41Z",
+    "asOf": "2026-11-21T16:37:17Z",
     "baselineMinutes": 33.159246498937534,
-    "baselineProbability": 0.580681791006062,
+    "baselineProbability": 0.5859971951728118,
     "teammates": [
      {
       "samples": [
@@ -506,7 +1545,7 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 666950,
       "player": "P.J. Washington",
       "status": "Questionable",
@@ -568,7 +1607,7 @@
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 56677839,
       "player": "Jett Howard",
       "status": "Questionable",
@@ -580,7 +1619,7 @@
       "supported": false
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 56677840,
       "player": "Dereck Lively II",
       "status": "Out",
@@ -661,7 +1700,7 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1057271583,
       "player": "Walter Clayton Jr.",
       "status": "Questionable",
@@ -717,7 +1756,7 @@
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1091350193,
       "player": "Sergio De Larrea",
       "status": "Out",
@@ -792,7 +1831,7 @@
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1091465199,
       "player": "Tobi Lawal",
       "status": "Out",
@@ -807,12 +1846,12 @@
       "withoutMinutes": 38.033333333333346,
       "withProjection": 1.2160627232216896,
       "withoutProjection": 1.4948584003403882,
-      "withProbability": 0.5910059057312,
-      "withoutProbability": 0.5598205966756856,
+      "withProbability": 0.5962814266800729,
+      "withoutProbability": 0.5652024365969593,
       "through": "2026-11-18"
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1092199635,
       "player": "Tarik Biberovic",
       "status": "Out",
@@ -827,61 +1866,70 @@
     ]
    },
    "market_median": 1.5,
-   "book_count": 7,
+   "book_count": 8,
    "book_quotes": [
+    {
+     "book": "betmgm",
+     "source": "SportsGameOdds",
+     "line": 1.5,
+     "overOdds": -111,
+     "underOdds": -120,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:47.784Z"
+    },
     {
      "book": "betparx",
      "source": "BALLDONTLIE",
      "line": 1.5,
-     "overOdds": 105,
-     "underOdds": -141,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:24:47.836Z"
+     "overOdds": 104,
+     "underOdds": -139,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:35:48.074Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
      "line": 1.5,
-     "overOdds": 105,
+     "overOdds": 104,
      "underOdds": -141,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T12:54:11.911Z"
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:27.455Z"
     },
     {
      "book": "bovada",
      "source": "SportsGameOdds",
      "line": 1.5,
-     "overOdds": -105,
-     "underOdds": -125,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:23:23.000Z"
+     "overOdds": 105,
+     "underOdds": -135,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:29:31.000Z"
     },
     {
      "book": "caesars",
      "source": "SportsGameOdds",
      "line": 1.5,
-     "overOdds": 100,
-     "underOdds": -132,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:23:19.000Z"
+     "overOdds": 102,
+     "underOdds": -136,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:33:17.000Z"
     },
     {
      "book": "draftkings",
      "source": "SportsGameOdds",
      "line": 1.5,
-     "overOdds": -109,
-     "underOdds": -121,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:27:25.690Z"
+     "overOdds": 106,
+     "underOdds": -139,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
     },
     {
      "book": "espnbet",
      "source": "SportsGameOdds",
      "line": 1.5,
-     "overOdds": 100,
-     "underOdds": -130,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:22:23.000Z"
+     "overOdds": 105,
+     "underOdds": -140,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:34:05.000Z"
     },
     {
      "book": "fanduel",
@@ -889,17 +1937,17 @@
      "line": 1.5,
      "overOdds": 108,
      "underOdds": -144,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:25:35.557Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-21T13:27:30Z",
-   "source_updated_at": "2026-11-21T13:23:19.000Z",
+   "quote_at": "2026-11-21T16:37:04Z",
+   "source_updated_at": "2026-11-21T16:29:31.000Z",
    "period": "game",
-   "logged_at": "2026-11-21T13:33:06Z",
+   "logged_at": "2026-11-21T16:47:29Z",
    "date": "2026-11-21",
    "game_id": 21718158,
    "player_id": 1057262088,
@@ -908,9 +1956,9 @@
    "stat": "threes",
    "side": "UNDER",
    "line": 1.5,
-   "odds": -132,
-   "book": "sgo/caesars",
-   "prob": 0.580681791006062,
+   "odds": -135,
+   "book": "sgo/bovada",
+   "prob": 0.5859971951728118,
    "prob_raw": 0.6409062881179572,
    "proj_mean": 1.303287769795645,
    "proj_min": 33.159246498937534,
@@ -919,7 +1967,7 @@
    "why": "minutes -4 vs his normal; defense vs forwards: 4th-fewest 3-pointers allowed (-12%, of 30 teams); rolling defense inputs: overall allowance -5.0% versus its league baseline, position-specific allowance -2.5% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -2.8% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +4.3 min, longer-run minutes +2.2 min, last-game minutes +1.9 min (before residual mixing and post-fit adjustments); teammates uncertain: P.J. Washington (questionable), Walter Clayton Jr. (questionable)",
    "matchup": "LAC @ DAL",
    "tip": "2026-11-22T01:00:00Z",
-   "edge": 0.01171627376468265,
+   "edge": 0.01152911006642876,
    "dist": [
     0.32,
     0.321,
@@ -935,9 +1983,9 @@
   {
    "availability": {
     "version": 1,
-    "asOf": "2026-11-21T13:27:41Z",
-    "baselineMinutes": 27.39810194056454,
-    "baselineProbability": 0.5647081879408955,
+    "asOf": "2026-11-21T16:37:17Z",
+    "baselineMinutes": 27.39521731259798,
+    "baselineProbability": 0.5643788497411459,
     "teammates": [
      {
       "samples": [
@@ -1020,7 +2068,7 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 182,
       "player": "Jerami Grant",
       "status": "Out",
@@ -1083,7 +2131,7 @@
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 38017656,
       "player": "Scotty Pippen Jr.",
       "status": "Out",
@@ -1188,7 +2236,7 @@
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 56677830,
       "player": "GG Jackson",
       "status": "Out",
@@ -1199,12 +2247,12 @@
       "withAvg": 29.284848484848485,
       "withoutAvg": 27.083333333333336,
       "supported": true,
-      "withMinutes": 29.28484848484848,
-      "withoutMinutes": 27.08333333333333,
-      "withProjection": 6.421958387109751,
-      "withoutProjection": 5.939181817548985,
-      "withProbability": 0.5516054619106243,
-      "withoutProbability": 0.5669669908803946,
+      "withMinutes": 29.284848484848485,
+      "withoutMinutes": 27.083333333333336,
+      "withProjection": 6.433239386466087,
+      "withoutProjection": 5.949614757506276,
+      "withProbability": 0.5512553083599817,
+      "withoutProbability": 0.5666170105643499,
       "through": "2026-11-19"
      },
      {
@@ -1252,7 +2300,7 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1057396260,
       "player": "Javon Small",
       "status": "Out",
@@ -1345,7 +2393,7 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1091339280,
       "player": "Cameron Boozer",
       "status": "Out",
@@ -1358,7 +2406,7 @@
       "supported": false
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1091466594,
       "player": "Richie Saunders",
       "status": "Out",
@@ -1373,52 +2421,61 @@
     ]
    },
    "market_median": 7.5,
-   "book_count": 7,
+   "book_count": 8,
    "book_quotes": [
+    {
+     "book": "betmgm",
+     "source": "SportsGameOdds",
+     "line": 7.5,
+     "overOdds": -135,
+     "underOdds": 100,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:47.784Z"
+    },
     {
      "book": "betparx",
      "source": "BALLDONTLIE",
      "line": 7.5,
-     "overOdds": -121,
-     "underOdds": -112,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:25:47.138Z"
+     "overOdds": -118,
+     "underOdds": -115,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:35:48.074Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
      "line": 7.5,
-     "overOdds": -121,
-     "underOdds": -112,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:15.031Z"
+     "overOdds": -118,
+     "underOdds": -115,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:30.449Z"
     },
     {
      "book": "bovada",
      "source": "SportsGameOdds",
      "line": 7.5,
-     "overOdds": -130,
-     "underOdds": 100,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:22:01.000Z"
+     "overOdds": -120,
+     "underOdds": -110,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:30:53.000Z"
     },
     {
      "book": "caesars",
-     "source": "BALLDONTLIE",
+     "source": "SportsGameOdds",
      "line": 7.5,
      "overOdds": -127,
      "underOdds": -106,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:12.975Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:24.000Z"
     },
     {
      "book": "draftkings",
      "source": "SportsGameOdds",
      "line": 7.5,
-     "overOdds": -131,
-     "underOdds": 100,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:27:25.690Z"
+     "overOdds": -122,
+     "underOdds": -108,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
     },
     {
      "book": "espnbet",
@@ -1426,26 +2483,26 @@
      "line": 7.5,
      "overOdds": -120,
      "underOdds": -110,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:22:19.000Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:41.000Z"
     },
     {
      "book": "fanduel",
-     "source": "BALLDONTLIE",
+     "source": "SportsGameOdds",
      "line": 7.5,
      "overOdds": -114,
      "underOdds": -114,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:24.804Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-21T13:25:31Z",
-   "source_updated_at": "2026-11-21T13:26:24.804Z",
+   "quote_at": "2026-11-21T16:37:04Z",
+   "source_updated_at": "2026-11-21T16:35:50.613Z",
    "period": "game",
-   "logged_at": "2026-11-21T13:33:06Z",
+   "logged_at": "2026-11-21T16:47:29Z",
    "date": "2026-11-21",
    "game_id": 21718159,
    "player_id": 1057266649,
@@ -1455,17 +2512,17 @@
    "side": "UNDER",
    "line": 7.5,
    "odds": -114,
-   "book": "fanduel",
-   "prob": 0.5647081879408955,
-   "prob_raw": 0.7156952690263134,
-   "proj_mean": 6.008208327904782,
-   "proj_min": 27.39810194056454,
+   "book": "sgo/fanduel",
+   "prob": 0.5643788497411459,
+   "prob_raw": 0.7145691747620477,
+   "proj_mean": 6.0181288322999755,
+   "proj_min": 27.39521731259798,
    "units": 0,
    "tier": "PAPER",
    "why": "out: Jerami Grant, Ty Jerome, Javon Small, Cameron Boozer; opponent out: Jaylen Clark; defense vs guards: 2nd-most rebounds allowed (+11%, of 30 teams); rolling defense inputs: overall allowance +2.1% versus its league baseline, position-specific allowance +9.8% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity +1.5% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +1.1 min, last-five minutes +0.6 min, past blowout cuts +0.4 min (before residual mixing and post-fit adjustments); posted, not staked: under the 60% staking bar",
    "matchup": "MEM @ MIN",
    "tip": "2026-11-22T01:00:00Z",
-   "edge": 0.03199790756706378,
+   "edge": 0.031668569367314214,
    "dist": [
     0.01,
     0.036,
@@ -1474,7 +2531,7 @@
     0.128,
     0.133,
     0.124,
-    0.106,
+    0.107,
     0.085,
     0.064,
     0.046,
@@ -1492,208 +2549,432 @@
   {
    "availability": {
     "version": 1,
-    "asOf": "2026-11-21T13:27:41Z",
-    "baselineMinutes": 34.40584913837466,
-    "baselineProbability": 0.5482320239499365,
+    "asOf": "2026-11-21T16:37:17Z",
+    "baselineMinutes": 27.39521731259798,
+    "baselineProbability": 0.533247026790189,
     "teammates": [
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
-      "playerId": 131,
-      "player": "Donte DiVincenzo",
-      "status": "Out",
-      "confirmedOut": true,
-      "assumedOut": true,
-      "withN": 0,
-      "withoutN": 0,
-      "withAvg": 0,
-      "withoutAvg": 0,
-      "supported": false
-     },
-     {
       "samples": [
        {
-        "date": "2026-10-23",
-        "gameId": 21717938,
-        "minutes": 29.833333333333332,
-        "teammatePlayed": true
-       },
-       {
-        "date": "2026-10-25",
-        "gameId": 21717958,
-        "minutes": 31.416666666666668,
-        "teammatePlayed": true
-       },
-       {
         "date": "2026-10-26",
-        "gameId": 21717963,
-        "minutes": 36.63333333333333,
+        "gameId": 21717969,
+        "minutes": 31.483333333333334,
         "teammatePlayed": true
        },
        {
-        "date": "2026-10-28",
-        "gameId": 21717982,
-        "minutes": 35.016666666666666,
-        "teammatePlayed": false
-       },
-       {
-        "date": "2026-10-30",
-        "gameId": 21717998,
-        "minutes": 32.86666666666667,
-        "teammatePlayed": false
-       },
-       {
-        "date": "2026-10-31",
-        "gameId": 21718006,
-        "minutes": 38.63333333333333,
-        "teammatePlayed": false
-       },
-       {
-        "date": "2026-11-02",
-        "gameId": 21718020,
-        "minutes": 29.25,
-        "teammatePlayed": false
-       },
-       {
-        "date": "2026-11-04",
-        "gameId": 21718035,
-        "minutes": 37.016666666666666,
-        "teammatePlayed": false
-       },
-       {
-        "date": "2026-11-06",
-        "gameId": 21718049,
-        "minutes": 39.81666666666667,
-        "teammatePlayed": false
-       }
-      ],
-      "reportedAt": "2026-11-21T13:25:31Z",
-      "playerId": 3547238,
-      "player": "Anthony Edwards",
-      "status": "Out",
-      "confirmedOut": true,
-      "assumedOut": true,
-      "withN": 3,
-      "withoutN": 6,
-      "withAvg": 32.62777777777777,
-      "withoutAvg": 35.43333333333333,
-      "supported": false
-     },
-     {
-      "samples": [
-       {
-        "date": "2026-10-23",
-        "gameId": 21717938,
-        "minutes": 29.833333333333332,
-        "teammatePlayed": true
-       },
-       {
-        "date": "2026-10-25",
-        "gameId": 21717958,
-        "minutes": 31.416666666666668,
-        "teammatePlayed": true
-       },
-       {
-        "date": "2026-10-26",
-        "gameId": 21717963,
-        "minutes": 36.63333333333333,
-        "teammatePlayed": false
-       },
-       {
-        "date": "2026-10-28",
-        "gameId": 21717982,
-        "minutes": 35.016666666666666,
-        "teammatePlayed": true
-       },
-       {
-        "date": "2026-10-30",
-        "gameId": 21717998,
-        "minutes": 32.86666666666667,
+        "date": "2026-10-29",
+        "gameId": 21717989,
+        "minutes": 26.833333333333332,
         "teammatePlayed": true
        },
        {
         "date": "2026-10-31",
-        "gameId": 21718006,
-        "minutes": 38.63333333333333,
+        "gameId": 21718004,
+        "minutes": 22.783333333333335,
         "teammatePlayed": true
        },
        {
         "date": "2026-11-02",
-        "gameId": 21718020,
-        "minutes": 29.25,
+        "gameId": 21718019,
+        "minutes": 30.633333333333333,
         "teammatePlayed": true
        },
        {
         "date": "2026-11-04",
-        "gameId": 21718035,
-        "minutes": 37.016666666666666,
+        "gameId": 21718032,
+        "minutes": 33.28333333333333,
         "teammatePlayed": true
        },
        {
         "date": "2026-11-06",
-        "gameId": 21718049,
-        "minutes": 39.81666666666667,
+        "gameId": 21718047,
+        "minutes": 23.35,
         "teammatePlayed": true
        },
        {
-        "date": "2026-11-08",
-        "gameId": 21718061,
-        "minutes": 32.68333333333333,
+        "date": "2026-11-09",
+        "gameId": 21718069,
+        "minutes": 27.55,
         "teammatePlayed": true
        },
        {
-        "date": "2026-11-12",
-        "gameId": 21718093,
-        "minutes": 25.266666666666666,
+        "date": "2026-11-11",
+        "gameId": 21718085,
+        "minutes": 26.966666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718099,
+        "minutes": 29.833333333333332,
         "teammatePlayed": true
        },
        {
         "date": "2026-11-14",
-        "gameId": 21718108,
-        "minutes": 37.016666666666666,
+        "gameId": 21718107,
+        "minutes": 32.81666666666667,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-16",
+        "gameId": 21718120,
+        "minutes": 26.833333333333332,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-18",
+        "gameId": 21718131,
+        "minutes": 33.43333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-19",
+        "gameId": 21718143,
+        "minutes": 24.716666666666665,
+        "teammatePlayed": true
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 182,
+      "player": "Jerami Grant",
+      "status": "Out",
+      "confirmedOut": true,
+      "assumedOut": true,
+      "withN": 12,
+      "withoutN": 1,
+      "withAvg": 28.141666666666666,
+      "withoutAvg": 32.81666666666667,
+      "supported": false
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-10-26",
+        "gameId": 21717969,
+        "minutes": 31.483333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-29",
+        "gameId": 21717989,
+        "minutes": 26.833333333333332,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-31",
+        "gameId": 21718004,
+        "minutes": 22.783333333333335,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-02",
+        "gameId": 21718019,
+        "minutes": 30.633333333333333,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-04",
+        "gameId": 21718032,
+        "minutes": 33.28333333333333,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-06",
+        "gameId": 21718047,
+        "minutes": 23.35,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-09",
+        "gameId": 21718069,
+        "minutes": 27.55,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718085,
+        "minutes": 26.966666666666665,
+        "teammatePlayed": false
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 38017656,
+      "player": "Scotty Pippen Jr.",
+      "status": "Out",
+      "confirmedOut": true,
+      "assumedOut": true,
+      "withN": 2,
+      "withoutN": 6,
+      "withAvg": 29.15833333333333,
+      "withoutAvg": 27.42777777777778,
+      "supported": false
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-10-21",
+        "gameId": 21717927,
+        "minutes": 27.816666666666666,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-25",
+        "gameId": 21717961,
+        "minutes": 32.13333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-26",
+        "gameId": 21717969,
+        "minutes": 31.483333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-29",
+        "gameId": 21717989,
+        "minutes": 26.833333333333332,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-31",
+        "gameId": 21718004,
+        "minutes": 22.783333333333335,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-02",
+        "gameId": 21718019,
+        "minutes": 30.633333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-04",
+        "gameId": 21718032,
+        "minutes": 33.28333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-06",
+        "gameId": 21718047,
+        "minutes": 23.35,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-09",
+        "gameId": 21718069,
+        "minutes": 27.55,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718085,
+        "minutes": 26.966666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718099,
+        "minutes": 29.833333333333332,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-14",
+        "gameId": 21718107,
+        "minutes": 32.81666666666667,
         "teammatePlayed": true
        },
        {
         "date": "2026-11-16",
-        "gameId": 21718123,
-        "minutes": 31.15,
+        "gameId": 21718120,
+        "minutes": 26.833333333333332,
         "teammatePlayed": false
        },
        {
-        "date": "2026-11-17",
-        "gameId": 21718127,
-        "minutes": 36.78333333333333,
+        "date": "2026-11-18",
+        "gameId": 21718131,
+        "minutes": 33.43333333333333,
         "teammatePlayed": false
        },
        {
         "date": "2026-11-19",
-        "gameId": 21718145,
-        "minutes": 38.71666666666667,
+        "gameId": 21718143,
+        "minutes": 24.716666666666665,
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
-      "playerId": 56677851,
-      "player": "Jaylen Clark",
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 56677830,
+      "player": "GG Jackson",
       "status": "Out",
       "confirmedOut": true,
       "assumedOut": true,
       "withN": 11,
       "withoutN": 4,
-      "withAvg": 33.528787878787874,
-      "withoutAvg": 35.82083333333333,
+      "withAvg": 29.284848484848485,
+      "withoutAvg": 27.083333333333336,
       "supported": true,
-      "withMinutes": 33.528787878787874,
-      "withoutMinutes": 35.82083333333333,
-      "withProjection": 1.4063374889033178,
-      "withoutProjection": 1.5024754543034036,
-      "withProbability": 0.5524255446368509,
-      "withoutProbability": 0.5416348347269644,
+      "withMinutes": 29.284848484848485,
+      "withoutMinutes": 27.083333333333336,
+      "withProjection": 3.0447850602796884,
+      "withoutProjection": 2.815890570803986,
+      "withProbability": 0.5251913988788273,
+      "withoutProbability": 0.5346167670854225,
       "through": "2026-11-19"
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
-      "playerId": 1057397172,
-      "player": "Rocco Zikarsky",
+      "samples": [
+       {
+        "date": "2026-10-21",
+        "gameId": 21717927,
+        "minutes": 27.816666666666666,
+        "teammatePlayed": false
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718085,
+        "minutes": 26.966666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718099,
+        "minutes": 29.833333333333332,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-14",
+        "gameId": 21718107,
+        "minutes": 32.81666666666667,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-16",
+        "gameId": 21718120,
+        "minutes": 26.833333333333332,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-18",
+        "gameId": 21718131,
+        "minutes": 33.43333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-19",
+        "gameId": 21718143,
+        "minutes": 24.716666666666665,
+        "teammatePlayed": true
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 1057396260,
+      "player": "Javon Small",
+      "status": "Out",
+      "confirmedOut": true,
+      "assumedOut": true,
+      "withN": 6,
+      "withoutN": 1,
+      "withAvg": 29.099999999999998,
+      "withoutAvg": 27.816666666666666,
+      "supported": false
+     },
+     {
+      "samples": [
+       {
+        "date": "2026-10-26",
+        "gameId": 21717969,
+        "minutes": 31.483333333333334,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-29",
+        "gameId": 21717989,
+        "minutes": 26.833333333333332,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-10-31",
+        "gameId": 21718004,
+        "minutes": 22.783333333333335,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-02",
+        "gameId": 21718019,
+        "minutes": 30.633333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-04",
+        "gameId": 21718032,
+        "minutes": 33.28333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-06",
+        "gameId": 21718047,
+        "minutes": 23.35,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-09",
+        "gameId": 21718069,
+        "minutes": 27.55,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-11",
+        "gameId": 21718085,
+        "minutes": 26.966666666666665,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-13",
+        "gameId": 21718099,
+        "minutes": 29.833333333333332,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-14",
+        "gameId": 21718107,
+        "minutes": 32.81666666666667,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-16",
+        "gameId": 21718120,
+        "minutes": 26.833333333333332,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-18",
+        "gameId": 21718131,
+        "minutes": 33.43333333333333,
+        "teammatePlayed": true
+       },
+       {
+        "date": "2026-11-19",
+        "gameId": 21718143,
+        "minutes": 24.716666666666665,
+        "teammatePlayed": true
+       }
+      ],
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 1091339280,
+      "player": "Cameron Boozer",
+      "status": "Out",
+      "confirmedOut": true,
+      "assumedOut": true,
+      "withN": 13,
+      "withoutN": 0,
+      "withAvg": 28.50128205128205,
+      "withoutAvg": 0,
+      "supported": false
+     },
+     {
+      "reportedAt": "2026-11-21T16:35:02Z",
+      "playerId": 1091466594,
+      "player": "Richie Saunders",
       "status": "Out",
       "confirmedOut": true,
       "assumedOut": true,
@@ -1705,121 +2986,132 @@
      }
     ]
    },
-   "market_median": 1.5,
-   "book_count": 7,
+   "market_median": 3.5,
+   "book_count": 8,
    "book_quotes": [
+    {
+     "book": "betmgm",
+     "source": "SportsGameOdds",
+     "line": 3.5,
+     "overOdds": -125,
+     "underOdds": -105,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:47.784Z"
+    },
     {
      "book": "betparx",
      "source": "BALLDONTLIE",
-     "line": 1.5,
-     "overOdds": -121,
-     "underOdds": -112,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:25:47.138Z"
+     "line": 3.5,
+     "overOdds": -150,
+     "underOdds": 112,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:35:48.074Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
-     "line": 1.5,
-     "overOdds": -121,
-     "underOdds": -112,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:15.031Z"
+     "line": 3.5,
+     "overOdds": -152,
+     "underOdds": 112,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:30.449Z"
     },
     {
      "book": "bovada",
      "source": "SportsGameOdds",
-     "line": 1.5,
-     "overOdds": -110,
-     "underOdds": -120,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:22:01.000Z"
+     "line": 3.5,
+     "overOdds": -130,
+     "underOdds": 100,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:30:53.000Z"
     },
     {
      "book": "caesars",
-     "source": "BALLDONTLIE",
-     "line": 1.5,
-     "overOdds": -113,
-     "underOdds": -118,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:12.975Z"
+     "source": "SportsGameOdds",
+     "line": 3.5,
+     "overOdds": -132,
+     "underOdds": 100,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:26.000Z"
     },
     {
      "book": "draftkings",
      "source": "SportsGameOdds",
-     "line": 1.5,
-     "overOdds": -110,
-     "underOdds": -120,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:27:25.690Z"
+     "line": 3.5,
+     "overOdds": -131,
+     "underOdds": -101,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
     },
     {
      "book": "espnbet",
      "source": "SportsGameOdds",
-     "line": 1.5,
-     "overOdds": -115,
-     "underOdds": -115,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:22:19.000Z"
+     "line": 3.5,
+     "overOdds": -130,
+     "underOdds": 100,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:41.000Z"
     },
     {
      "book": "fanduel",
-     "source": "BALLDONTLIE",
-     "line": 1.5,
+     "source": "SportsGameOdds",
+     "line": 3.5,
      "overOdds": -118,
      "underOdds": -112,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:24.804Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-21T13:27:30Z",
-   "source_updated_at": "2026-11-21T13:22:01.000Z",
+   "quote_at": "2026-11-21T16:37:04Z",
+   "source_updated_at": "2026-11-21T16:35:50.613Z",
    "period": "game",
-   "logged_at": "2026-11-21T13:33:06Z",
+   "logged_at": "2026-11-21T16:47:29Z",
    "date": "2026-11-21",
    "game_id": 21718159,
-   "player_id": 3547259,
-   "player": "Jaden McDaniels",
-   "team": "MIN",
-   "stat": "threes",
+   "player_id": 1057266649,
+   "player": "Cedric Coward",
+   "team": "MEM",
+   "stat": "assists",
    "side": "UNDER",
-   "line": 1.5,
-   "odds": -120,
-   "book": "sgo/bovada",
-   "prob": 0.5482320239499365,
-   "prob_raw": 0.5906720305593651,
-   "proj_mean": 1.4431251035907549,
-   "proj_min": 34.40584913837466,
+   "line": 3.5,
+   "odds": -112,
+   "book": "sgo/fanduel",
+   "prob": 0.533247026790189,
+   "prob_raw": 0.6786361886215995,
+   "proj_mean": 2.848317567347843,
+   "proj_min": 27.39521731259798,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Jaylen Clark; opponent out: Jerami Grant, Ty Jerome (starter), Javon Small, Cameron Boozer (starter); defense vs forwards: 14th-most 3-pointers allowed (-0%, of 30 teams); rolling defense inputs: overall allowance -6.1% versus its league baseline, position-specific allowance +8.1% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -3.2% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +3.9 min, last-game minutes +2.5 min, longer-run minutes +2.1 min (before residual mixing and post-fit adjustments)",
+   "why": "out: Jerami Grant, Ty Jerome, Javon Small, Cameron Boozer; opponent out: Jaylen Clark; defense vs guards: 12th-fewest assists allowed (-3%, of 30 teams); rolling defense inputs: overall allowance -4.7% versus its league baseline, position-specific allowance -7.4% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -4.2% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +1.1 min, last-five minutes +0.6 min, past blowout cuts +0.4 min (before residual mixing and post-fit adjustments)",
    "matchup": "MEM @ MIN",
    "tip": "2026-11-22T01:00:00Z",
-   "edge": 0.002777478495391117,
+   "edge": 0.004945139997736159,
    "dist": [
-    0.267,
-    0.324,
-    0.222,
-    0.113,
-    0.048,
-    0.018,
-    0.006,
-    0.002,
+    0.071,
+    0.174,
+    0.226,
+    0.207,
+    0.149,
+    0.089,
+    0.047,
+    0.022,
+    0.009,
+    0.004,
     0.001
    ]
   },
   {
    "availability": {
     "version": 1,
-    "asOf": "2026-11-21T13:27:41Z",
-    "baselineMinutes": 27.47156826976974,
-    "baselineProbability": 0.5248465028068969,
+    "asOf": "2026-11-21T16:37:17Z",
+    "baselineMinutes": 27.38428386406988,
+    "baselineProbability": 0.5370717649279775,
     "teammates": [
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 200,
       "player": "Tobias Harris",
       "status": "Out",
@@ -1972,7 +3264,7 @@
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1057262518,
       "player": "Dylan Harper",
       "status": "Out",
@@ -1985,7 +3277,7 @@
       "supported": false
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1091352835,
       "player": "Jayden Quaintance",
       "status": "Out",
@@ -1998,7 +3290,7 @@
       "supported": false
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1091463115,
       "player": "Maliq Brown",
       "status": "Out",
@@ -2011,7 +3303,7 @@
       "supported": false
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1091464155,
       "player": "Ja'Kobi Gillespie",
       "status": "Out",
@@ -2026,16 +3318,25 @@
     ]
    },
    "market_median": 3.5,
-   "book_count": 7,
+   "book_count": 8,
    "book_quotes": [
+    {
+     "book": "betmgm",
+     "source": "SportsGameOdds",
+     "line": 3.5,
+     "overOdds": -135,
+     "underOdds": 100,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:47.784Z"
+    },
     {
      "book": "betparx",
      "source": "BALLDONTLIE",
      "line": 3.5,
      "overOdds": -130,
      "underOdds": -104,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:25:47.138Z"
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:35:48.074Z"
     },
     {
      "book": "betrivers",
@@ -2043,62 +3344,62 @@
      "line": 3.5,
      "overOdds": -130,
      "underOdds": -104,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:17.801Z"
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:33.474Z"
     },
     {
      "book": "bovada",
      "source": "SportsGameOdds",
      "line": 3.5,
-     "overOdds": -125,
-     "underOdds": -105,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:21:59.000Z"
+     "overOdds": -120,
+     "underOdds": -110,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:33:51.000Z"
     },
     {
      "book": "caesars",
-     "source": "BALLDONTLIE",
+     "source": "SportsGameOdds",
      "line": 3.5,
-     "overOdds": -127,
-     "underOdds": -106,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:15.791Z"
+     "overOdds": -121,
+     "underOdds": -110,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:33:47.000Z"
     },
     {
      "book": "draftkings",
      "source": "SportsGameOdds",
      "line": 3.5,
-     "overOdds": -124,
-     "underOdds": -106,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:27:25.690Z"
+     "overOdds": -119,
+     "underOdds": -111,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
     },
     {
      "book": "espnbet",
      "source": "SportsGameOdds",
      "line": 3.5,
-     "overOdds": -125,
-     "underOdds": -105,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:26:16.000Z"
+     "overOdds": -120,
+     "underOdds": -110,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:41.000Z"
     },
     {
      "book": "fanduel",
-     "source": "BALLDONTLIE",
+     "source": "SportsGameOdds",
      "line": 3.5,
-     "overOdds": -132,
-     "underOdds": 100,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:24.784Z"
+     "overOdds": -114,
+     "underOdds": -114,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-21T13:27:30Z",
-   "source_updated_at": "2026-11-21T13:27:25.690Z",
+   "quote_at": "2026-11-21T16:37:04Z",
+   "source_updated_at": "2026-11-21T16:35:50.613Z",
    "period": "game",
-   "logged_at": "2026-11-21T13:33:06Z",
+   "logged_at": "2026-11-21T16:47:29Z",
    "date": "2026-11-21",
    "game_id": 21718160,
    "player_id": 161,
@@ -2107,23 +3408,23 @@
    "stat": "rebounds",
    "side": "UNDER",
    "line": 3.5,
-   "odds": -106,
-   "book": "sgo/draftkings",
-   "prob": 0.5248465028068969,
-   "prob_raw": 0.613612452693365,
-   "proj_mean": 3.1735230775968377,
-   "proj_min": 27.47156826976974,
+   "odds": -114,
+   "book": "sgo/fanduel",
+   "prob": 0.5370717649279775,
+   "prob_raw": 0.6135314336692543,
+   "proj_mean": 3.1739774515112575,
+   "proj_min": 27.38428386406988,
    "units": 0,
    "tier": "LEAN",
    "why": "out: Dylan Harper; opponent out: Dejounte Murray (starter); minutes -7 vs his normal; defense vs guards: 4th-fewest rebounds allowed (-9%, of 30 teams); rolling defense inputs: overall allowance +1.6% versus its league baseline, position-specific allowance -8.0% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity +1.0% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: past blowout cuts -2.6 min, recent minutes trend +2.6 min, longer-run minutes +1.7 min (before residual mixing and post-fit adjustments)",
    "matchup": "NOP @ SAS",
    "tip": "2026-11-22T01:00:00Z",
-   "edge": 0.010283396010780432,
+   "edge": 0.004361484554145756,
    "dist": [
     0.061,
     0.151,
     0.204,
-    0.199,
+    0.198,
     0.156,
     0.105,
     0.062,
@@ -2138,9 +3439,9 @@
   {
    "availability": {
     "version": 1,
-    "asOf": "2026-11-21T13:27:41Z",
-    "baselineMinutes": 26.650535574587693,
-    "baselineProbability": 0.5525125256755259,
+    "asOf": "2026-11-21T16:37:17Z",
+    "baselineMinutes": 26.649988368283466,
+    "baselineProbability": 0.5540222827511858,
     "teammates": [
      {
       "samples": [
@@ -2193,7 +3494,7 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 434,
       "player": "Jayson Tatum",
       "status": "Questionable",
@@ -2255,7 +3556,7 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 473,
       "player": "Derrick White",
       "status": "Questionable",
@@ -2267,7 +3568,7 @@
       "supported": false
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1057396966,
       "player": "Amari Williams",
       "status": "Out",
@@ -2280,7 +3581,7 @@
       "supported": false
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1091465698,
       "player": "Dillon Mitchell",
       "status": "Out",
@@ -2300,20 +3601,20 @@
     {
      "book": "betparx",
      "source": "BALLDONTLIE",
-     "line": 6.5,
-     "overOdds": 100,
-     "underOdds": -136,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:25:47.138Z"
+     "line": 5.5,
+     "overOdds": -143,
+     "underOdds": 106,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:35:48.074Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
-     "line": 6.5,
-     "overOdds": 100,
-     "underOdds": -136,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:20.562Z"
+     "line": 5.5,
+     "overOdds": -143,
+     "underOdds": 106,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:36.395Z"
     },
     {
      "book": "bovada",
@@ -2321,17 +3622,17 @@
      "line": 5.5,
      "overOdds": -135,
      "underOdds": 105,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:20:42.000Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:20.000Z"
     },
     {
      "book": "caesars",
-     "source": "BALLDONTLIE",
+     "source": "SportsGameOdds",
      "line": 5.5,
-     "overOdds": -136,
-     "underOdds": 103,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:18.543Z"
+     "overOdds": -130,
+     "underOdds": -102,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:15.000Z"
     },
     {
      "book": "draftkings",
@@ -2339,8 +3640,8 @@
      "line": 5.5,
      "overOdds": -138,
      "underOdds": 105,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:27:25.690Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
     },
     {
      "book": "espnbet",
@@ -2348,26 +3649,26 @@
      "line": 5.5,
      "overOdds": -130,
      "underOdds": 100,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:26:15.000Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:31:34.000Z"
     },
     {
      "book": "fanduel",
-     "source": "BALLDONTLIE",
+     "source": "SportsGameOdds",
      "line": 5.5,
-     "overOdds": -132,
-     "underOdds": 100,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:24.830Z"
+     "overOdds": -130,
+     "underOdds": -102,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-21T13:27:30Z",
-   "source_updated_at": "2026-11-21T13:26:15.000Z",
+   "quote_at": "2026-11-21T16:37:04Z",
+   "source_updated_at": "2026-11-21T16:32:15.000Z",
    "period": "game",
-   "logged_at": "2026-11-21T13:33:06Z",
+   "logged_at": "2026-11-21T16:47:29Z",
    "date": "2026-11-21",
    "game_id": 21718161,
    "player_id": 172,
@@ -2376,29 +3677,29 @@
    "stat": "rebounds",
    "side": "UNDER",
    "line": 5.5,
-   "odds": 100,
-   "book": "sgo/espnbet",
-   "prob": 0.5525125256755259,
-   "prob_raw": 0.7426025832616348,
-   "proj_mean": 4.159548377105508,
-   "proj_min": 26.650535574587693,
+   "odds": -102,
+   "book": "sgo/caesars",
+   "prob": 0.5540222827511858,
+   "prob_raw": 0.7421908376305437,
+   "proj_mean": 4.162278216476208,
+   "proj_min": 26.649988368283466,
    "units": 0,
    "tier": "CHECK",
-   "why": "opponent out: Precious Achiuwa; minutes -9 vs his normal; defense vs forwards: 11th-fewest rebounds allowed (-3%, of 30 teams); rolling defense inputs: overall allowance -3.6% versus its league baseline, position-specific allowance -3.2% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -2.5% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +2.4 min, longer-run minutes +1.9 min, past blowout cuts -1.9 min (before residual mixing and post-fit adjustments); teammates uncertain: Jayson Tatum (questionable), Derrick White (questionable)",
+   "why": "minutes -9 vs his normal; defense vs forwards: 11th-fewest rebounds allowed (-3%, of 30 teams); rolling defense inputs: overall allowance -3.6% versus its league baseline, position-specific allowance -3.2% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -2.5% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +2.4 min, longer-run minutes +1.9 min, past blowout cuts -1.9 min (before residual mixing and post-fit adjustments); teammates uncertain: Jayson Tatum (questionable), Derrick White (questionable)",
    "matchup": "BOS @ SAC",
    "tip": "2026-11-22T03:00:00Z",
-   "edge": 0.05251252567552589,
+   "edge": 0.04907178770168086,
    "dist": [
     0.027,
     0.084,
-    0.143,
+    0.142,
     0.175,
     0.172,
     0.143,
-    0.104,
+    0.105,
     0.068,
     0.041,
-    0.022,
+    0.023,
     0.012,
     0.006,
     0.003,
@@ -2408,9 +3709,9 @@
   {
    "availability": {
     "version": 1,
-    "asOf": "2026-11-21T13:27:41Z",
-    "baselineMinutes": 26.650535574587693,
-    "baselineProbability": 0.6154204694638912,
+    "asOf": "2026-11-21T16:37:17Z",
+    "baselineMinutes": 26.649988368283466,
+    "baselineProbability": 0.6202359801136522,
     "teammates": [
      {
       "samples": [
@@ -2463,7 +3764,7 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 434,
       "player": "Jayson Tatum",
       "status": "Questionable",
@@ -2525,7 +3826,7 @@
         "teammatePlayed": true
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 473,
       "player": "Derrick White",
       "status": "Questionable",
@@ -2537,7 +3838,7 @@
       "supported": false
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1057396966,
       "player": "Amari Williams",
       "status": "Out",
@@ -2550,7 +3851,7 @@
       "supported": false
      },
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1091465698,
       "player": "Dillon Mitchell",
       "status": "Out",
@@ -2571,19 +3872,19 @@
      "book": "betparx",
      "source": "BALLDONTLIE",
      "line": 3.5,
-     "overOdds": 107,
-     "underOdds": -143,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:25:47.138Z"
+     "overOdds": 110,
+     "underOdds": -150,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:35:48.074Z"
     },
     {
      "book": "betrivers",
      "source": "BALLDONTLIE",
      "line": 3.5,
-     "overOdds": 107,
-     "underOdds": -143,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:20.562Z"
+     "overOdds": 110,
+     "underOdds": -150,
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:36.395Z"
     },
     {
      "book": "bovada",
@@ -2591,17 +3892,17 @@
      "line": 3.5,
      "overOdds": 105,
      "underOdds": -135,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:20:42.000Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:20.000Z"
     },
     {
      "book": "caesars",
-     "source": "BALLDONTLIE",
+     "source": "SportsGameOdds",
      "line": 3.5,
      "overOdds": 100,
      "underOdds": -134,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:18.543Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:15.000Z"
     },
     {
      "book": "draftkings",
@@ -2609,8 +3910,8 @@
      "line": 3.5,
      "overOdds": 106,
      "underOdds": -139,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:27:25.690Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
     },
     {
      "book": "espnbet",
@@ -2618,26 +3919,26 @@
      "line": 3.5,
      "overOdds": 100,
      "underOdds": -130,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:26:15.000Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:31:34.000Z"
     },
     {
      "book": "fanduel",
-     "source": "BALLDONTLIE",
+     "source": "SportsGameOdds",
      "line": 3.5,
      "overOdds": 102,
      "underOdds": -136,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:24.830Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-21T13:25:31Z",
-   "source_updated_at": "2026-11-21T13:25:47.138Z",
+   "quote_at": "2026-11-21T16:35:02Z",
+   "source_updated_at": "2026-11-21T16:35:48.074Z",
    "period": "game",
-   "logged_at": "2026-11-21T13:33:06Z",
+   "logged_at": "2026-11-21T16:47:29Z",
    "date": "2026-11-21",
    "game_id": 21718161,
    "player_id": 172,
@@ -2646,18 +3947,18 @@
    "stat": "threes",
    "side": "UNDER",
    "line": 3.5,
-   "odds": -143,
+   "odds": -150,
    "book": "betparx",
-   "prob": 0.6154204694638912,
-   "prob_raw": 0.703519241353147,
-   "proj_mean": 2.7159343253061943,
-   "proj_min": 26.650535574587693,
+   "prob": 0.6202359801136522,
+   "prob_raw": 0.7028540543237716,
+   "proj_mean": 2.7193561396138213,
+   "proj_min": 26.649988368283466,
    "units": 0,
    "tier": "PAPER",
-   "why": "opponent out: Precious Achiuwa; minutes -9 vs his normal; defense vs forwards: 10th-fewest 3-pointers allowed (-9%, of 30 teams); rolling defense inputs: overall allowance +4.8% versus its league baseline, position-specific allowance +6.1% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity +2.7% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +2.4 min, longer-run minutes +1.9 min, past blowout cuts -1.9 min (before residual mixing and post-fit adjustments); teammates uncertain: Jayson Tatum (questionable), Derrick White (questionable)",
+   "why": "minutes -9 vs his normal; defense vs forwards: 10th-fewest 3-pointers allowed (-9%, of 30 teams); rolling defense inputs: overall allowance +4.8% versus its league baseline, position-specific allowance +6.1% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity +2.7% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +2.4 min, longer-run minutes +1.9 min, past blowout cuts -1.9 min (before residual mixing and post-fit adjustments); teammates uncertain: Jayson Tatum (questionable), Derrick White (questionable)",
    "matchup": "BOS @ SAC",
    "tip": "2026-11-22T03:00:00Z",
-   "edge": 0.026943103208747154,
+   "edge": 0.02023598011365224,
    "dist": [
     0.096,
     0.195,
@@ -2676,12 +3977,12 @@
   {
    "availability": {
     "version": 1,
-    "asOf": "2026-11-21T13:27:41Z",
-    "baselineMinutes": 33.01718431652762,
-    "baselineProbability": 0.5041757253070968,
+    "asOf": "2026-11-21T16:37:17Z",
+    "baselineMinutes": 33.016637110223385,
+    "baselineProbability": 0.5094070207405852,
     "teammates": [
      {
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 417,
       "player": "Ben Simmons",
       "status": "Out",
@@ -2750,12 +4051,11 @@
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 3547249,
       "player": "Precious Achiuwa",
-      "status": "Out",
-      "confirmedOut": true,
-      "assumedOut": true,
+      "status": "Day-To-Day",
+      "confirmedOut": false,
       "withN": 7,
       "withoutN": 2,
       "withAvg": 29.859523809523814,
@@ -2771,7 +4071,7 @@
         "teammatePlayed": false
        }
       ],
-      "reportedAt": "2026-11-21T13:25:31Z",
+      "reportedAt": "2026-11-21T16:35:02Z",
       "playerId": 1057390745,
       "player": "Maxime Raynaud",
       "status": "Out",
@@ -2786,16 +4086,25 @@
     ]
    },
    "market_median": 2.5,
-   "book_count": 6,
+   "book_count": 7,
    "book_quotes": [
+    {
+     "book": "betmgm",
+     "source": "SportsGameOdds",
+     "line": 2.5,
+     "overOdds": 105,
+     "underOdds": -140,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:47.784Z"
+    },
     {
      "book": "betparx",
      "source": "BALLDONTLIE",
      "line": 2.5,
      "overOdds": 120,
      "underOdds": -162,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:25:47.138Z"
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:35:48.074Z"
     },
     {
      "book": "betrivers",
@@ -2803,8 +4112,8 @@
      "line": 2.5,
      "overOdds": 120,
      "underOdds": -162,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:20.562Z"
+     "capturedAt": "2026-11-21T16:35:02Z",
+     "updatedAt": "2026-11-21T16:30:36.395Z"
     },
     {
      "book": "bovada",
@@ -2812,8 +4121,8 @@
      "line": 2.5,
      "overOdds": 120,
      "underOdds": -160,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:20:42.000Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:32:20.000Z"
     },
     {
      "book": "draftkings",
@@ -2821,35 +4130,35 @@
      "line": 2.5,
      "overOdds": 118,
      "underOdds": -155,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:27:25.690Z"
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:36:53.275Z"
     },
     {
      "book": "espnbet",
      "source": "SportsGameOdds",
      "line": 2.5,
      "overOdds": 110,
-     "underOdds": -145,
-     "capturedAt": "2026-11-21T13:27:30Z",
-     "updatedAt": "2026-11-21T13:26:15.000Z"
+     "underOdds": -150,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:31:34.000Z"
     },
     {
      "book": "fanduel",
-     "source": "BALLDONTLIE",
+     "source": "SportsGameOdds",
      "line": 2.5,
-     "overOdds": 108,
-     "underOdds": -144,
-     "capturedAt": "2026-11-21T13:25:31Z",
-     "updatedAt": "2026-11-21T13:26:24.830Z"
+     "overOdds": 116,
+     "underOdds": -152,
+     "capturedAt": "2026-11-21T16:37:04Z",
+     "updatedAt": "2026-11-21T16:35:50.613Z"
     }
    ],
    "capture_max_age_seconds": 1800,
    "price_max_age_seconds": 21600,
    "audit_version": 2,
-   "quote_at": "2026-11-21T13:25:31Z",
-   "source_updated_at": "2026-11-21T13:26:24.830Z",
+   "quote_at": "2026-11-21T16:37:04Z",
+   "source_updated_at": "2026-11-21T16:36:47.784Z",
    "period": "game",
-   "logged_at": "2026-11-21T13:33:06Z",
+   "logged_at": "2026-11-21T16:47:29Z",
    "date": "2026-11-21",
    "game_id": 21718161,
    "player_id": 268,
@@ -2858,22 +4167,22 @@
    "stat": "assists",
    "side": "OVER",
    "line": 2.5,
-   "odds": 108,
-   "book": "fanduel",
-   "prob": 0.5041757253070968,
-   "prob_raw": 0.7495111346784945,
-   "proj_mean": 4.08798191254302,
-   "proj_min": 33.01718431652762,
+   "odds": 105,
+   "book": "sgo/betmgm",
+   "prob": 0.5094070207405852,
+   "prob_raw": 0.7501840062751707,
+   "proj_mean": 4.093016027472584,
+   "proj_min": 33.016637110223385,
    "units": 0,
    "tier": "LEAN",
-   "why": "out: Precious Achiuwa; back-to-back; defense vs guards: 2nd-fewest assists allowed (-13%, of 30 teams); rolling defense inputs: overall allowance -5.3% versus its league baseline, position-specific allowance -12.2% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -4.9% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +3.0 min, last-game minutes +2.5 min, longer-run minutes +1.2 min (before residual mixing and post-fit adjustments)",
+   "why": "back-to-back; defense vs guards: 2nd-fewest assists allowed (-13%, of 30 teams); rolling defense inputs: overall allowance -5.3% versus its league baseline, position-specific allowance -12.2% versus its league baseline; overall uses up to 20 games and position-specific up to 30, each shrunk toward league average; displayed current-season ranks are descriptive; injury feature policy: teammate absences and opponent absences are disabled in this fitted model; displayed injury lists are context, not a learned absence adjustment; fitted defense-rate sensitivity -4.9% versus league-neutral opponent inputs, other rate inputs held fixed (not the raw rank percentage); largest fitted minutes terms versus training-average inputs: recent minutes trend +3.0 min, last-game minutes +2.5 min, longer-run minutes +1.2 min (before residual mixing and post-fit adjustments); teammates uncertain: Precious Achiuwa (day-to-day)",
    "matchup": "BOS @ SAC",
    "tip": "2026-11-22T03:00:00Z",
-   "edge": 0.023406494537865974,
+   "edge": 0.021602142691804715,
    "dist": [
     0.024,
     0.081,
-    0.146,
+    0.145,
     0.182,
     0.179,
     0.147,
@@ -2922,14 +4231,14 @@
  ],
  "status": {
   "scheduleComplete": true,
-  "scheduleCapturedAt": "2026-11-21T13:25:31Z",
+  "scheduleCapturedAt": "2026-11-21T16:35:02Z",
   "scheduleGames": 6,
-  "scoredAt": "2026-11-21T13:27:41Z",
-  "quotesRead": 2467,
-  "usableQuotes": 1563,
-  "unsafeOrDuplicate": 56,
-  "conflictingBooks": 9,
-  "offConsensus": 137,
+  "scoredAt": "2026-11-21T16:37:17Z",
+  "quotesRead": 2821,
+  "usableQuotes": 1663,
+  "unsafeOrDuplicate": 117,
+  "conflictingBooks": 2,
+  "offConsensus": 223,
   "captureMaxAgeSeconds": 1800,
   "priceMaxAgeSeconds": 21600,
   "minBooks": 3,
@@ -2937,11 +4246,11 @@
   "feeds": [
    {
     "name": "BALLDONTLIE",
-    "quotes": 623
+    "quotes": 460
    },
    {
     "name": "SportsGameOdds",
-    "quotes": 940
+    "quotes": 1203
    }
   ]
  }
