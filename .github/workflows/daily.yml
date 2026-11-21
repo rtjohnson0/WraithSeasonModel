@@ -223,6 +223,7 @@ jobs:
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'site'
         run: |
           go run ./cmd/rotationaudit -policy rotation-v4 -v21lab -out run_evidence/context-audit || echo "V2.1 evidence unavailable; publish last verified aggregate if present"
+          go run ./cmd/rotationaudit -policy rotation-v5 -out run_evidence/guarded-v5 || echo "V5 future evidence unavailable"
 
       # Runs even after a failed model step/push. These are actual recoverable run
       # outputs, including quote evidence; a failed push must never lose the logs.
@@ -332,6 +333,7 @@ jobs:
         run: |
           python3 scripts/publish_v21_lab.py
           python3 scripts/publish_v21_games.py
+          python3 scripts/publish_v5_lab.py
 
       - name: Deliver board through the protected gateway
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'bootstrap' && vars.WRAITH_DELIVERY == 'whop'
