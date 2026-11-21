@@ -67,3 +67,13 @@ func TestContextPolicyKeepsItsOwnRecord(t *testing.T) {
 		}
 	}
 }
+
+
+func TestGuardedV5HasIndependentReplayAndResultFiles(t *testing.T) {
+    if !KnownPolicy(GuardedPolicy) || !ProductionPolicy(GuardedPolicy) {t.Fatal("V5 not a known tracked policy")}
+    log, settle := Files(GuardedPolicy)
+    oldLog, oldSettle := Files(ContextPolicy)
+    if log==oldLog || settle==oldSettle || EvidenceDirectory(GuardedPolicy)==EvidenceDirectory(ContextPolicy) {
+        t.Fatal("V5 histories must not mix with V4, old checkpoints or results")
+    }
+}
