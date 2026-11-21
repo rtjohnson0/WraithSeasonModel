@@ -239,6 +239,8 @@ def sync(branch, message, attempts=5, delay=2):
                         a, b = json.loads(local), json.loads(upstream)
                         if a.get('at', '') > b.get('at', ''):
                             content = local
+                        if name == 'data/v21_lab.json' and local and upstream:
+                            content = local if json.loads(local).get('generatedAt','') > json.loads(upstream).get('generatedAt','') else upstream
                         if name in {'data/settled_audit.json', 'data/combosettled_audit.json', 'data/v2settled_audit.json'}:
                             content = merge_result_audit(local, upstream)
                 if content is None:
