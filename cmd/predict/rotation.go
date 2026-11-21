@@ -274,6 +274,11 @@ func (f *rotationForecast) adjustments(row *feat.Row) predictor.Adjustments {
 	if target, ok := f.target(f.teams[row.G.TeamID], row.G.PlayerID); ok {
 		a.TargetMinutes = &target
 	}
+	if f.guarded {
+		if status, ok := f.statuses[row.G.PlayerID]; ok && props.IsUncertain(status.Status) {
+			a.TargetMinutes = nil // uncertain own availability: no extra minutes
+		}
+	}
 	if f.strict {
 		impacts := f.rateImpacts(row)
 		if f.guarded {
@@ -359,6 +364,7 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 	c.Production = f.rateImpacts(row)
 	c.RateScale = f.adjustments(row).Scale
 	_, c.AllocationApplied = f.target(a, s.PlayerID)
+	if f.guarded { c.AllocationApplied = f.adjustments(row).TargetMinutes != nil }
 	if f.strict && !c.AllocationApplied {
 		c.Supported = false
 		c.Reason = "baseline minutes retained: no supported joint-absence target; " + a.Reason
