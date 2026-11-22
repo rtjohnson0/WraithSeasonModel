@@ -1,13 +1,13 @@
 {
   "activeStats": [],
-  "at": "2026-11-22T08:03:55Z",
+  "at": "2026-11-22T15:31:33Z",
   "before": "2026-11-22",
   "byStat": {
     "pa": {
       "eligibleDates": 5,
-      "eligibleRows": 313,
+      "eligibleRows": 349,
       "evaluationDates": 4,
-      "evaluationRows": 263,
+      "evaluationRows": 299,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
@@ -15,9 +15,9 @@
     },
     "pr": {
       "eligibleDates": 5,
-      "eligibleRows": 364,
+      "eligibleRows": 408,
       "evaluationDates": 4,
-      "evaluationRows": 302,
+      "evaluationRows": 346,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
@@ -25,9 +25,9 @@
     },
     "pra": {
       "eligibleDates": 5,
-      "eligibleRows": 329,
+      "eligibleRows": 365,
       "evaluationDates": 4,
-      "evaluationRows": 275,
+      "evaluationRows": 311,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
@@ -35,9 +35,9 @@
     },
     "ra": {
       "eligibleDates": 5,
-      "eligibleRows": 309,
+      "eligibleRows": 345,
       "evaluationDates": 4,
-      "evaluationRows": 257,
+      "evaluationRows": 293,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
@@ -45,16 +45,17 @@
     }
   },
   "eligibleDates": 5,
-  "eligibleRows": 1315,
+  "eligibleRows": 1467,
   "evaluationDates": 0,
-  "evaluationRows": 1097,
+  "evaluationRows": 1249,
   "evidenceUnit": "date-clustered paired log-loss improvement; each slate counts once",
   "excluded": {
     "different model version": 2089,
-    "final actuals pending or identity review": 243,
+    "final actuals pending or identity review": 91,
+    "forecast date not completed": 69,
     "quote timing or book checks": 90
   },
-  "loadedRows": 3737,
+  "loadedRows": 3806,
   "qualifiedStats": [],
   "status": "More forward data needed",
   "trainingRows": 218
