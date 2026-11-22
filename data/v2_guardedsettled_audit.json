@@ -13,7 +13,7 @@
       "oldActual": 20,
       "newResult": "LOSS",
       "newActual": 20,
-      "reason": "identity-checked final player/game/stat; source 2fc92b98d43b, fetched 2026-11-22T22:19:35.804990908Z"
+      "reason": "identity-checked final player/game/stat; source 4746423232ce, fetched 2026-11-22T22:51:36.561635123Z"
     },
     {
       "id": "2026-11-21|73|rebounds|UNDER|sgo/fanduel|3.5",
@@ -28,7 +28,7 @@
       "oldActual": 7,
       "newResult": "LOSS",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source d2fabf01708a, fetched 2026-11-22T22:19:35.80496624Z"
+      "reason": "identity-checked final player/game/stat; source c3d4b7384d8e, fetched 2026-11-22T22:51:36.561603202Z"
     },
     {
       "id": "2026-11-21|61|threes|UNDER|sgo/fanduel|1.5",
@@ -43,7 +43,7 @@
       "oldActual": 2,
       "newResult": "LOSS",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 9415859a19c7, fetched 2026-11-22T22:19:35.804889985Z"
+      "reason": "identity-checked final player/game/stat; source 25227d006d38, fetched 2026-11-22T22:51:36.561511671Z"
     },
     {
       "id": "2026-11-21|73|points|UNDER|sgo/fanduel|29.5",
@@ -58,7 +58,7 @@
       "oldActual": 30,
       "newResult": "LOSS",
       "newActual": 30,
-      "reason": "identity-checked final player/game/stat; source d2fabf01708a, fetched 2026-11-22T22:19:35.80496624Z"
+      "reason": "identity-checked final player/game/stat; source c3d4b7384d8e, fetched 2026-11-22T22:51:36.561603202Z"
     },
     {
       "id": "2026-11-21|3547242|rebounds|UNDER|sgo/bovada|6.5",
@@ -73,7 +73,7 @@
       "oldActual": 9,
       "newResult": "LOSS",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source 5010f0eed888, fetched 2026-11-22T22:19:35.805388728Z"
+      "reason": "identity-checked final player/game/stat; source 8b960db29f21, fetched 2026-11-22T22:51:36.562143581Z"
     },
     {
       "id": "2026-11-21|3547242|assists|UNDER|betparx|5.5",
@@ -88,7 +88,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 5010f0eed888, fetched 2026-11-22T22:19:35.805388728Z"
+      "reason": "identity-checked final player/game/stat; source 8b960db29f21, fetched 2026-11-22T22:51:36.562143581Z"
     },
     {
       "id": "2026-11-21|56677850|rebounds|OVER|betrivers|3.5",
@@ -103,7 +103,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source bfcac28c570b, fetched 2026-11-22T22:19:35.805313775Z"
+      "reason": "identity-checked final player/game/stat; source 9a2041ec0376, fetched 2026-11-22T22:51:36.562051766Z"
     },
     {
       "id": "2026-11-21|278|points|UNDER|sgo/fanduel|19.5",
@@ -118,7 +118,7 @@
       "oldActual": 15,
       "newResult": "WIN",
       "newActual": 15,
-      "reason": "identity-checked final player/game/stat; source 552b64907108, fetched 2026-11-22T22:19:35.805412784Z"
+      "reason": "identity-checked final player/game/stat; source 5cf660d5a963, fetched 2026-11-22T22:51:36.562172013Z"
     },
     {
       "id": "2026-11-21|666609|rebounds|UNDER|betparx|5.5",
@@ -133,7 +133,7 @@
       "oldActual": 8,
       "newResult": "LOSS",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source bbc8f9d59f26, fetched 2026-11-22T22:19:36.069246365Z"
+      "reason": "identity-checked final player/game/stat; source 4ec89115f37c, fetched 2026-11-22T22:51:36.846032126Z"
     },
     {
       "id": "2026-11-21|666747|assists|UNDER|sgo/espnbet|2.5",
@@ -148,7 +148,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source dfb69b26501c, fetched 2026-11-22T22:19:36.068757057Z"
+      "reason": "identity-checked final player/game/stat; source 5a4c5015587c, fetched 2026-11-22T22:51:36.845457418Z"
     },
     {
       "id": "2026-11-21|3547293|rebounds|UNDER|sgo/bovada|4.5",
@@ -163,7 +163,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 2ee5446481ea, fetched 2026-11-22T22:19:36.069018131Z"
+      "reason": "identity-checked final player/game/stat; source bcd5a831324b, fetched 2026-11-22T22:51:36.845750474Z"
     },
     {
       "id": "2026-11-21|666908|threes|UNDER|sgo/bovada|2.5",
@@ -178,7 +178,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 2d9cd69b7a65, fetched 2026-11-22T22:19:36.069296451Z"
+      "reason": "identity-checked final player/game/stat; source a9e6358d2c5d, fetched 2026-11-22T22:51:36.846090336Z"
     },
     {
       "id": "2026-11-21|1057266649|rebounds|UNDER|betrivers|7.5",
@@ -193,7 +193,7 @@
       "oldActual": 7,
       "newResult": "WIN",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source ad17a15c0dec, fetched 2026-11-22T22:19:36.067434202Z"
+      "reason": "identity-checked final player/game/stat; source 535ef8a2e6bb, fetched 2026-11-22T22:51:36.843995408Z"
     },
     {
       "id": "2026-11-21|1057266649|assists|UNDER|sgo/bovada|3.5",
@@ -208,7 +208,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source ad17a15c0dec, fetched 2026-11-22T22:19:36.067434202Z"
+      "reason": "identity-checked final player/game/stat; source 535ef8a2e6bb, fetched 2026-11-22T22:51:36.843995408Z"
     },
     {
       "id": "2026-11-21|666676|points|UNDER|betparx|22.5",
@@ -223,7 +223,7 @@
       "oldActual": 18,
       "newResult": "WIN",
       "newActual": 18,
-      "reason": "identity-checked final player/game/stat; source 0eb4a8ee5cdd, fetched 2026-11-22T22:19:36.067460822Z"
+      "reason": "identity-checked final player/game/stat; source aba3339f548d, fetched 2026-11-22T22:51:36.844025106Z"
     },
     {
       "id": "2026-11-21|17553979|assists|UNDER|betrivers|2.5",
@@ -238,7 +238,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 928897a1a40c, fetched 2026-11-22T22:19:35.805761961Z"
+      "reason": "identity-checked final player/game/stat; source bd52c0be77f7, fetched 2026-11-22T22:51:36.56259757Z"
     },
     {
       "id": "2026-11-21|17895983|points|OVER|sgo/fanduel|17.5",
@@ -253,7 +253,7 @@
       "oldActual": 19,
       "newResult": "WIN",
       "newActual": 19,
-      "reason": "identity-checked final player/game/stat; source 8b553825ddd2, fetched 2026-11-22T22:19:35.805811385Z"
+      "reason": "identity-checked final player/game/stat; source 8348484dc875, fetched 2026-11-22T22:51:36.562659053Z"
     },
     {
       "id": "2026-11-21|176|assists|OVER|sgo/espnbet|1.5",
@@ -268,7 +268,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 3be448ff9522, fetched 2026-11-22T22:19:35.805787169Z"
+      "reason": "identity-checked final player/game/stat; source c9eb813c7b8b, fetched 2026-11-22T22:51:36.562626861Z"
     },
     {
       "id": "2026-11-21|3547246|rebounds|OVER|sgo/betmgm|3.5",
@@ -283,7 +283,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 26bd5cd3b657, fetched 2026-11-22T22:19:36.067854966Z"
+      "reason": "identity-checked final player/game/stat; source 5465980caacb, fetched 2026-11-22T22:51:36.844459282Z"
     },
     {
       "id": "2026-11-21|1028025261|assists|UNDER|sgo/caesars|7.5",
@@ -298,7 +298,7 @@
       "oldActual": 6,
       "newResult": "WIN",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 263926832bbc, fetched 2026-11-22T22:19:36.067906184Z"
+      "reason": "identity-checked final player/game/stat; source 621942beca48, fetched 2026-11-22T22:51:36.844516432Z"
     },
     {
       "id": "2026-11-21|1028025261|rebounds|UNDER|sgo/betmgm|5.5",
@@ -313,7 +313,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 263926832bbc, fetched 2026-11-22T22:19:36.067906184Z"
+      "reason": "identity-checked final player/game/stat; source 621942beca48, fetched 2026-11-22T22:51:36.844516432Z"
     },
     {
       "id": "2026-11-21|666682|points|UNDER|sgo/fanduel|11.5",
@@ -328,7 +328,7 @@
       "oldActual": 10,
       "newResult": "WIN",
       "newActual": 10,
-      "reason": "identity-checked final player/game/stat; source 26d91fb6300b, fetched 2026-11-22T22:19:36.068008819Z"
+      "reason": "identity-checked final player/game/stat; source 8fdcb059803e, fetched 2026-11-22T22:51:36.844633843Z"
     },
     {
       "id": "2026-11-21|3547276|assists|UNDER|sgo/betmgm|6.5",
@@ -343,7 +343,7 @@
       "oldActual": 8,
       "newResult": "LOSS",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 729ef40fc8c0, fetched 2026-11-22T22:20:36.117992157Z"
+      "reason": "identity-checked final player/game/stat; source 1da706ea0fa9, fetched 2026-11-22T22:52:36.252375567Z"
     },
     {
       "id": "2026-11-21|172|assists|UNDER|sgo/bovada|5.5",
@@ -358,7 +358,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 1e294f6650c2, fetched 2026-11-22T22:20:36.117877865Z"
+      "reason": "identity-checked final player/game/stat; source b1ad5c9cbf64, fetched 2026-11-22T22:52:36.252256056Z"
     },
     {
       "id": "2026-11-21|172|rebounds|UNDER|sgo/draftkings|6.5",
@@ -373,7 +373,7 @@
       "oldActual": 8,
       "newResult": "LOSS",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 1e294f6650c2, fetched 2026-11-22T22:20:36.117877865Z"
+      "reason": "identity-checked final player/game/stat; source b1ad5c9cbf64, fetched 2026-11-22T22:52:36.252256056Z"
     },
     {
       "id": "2026-11-21|17896060|points|UNDER|sgo/fanduel|12.5",
@@ -388,7 +388,7 @@
       "oldActual": 14,
       "newResult": "LOSS",
       "newActual": 14,
-      "reason": "identity-checked final player/game/stat; source 962f7be03039, fetched 2026-11-22T22:20:36.117965687Z"
+      "reason": "identity-checked final player/game/stat; source a8260216a30b, fetched 2026-11-22T22:52:36.252346057Z"
     },
     {
       "id": "2026-11-21|406|assists|OVER|sgo/bovada|4.5",
@@ -403,7 +403,7 @@
       "oldActual": 4,
       "newResult": "LOSS",
       "newActual": 4,
-      "reason": "identity-checked final player/game/stat; source 7f00c81e5af5, fetched 2026-11-22T22:19:36.06973345Z"
+      "reason": "identity-checked final player/game/stat; source 6dc6113655a5, fetched 2026-11-22T22:51:36.84658506Z"
     },
     {
       "id": "2026-11-21|406|points|OVER|sgo/draftkings|12.5",
@@ -418,7 +418,7 @@
       "oldActual": 15,
       "newResult": "WIN",
       "newActual": 15,
-      "reason": "identity-checked final player/game/stat; source 7f00c81e5af5, fetched 2026-11-22T22:19:36.06973345Z"
+      "reason": "identity-checked final player/game/stat; source 6dc6113655a5, fetched 2026-11-22T22:51:36.84658506Z"
     },
     {
       "id": "2026-11-21|268|assists|OVER|sgo/bovada|2.5",
@@ -433,7 +433,7 @@
       "oldActual": 0,
       "newResult": "LOSS",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source 8ecad928cb48, fetched 2026-11-22T22:19:36.06975993Z"
+      "reason": "identity-checked final player/game/stat; source 5d817ce7b196, fetched 2026-11-22T22:51:36.846614151Z"
     },
     {
       "id": "2026-11-21|38017688|threes|UNDER|sgo/betmgm|1.5",
@@ -448,7 +448,7 @@
       "oldActual": 0,
       "newResult": "WIN",
       "newActual": 0,
-      "reason": "identity-checked final player/game/stat; source be0ab82e1ff9, fetched 2026-11-22T22:19:36.06968057Z"
+      "reason": "identity-checked final player/game/stat; source a379f6728604, fetched 2026-11-22T22:51:36.846525567Z"
     },
     {
       "id": "2026-11-21|172|ra|UNDER|betparx|11.5",
@@ -463,7 +463,7 @@
       "oldActual": 13,
       "newResult": "LOSS",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source 1e294f6650c2, fetched 2026-11-22T22:20:36.117877865Z"
+      "reason": "identity-checked final player/game/stat; source b1ad5c9cbf64, fetched 2026-11-22T22:52:36.252256056Z"
     },
     {
       "id": "2026-11-21|3547276|pa|UNDER|betparx|28.5",
@@ -478,7 +478,7 @@
       "oldActual": 17,
       "newResult": "WIN",
       "newActual": 17,
-      "reason": "identity-checked final player/game/stat; source 729ef40fc8c0, fetched 2026-11-22T22:20:36.117992157Z"
+      "reason": "identity-checked final player/game/stat; source 1da706ea0fa9, fetched 2026-11-22T22:52:36.252375567Z"
     },
     {
       "id": "2026-11-21|666969|ra|OVER|sgo/fanduel|7.5",
@@ -507,7 +507,7 @@
       "oldActual": 29,
       "newResult": "LOSS",
       "newActual": 29,
-      "reason": "identity-checked final player/game/stat; source 5010f0eed888, fetched 2026-11-22T22:19:35.805388728Z"
+      "reason": "identity-checked final player/game/stat; source 8b960db29f21, fetched 2026-11-22T22:51:36.562143581Z"
     },
     {
       "id": "2026-11-21|17896060|pr|UNDER|sgo/bovada|15.5",
@@ -522,7 +522,7 @@
       "oldActual": 20,
       "newResult": "LOSS",
       "newActual": 20,
-      "reason": "identity-checked final player/game/stat; source 962f7be03039, fetched 2026-11-22T22:20:36.117965687Z"
+      "reason": "identity-checked final player/game/stat; source a8260216a30b, fetched 2026-11-22T22:52:36.252346057Z"
     },
     {
       "id": "2026-11-21|666908|pa|UNDER|sgo/fanduel|15.5",
@@ -537,7 +537,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 2d9cd69b7a65, fetched 2026-11-22T22:19:36.069296451Z"
+      "reason": "identity-checked final player/game/stat; source a9e6358d2c5d, fetched 2026-11-22T22:51:36.846090336Z"
     },
     {
       "id": "2026-11-21|1057266649|pra|UNDER|betparx|27.5",
@@ -552,7 +552,7 @@
       "oldActual": 32,
       "newResult": "LOSS",
       "newActual": 32,
-      "reason": "identity-checked final player/game/stat; source ad17a15c0dec, fetched 2026-11-22T22:19:36.067434202Z"
+      "reason": "identity-checked final player/game/stat; source 535ef8a2e6bb, fetched 2026-11-22T22:51:36.843995408Z"
     },
     {
       "id": "2026-11-21|406|pa|OVER|sgo/bovada|17.5",
@@ -567,7 +567,7 @@
       "oldActual": 19,
       "newResult": "WIN",
       "newActual": 19,
-      "reason": "identity-checked final player/game/stat; source 7f00c81e5af5, fetched 2026-11-22T22:19:36.06973345Z"
+      "reason": "identity-checked final player/game/stat; source 6dc6113655a5, fetched 2026-11-22T22:51:36.84658506Z"
     },
     {
       "id": "2026-11-21|414|pa|UNDER|sgo/espnbet|14.5",
@@ -582,7 +582,7 @@
       "oldActual": 23,
       "newResult": "LOSS",
       "newActual": 23,
-      "reason": "identity-checked final player/game/stat; source 2fc92b98d43b, fetched 2026-11-22T22:19:35.804990908Z"
+      "reason": "identity-checked final player/game/stat; source 4746423232ce, fetched 2026-11-22T22:51:36.561635123Z"
     },
     {
       "id": "2026-11-21|666747|ra|UNDER|sgo/fanduel|6.5",
@@ -597,7 +597,7 @@
       "oldActual": 7,
       "newResult": "LOSS",
       "newActual": 7,
-      "reason": "identity-checked final player/game/stat; source dfb69b26501c, fetched 2026-11-22T22:19:36.068757057Z"
+      "reason": "identity-checked final player/game/stat; source 5a4c5015587c, fetched 2026-11-22T22:51:36.845457418Z"
     },
     {
       "id": "2026-11-21|73|ra|UNDER|betparx|9.5",
@@ -612,7 +612,7 @@
       "oldActual": 12,
       "newResult": "LOSS",
       "newActual": 12,
-      "reason": "identity-checked final player/game/stat; source d2fabf01708a, fetched 2026-11-22T22:19:35.80496624Z"
+      "reason": "identity-checked final player/game/stat; source c3d4b7384d8e, fetched 2026-11-22T22:51:36.561603202Z"
     },
     {
       "id": "2026-11-21|3547293|pra|UNDER|sgo/draftkings|21.5",
@@ -627,7 +627,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 2ee5446481ea, fetched 2026-11-22T22:19:36.069018131Z"
+      "reason": "identity-checked final player/game/stat; source bcd5a831324b, fetched 2026-11-22T22:51:36.845750474Z"
     },
     {
       "id": "2026-11-21|56677822|pa|UNDER|sgo/betmgm|32.5",
@@ -642,7 +642,7 @@
       "oldActual": 51,
       "newResult": "LOSS",
       "newActual": 51,
-      "reason": "identity-checked final player/game/stat; source b9a3ac7d2026, fetched 2026-11-22T22:19:36.067881076Z"
+      "reason": "identity-checked final player/game/stat; source d160a20e4db0, fetched 2026-11-22T22:51:36.844488217Z"
     },
     {
       "id": "2026-11-21|61|ra|UNDER|sgo/draftkings|6.5",
@@ -657,7 +657,7 @@
       "oldActual": 5,
       "newResult": "WIN",
       "newActual": 5,
-      "reason": "identity-checked final player/game/stat; source 9415859a19c7, fetched 2026-11-22T22:19:35.804889985Z"
+      "reason": "identity-checked final player/game/stat; source 25227d006d38, fetched 2026-11-22T22:51:36.561511671Z"
     },
     {
       "id": "2026-11-21|666581|ra|OVER|sgo/espnbet|9.5",
@@ -672,7 +672,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 6af05f23d583, fetched 2026-11-22T22:19:36.069322821Z"
+      "reason": "identity-checked final player/game/stat; source 586054cfdf1c, fetched 2026-11-22T22:51:36.846120573Z"
     },
     {
       "id": "2026-11-21|202|ra|UNDER|sgo/fanduel|12.5",
@@ -687,7 +687,7 @@
       "oldActual": 14,
       "newResult": "LOSS",
       "newActual": 14,
-      "reason": "identity-checked final player/game/stat; source 20437da97808, fetched 2026-11-22T22:19:35.804916916Z"
+      "reason": "identity-checked final player/game/stat; source a83bbc4f5cff, fetched 2026-11-22T22:51:36.561544472Z"
     },
     {
       "id": "2026-11-21|666609|ra|UNDER|sgo/fanduel|6.5",
@@ -702,7 +702,7 @@
       "oldActual": 9,
       "newResult": "LOSS",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source bbc8f9d59f26, fetched 2026-11-22T22:19:36.069246365Z"
+      "reason": "identity-checked final player/game/stat; source 4ec89115f37c, fetched 2026-11-22T22:51:36.846032126Z"
     },
     {
       "id": "2026-11-21|17553967|ra|UNDER|sgo/espnbet|11.5",
@@ -717,7 +717,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 85bde9dd6e6b, fetched 2026-11-22T22:20:36.117936584Z"
+      "reason": "identity-checked final player/game/stat; source d5b8cab90015, fetched 2026-11-22T22:52:36.252317779Z"
     },
     {
       "id": "2026-11-21|1028025261|ra|UNDER|sgo/fanduel|12.5",
@@ -732,7 +732,7 @@
       "oldActual": 9,
       "newResult": "WIN",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source 263926832bbc, fetched 2026-11-22T22:19:36.067906184Z"
+      "reason": "identity-checked final player/game/stat; source 621942beca48, fetched 2026-11-22T22:51:36.844516432Z"
     },
     {
       "id": "2026-11-21|139|ra|OVER|sgo/draftkings|5.5",
@@ -747,7 +747,7 @@
       "oldActual": 9,
       "newResult": "WIN",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source 3c068cd6adf3, fetched 2026-11-22T22:19:36.069398074Z"
+      "reason": "identity-checked final player/game/stat; source 74e7147407c3, fetched 2026-11-22T22:51:36.846206883Z"
     },
     {
       "id": "2026-11-21|666676|pra|UNDER|betparx|32.5",
@@ -762,7 +762,7 @@
       "oldActual": 28,
       "newResult": "WIN",
       "newActual": 28,
-      "reason": "identity-checked final player/game/stat; source 0eb4a8ee5cdd, fetched 2026-11-22T22:19:36.067460822Z"
+      "reason": "identity-checked final player/game/stat; source aba3339f548d, fetched 2026-11-22T22:51:36.844025106Z"
     },
     {
       "id": "2026-11-21|268|ra|OVER|sgo/caesars|5.5",
@@ -777,7 +777,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 8ecad928cb48, fetched 2026-11-22T22:19:36.06975993Z"
+      "reason": "identity-checked final player/game/stat; source 5d817ce7b196, fetched 2026-11-22T22:51:36.846614151Z"
     },
     {
       "id": "2026-11-21|1091343544|pra|OVER|sgo/fanduel|14.5",
@@ -792,7 +792,7 @@
       "oldActual": 17,
       "newResult": "WIN",
       "newActual": 17,
-      "reason": "identity-checked final player/game/stat; source 10edecf3b88c, fetched 2026-11-22T22:19:36.069524745Z"
+      "reason": "identity-checked final player/game/stat; source 195da68f73d8, fetched 2026-11-22T22:51:36.846350487Z"
     },
     {
       "id": "2026-11-21|278|pa|UNDER|sgo/draftkings|23.5",
@@ -807,7 +807,7 @@
       "oldActual": 18,
       "newResult": "WIN",
       "newActual": 18,
-      "reason": "identity-checked final player/game/stat; source 552b64907108, fetched 2026-11-22T22:19:35.805412784Z"
+      "reason": "identity-checked final player/game/stat; source 5cf660d5a963, fetched 2026-11-22T22:51:36.562172013Z"
     },
     {
       "id": "2026-11-21|56677850|pa|OVER|sgo/draftkings|12.5",
@@ -822,7 +822,7 @@
       "oldActual": 6,
       "newResult": "LOSS",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source bfcac28c570b, fetched 2026-11-22T22:19:35.805313775Z"
+      "reason": "identity-checked final player/game/stat; source 9a2041ec0376, fetched 2026-11-22T22:51:36.562051766Z"
     },
     {
       "id": "2026-11-21|666682|pr|UNDER|sgo/bovada|16.5",
@@ -837,7 +837,7 @@
       "oldActual": 14,
       "newResult": "WIN",
       "newActual": 14,
-      "reason": "identity-checked final player/game/stat; source 26d91fb6300b, fetched 2026-11-22T22:19:36.068008819Z"
+      "reason": "identity-checked final player/game/stat; source 8fdcb059803e, fetched 2026-11-22T22:51:36.844633843Z"
     },
     {
       "id": "2026-11-21|17896024|pr|OVER|betmgm|10.5",
@@ -852,7 +852,7 @@
       "oldActual": 6,
       "newResult": "LOSS",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 49c3fb061564, fetched 2026-11-22T22:19:36.068359698Z"
+      "reason": "identity-checked final player/game/stat; source 70eded2d37ff, fetched 2026-11-22T22:51:36.845023862Z"
     },
     {
       "id": "2026-11-21|17895983|pa|OVER|sgo/betmgm|21.5",
@@ -867,7 +867,7 @@
       "oldActual": 21,
       "newResult": "LOSS",
       "newActual": 21,
-      "reason": "identity-checked final player/game/stat; source 8b553825ddd2, fetched 2026-11-22T22:19:35.805811385Z"
+      "reason": "identity-checked final player/game/stat; source 8348484dc875, fetched 2026-11-22T22:51:36.562659053Z"
     },
     {
       "id": "2026-11-21|17553979|pra|UNDER|sgo/fanduel|22.5",
@@ -882,7 +882,7 @@
       "oldActual": 22,
       "newResult": "WIN",
       "newActual": 22,
-      "reason": "identity-checked final player/game/stat; source 928897a1a40c, fetched 2026-11-22T22:19:35.805761961Z"
+      "reason": "identity-checked final player/game/stat; source bd52c0be77f7, fetched 2026-11-22T22:51:36.56259757Z"
     },
     {
       "id": "2026-11-21|3547246|pr|OVER|sgo/draftkings|16.5",
@@ -897,7 +897,7 @@
       "oldActual": 13,
       "newResult": "LOSS",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source 26bd5cd3b657, fetched 2026-11-22T22:19:36.067854966Z"
+      "reason": "identity-checked final player/game/stat; source 5465980caacb, fetched 2026-11-22T22:51:36.844459282Z"
     },
     {
       "id": "2026-11-21|1057262088|threes|UNDER|sgo/betmgm|1.5",
@@ -912,7 +912,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 0a34b9ba6a60, fetched 2026-11-22T22:19:36.068835616Z"
+      "reason": "identity-checked final player/game/stat; source 8a5fef845064, fetched 2026-11-22T22:51:36.845548014Z"
     },
     {
       "id": "2026-11-21|3547293|assists|UNDER|sgo/fanduel|3.5",
@@ -927,7 +927,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source 2ee5446481ea, fetched 2026-11-22T22:19:36.069018131Z"
+      "reason": "identity-checked final player/game/stat; source bcd5a831324b, fetched 2026-11-22T22:51:36.845750474Z"
     },
     {
       "id": "2026-11-21|1057262088|points|UNDER|sgo/espnbet|24.5",
@@ -942,7 +942,7 @@
       "oldActual": 22,
       "newResult": "WIN",
       "newActual": 22,
-      "reason": "identity-checked final player/game/stat; source 0a34b9ba6a60, fetched 2026-11-22T22:19:36.068835616Z"
+      "reason": "identity-checked final player/game/stat; source 8a5fef845064, fetched 2026-11-22T22:51:36.845548014Z"
     },
     {
       "id": "2026-11-21|666908|assists|UNDER|sgo/fanduel|3.5",
@@ -957,7 +957,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 2d9cd69b7a65, fetched 2026-11-22T22:19:36.069296451Z"
+      "reason": "identity-checked final player/game/stat; source a9e6358d2c5d, fetched 2026-11-22T22:51:36.846090336Z"
     },
     {
       "id": "2026-11-21|666609|assists|UNDER|sgo/espnbet|1.5",
@@ -972,7 +972,7 @@
       "oldActual": 1,
       "newResult": "WIN",
       "newActual": 1,
-      "reason": "identity-checked final player/game/stat; source bbc8f9d59f26, fetched 2026-11-22T22:19:36.069246365Z"
+      "reason": "identity-checked final player/game/stat; source 4ec89115f37c, fetched 2026-11-22T22:51:36.846032126Z"
     },
     {
       "id": "2026-11-21|666676|points|UNDER|sgo/betmgm|22.5",
@@ -987,7 +987,7 @@
       "oldActual": 18,
       "newResult": "WIN",
       "newActual": 18,
-      "reason": "identity-checked final player/game/stat; source 0eb4a8ee5cdd, fetched 2026-11-22T22:19:36.067460822Z"
+      "reason": "identity-checked final player/game/stat; source aba3339f548d, fetched 2026-11-22T22:51:36.844025106Z"
     },
     {
       "id": "2026-11-21|176|assists|OVER|fanatics|1.5",
@@ -1002,7 +1002,7 @@
       "oldActual": 2,
       "newResult": "WIN",
       "newActual": 2,
-      "reason": "identity-checked final player/game/stat; source 3be448ff9522, fetched 2026-11-22T22:19:35.805787169Z"
+      "reason": "identity-checked final player/game/stat; source c9eb813c7b8b, fetched 2026-11-22T22:51:36.562626861Z"
     },
     {
       "id": "2026-11-21|56677822|points|UNDER|sgo/betmgm|29.5",
@@ -1017,7 +1017,7 @@
       "oldActual": 50,
       "newResult": "LOSS",
       "newActual": 50,
-      "reason": "identity-checked final player/game/stat; source b9a3ac7d2026, fetched 2026-11-22T22:19:36.067881076Z"
+      "reason": "identity-checked final player/game/stat; source d160a20e4db0, fetched 2026-11-22T22:51:36.844488217Z"
     },
     {
       "id": "2026-11-21|1028025261|assists|UNDER|sgo/draftkings|7.5",
@@ -1032,7 +1032,7 @@
       "oldActual": 6,
       "newResult": "WIN",
       "newActual": 6,
-      "reason": "identity-checked final player/game/stat; source 263926832bbc, fetched 2026-11-22T22:19:36.067906184Z"
+      "reason": "identity-checked final player/game/stat; source 621942beca48, fetched 2026-11-22T22:51:36.844516432Z"
     },
     {
       "id": "2026-11-21|1028025261|rebounds|UNDER|betparx|5.5",
@@ -1047,7 +1047,7 @@
       "oldActual": 3,
       "newResult": "WIN",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 263926832bbc, fetched 2026-11-22T22:19:36.067906184Z"
+      "reason": "identity-checked final player/game/stat; source 621942beca48, fetched 2026-11-22T22:51:36.844516432Z"
     },
     {
       "id": "2026-11-21|3547276|assists|UNDER|sgo/fanduel|6.5",
@@ -1062,7 +1062,7 @@
       "oldActual": 8,
       "newResult": "LOSS",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 729ef40fc8c0, fetched 2026-11-22T22:20:36.117992157Z"
+      "reason": "identity-checked final player/game/stat; source 1da706ea0fa9, fetched 2026-11-22T22:52:36.252375567Z"
     },
     {
       "id": "2026-11-21|172|points|UNDER|sgo/caesars|24.5",
@@ -1077,7 +1077,7 @@
       "oldActual": 19,
       "newResult": "WIN",
       "newActual": 19,
-      "reason": "identity-checked final player/game/stat; source 1e294f6650c2, fetched 2026-11-22T22:20:36.117877865Z"
+      "reason": "identity-checked final player/game/stat; source b1ad5c9cbf64, fetched 2026-11-22T22:52:36.252256056Z"
     },
     {
       "id": "2026-11-21|3547276|pa|UNDER|sgo/draftkings|28.5",
@@ -1092,7 +1092,7 @@
       "oldActual": 17,
       "newResult": "WIN",
       "newActual": 17,
-      "reason": "identity-checked final player/game/stat; source 729ef40fc8c0, fetched 2026-11-22T22:20:36.117992157Z"
+      "reason": "identity-checked final player/game/stat; source 1da706ea0fa9, fetched 2026-11-22T22:52:36.252375567Z"
     },
     {
       "id": "2026-11-21|666969|ra|OVER|sgo/betmgm|7.5",
@@ -1121,7 +1121,7 @@
       "oldActual": 9,
       "newResult": "WIN",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source ad17a15c0dec, fetched 2026-11-22T22:19:36.067434202Z"
+      "reason": "identity-checked final player/game/stat; source 535ef8a2e6bb, fetched 2026-11-22T22:51:36.843995408Z"
     },
     {
       "id": "2026-11-21|666908|pa|UNDER|sgo/espnbet|15.5",
@@ -1136,7 +1136,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 2d9cd69b7a65, fetched 2026-11-22T22:19:36.069296451Z"
+      "reason": "identity-checked final player/game/stat; source a9e6358d2c5d, fetched 2026-11-22T22:51:36.846090336Z"
     },
     {
       "id": "2026-11-21|406|ra|OVER|sgo/betmgm|16.5",
@@ -1151,7 +1151,7 @@
       "oldActual": 21,
       "newResult": "WIN",
       "newActual": 21,
-      "reason": "identity-checked final player/game/stat; source 7f00c81e5af5, fetched 2026-11-22T22:19:36.06973345Z"
+      "reason": "identity-checked final player/game/stat; source 6dc6113655a5, fetched 2026-11-22T22:51:36.84658506Z"
     },
     {
       "id": "2026-11-21|56677822|pa|UNDER|sgo/fanduel|32.5",
@@ -1166,7 +1166,7 @@
       "oldActual": 51,
       "newResult": "LOSS",
       "newActual": 51,
-      "reason": "identity-checked final player/game/stat; source b9a3ac7d2026, fetched 2026-11-22T22:19:36.067881076Z"
+      "reason": "identity-checked final player/game/stat; source d160a20e4db0, fetched 2026-11-22T22:51:36.844488217Z"
     },
     {
       "id": "2026-11-21|17553967|pa|UNDER|betparx|15.5",
@@ -1181,7 +1181,7 @@
       "oldActual": 16,
       "newResult": "LOSS",
       "newActual": 16,
-      "reason": "identity-checked final player/game/stat; source 85bde9dd6e6b, fetched 2026-11-22T22:20:36.117936584Z"
+      "reason": "identity-checked final player/game/stat; source d5b8cab90015, fetched 2026-11-22T22:52:36.252317779Z"
     },
     {
       "id": "2026-11-21|139|ra|OVER|sgo/bovada|5.5",
@@ -1196,7 +1196,7 @@
       "oldActual": 9,
       "newResult": "WIN",
       "newActual": 9,
-      "reason": "identity-checked final player/game/stat; source 3c068cd6adf3, fetched 2026-11-22T22:19:36.069398074Z"
+      "reason": "identity-checked final player/game/stat; source 74e7147407c3, fetched 2026-11-22T22:51:36.846206883Z"
     },
     {
       "id": "2026-11-21|268|ra|OVER|sgo/draftkings|5.5",
@@ -1211,7 +1211,7 @@
       "oldActual": 3,
       "newResult": "LOSS",
       "newActual": 3,
-      "reason": "identity-checked final player/game/stat; source 8ecad928cb48, fetched 2026-11-22T22:19:36.06975993Z"
+      "reason": "identity-checked final player/game/stat; source 5d817ce7b196, fetched 2026-11-22T22:51:36.846614151Z"
     },
     {
       "id": "2026-11-21|1091343544|pra|OVER|sgo/bovada|14.5",
@@ -1226,7 +1226,7 @@
       "oldActual": 17,
       "newResult": "WIN",
       "newActual": 17,
-      "reason": "identity-checked final player/game/stat; source 10edecf3b88c, fetched 2026-11-22T22:19:36.069524745Z"
+      "reason": "identity-checked final player/game/stat; source 195da68f73d8, fetched 2026-11-22T22:51:36.846350487Z"
     },
     {
       "id": "2026-11-21|666577|ra|UNDER|sgo/espnbet|8.5",
@@ -1241,7 +1241,7 @@
       "oldActual": 13,
       "newResult": "LOSS",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source 1154ebd3162b, fetched 2026-11-22T22:19:36.068808325Z"
+      "reason": "identity-checked final player/game/stat; source ec2c99d586d5, fetched 2026-11-22T22:51:36.845517532Z"
     },
     {
       "id": "2026-11-21|1057262088|pra|UNDER|sgo/draftkings|38.5",
@@ -1256,7 +1256,7 @@
       "oldActual": 36,
       "newResult": "WIN",
       "newActual": 36,
-      "reason": "identity-checked final player/game/stat; source 0a34b9ba6a60, fetched 2026-11-22T22:19:36.068835616Z"
+      "reason": "identity-checked final player/game/stat; source 8a5fef845064, fetched 2026-11-22T22:51:36.845548014Z"
     },
     {
       "id": "2026-11-21|666682|pr|UNDER|betparx|16.5",
@@ -1271,7 +1271,7 @@
       "oldActual": 14,
       "newResult": "WIN",
       "newActual": 14,
-      "reason": "identity-checked final player/game/stat; source 26d91fb6300b, fetched 2026-11-22T22:19:36.068008819Z"
+      "reason": "identity-checked final player/game/stat; source 8fdcb059803e, fetched 2026-11-22T22:51:36.844633843Z"
     },
     {
       "id": "2026-11-21|3547293|pra|UNDER|sgo/caesars|21.5",
@@ -1286,7 +1286,7 @@
       "oldActual": 8,
       "newResult": "WIN",
       "newActual": 8,
-      "reason": "identity-checked final player/game/stat; source 2ee5446481ea, fetched 2026-11-22T22:19:36.069018131Z"
+      "reason": "identity-checked final player/game/stat; source bcd5a831324b, fetched 2026-11-22T22:51:36.845750474Z"
     },
     {
       "id": "2026-11-21|17553979|pra|UNDER|sgo/draftkings|22.5",
@@ -1301,7 +1301,7 @@
       "oldActual": 22,
       "newResult": "WIN",
       "newActual": 22,
-      "reason": "identity-checked final player/game/stat; source 928897a1a40c, fetched 2026-11-22T22:19:35.805761961Z"
+      "reason": "identity-checked final player/game/stat; source bd52c0be77f7, fetched 2026-11-22T22:51:36.56259757Z"
     },
     {
       "id": "2026-11-21|3547246|pr|OVER|sgo/fanduel|16.5",
@@ -1316,7 +1316,7 @@
       "oldActual": 13,
       "newResult": "LOSS",
       "newActual": 13,
-      "reason": "identity-checked final player/game/stat; source 26bd5cd3b657, fetched 2026-11-22T22:19:36.067854966Z"
+      "reason": "identity-checked final player/game/stat; source 5465980caacb, fetched 2026-11-22T22:51:36.844459282Z"
     },
     {
       "id": "2026-11-22|17896040|assists|OVER|sgo/caesars|6.5",
@@ -3301,7 +3301,7 @@
       "stat": "points",
       "side": "UNDER",
       "line": 18.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3315,7 +3315,7 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 1.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3329,7 +3329,7 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 2.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3343,7 +3343,7 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 1.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3357,7 +3357,7 @@
       "stat": "rebounds",
       "side": "OVER",
       "line": 11.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3371,7 +3371,7 @@
       "stat": "rebounds",
       "side": "OVER",
       "line": 3.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3385,7 +3385,7 @@
       "stat": "threes",
       "side": "OVER",
       "line": 1.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3399,7 +3399,7 @@
       "stat": "assists",
       "side": "UNDER",
       "line": 3.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3413,7 +3413,7 @@
       "stat": "rebounds",
       "side": "UNDER",
       "line": 4.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3427,7 +3427,7 @@
       "stat": "threes",
       "side": "UNDER",
       "line": 2.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3441,7 +3441,7 @@
       "stat": "points",
       "side": "UNDER",
       "line": 7.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3455,7 +3455,7 @@
       "stat": "points",
       "side": "UNDER",
       "line": 27.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3469,7 +3469,7 @@
       "stat": "points",
       "side": "OVER",
       "line": 7.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3483,7 +3483,7 @@
       "stat": "assists",
       "side": "UNDER",
       "line": 5.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3497,7 +3497,7 @@
       "stat": "ra",
       "side": "UNDER",
       "line": 6.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3511,7 +3511,7 @@
       "stat": "pra",
       "side": "UNDER",
       "line": 24.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3525,7 +3525,7 @@
       "stat": "ra",
       "side": "UNDER",
       "line": 6.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3539,7 +3539,7 @@
       "stat": "pra",
       "side": "UNDER",
       "line": 29.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3553,7 +3553,7 @@
       "stat": "pra",
       "side": "UNDER",
       "line": 19.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3567,7 +3567,7 @@
       "stat": "pr",
       "side": "UNDER",
       "line": 27.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3581,7 +3581,7 @@
       "stat": "pr",
       "side": "UNDER",
       "line": 14.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3595,7 +3595,7 @@
       "stat": "ra",
       "side": "UNDER",
       "line": 10.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3609,7 +3609,7 @@
       "stat": "pra",
       "side": "UNDER",
       "line": 18.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3623,7 +3623,7 @@
       "stat": "pa",
       "side": "UNDER",
       "line": 25.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3637,7 +3637,7 @@
       "stat": "pra",
       "side": "UNDER",
       "line": 22.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3651,7 +3651,7 @@
       "stat": "pr",
       "side": "UNDER",
       "line": 17.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
@@ -3665,13 +3665,559 @@
       "stat": "pa",
       "side": "OVER",
       "line": 11.5,
-      "oldResult": "",
+      "oldResult": "REVIEW",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
       "id": "2026-11-22|3547247|pr|UNDER|fanduel|13.5",
+      "player": "Isaac Okoro",
+      "date": "2026-11-22",
+      "gameId": 21718166,
+      "playerId": 3547247,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 13.5,
+      "oldResult": "REVIEW",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028037477|assists|UNDER|sgo/fanduel|5.5",
+      "player": "Ajay Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028037477,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 5.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|201|assists|UNDER|sgo/bovada|5.5",
+      "player": "Isaiah Hartenstein",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 201,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 5.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028027372|points|UNDER|sgo/bovada|20.5",
+      "player": "Jared McCain",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028027372,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 20.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028037477|points|UNDER|sgo/espnbet|24.5",
+      "player": "Ajay Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028037477,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 24.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091340077|threes|UNDER|sgo/caesars|1.5",
+      "player": "AJ Dybantsa",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 1091340077,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 1.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|117|points|UNDER|sgo/bovada|23.5",
+      "player": "Anthony Davis",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 117,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 23.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028025177|threes|UNDER|sgo/fanduel|2.5",
+      "player": "Matas Buzelis",
+      "date": "2026-11-22",
+      "gameId": 21718166,
+      "playerId": 1028025177,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 2.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|335|assists|UNDER|sgo/fanduel|6.5",
+      "player": "Jamal Murray",
+      "date": "2026-11-22",
+      "gameId": 21718166,
+      "playerId": 335,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 6.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091342427|points|UNDER|sgo/fanduel|19.5",
+      "player": "Darryn Peterson",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 1091342427,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 19.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|666747|assists|UNDER|betparx|2.5",
+      "player": "Caleb Martin",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 666747,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 2.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|228|assists|UNDER|sgo/fanduel|4.5",
+      "player": "Kyrie Irving",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 228,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091342427|assists|UNDER|sgo/bovada|4.5",
+      "player": "Darryn Peterson",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 1091342427,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|56677842|points|OVER|sgo/betmgm|12.5",
+      "player": "Brice Sensabaugh",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 56677842,
+      "stat": "points",
+      "side": "OVER",
+      "line": 12.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|360|points|UNDER|sgo/espnbet|12.5",
+      "player": "Kelly Oubre Jr.",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 360,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 12.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028028434|rebounds|UNDER|sgo/betmgm|4.5",
+      "player": "Baylor Scheierman",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 1028028434,
+      "stat": "rebounds",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|473|assists|UNDER|fanduel|5.5",
+      "player": "Derrick White",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 473,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 5.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028028434|threes|UNDER|fanduel|1.5",
+      "player": "Baylor Scheierman",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 1028028434,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 1.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|56677858|assists|UNDER|sgo/betmgm|4.5",
+      "player": "Brandin Podziemski",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 56677858,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028037477|ra|UNDER|sgo/espnbet|10.5",
+      "player": "Ajay Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028037477,
+      "stat": "ra",
+      "side": "UNDER",
+      "line": 10.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028027372|pa|UNDER|sgo/caesars|23.5",
+      "player": "Jared McCain",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028027372,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 23.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|17553994|pa|UNDER|sgo/caesars|25.5",
+      "player": "Davion Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 17553994,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 25.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028025177|pr|UNDER|sgo/bovada|23.5",
+      "player": "Matas Buzelis",
+      "date": "2026-11-22",
+      "gameId": 21718166,
+      "playerId": 1028025177,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 23.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|4|pa|UNDER|betparx|25.5",
+      "player": "Bam Adebayo",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 4,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 25.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|313|pa|UNDER|sgo/draftkings|13.5",
+      "player": "De'Anthony Melton",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 313,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 13.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091351802|pr|UNDER|fanduel|27.5",
+      "player": "Yaxel Lendeborg",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 1091351802,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 27.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|185|ra|UNDER|sgo/draftkings|10.5",
+      "player": "Draymond Green",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 185,
+      "stat": "ra",
+      "side": "UNDER",
+      "line": 10.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|443|pr|UNDER|betparx|17.5",
+      "player": "Klay Thompson",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 443,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 17.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|201|pa|UNDER|sgo/fanduel|16.5",
+      "player": "Isaiah Hartenstein",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 201,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 16.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|666577|pr|OVER|sgo/caesars|14.5",
+      "player": "Daniel Gafford",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 666577,
+      "stat": "pr",
+      "side": "OVER",
+      "line": 14.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|73|ra|UNDER|betparx|9.5",
+      "player": "Jalen Brunson",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 73,
+      "stat": "ra",
+      "side": "UNDER",
+      "line": 9.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|3547287|pra|UNDER|sgo/fanduel|27.5",
+      "player": "Desmond Bane",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 3547287,
+      "stat": "pra",
+      "side": "UNDER",
+      "line": 27.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|56677844|pr|OVER|sgo/draftkings|10.5",
+      "player": "Bilal Coulibaly",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 56677844,
+      "stat": "pr",
+      "side": "OVER",
+      "line": 10.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|61|pra|UNDER|sgo/caesars|18.5",
+      "player": "Mikal Bridges",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 61,
+      "stat": "pra",
+      "side": "UNDER",
+      "line": 18.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|360|pr|UNDER|fanduel|16.5",
+      "player": "Kelly Oubre Jr.",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 360,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 16.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|666626|pra|UNDER|betparx|18.5",
+      "player": "Jaxson Hayes",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 666626,
+      "stat": "pra",
+      "side": "UNDER",
+      "line": 18.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1057262088|pr|UNDER|sgo/bovada|32.5",
+      "player": "Cooper Flagg",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 1057262088,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 32.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|117|ra|OVER|sgo/fanduel|12.5",
+      "player": "Anthony Davis",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 117,
+      "stat": "ra",
+      "side": "OVER",
+      "line": 12.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|17896026|pr|UNDER|sgo/fanduel|32.5",
+      "player": "Franz Wagner",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 17896026,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 32.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|3547247|pr|UNDER|sgo/caesars|13.5",
       "player": "Isaac Okoro",
       "date": "2026-11-22",
       "gameId": 21718166,
@@ -3686,28 +4232,70 @@
     }
   ],
   "staleSources": 0,
-  "at": "2026-11-22T22:34:10.92653401Z",
+  "at": "2026-11-22T23:05:18.50641141Z",
   "log": "v2_guardedsettled.jsonl",
-  "checked": 257,
+  "checked": 296,
   "confirmed": 86,
-  "review": 171,
+  "review": 210,
   "changes": [
     {
-      "id": "2026-11-22|1028027372|points|UNDER|sgo/draftkings|18.5",
-      "player": "Jared McCain",
+      "id": "2026-11-22|1028037477|assists|UNDER|sgo/fanduel|5.5",
+      "player": "Ajay Mitchell",
       "date": "2026-11-22",
       "gameId": 21718163,
-      "playerId": 1028027372,
-      "stat": "points",
+      "playerId": 1028037477,
+      "stat": "assists",
       "side": "UNDER",
-      "line": 18.5,
+      "line": 5.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|1091340077|threes|UNDER|sgo/fanduel|1.5",
+      "id": "2026-11-22|201|assists|UNDER|sgo/bovada|5.5",
+      "player": "Isaiah Hartenstein",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 201,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 5.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028027372|points|UNDER|sgo/bovada|20.5",
+      "player": "Jared McCain",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028027372,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 20.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028037477|points|UNDER|sgo/espnbet|24.5",
+      "player": "Ajay Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028037477,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 24.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091340077|threes|UNDER|sgo/caesars|1.5",
       "player": "AJ Dybantsa",
       "date": "2026-11-22",
       "gameId": 21718165,
@@ -3721,11 +4309,25 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|210|threes|UNDER|fanduel|2.5",
-      "player": "Buddy Hield",
+      "id": "2026-11-22|117|points|UNDER|sgo/bovada|23.5",
+      "player": "Anthony Davis",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 117,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 23.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028025177|threes|UNDER|sgo/fanduel|2.5",
+      "player": "Matas Buzelis",
       "date": "2026-11-22",
       "gameId": 21718166,
-      "playerId": 210,
+      "playerId": 1028025177,
       "stat": "threes",
       "side": "UNDER",
       "line": 2.5,
@@ -3735,77 +4337,105 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|3547248|threes|UNDER|sgo/betmgm|1.5",
-      "player": "Patrick Williams",
+      "id": "2026-11-22|335|assists|UNDER|sgo/fanduel|6.5",
+      "player": "Jamal Murray",
       "date": "2026-11-22",
       "gameId": 21718166,
-      "playerId": 3547248,
-      "stat": "threes",
+      "playerId": 335,
+      "stat": "assists",
       "side": "UNDER",
-      "line": 1.5,
+      "line": 6.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|246|rebounds|OVER|fanduel|11.5",
-      "player": "Nikola Jokic",
+      "id": "2026-11-22|1091342427|points|UNDER|sgo/fanduel|19.5",
+      "player": "Darryn Peterson",
       "date": "2026-11-22",
-      "gameId": 21718166,
-      "playerId": 246,
-      "stat": "rebounds",
-      "side": "OVER",
-      "line": 11.5,
+      "gameId": 21718167,
+      "playerId": 1091342427,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 19.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|666679|rebounds|OVER|sgo/betmgm|3.5",
-      "player": "Cameron Johnson",
+      "id": "2026-11-22|666747|assists|UNDER|betparx|2.5",
+      "player": "Caleb Martin",
       "date": "2026-11-22",
-      "gameId": 21718166,
-      "playerId": 666679,
-      "stat": "rebounds",
-      "side": "OVER",
-      "line": 3.5,
+      "gameId": 21718167,
+      "playerId": 666747,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 2.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|56677842|threes|OVER|fanduel|1.5",
+      "id": "2026-11-22|228|assists|UNDER|sgo/fanduel|4.5",
+      "player": "Kyrie Irving",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 228,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091342427|assists|UNDER|sgo/bovada|4.5",
+      "player": "Darryn Peterson",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 1091342427,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|56677842|points|OVER|sgo/betmgm|12.5",
       "player": "Brice Sensabaugh",
       "date": "2026-11-22",
       "gameId": 21718167,
       "playerId": 56677842,
-      "stat": "threes",
+      "stat": "points",
       "side": "OVER",
-      "line": 1.5,
+      "line": 12.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|3547293|assists|UNDER|sgo/bovada|3.5",
-      "player": "Naji Marshall",
+      "id": "2026-11-22|360|points|UNDER|sgo/espnbet|12.5",
+      "player": "Kelly Oubre Jr.",
       "date": "2026-11-22",
-      "gameId": 21718167,
-      "playerId": 3547293,
-      "stat": "assists",
+      "gameId": 21718169,
+      "playerId": 360,
+      "stat": "points",
       "side": "UNDER",
-      "line": 3.5,
+      "line": 12.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|1028028434|rebounds|UNDER|fanduel|4.5",
+      "id": "2026-11-22|1028028434|rebounds|UNDER|sgo/betmgm|4.5",
       "player": "Baylor Scheierman",
       "date": "2026-11-22",
       "gameId": 21718170,
@@ -3819,67 +4449,11 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|473|threes|UNDER|fanduel|2.5",
+      "id": "2026-11-22|473|assists|UNDER|fanduel|5.5",
       "player": "Derrick White",
       "date": "2026-11-22",
       "gameId": 21718170,
       "playerId": 473,
-      "stat": "threes",
-      "side": "UNDER",
-      "line": 2.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "exact player/game final row missing; missing stats do not establish DNP"
-    },
-    {
-      "id": "2026-11-22|1028028434|points|UNDER|betparx|7.5",
-      "player": "Baylor Scheierman",
-      "date": "2026-11-22",
-      "gameId": 21718170,
-      "playerId": 1028028434,
-      "stat": "points",
-      "side": "UNDER",
-      "line": 7.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "exact player/game final row missing; missing stats do not establish DNP"
-    },
-    {
-      "id": "2026-11-22|434|points|UNDER|sgo/bovada|27.5",
-      "player": "Jayson Tatum",
-      "date": "2026-11-22",
-      "gameId": 21718170,
-      "playerId": 434,
-      "stat": "points",
-      "side": "UNDER",
-      "line": 27.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "exact player/game final row missing; missing stats do not establish DNP"
-    },
-    {
-      "id": "2026-11-22|17895854|points|OVER|betparx|7.5",
-      "player": "Charles Bassey",
-      "date": "2026-11-22",
-      "gameId": 21718170,
-      "playerId": 17895854,
-      "stat": "points",
-      "side": "OVER",
-      "line": 7.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "exact player/game final row missing; missing stats do not establish DNP"
-    },
-    {
-      "id": "2026-11-22|185|assists|UNDER|sgo/bovada|5.5",
-      "player": "Draymond Green",
-      "date": "2026-11-22",
-      "gameId": 21718170,
-      "playerId": 185,
       "stat": "assists",
       "side": "UNDER",
       "line": 5.5,
@@ -3889,77 +4463,119 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|1028028434|ra|UNDER|fanduel|6.5",
+      "id": "2026-11-22|1028028434|threes|UNDER|fanduel|1.5",
       "player": "Baylor Scheierman",
       "date": "2026-11-22",
       "gameId": 21718170,
       "playerId": 1028028434,
-      "stat": "ra",
+      "stat": "threes",
       "side": "UNDER",
-      "line": 6.5,
+      "line": 1.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|1028027372|pra|UNDER|betrivers|24.5",
-      "player": "Jared McCain",
+      "id": "2026-11-22|56677858|assists|UNDER|sgo/betmgm|4.5",
+      "player": "Brandin Podziemski",
       "date": "2026-11-22",
-      "gameId": 21718163,
-      "playerId": 1028027372,
-      "stat": "pra",
+      "gameId": 21718170,
+      "playerId": 56677858,
+      "stat": "assists",
       "side": "UNDER",
-      "line": 24.5,
+      "line": 4.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|666747|ra|UNDER|sgo/draftkings|6.5",
-      "player": "Caleb Martin",
-      "date": "2026-11-22",
-      "gameId": 21718167,
-      "playerId": 666747,
-      "stat": "ra",
-      "side": "UNDER",
-      "line": 6.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "exact player/game final row missing; missing stats do not establish DNP"
-    },
-    {
-      "id": "2026-11-22|1028037477|pra|UNDER|betrivers|29.5",
+      "id": "2026-11-22|1028037477|ra|UNDER|sgo/espnbet|10.5",
       "player": "Ajay Mitchell",
       "date": "2026-11-22",
       "gameId": 21718163,
       "playerId": 1028037477,
-      "stat": "pra",
+      "stat": "ra",
       "side": "UNDER",
-      "line": 29.5,
+      "line": 10.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|443|pra|UNDER|sgo/caesars|19.5",
-      "player": "Klay Thompson",
+      "id": "2026-11-22|1028027372|pa|UNDER|sgo/caesars|23.5",
+      "player": "Jared McCain",
       "date": "2026-11-22",
       "gameId": 21718163,
-      "playerId": 443,
-      "stat": "pra",
+      "playerId": 1028027372,
+      "stat": "pa",
       "side": "UNDER",
-      "line": 19.5,
+      "line": 23.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|1091351802|pr|UNDER|sgo/bovada|27.5",
+      "id": "2026-11-22|17553994|pa|UNDER|sgo/caesars|25.5",
+      "player": "Davion Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 17553994,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 25.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028025177|pr|UNDER|sgo/bovada|23.5",
+      "player": "Matas Buzelis",
+      "date": "2026-11-22",
+      "gameId": 21718166,
+      "playerId": 1028025177,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 23.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|4|pa|UNDER|betparx|25.5",
+      "player": "Bam Adebayo",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 4,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 25.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|313|pa|UNDER|sgo/draftkings|13.5",
+      "player": "De'Anthony Melton",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 313,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 13.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091351802|pr|UNDER|fanduel|27.5",
       "player": "Yaxel Lendeborg",
       "date": "2026-11-22",
       "gameId": 21718170,
@@ -3973,21 +4589,7 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|210|pr|UNDER|sgo/caesars|14.5",
-      "player": "Buddy Hield",
-      "date": "2026-11-22",
-      "gameId": 21718166,
-      "playerId": 210,
-      "stat": "pr",
-      "side": "UNDER",
-      "line": 14.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "exact player/game final row missing; missing stats do not establish DNP"
-    },
-    {
-      "id": "2026-11-22|185|ra|UNDER|sgo/bovada|10.5",
+      "id": "2026-11-22|185|ra|UNDER|sgo/draftkings|10.5",
       "player": "Draymond Green",
       "date": "2026-11-22",
       "gameId": 21718170,
@@ -4001,7 +4603,91 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|61|pra|UNDER|fanduel|18.5",
+      "id": "2026-11-22|443|pr|UNDER|betparx|17.5",
+      "player": "Klay Thompson",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 443,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 17.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|201|pa|UNDER|sgo/fanduel|16.5",
+      "player": "Isaiah Hartenstein",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 201,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 16.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|666577|pr|OVER|sgo/caesars|14.5",
+      "player": "Daniel Gafford",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 666577,
+      "stat": "pr",
+      "side": "OVER",
+      "line": 14.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|73|ra|UNDER|betparx|9.5",
+      "player": "Jalen Brunson",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 73,
+      "stat": "ra",
+      "side": "UNDER",
+      "line": 9.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|3547287|pra|UNDER|sgo/fanduel|27.5",
+      "player": "Desmond Bane",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 3547287,
+      "stat": "pra",
+      "side": "UNDER",
+      "line": 27.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|56677844|pr|OVER|sgo/draftkings|10.5",
+      "player": "Bilal Coulibaly",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 56677844,
+      "stat": "pr",
+      "side": "OVER",
+      "line": 10.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|61|pra|UNDER|sgo/caesars|18.5",
       "player": "Mikal Bridges",
       "date": "2026-11-22",
       "gameId": 21718169,
@@ -4015,63 +4701,77 @@
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|117|pa|UNDER|sgo/fanduel|25.5",
+      "id": "2026-11-22|360|pr|UNDER|fanduel|16.5",
+      "player": "Kelly Oubre Jr.",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 360,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 16.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|666626|pra|UNDER|betparx|18.5",
+      "player": "Jaxson Hayes",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 666626,
+      "stat": "pra",
+      "side": "UNDER",
+      "line": 18.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1057262088|pr|UNDER|sgo/bovada|32.5",
+      "player": "Cooper Flagg",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 1057262088,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 32.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|117|ra|OVER|sgo/fanduel|12.5",
       "player": "Anthony Davis",
       "date": "2026-11-22",
       "gameId": 21718165,
       "playerId": 117,
-      "stat": "pa",
-      "side": "UNDER",
-      "line": 25.5,
+      "stat": "ra",
+      "side": "OVER",
+      "line": 12.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|493|pra|UNDER|sgo/espnbet|22.5",
-      "player": "Ivica Zubac",
-      "date": "2026-11-22",
-      "gameId": 21718169,
-      "playerId": 493,
-      "stat": "pra",
-      "side": "UNDER",
-      "line": 22.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "exact player/game final row missing; missing stats do not establish DNP"
-    },
-    {
-      "id": "2026-11-22|1028028405|pr|UNDER|sgo/fanduel|17.5",
-      "player": "Alexandre Sarr",
+      "id": "2026-11-22|17896026|pr|UNDER|sgo/fanduel|32.5",
+      "player": "Franz Wagner",
       "date": "2026-11-22",
       "gameId": 21718165,
-      "playerId": 1028028405,
+      "playerId": 17896026,
       "stat": "pr",
       "side": "UNDER",
-      "line": 17.5,
+      "line": 32.5,
       "oldResult": "",
       "oldActual": 0,
       "newResult": "REVIEW",
       "reason": "exact player/game final row missing; missing stats do not establish DNP"
     },
     {
-      "id": "2026-11-22|17553967|pa|OVER|betparx|11.5",
-      "player": "Neemias Queta",
-      "date": "2026-11-22",
-      "gameId": 21718170,
-      "playerId": 17553967,
-      "stat": "pa",
-      "side": "OVER",
-      "line": 11.5,
-      "oldResult": "",
-      "oldActual": 0,
-      "newResult": "REVIEW",
-      "reason": "exact player/game final row missing; missing stats do not establish DNP"
-    },
-    {
-      "id": "2026-11-22|3547247|pr|UNDER|fanduel|13.5",
+      "id": "2026-11-22|3547247|pr|UNDER|sgo/caesars|13.5",
       "player": "Isaac Okoro",
       "date": "2026-11-22",
       "gameId": 21718166,
@@ -7758,6 +8458,552 @@
     },
     {
       "id": "2026-11-22|3547247|pr|UNDER|fanduel|13.5",
+      "player": "Isaac Okoro",
+      "date": "2026-11-22",
+      "gameId": 21718166,
+      "playerId": 3547247,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 13.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028037477|assists|UNDER|sgo/fanduel|5.5",
+      "player": "Ajay Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028037477,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 5.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|201|assists|UNDER|sgo/bovada|5.5",
+      "player": "Isaiah Hartenstein",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 201,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 5.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028027372|points|UNDER|sgo/bovada|20.5",
+      "player": "Jared McCain",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028027372,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 20.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028037477|points|UNDER|sgo/espnbet|24.5",
+      "player": "Ajay Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028037477,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 24.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091340077|threes|UNDER|sgo/caesars|1.5",
+      "player": "AJ Dybantsa",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 1091340077,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 1.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|117|points|UNDER|sgo/bovada|23.5",
+      "player": "Anthony Davis",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 117,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 23.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028025177|threes|UNDER|sgo/fanduel|2.5",
+      "player": "Matas Buzelis",
+      "date": "2026-11-22",
+      "gameId": 21718166,
+      "playerId": 1028025177,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 2.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|335|assists|UNDER|sgo/fanduel|6.5",
+      "player": "Jamal Murray",
+      "date": "2026-11-22",
+      "gameId": 21718166,
+      "playerId": 335,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 6.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091342427|points|UNDER|sgo/fanduel|19.5",
+      "player": "Darryn Peterson",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 1091342427,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 19.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|666747|assists|UNDER|betparx|2.5",
+      "player": "Caleb Martin",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 666747,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 2.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|228|assists|UNDER|sgo/fanduel|4.5",
+      "player": "Kyrie Irving",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 228,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091342427|assists|UNDER|sgo/bovada|4.5",
+      "player": "Darryn Peterson",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 1091342427,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|56677842|points|OVER|sgo/betmgm|12.5",
+      "player": "Brice Sensabaugh",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 56677842,
+      "stat": "points",
+      "side": "OVER",
+      "line": 12.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|360|points|UNDER|sgo/espnbet|12.5",
+      "player": "Kelly Oubre Jr.",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 360,
+      "stat": "points",
+      "side": "UNDER",
+      "line": 12.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028028434|rebounds|UNDER|sgo/betmgm|4.5",
+      "player": "Baylor Scheierman",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 1028028434,
+      "stat": "rebounds",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|473|assists|UNDER|fanduel|5.5",
+      "player": "Derrick White",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 473,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 5.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028028434|threes|UNDER|fanduel|1.5",
+      "player": "Baylor Scheierman",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 1028028434,
+      "stat": "threes",
+      "side": "UNDER",
+      "line": 1.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|56677858|assists|UNDER|sgo/betmgm|4.5",
+      "player": "Brandin Podziemski",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 56677858,
+      "stat": "assists",
+      "side": "UNDER",
+      "line": 4.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028037477|ra|UNDER|sgo/espnbet|10.5",
+      "player": "Ajay Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028037477,
+      "stat": "ra",
+      "side": "UNDER",
+      "line": 10.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028027372|pa|UNDER|sgo/caesars|23.5",
+      "player": "Jared McCain",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 1028027372,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 23.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|17553994|pa|UNDER|sgo/caesars|25.5",
+      "player": "Davion Mitchell",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 17553994,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 25.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1028025177|pr|UNDER|sgo/bovada|23.5",
+      "player": "Matas Buzelis",
+      "date": "2026-11-22",
+      "gameId": 21718166,
+      "playerId": 1028025177,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 23.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|4|pa|UNDER|betparx|25.5",
+      "player": "Bam Adebayo",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 4,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 25.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|313|pa|UNDER|sgo/draftkings|13.5",
+      "player": "De'Anthony Melton",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 313,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 13.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1091351802|pr|UNDER|fanduel|27.5",
+      "player": "Yaxel Lendeborg",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 1091351802,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 27.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|185|ra|UNDER|sgo/draftkings|10.5",
+      "player": "Draymond Green",
+      "date": "2026-11-22",
+      "gameId": 21718170,
+      "playerId": 185,
+      "stat": "ra",
+      "side": "UNDER",
+      "line": 10.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|443|pr|UNDER|betparx|17.5",
+      "player": "Klay Thompson",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 443,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 17.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|201|pa|UNDER|sgo/fanduel|16.5",
+      "player": "Isaiah Hartenstein",
+      "date": "2026-11-22",
+      "gameId": 21718163,
+      "playerId": 201,
+      "stat": "pa",
+      "side": "UNDER",
+      "line": 16.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|666577|pr|OVER|sgo/caesars|14.5",
+      "player": "Daniel Gafford",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 666577,
+      "stat": "pr",
+      "side": "OVER",
+      "line": 14.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|73|ra|UNDER|betparx|9.5",
+      "player": "Jalen Brunson",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 73,
+      "stat": "ra",
+      "side": "UNDER",
+      "line": 9.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|3547287|pra|UNDER|sgo/fanduel|27.5",
+      "player": "Desmond Bane",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 3547287,
+      "stat": "pra",
+      "side": "UNDER",
+      "line": 27.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|56677844|pr|OVER|sgo/draftkings|10.5",
+      "player": "Bilal Coulibaly",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 56677844,
+      "stat": "pr",
+      "side": "OVER",
+      "line": 10.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|61|pra|UNDER|sgo/caesars|18.5",
+      "player": "Mikal Bridges",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 61,
+      "stat": "pra",
+      "side": "UNDER",
+      "line": 18.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|360|pr|UNDER|fanduel|16.5",
+      "player": "Kelly Oubre Jr.",
+      "date": "2026-11-22",
+      "gameId": 21718169,
+      "playerId": 360,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 16.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|666626|pra|UNDER|betparx|18.5",
+      "player": "Jaxson Hayes",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 666626,
+      "stat": "pra",
+      "side": "UNDER",
+      "line": 18.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|1057262088|pr|UNDER|sgo/bovada|32.5",
+      "player": "Cooper Flagg",
+      "date": "2026-11-22",
+      "gameId": 21718167,
+      "playerId": 1057262088,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 32.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|117|ra|OVER|sgo/fanduel|12.5",
+      "player": "Anthony Davis",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 117,
+      "stat": "ra",
+      "side": "OVER",
+      "line": 12.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|17896026|pr|UNDER|sgo/fanduel|32.5",
+      "player": "Franz Wagner",
+      "date": "2026-11-22",
+      "gameId": 21718165,
+      "playerId": 17896026,
+      "stat": "pr",
+      "side": "UNDER",
+      "line": 32.5,
+      "oldResult": "",
+      "oldActual": 0,
+      "newResult": "REVIEW",
+      "reason": "exact player/game final row missing; missing stats do not establish DNP"
+    },
+    {
+      "id": "2026-11-22|3547247|pr|UNDER|sgo/caesars|13.5",
       "player": "Isaac Okoro",
       "date": "2026-11-22",
       "gameId": 21718166,
