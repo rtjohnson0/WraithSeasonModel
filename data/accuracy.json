@@ -5,14 +5,14 @@
     "testDays": 0,
     "byStat": null
   },
-  "at": "2026-11-21T23:14:57Z",
+  "at": "2026-11-22T00:26:23Z",
   "through": "2026-11-20",
   "config": "pregame-7af6e4",
   "modelVersion": 6,
   "accepted": 1374,
   "excluded": {
     "final_identity_or_source_unverified": 71,
-    "not_completed_date": 855,
+    "not_completed_date": 1060,
     "training_cutoff_or_configuration_invalid": 6411
   },
   "slices": [
@@ -456,7 +456,7 @@
       "logLoss": 0.7613303108198534,
       "marketLogLoss": 0.7211307319382623,
       "gain": -0.04019957888159099,
-      "dateClusteredZ": -3.1200273002331773,
+      "dateClusteredZ": -3.1200273002331778,
       "actualMinusProjected": 0.6132055993063076,
       "mae": 1.6605932364994835,
       "minutesBias": 4.024582531843404,
