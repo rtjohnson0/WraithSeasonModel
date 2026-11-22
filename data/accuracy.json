@@ -1,18 +1,17 @@
 {
   "calibrationExperiment": {
     "trainN": 230,
-    "testN": 1144,
+    "testN": 1195,
     "testDays": 0,
     "byStat": null
   },
-  "at": "2026-11-22T03:19:28Z",
-  "through": "2026-11-20",
+  "at": "2026-11-22T08:03:49Z",
+  "through": "2026-11-21",
   "config": "pregame-7af6e4",
   "modelVersion": 6,
-  "accepted": 1374,
+  "accepted": 1425,
   "excluded": {
-    "final_identity_or_source_unverified": 71,
-    "not_completed_date": 1267,
+    "final_identity_or_source_unverified": 299,
     "training_cutoff_or_configuration_invalid": 6411
   },
   "slices": [
@@ -456,7 +455,7 @@
       "logLoss": 0.7613303108198534,
       "marketLogLoss": 0.7211307319382623,
       "gain": -0.04019957888159099,
-      "dateClusteredZ": -3.1200273002331778,
+      "dateClusteredZ": -3.1200273002331773,
       "actualMinusProjected": 0.6132055993063076,
       "mae": 1.6605932364994835,
       "minutesBias": 4.024582531843404,
@@ -483,13 +482,13 @@
   "minutesExperiment": {
     "weight": 0.25,
     "trainN": 220,
-    "testN": 165,
-    "testDays": 2,
+    "testN": 179,
+    "testDays": 3,
     "trainBefore": "2026-11-19",
-    "baseMAE": 3.841310545451952,
-    "trialMAE": 3.641820325560661,
-    "gain": 0.1994902198912909,
-    "dateClusteredZ": 2.295215722920657,
+    "baseMAE": 3.9415867891228418,
+    "trialMAE": 3.723054736533238,
+    "gain": 0.21853205258960395,
+    "dateClusteredZ": 2.731224464432534,
     "supported": false
   },
   "note": "Fixed policy: probability \u003e=55%, edge \u003e=1pp at recorded odds. One earliest pregame question per player/game/stat; pushes excluded from binary scores. No legacy results, postgame features, or unproven calibration dates. Minutes trial is experimental and never automatically applied. Evidence criteria are provisional, not a profitability guarantee."
