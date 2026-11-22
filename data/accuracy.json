@@ -45,19 +45,19 @@
         "existingLogLoss": 0.6764074865659634,
         "marketLogLoss": 0.6745331572933869,
         "gainVsExisting": 0.002275047052578356,
-        "dateClusteredZ": 0.8023346016378883,
+        "dateClusteredZ": 0.8023346016378885,
         "supported": false
       }
     ]
   },
-  "at": "2026-11-22T15:31:27Z",
+  "at": "2026-11-22T20:28:29Z",
   "through": "2026-11-21",
   "config": "pregame-7af6e4",
   "modelVersion": 6,
   "accepted": 1630,
   "excluded": {
     "final_identity_or_source_unverified": 94,
-    "not_completed_date": 155,
+    "not_completed_date": 434,
     "training_cutoff_or_configuration_invalid": 6411
   },
   "slices": [
@@ -343,7 +343,7 @@
       "logLoss": 0.7071554450431525,
       "marketLogLoss": 0.6923761033383309,
       "gain": -0.014779341704821647,
-      "dateClusteredZ": -0.14805679444827957,
+      "dateClusteredZ": -0.14805679444827954,
       "actualMinusProjected": 2.03172936246564,
       "mae": 2.7797575273771193,
       "minutesBias": 4.226642336889265,
