@@ -1,6 +1,6 @@
 {
   "activeStats": [],
-  "at": "2026-11-23T13:24:37Z",
+  "at": "2026-11-23T17:56:29Z",
   "before": "2026-11-23",
   "byStat": {
     "pa": {
@@ -53,11 +53,11 @@
   "excluded": {
     "different model version": 2089,
     "final actuals pending or identity review": 104,
-    "forecast date not completed": 329,
+    "forecast date not completed": 387,
     "quote timing or book checks": 136
   },
   "gainVsBook": -0.002167527676017072,
-  "loadedRows": 4345,
+  "loadedRows": 4403,
   "qualifiedStats": [],
   "rawLogLoss": 0.6885957229505242,
   "status": "More forward data needed",
