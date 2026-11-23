@@ -178,7 +178,11 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 	lab := newMinutesLab()
 	for _, k := range keys {
 		r := chosen[k]
-		if rotation.ProductionPolicy(policy) && !validProductionCapture(r) {
+		validProduction := validProductionCapture(r)
+		if policy == rotation.GuardedPolicy {
+			validProduction = validGuardedCapture(r, models[r.ModelID].Forecast(r.Row.Features(), predictor.Adjustments{}))
+		}
+		if rotation.ProductionPolicy(policy) && !validProduction {
 			out.Excluded["production provenance unavailable"]++
 			continue
 		}

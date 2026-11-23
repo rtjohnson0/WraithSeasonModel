@@ -1,0 +1,23 @@
+{
+  "Policy": "rotation-v5",
+  "Questions": 503,
+  "PlayerGames": 142,
+  "Days": 2,
+  "Through": "2026-11-22",
+  "Excluded": {
+    "date not completed": 765,
+    "final identity/source unavailable": 19
+  },
+  "BaselineMinutesMAE": 4.582107911972874,
+  "RotationMinutesMAE": 4.567980938619652,
+  "residualStudy": {
+    "policy": "game-residual-study-v1",
+    "games": 2741,
+    "dates": 538,
+    "rawMarginMAE": 11.560146251922642,
+    "correctedMarginMAE": 11.581853676705682,
+    "rawTotalMAE": 15.041740946232474,
+    "correctedTotalMAE": 15.017284407579506,
+    "note": "Historical point forecasts only, no injury reconstruction or sportsbook edge claim. Corrections use earlier out-of-fold forecasts; live picks unchanged."
+  }
+}

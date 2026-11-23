@@ -47,6 +47,7 @@ func main() {
 	report := map[string]any{"study": study, "excluded": excluded, "note": "Possessions are estimated from complete box scores. Monthly fits use earlier dates and earlier projected workloads. This study does not reconstruct historical injuries or validate sportsbook edge."}
 	baseline := pairedBaseline(rows, study.Replays)
 	report["pairedBaseline"] = baseline
+	report["residualStudy"] = gamepace.StudyResiduals(study.Replays)
 	if err = os.MkdirAll(*out, 0755); err != nil {
 		fail(err)
 	}

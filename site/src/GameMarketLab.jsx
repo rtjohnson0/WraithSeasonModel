@@ -65,6 +65,7 @@ export default function GameMarketLab() {
       {!error && !data && <p className="notice" role="status">Loading independent game-market scores…</p>}
       {data && <>
         <div className="v21-game-cards">{data.markets.map(m => <MarketCard key={m.id} row={m}/>)}</div>
+        {data.pointStudy&&data.pointStudy.games>0&&<section className="v21-verdict"><div><strong>RECENT ERROR CORRECTION · HISTORICAL TEST</strong><p>{data.pointStudy.games} matching games across {data.pointStudy.dates} dates. Each correction uses earlier out-of-fold forecasts only.</p><p>Margin error: {data.pointStudy.rawMarginMAE.toFixed(3)} → {data.pointStudy.correctedMarginMAE.toFixed(3)} points. Total error: {data.pointStudy.rawTotalMAE.toFixed(3)} → {data.pointStudy.correctedTotalMAE.toFixed(3)} points. Lower is better.</p><p>This is a point-forecast comparison, not a sportsbook edge test. It does not change live picks.</p></div></section>}
         <div className="v21-verdict">
           <span className="v21-verdict-symbol" aria-hidden="true">◎</span>
           <div>

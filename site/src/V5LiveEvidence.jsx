@@ -34,6 +34,7 @@ export default function V5LiveEvidence() {
       <p className="v21-caption">V5 changes the real V2 minutes and three-point calculations. Its new results are tracked separately and cannot be treated as a matched comparison with the earlier V4 Lab sample.</p>
       {message && <p className="v21-wait" role="status">{message} This doesn't affect today's board.</p>}
       {data && <>
+        <p className="v21-caption" role="status">{data.questions>0?'Audit is evaluating saved forecasts.':data.audit?.rejectedProduction>0?'Audit needs attention: saved production evidence was rejected.':'Waiting for eligible completed forecasts.'} {data.audit?.missingFinals||0} forecasts await matching final data. Updated {data.generatedAt||'time unavailable'}.</p>
         <div className="v21-overview">
           <div><small>V5 player-games</small><strong>{data.playerGames}</strong></div>
           <div><small>V5 prop questions</small><strong>{data.questions}</strong></div>

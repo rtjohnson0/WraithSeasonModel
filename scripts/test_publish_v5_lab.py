@@ -18,6 +18,12 @@ def report():
     }
 
 class V5PublicEvidenceTests(unittest.TestCase):
+    def test_audit_health_exposes_only_named_aggregate_counts(self):
+        r=report();r['Excluded'].update({'production provenance unavailable':3,'final identity/source unavailable':19})
+        data=sanitize(r)
+        self.assertEqual(data['audit']['rejectedProduction'],3)
+        self.assertEqual(data['audit']['missingFinals'],19)
+        self.assertNotIn('private-player',json.dumps(data))
     def test_allows_only_aggregates_and_separate_cohort(self):
         raw=sanitize(report())
         payload=json.dumps(raw)

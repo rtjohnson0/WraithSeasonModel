@@ -7,6 +7,7 @@ The allowlist exposes no single game, player, book, price, or selection.
 import argparse
 import json
 import math
+from datetime import datetime, timezone
 from pathlib import Path
 
 STAT_IDS = ("points", "rebounds", "assists", "threes")
@@ -24,9 +25,16 @@ def sanitize(raw):
     if not all(map(count, (pg, questions, days))):
         raise ValueError("invalid V5 cohort sizes")
     output = {"schema":1, "policy":"rotation-v5", "researchOnly":True,
+              "generatedAt":datetime.now(timezone.utc).isoformat(),
               "through":str(raw.get("Through") or "")[:10],
               "playerGames":pg, "questions":questions, "days":days,
               "minutesMAE":None, "minutesBias":None, "stats":[]}
+    exclusions=raw.get("Excluded") or {}
+    output["audit"]={}
+    for dest,source in (("pending","date not completed"),("rejectedProduction","production provenance unavailable"),("missingFinals","final identity/source unavailable")):
+        value=exclusions.get(source,0)
+        if not count(value): raise ValueError("invalid audit exclusion count")
+        output["audit"][dest]=value
     # Go reports exclude all private Phase3 questions by design.
     if pg >= 30 and days >= 5:
         ma=raw.get("RotationMinutesMAE")
