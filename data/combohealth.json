@@ -1,61 +1,66 @@
 {
   "activeStats": [],
-  "at": "2026-11-23T09:12:21Z",
+  "at": "2026-11-23T13:24:37Z",
   "before": "2026-11-23",
   "byStat": {
     "pa": {
-      "eligibleDates": 5,
-      "eligibleRows": 349,
+      "eligibleDates": 6,
+      "eligibleRows": 399,
       "evaluationDates": 4,
-      "evaluationRows": 299,
+      "evaluationRows": 224,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
-      "trainingRows": 50
+      "trainingRows": 175
     },
     "pr": {
-      "eligibleDates": 5,
-      "eligibleRows": 408,
+      "eligibleDates": 6,
+      "eligibleRows": 477,
       "evaluationDates": 4,
-      "evaluationRows": 346,
+      "evaluationRows": 268,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
-      "trainingRows": 62
+      "trainingRows": 209
     },
     "pra": {
-      "eligibleDates": 5,
-      "eligibleRows": 365,
+      "eligibleDates": 6,
+      "eligibleRows": 417,
       "evaluationDates": 4,
-      "evaluationRows": 311,
+      "evaluationRows": 229,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
-      "trainingRows": 54
+      "trainingRows": 188
     },
     "ra": {
-      "eligibleDates": 5,
-      "eligibleRows": 345,
+      "eligibleDates": 6,
+      "eligibleRows": 394,
       "evaluationDates": 4,
-      "evaluationRows": 293,
+      "evaluationRows": 217,
       "requiredEvaluationDates": 30,
       "requiredEvaluationRows": 200,
       "requiredTrainingRows": 300,
-      "trainingRows": 52
+      "trainingRows": 177
     }
   },
-  "eligibleDates": 5,
-  "eligibleRows": 1467,
-  "evaluationDates": 0,
-  "evaluationRows": 1249,
+  "calibratedLogLoss": 0.6916475944147027,
+  "eligibleDates": 6,
+  "eligibleRows": 1687,
+  "evaluationDates": 4,
+  "evaluationRows": 938,
   "evidenceUnit": "date-clustered paired log-loss improvement; each slate counts once",
   "excluded": {
     "different model version": 2089,
-    "final actuals pending or identity review": 324,
+    "final actuals pending or identity review": 104,
+    "forecast date not completed": 329,
     "quote timing or book checks": 136
   },
-  "loadedRows": 4016,
+  "gainVsBook": -0.002167527676017072,
+  "loadedRows": 4345,
   "qualifiedStats": [],
+  "rawLogLoss": 0.6885957229505242,
   "status": "More forward data needed",
-  "trainingRows": 218
+  "trainingRows": 749,
+  "zVsBook": -1.4100816426015643
 }
