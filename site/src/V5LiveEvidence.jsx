@@ -34,6 +34,7 @@ export default function V5LiveEvidence() {
       <p className="v21-caption">V5 changes the real V2 minutes and three-point calculations. Its new results are tracked separately and cannot be treated as a matched comparison with the earlier V4 Lab sample.</p>
       {message && <p className="v21-wait" role="status">{message} This doesn't affect today's board.</p>}
       {data && <>
+        <p className="v21-caption" role="status">{data.questions>0?'Audit is evaluating saved forecasts.':data.audit?.rejectedProduction>0?'Audit needs attention: saved production evidence was rejected.':'Waiting for eligible completed forecasts.'} {data.audit?.missingFinals||0} forecasts await matching final data. Updated {data.generatedAt||'time unavailable'}.</p>
         <div className="v21-overview">
           <div><small>V5 player-games</small><strong>{data.playerGames}</strong></div>
           <div><small>V5 prop questions</small><strong>{data.questions}</strong></div>
@@ -48,6 +49,7 @@ export default function V5LiveEvidence() {
           </div>)}
         </div>
         <p className="v21-hint">Results through {data.through || 'pending'}. Five separate days are required before scores appear; more future evidence is needed to establish any improvement.</p>
+        {data.selection?.length>0&&<details><summary>Posted versus excluded prop forecasts</summary><p className="v21-caption">Selection is frozen at the exact quoted line and book. Older captures stay unknown; alternate quotes are separate from excluded plays. These are descriptive groups from the earliest eligible saved decision per player/game/stat, not a backtest of a new selection rule. Hit rates appear after 30 questions across five dates.</p><table><thead><tr><th>Stat / side</th><th>Selection</th><th>Questions / dates</th><th>Hit rate / estimate</th></tr></thead><tbody>{data.selection.map((s,i)=><tr key={i}><td>{s.stat} {s.side}</td><td>{s.status}<small>{s.reason?` · ${s.reason}`:null}</small></td><td>{s.n} / {s.days}</td><td>{s.hitRate==null?'Pending':`${(100*s.hitRate).toFixed(1)}% / ${(100*s.predicted).toFixed(1)}%`}</td></tr>)}</tbody></table></details>}
       </>}
     </div>
   )

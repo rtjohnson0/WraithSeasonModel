@@ -1001,6 +1001,7 @@ func main() {
 		}
 		var drops V2Drops
 		v2Plays, drops = v2Select(v2all, rules)
+		captureSelection(rotationRecords, v2all, v2Plays, rules)
 		v2Overs = v2OversWatch(v2all, v2Plays, rules, 12)
 		v2Meta = v2Info(v2fix, *v2Weight, *hi, *comboBar, v2model, v2all, v2Plays, drops, v2gates)
 		v2Meta.Watch = len(v2Overs)

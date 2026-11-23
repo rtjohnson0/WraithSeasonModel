@@ -18,6 +18,21 @@ def report():
     }
 
 class V5PublicEvidenceTests(unittest.TestCase):
+    def test_selection_counts_do_not_invent_old_selection_or_expose_small_scores(self):
+        r=report();r['SelectionSlices']=[dict(stat='threes',side='UNDER',status='unknown',n=40,days=6,wins=30,predicted=.6,player='PRIVATE')]
+        out=sanitize(r)
+        self.assertIsNone(out['selection'][0]['hitRate'])
+        self.assertNotIn('PRIVATE',json.dumps(out))
+        r['SelectionSlices'][0]['status']='posted'
+        self.assertEqual(sanitize(r)['selection'][0]['hitRate'],.75)
+        r['SelectionSlices'][0]['days']=2
+        self.assertIsNone(sanitize(r)['selection'][0]['hitRate'])
+    def test_audit_health_exposes_only_named_aggregate_counts(self):
+        r=report();r['Excluded'].update({'production provenance unavailable':3,'final identity/source unavailable':19})
+        data=sanitize(r)
+        self.assertEqual(data['audit']['rejectedProduction'],3)
+        self.assertEqual(data['audit']['missingFinals'],19)
+        self.assertNotIn('private-player',json.dumps(data))
     def test_allows_only_aggregates_and_separate_cohort(self):
         raw=sanitize(report())
         payload=json.dumps(raw)

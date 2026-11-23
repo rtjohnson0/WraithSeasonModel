@@ -12,6 +12,7 @@ param(
 $ErrorActionPreference = "Stop"
 # UTF-8 Go/JSON logs and Git output must not use the Windows ANSI code page.
 $env:PYTHONUTF8 = "1"
+$rotationPolicy = if ($env:WRAITH_V2_ROTATION_POLICY) { $env:WRAITH_V2_ROTATION_POLICY } else { "rotation-v5" }
 
 # Native commands do not stop the script on failure by themselves; this does.
 function Run {
@@ -45,8 +46,8 @@ Run "grade game markets" { go run ./cmd/games -settle } -Optional
 Run "grade combo plays"            { go run ./cmd/combos settle } -Optional
 Run "grade every logged line"      { go run ./cmd/lines } -Optional
 Run "grade the V2 challenger"      { go run ./cmd/v2 settle } -Optional
-Run "combo projection diagnostic" { go run ./cmd/comboaudit } -Optional
-Run "V2 single-stat diagnostic" { go run ./cmd/comboaudit -singles -out run_evidence/v2-singles-audit/report.json } -Optional
+Run "combo projection diagnostic" { go run ./cmd/comboaudit -policy $rotationPolicy } -Optional
+Run "V2 single-stat diagnostic" { go run ./cmd/comboaudit -singles -policy $rotationPolicy -out run_evidence/v2-singles-audit/report.json } -Optional
 Run "review yesterday (csv)"        { go run ./cmd/review } -Optional
 
 if (-not $SkipTrain) {
@@ -63,7 +64,7 @@ Run "extra books (SportsGameOdds)" { go run ./cmd/sgo snapshot } -Optional
 Run "forward accuracy evaluation" { go run ./cmd/accuracy }
 Run "offline accuracy report" { python scripts/accuracy_report.py }
 Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
-Run "player props"                 { go run ./cmd/predict -rotationpolicy rotation-v4 }
+Run "player props"                 { go run ./cmd/predict -rotationpolicy $rotationPolicy }
 Run "minutes and Under-bias audit" { go run ./cmd/minutesaudit -legacy } -Optional
 Run "Over and Under price comparison" { go run ./cmd/priceaudit } -Optional
 Run "prior V2 rotation comparison" { go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 } -Optional

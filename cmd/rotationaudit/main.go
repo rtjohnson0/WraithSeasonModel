@@ -71,6 +71,7 @@ type Report struct {
 	BaselineMinutesMAE, RotationMinutesMAE float64
 	ProtectedMinutesMAE                    float64
 	Slices                                 []Slice
+	SelectionSlices                        []SelectionSlice
 	Excluded                               map[string]int
 }
 
@@ -176,9 +177,14 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 	stats := map[string]*Slice{}
 	statDates := map[string]map[string]bool{}
 	lab := newMinutesLab()
+	selection := selectionAudit{}
 	for _, k := range keys {
 		r := chosen[k]
-		if rotation.ProductionPolicy(policy) && !validProductionCapture(r) {
+		validProduction := validProductionCapture(r)
+		if policy == rotation.GuardedPolicy {
+			validProduction = validGuardedCapture(r, models[r.ModelID].Forecast(r.Row.Features(), predictor.Adjustments{}))
+		}
+		if rotation.ProductionPolicy(policy) && !validProduction {
 			out.Excluded["production provenance unavailable"]++
 			continue
 		}
@@ -259,6 +265,7 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		}
 		s.N++
 		out.Questions++
+		selection.observe(r, grade.Actual, mins, p.Mean(r.Stat), p.Minutes)
 		out.ModelVersions[m.Version]++
 		statDates[st][r.Date] = true
 		s.BaselineBrier += (pb - y) * (pb - y)
@@ -318,6 +325,7 @@ func collectPolicy(dir, before, cohort, policy string) (Report, error) {
 		s.RateContribution /= n
 		out.Slices = append(out.Slices, *s)
 	}
+	out.SelectionSlices = selection.snapshot()
 	if policy == rotation.ContextPolicy { out.Lab = lab.snapshot(out.Through) }
 	return out, nil
 }

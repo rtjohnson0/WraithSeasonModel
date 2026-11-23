@@ -61,8 +61,23 @@ def sanitize(report):
     return out
 
 
-def publish(source, destination):
+def sanitize_point_study(study):
+    if not isinstance(study,dict) or study.get("policy")!="game-residual-study-v1":
+        raise ValueError("unsupported point study")
+    out={"policy":study["policy"]}
+    for k in ("games","dates"):
+        if not positive_count(study.get(k)): raise ValueError("invalid point study counts")
+        out[k]=study[k]
+    for k in ("rawMarginMAE","correctedMarginMAE","rawTotalMAE","correctedTotalMAE"):
+        out[k]=clean_number(study.get(k))
+        if out[k] is None: raise ValueError("invalid point error")
+    return out
+
+
+def publish(source, destination, study=None):
     report = sanitize(json.loads(Path(source).read_text(encoding="utf-8")))
+    if study is not None:
+        report["pointStudy"]=sanitize_point_study(study)
     destination = Path(destination)
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8")
@@ -73,11 +88,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, default=Path("data/gamechallenger.json"))
     parser.add_argument("--out", type=Path, default=Path("site/public/data/v21-games.json"))
+    parser.add_argument("--study",type=Path,default=Path("run_evidence/game-pace/report.json"))
     args = parser.parse_args()
     if not args.source.exists():
         print("Game market research results not available; no scores published.")
         return
-    report = publish(args.source, args.out)
+    study=json.loads(args.study.read_text()).get("residualStudy") if args.study.exists() else None
+    report = publish(args.source, args.out, study)
     print("Aggregate-only game market lab:", ", ".join(
         f"{r['id']}={r['n']} verified results over {r['days']} dates" for r in report["markets"]))
 

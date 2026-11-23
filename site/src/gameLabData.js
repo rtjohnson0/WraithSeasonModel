@@ -21,6 +21,7 @@ export function validateGameLab(raw) {
     if (m.calibratedN > 0 && (m.calibratedLogLoss == null || m.calibrationBookLogLoss == null))
       throw new Error('Calibrated scores must share verified games with the book.')
   })
+  if(raw.pointStudy){const s=raw.pointStudy;if(s.policy!=='game-residual-study-v1'||!validCount(s.games)||!validCount(s.dates)||!['rawMarginMAE','correctedMarginMAE','rawTotalMAE','correctedTotalMAE'].every(k=>score(s[k])&&s[k]!=null))throw new Error('Point study is invalid.')}
   return raw
 }
 

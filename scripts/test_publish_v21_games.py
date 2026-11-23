@@ -2,7 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from publish_v21_games import sanitize, publish
+from publish_v21_games import sanitize, publish, sanitize_point_study
 
 
 def sample():
@@ -23,6 +23,11 @@ def sample():
 
 
 class GameMarketPublisherTests(unittest.TestCase):
+    def test_point_study_is_allowlisted_and_rejects_invalid_metrics(self):
+        s=dict(policy='game-residual-study-v1',games=300,dates=30,rawMarginMAE=11,correctedMarginMAE=12,rawTotalMAE=15,correctedTotalMAE=14,privatePlayer='SECRET')
+        self.assertNotIn('SECRET',json.dumps(sanitize_point_study(s)))
+        s['rawTotalMAE']=float('nan')
+        with self.assertRaises(ValueError):sanitize_point_study(s)
     def test_allowlist_exposes_no_single_game_or_player(self):
         report = sanitize(sample())
         self.assertEqual([x["id"] for x in report["markets"]], ["moneyline", "spread", "total"])
