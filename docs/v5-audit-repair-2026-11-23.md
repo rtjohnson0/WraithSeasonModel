@@ -31,3 +31,13 @@ go run ./cmd/gamepace -audit -out run_evidence/game-pace
 ```
 
 Normal Daily already invokes both model diagnostics and the public lab exporters. After merge, run Daily to regenerate the live lab. This repairs the evaluation, not the earlier betting record. Public outputs contain no per-player or per-book audit details.
+
+## Prop review additions before merge
+
+- Extend the existing workload-reversal lean rule to rotation-v5. V5 was capturing the primary-minutes sensitivity but the selection helper accepted only V4. Eligible singles that reverse below 50% at primary minutes remain visible as LEANs for either side; no probability or projection is inflated or rewritten.
+- Freeze exact-quote selection metadata in new replay records: posted, excluded with reason, or another quote/side posted. Captures match player, game, stat, line, book and capture time. The immutable historical record stays unknown when this metadata did not exist. The audit groups these first eligible saved decisions by stat, side, status and reason; this is a descriptive comparison, not a replay certification of new selection rules.
+- Public lab comparisons allowlist only aggregate selection fields. Hit rates stay hidden below 30 questions/five dates and for unknown historical selection. No player, line, book or private reason string can enter the public summary.
+- Daily combo and single-stat diagnostics now explicitly use the active rotation policy, rather than silently reading V4 settlements. On the saved current V5 cohort they match all 106 posted questions, 67–39. Shooting-opportunity decomposition covers 50; actual passing/rebound-chance tracking remains unavailable for 56 questions. Missing tracking is not replaced with zero or a causal explanation.
+- PowerShell Daily and pre-tip now default to V5 like Bash/GitHub Actions, with the same WRAITH_V2_ROTATION_POLICY rollback override. Previously both PowerShell prediction steps were hard-coded to V4.
+
+Run normal Daily after merging. Existing leans stay available, past records stay unchanged, and the new selection groups accumulate prospectively from saved exact quotes. This is not a claim that selection changes have demonstrated improved accuracy.

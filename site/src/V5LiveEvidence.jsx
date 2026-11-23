@@ -49,6 +49,7 @@ export default function V5LiveEvidence() {
           </div>)}
         </div>
         <p className="v21-hint">Results through {data.through || 'pending'}. Five separate days are required before scores appear; more future evidence is needed to establish any improvement.</p>
+        {data.selection?.length>0&&<details><summary>Posted versus excluded prop forecasts</summary><p className="v21-caption">Selection is frozen at the exact quoted line and book. Older captures stay unknown; alternate quotes are separate from excluded plays. These are descriptive groups from the earliest eligible saved decision per player/game/stat, not a backtest of a new selection rule. Hit rates appear after 30 questions across five dates.</p><table><thead><tr><th>Stat / side</th><th>Selection</th><th>Questions / dates</th><th>Hit rate / estimate</th></tr></thead><tbody>{data.selection.map((s,i)=><tr key={i}><td>{s.stat} {s.side}</td><td>{s.status}<small>{s.reason?` · ${s.reason}`:null}</small></td><td>{s.n} / {s.days}</td><td>{s.hitRate==null?'Pending':`${(100*s.hitRate).toFixed(1)}% / ${(100*s.predicted).toFixed(1)}%`}</td></tr>)}</tbody></table></details>}
       </>}
     </div>
   )

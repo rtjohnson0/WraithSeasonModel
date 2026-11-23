@@ -69,6 +69,7 @@ func (r Row) Features() *feat.Row {
 }
 
 type Record struct {
+	Selection         *Selection            `json:"selection,omitempty"`
 	Rotation          *rotation.Context     `json:"rotation,omitempty"`
 	ProbabilityMethod string                `json:"probability_method,omitempty"`
 	BlendWeight       float64               `json:"blend_weight,omitempty"`
@@ -94,6 +95,15 @@ type Record struct {
 	Market            float64               `json:"market"`
 	P1                float64               `json:"p1"`
 	P2                float64               `json:"p2,omitempty"`
+}
+
+// Selection freezes the decision at the exact saved quote. Missing historical
+// metadata stays unknown; later results must never reconstruct this decision.
+type Selection struct {
+	Revision string `json:"revision"`
+	Status   string `json:"status"`
+	Reason   string `json:"reason"`
+	Side     string `json:"side"`
 }
 
 func Checkpoint(dir string, m *predictor.Model) (string, error) {

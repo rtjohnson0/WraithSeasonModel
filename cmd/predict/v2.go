@@ -585,7 +585,7 @@ func v2LeanWhy(s scored, gates map[string]V2Gate) string {
 }
 
 func workloadDirectionChanges(s scored) bool {
-	if s.Rotation == nil || s.Rotation.Policy != rotation.ContextPolicy || s.Rotation.WorkloadReview == nil {
+	if s.Rotation == nil || (s.Rotation.Policy != rotation.ContextPolicy && s.Rotation.Policy != rotation.GuardedPolicy) || s.Rotation.WorkloadReview == nil {
 		return false
 	}
 	r := s.Rotation.WorkloadReview

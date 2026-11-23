@@ -1,6 +1,8 @@
 # Quick refresh close to tip-off (no retrain): newest lines and injuries, then picks.
 #   .\scripts\pretip.ps1
 $ErrorActionPreference = "Stop"
+$env:PYTHONUTF8 = "1"
+$rotationPolicy = if ($env:WRAITH_V2_ROTATION_POLICY) { $env:WRAITH_V2_ROTATION_POLICY } else { "rotation-v5" }
 function Run {
     param([string]$Label, [scriptblock]$Cmd, [switch]$Optional)
     Write-Host ""
@@ -21,7 +23,7 @@ Run "extra books (SportsGameOdds)" { go run ./cmd/sgo snapshot } -Optional
 Run "forward accuracy evaluation" { go run ./cmd/accuracy }
 Run "offline accuracy report" { python scripts/accuracy_report.py }
 Run "direct combo calibration" { go run ./cmd/combos calibrate } -Optional
-Run "player props"                 { go run ./cmd/predict -rotationpolicy rotation-v4 }
+Run "player props"                 { go run ./cmd/predict -rotationpolicy $rotationPolicy }
 Run "minutes and Under-bias audit" { go run ./cmd/minutesaudit -legacy } -Optional
 Run "Over and Under price comparison" { go run ./cmd/priceaudit } -Optional
 Run "prior V2 rotation comparison" { go run ./cmd/rotationaudit -policy rotation-v2 -out run_evidence/rotation-v2 } -Optional

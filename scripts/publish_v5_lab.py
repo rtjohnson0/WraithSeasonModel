@@ -28,7 +28,7 @@ def sanitize(raw):
               "generatedAt":datetime.now(timezone.utc).isoformat(),
               "through":str(raw.get("Through") or "")[:10],
               "playerGames":pg, "questions":questions, "days":days,
-              "minutesMAE":None, "minutesBias":None, "stats":[]}
+              "minutesMAE":None, "minutesBias":None, "stats":[], "selection":[]}
     exclusions=raw.get("Excluded") or {}
     output["audit"]={}
     for dest,source in (("pending","date not completed"),("rejectedProduction","production provenance unavailable"),("missingFinals","final identity/source unavailable")):
@@ -60,6 +60,19 @@ def sanitize(raw):
             item["brier"]=round(b,6)
             item["statMAE"]=round(e,5)
         output["stats"].append(item)
+    for row in raw.get("SelectionSlices") or []:
+        if row.get("stat") not in STAT_IDS or row.get("side") not in ("OVER","UNDER") or row.get("status") not in ("posted","excluded","alternate-quote","unknown"):
+            raise ValueError("invalid selection aggregate")
+        n,days,wins=(row.get(k) for k in ("n","days","wins"))
+        if not all(map(count,(n,days,wins))) or wins>n: raise ValueError("invalid selection counts")
+        # Older snapshots have no selection flag. They cannot certify a new rule.
+        reasons={"historical selection not captured","another quote or side was posted","selected at this quote","below probability or edge rule","selection or correlation cap","thin","juiced","disagree","failed"}
+        item={"stat":row["stat"],"side":row["side"],"status":row["status"],"reason":row.get("reason") if row.get("reason") in reasons else "unavailable","n":n,"days":days,"hitRate":None,"predicted":None}
+        if n>=30 and days>=5 and row["status"]!="unknown":
+            p=row.get("predicted")
+            if not numeric(p) or p>1: raise ValueError("invalid selection estimate")
+            item["hitRate"]=round(wins/n,6);item["predicted"]=round(p,6)
+        output["selection"].append(item)
     return output
 
 
