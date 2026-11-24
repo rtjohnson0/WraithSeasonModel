@@ -9,6 +9,25 @@ import (
 	"propsmodel/internal/runlog"
 )
 
+func TestTenGameExportKeepsFiveGameDefaultStatistics(t *testing.T) {
+	form := func(int, string, string) ([]Game5, float64, int) {
+		var rows []Game5
+		for i := 1; i <= 10; i++ {
+			rows = append(rows, Game5{Value: float64(i), Minutes: 30})
+		}
+		return rows, 5.5, 10
+	}
+	entry := e("Test", 1, "points", "UNDER", "LEAN", .55, -110)
+	entry.Line = 6.5
+	p := makePlay(entry, entry.Date, form, 0, nil)
+	if len(p.Last10) != 10 || len(p.Last5) != 5 || p.Last5[0].Value != 6 || p.L5Avg != 8 || p.L5Hits != 1 {
+		t.Fatal(p)
+	}
+	if p.SeasonAvg != 5.5 || p.SeasonGP != 10 {
+		t.Fatal("season history changed")
+	}
+}
+
 func e(player string, id int, stat, side, tier string, prob float64, odds int) picklog.Entry {
 	return picklog.Entry{Date: "2026-10-24", GameID: id, PlayerID: id*100 + len(player), Player: player, Stat: stat, Side: side,
 		Line: 5.5, Odds: odds, Prob: prob, Tier: tier, Units: 0, Matchup: "CHI @ MIL", Team: "CHI"}

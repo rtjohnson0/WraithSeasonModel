@@ -7,7 +7,7 @@ import { MatchupDetails } from './GameMarkets.jsx'
 import QuarterBoard from './QuarterBoard.jsx'
 import PickReason from './PickReason.jsx'
 import PlayerPortrait from './PlayerPortrait.jsx'
-import { PropTicket, RecentForm } from './PropVisuals.jsx'
+import { PropTicket, RecentForm, FormRange, formView } from './PropVisuals.jsx'
 import TimedGroups from './TimedGroups.jsx'
 import { remainingSlate, groupTimedCards, compareGameTip } from './boardData.js'
 import {matchupSignal} from './matchup.js'
@@ -27,7 +27,7 @@ function reasons(p) {
     const normal = p.minTypical || p.minAvg5
     const diff = p.projMin - normal
     if (Math.abs(diff) >= 2.5) {
-      out.push(`Projected minutes (${Math.round(p.projMin)}) are ${Math.abs(diff).toFixed(0)} ${diff < 0 ? 'below' : 'above'} his normal (${Math.round(normal)}, the middle of his last ${p.last5.length} games).`)
+      out.push(`Projected minutes (${Math.round(p.projMin)}) are ${Math.abs(diff).toFixed(0)} ${diff < 0 ? 'below' : 'above'} his normal (${Math.round(normal)}, recent typical workload).`)
     }
     if (p.last5.some((g) => g.short)) {
       out.push('One recent night was cut short (injury, foul trouble or a blowout), so it is left out of his normal minutes.')
@@ -112,25 +112,28 @@ function OversWatch({ overs, now }) {
  const [all,setAll]=useState(false)
  const open=(overs||[]).filter(o=>o.analysis && o.analysis.edge>0 && o.analysis.prob>=.5 && !['live','done'].includes(tipState(o.tip,now).state)).sort(compareGameTip)
  if(!open.length)return null
- return <section className="overs" aria-label="Over research comparisons" id="overs-watch">
-  <div className="section-heading"><div><span className="card-eyebrow">More to analyze</span><h2>Over comparisons<span className="section-dot">↗</span></h2></div><span className="research-chip">Research · not selected plays</span></div>
+ return <details className="overs" aria-label="Over research comparisons" id="overs-watch">
+  <summary className="section-heading"><div><span className="card-eyebrow">More to analyze</span><h2>Over comparisons<span className="section-dot">↗</span></h2></div><span className="research-chip">Research · tap to expand</span></summary>
   <p className="small">These positive-edge estimates have not cleared every selection check. Each card uses its exact quoted line and the same analytics as the main board.</p>
   <ul className="plays prop-grid over-comparison-grid">{(all?open:open.slice(0,6)).map(o=><PlayRow key={`${o.game_id}|${o.analysis.player}|${o.analysis.stat}`} p={{...o.analysis,research:true}} started={false} game={{matchup:o.matchup,tip:o.tip}} researchNote={o.status}/>)}</ul>
   {open.length>6&&<button type="button" className="morebtn" onClick={()=>setAll(!all)}>{all?'Show fewer':`Show all ${open.length}`}</button>}
- </section>
+ </details>
 }
 
 const playId = (p) => `play-${p.player}-${p.stat}-${p.side}`.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
-function PlayRow({ p, started, game, markets, researchNote }) {
+function PlayRow({ p: source, started, game, markets, researchNote }) {
+  const [windowSize,setWindowSize]=useState(5)
+  const p=formView(source,windowSize)
   const quote = quoteState(p, useNow())
-  const [open, setOpen] = useState(!!p.research)
+  const [open, setOpen] = useState(false)
   const info = labelInfo[p.label] || labelInfo.Lean
   const signal=matchupSignal(p)
   const conf = Math.max(0, Math.min(1, (p.prob - 0.5) / 0.2))
   return (
     <li id={playId(p)} className={`play quote-${quote.key} ${p.side === 'OVER' ? 'over' : 'under'} ${info.key}${p.multi ? ' multi' : ''}${started ? ' started' : ''}`}>
       {game && <div className="card-matchup"><span>{game.matchup}</span><span className={started?'closed-tag':''}>{started ? 'Pregame closed' : tipText(game.tip) || 'Tip pending'}</span></div>}
+      <FormRange p={source} value={windowSize} onChange={setWindowSize}/>
       <button type="button" className="playbtn" aria-expanded={open} onClick={() => setOpen(!open)}>
         <span className="portrait-grade"><PlayerPortrait name={p.player} team={p.team}/><span className={`grade ${gradeTone(p.grade)}`} aria-label={`Grade ${p.grade}`}>{p.grade}</span></span>
         <span className="who">

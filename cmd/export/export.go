@@ -80,6 +80,7 @@ type Play struct {
 	Label  string  `json:"label"`  // Max play, Great play, Risky play or Lean
 	Badges []Badge `json:"badges"` // quick-read signals: weak defense, hot streak, back-to-back and so on
 
+	Last10    []Game5 `json:"last10,omitempty"`
 	Last5     []Game5 `json:"last5,omitempty"`
 	L5Avg     float64 `json:"l5Avg"`
 	L5Hits    int     `json:"l5Hits"`
@@ -507,6 +508,14 @@ func makePlay(e picklog.Entry, date string, form Form, runs int, seenIn []string
 	}
 	if form != nil {
 		games, sAvg, sGP := form(e.PlayerID, e.Stat, date)
+		if len(games) > 10 {
+			games = games[len(games)-10:]
+		}
+		p.Last10 = append([]Game5(nil), games...)
+		markShort(p.Last10)
+		if len(games) > 5 {
+			games = games[len(games)-5:]
+		}
 		p.Last5, p.SeasonAvg, p.SeasonGP = games, sAvg, sGP
 		var sum, mins float64
 		for _, x := range games {

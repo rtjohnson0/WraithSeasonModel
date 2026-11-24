@@ -23,3 +23,13 @@ export function RecentForm({ p }) {
     })}
   </span>
 }
+
+export function formView(p, count=5) {
+ const rows=(count===10&&p.last10?.length?p.last10:p.last5)||[]
+ const games=rows.slice(-count).filter(g=>Number.isFinite(g.value))
+ const hits=games.filter(g=>p.side==='OVER'?g.value>p.line:g.value<p.line).length
+ return {...p,last5:games,l5Hits:hits,l5Avg:games.length?games.reduce((a,g)=>a+g.value,0)/games.length:0}
+}
+export function FormRange({p,value,onChange}) {
+ return <div className="form-range" role="group" aria-label="Recent form window">{[5,10].map(n=><button type="button" key={n} aria-pressed={value===n} disabled={n===10&&!p.last10?.length} onClick={()=>onChange(n)}>Last {n}</button>)}</div>
+}
