@@ -25,17 +25,24 @@ function click(el){assert.ok(el,'Control exists');act(()=>el.dispatchEvent(new w
 function input(el,value){act(()=>{const setter=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;setter.call(el,value);el.dispatchEvent(new window.Event('input',{bubbles:true}));});}
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 fixture.board.games[0].plays[0].last5[0].value=fixture.board.games[0].plays[0].line;
+fixture.board.games[0].plays[0].last10=[...structuredClone(fixture.board.games[0].plays[0].last5),...structuredClone(fixture.board.games[0].plays[0].last5)];
 act(()=>root.render(React.createElement(Board,{site:fixture})));
 check('V1 groups keep games in scheduled order',$$('.timed-game .schedule-divider h3').map(n=>n.textContent).join('|')==='GSW @ LAL|DAL @ BOS');
 check('Every V1 card shows a prominent line ticket',$$('.timed-game .prop-grid .prop-ticket').length===5&&$('.timed-game .prop-grid .ticket-line').textContent==='25.5');
 check('Recent form exposes numeric outcomes',$$('.timed-game .prop-grid>.play')[0].querySelectorAll('.form-result').length===5);
 check('A historical result exactly on the line is shown as a push',$$('.timed-game .prop-grid>.play')[0].querySelector('.form-result.push b').textContent==='25.5');
+click($$('.timed-game .prop-grid>.play')[0].querySelectorAll('.form-range button')[1]);
+check('Last 10 displays ten recent results',$$('.timed-game .prop-grid>.play')[0].querySelectorAll('.form-result').length===10);
+click($$('.timed-game .prop-grid>.play')[0].querySelectorAll('.form-range button')[0]);
+check('Last 5 restores five recent results',$$('.timed-game .prop-grid>.play')[0].querySelectorAll('.form-result').length===5);
 check('Every V1 prop card has a player image URL',$$('.timed-game .prop-grid>.play').length===5&&$$('.timed-game .prop-grid>.play .player-portrait img').length===5);
 act(()=>$('.timed-game .prop-grid .player-portrait img').dispatchEvent(new window.Event('error')));
 check('Unavailable photos fall back to player initials',$('.timed-game .prop-grid .portrait-initials')?.textContent==='SC');
 check('Games no longer compete with props in a separate section',!$('.boardpage>.game-markets:not(.quarter-board)'));
 check('Over comparisons use the shared prop-card grid',$('#overs-watch > ul').classList.contains('prop-grid'));
-check('Over comparisons have player photos and expanded analytics',$$('#overs-watch .player-portrait img').length===2&&$$('#overs-watch .why .bars').length===4);
+check('Over research starts collapsed',!$('#overs-watch').open&&$$('#overs-watch .playbtn').every(b=>b.getAttribute('aria-expanded')==='false'));
+for(const b of $$('#overs-watch .playbtn'))click(b);
+check('Over comparisons have player photos and optional analytics',$$('#overs-watch .player-portrait img').length===2&&$$('#overs-watch .why .bars').length===4);
 check('Over comparisons never look like selected recommendations',$$('#overs-watch .tier').every(el=>el.textContent==='Research comparison'));
 check('Over comparisons include quote details and matchup explanations',$$('#overs-watch .pick-reason').length===2&&$('#overs-watch').textContent.includes('How defense affects this forecast'));
 click($('.timed-game .prop-grid .playbtn'));check('Expanded V1 analysis retains charts',$$('.timed-game .prop-grid .why .bars').length===2);

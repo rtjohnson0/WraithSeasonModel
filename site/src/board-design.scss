@@ -207,3 +207,10 @@ main,.top,.foot,.sample { width:min(100% - 56px,1280px); }
 .context-starters>div>span:last-child {font-size:11px;overflow-wrap:anywhere;}
 .context-starters small {display:block;color:#bca6d6;font-size:9px;}
 .context-opportunities table td small {display:block;font-size:9px;max-width:220px;}
+
+.form-range {display:flex;justify-content:flex-end;gap:5px;padding:8px 14px;}
+.form-range button {border:1px solid #b18ac244;border-radius:6px;background:#171020;color:#c5b8d4;padding:5px 9px;font:inherit;font-size:11px;cursor:pointer;}
+.form-range button[aria-pressed=true] {background:#b99ae0;color:#130c1d;}
+.form-range button:disabled {opacity:.4;cursor:default;}
+.recent-form {flex-wrap:wrap;}
+#overs-watch>summary {cursor:pointer;}

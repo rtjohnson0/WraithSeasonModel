@@ -243,7 +243,7 @@ func loadForm(dir string) (Form, map[int]string) {
 				n++
 			}
 		}
-		start := len(prior) - 5
+		start := len(prior) - 10
 		if start < 0 {
 			start = 0
 		}

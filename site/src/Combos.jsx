@@ -7,7 +7,7 @@ import { tipState, useNow } from './time.js'
 import QuoteDetails from './QuoteDetails.jsx'
 import PickReason from './PickReason.jsx'
 import PlayerPortrait from './PlayerPortrait.jsx'
-import { PropTicket, RecentForm } from './PropVisuals.jsx'
+import { PropTicket, RecentForm, FormRange, formView } from './PropVisuals.jsx'
 import { bookName, visibleQuote, quoteState } from './quote.js'
 import { comboGroups } from './combo.js'
 import { MatchupDetails } from './GameMarkets.jsx'
@@ -18,7 +18,9 @@ import { comparePlayValue } from './format.js'
 const COMBO_STATS = ['pra', 'pr', 'pa', 'ra']
 
 
-function ComboCard({ c, now, site }) {
+function ComboCard({ c: source, now, site }) {
+ const [windowSize,setWindowSize]=useState(5)
+ const c=formView(source,windowSize)
  const comparison=c.tier==='COMBOWATCH'||c.tier==='COMBORESEARCH'||c.research||!!c.rotation
  const rawComparison=c.tier==='COMBOWATCH'
  const confidence=rawComparison?(c.probRaw??c.prob):c.prob
@@ -26,7 +28,7 @@ function ComboCard({ c, now, site }) {
  const quote=quoteState(c,now)
  const workload=c.projMin-c.minTypical
  const workloadRisk=Number.isFinite(workload)&&Math.abs(workload)>=4
- return <li className={`combo-row ${c.side==='OVER'?'over':'under'}`}><div className="card-matchup"><span>{c.matchup}</span><span>{tipState(c.tip,now).label || 'Tip pending'}</span></div><details>
+ return <li className={`combo-row ${c.side==='OVER'?'over':'under'}`}><div className="card-matchup"><span>{c.matchup}</span><span>{tipState(c.tip,now).label || 'Tip pending'}</span></div><FormRange p={source} value={windowSize} onChange={setWindowSize}/><details>
   <summary className="combo-summary"><span className="combo-player"><PlayerPortrait name={c.player} team={c.team}/><span><small className="card-eyebrow">{comparison?'Research comparison':'Selected combo'}</small><b>{c.player} <small className="team-chip">{c.team}</small></b><PropTicket p={c}/><small>{comparison?'Line comparison':'Combo pick'} · {oddsText(c.odds)} · {bookName(c.book)}</small>{c.availability&&<small className="availability-hint">Availability watch · Compare minutes</small>}</span></span>
    <span className="combo-strip"><span className="form-caption">Recent form<small>At this line</small></span><RecentForm p={c}/></span><span className="combo-prob">{comparison ? c.projStat.toFixed(1) : pct(confidence,1)}<small>{comparison ? 'Projected total' : 'Model probability'}</small><small className="expand-hint">View analysis <span aria-hidden="true">⌄</span></small></span></summary>
   <div className="combo-expanded"><QuoteDetails p={c} compact/>
