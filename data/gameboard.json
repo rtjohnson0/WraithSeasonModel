@@ -1,7 +1,7 @@
 {
   "policy": "game-v2",
   "date": "2026-11-23",
-  "at": "2026-11-24T02:13:53.955181324Z",
+  "at": "2026-11-24T02:44:57.146813679Z",
   "games": [
     {
       "homeId": 14,
@@ -109,8 +109,8 @@
           "market": "spread",
           "book": "ballybet",
           "line": -13.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:15.647Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:15.531Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -142,8 +142,8 @@
           "market": "total",
           "book": "ballybet",
           "line": 225.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:15.647Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:15.531Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -175,8 +175,8 @@
           "market": "moneyline",
           "book": "ballybet",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:15.647Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:15.531Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -208,8 +208,8 @@
           "market": "spread",
           "book": "betmgm",
           "line": -13.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.912Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.332Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -241,8 +241,8 @@
           "market": "total",
           "book": "betmgm",
           "line": 225.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.912Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.332Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -274,8 +274,8 @@
           "market": "moneyline",
           "book": "betmgm",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.912Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.332Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -307,8 +307,8 @@
           "market": "spread",
           "book": "betparx",
           "line": -13.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:35.670Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:35.632Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -340,8 +340,8 @@
           "market": "total",
           "book": "betparx",
           "line": 225.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:35.670Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:35.632Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -373,8 +373,8 @@
           "market": "moneyline",
           "book": "betparx",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:35.670Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:35.632Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -406,8 +406,8 @@
           "market": "spread",
           "book": "betrivers",
           "line": -13.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:06.019Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:06.118Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -439,8 +439,8 @@
           "market": "total",
           "book": "betrivers",
           "line": 225.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:06.019Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:06.118Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -472,8 +472,8 @@
           "market": "moneyline",
           "book": "betrivers",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:06.019Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:06.118Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -502,44 +502,11 @@
           ]
         },
         {
-          "market": "spread",
-          "book": "betway",
-          "line": -13.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:28.784Z",
-          "tip": "2026-11-24T03:00:00Z",
-          "bookCount": 9,
-          "sides": [
-            {
-              "label": "LAL",
-              "odds": -105,
-              "win": 0.4912504781240966,
-              "push": 0,
-              "conditional": 0.4912504781240966,
-              "breakEven": 0.5121951219512195,
-              "market": 0.4891657638136511,
-              "edge": -0.02094464382712291,
-              "ev": -0.04089192366247807
-            },
-            {
-              "label": "UTA",
-              "odds": -115,
-              "win": 0.5087495218759034,
-              "push": 0,
-              "conditional": 0.5087495218759034,
-              "breakEven": 0.5348837209302325,
-              "market": 0.5108342361863488,
-              "edge": -0.02613419905432912,
-              "ev": -0.04885958953635455
-            }
-          ]
-        },
-        {
           "market": "total",
           "book": "betway",
           "line": 225.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:28.784Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:28.177Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -571,8 +538,8 @@
           "market": "moneyline",
           "book": "betway",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:28.784Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:28.177Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -604,41 +571,41 @@
           "market": "spread",
           "book": "caesars",
           "line": -13,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:03.103Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.431Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
             {
               "label": "LAL",
-              "odds": -110,
+              "odds": -115,
               "win": 0.4912504781240966,
               "push": 0.028087708874738215,
               "conditional": 0.5054473357419279,
-              "breakEven": 0.5238095238095238,
-              "market": 0.5,
-              "edge": -0.01836218806759593,
-              "ev": -0.034070469251986424
+              "breakEven": 0.5348837209302325,
+              "market": 0.5108342361863488,
+              "edge": -0.029436385188304603,
+              "ev": -0.05348748419760291
             },
             {
               "label": "UTA",
-              "odds": -110,
+              "odds": -105,
               "win": 0.4806618130011652,
               "push": 0.028087708874738215,
               "conditional": 0.49455266425807204,
-              "breakEven": 0.5238095238095238,
-              "market": 0.5,
-              "edge": -0.029256859551451797,
-              "ev": -0.054285193577582824
+              "breakEven": 0.5121951219512195,
+              "market": 0.4891657638136511,
+              "edge": -0.017642457693147484,
+              "ev": -0.03347732288489169
             }
           ]
         },
         {
           "market": "total",
           "book": "caesars",
-          "line": 225,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:03.103Z",
+          "line": 225.5,
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.431Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -646,23 +613,23 @@
               "label": "Over",
               "odds": -110,
               "win": 0.5138306615263449,
-              "push": 0.021791084623233314,
-              "conditional": 0.5252770174645547,
+              "push": 0,
+              "conditional": 0.5138306615263449,
               "breakEven": 0.5238095238095238,
               "market": 0.5,
-              "edge": 0.0014674936550308493,
-              "ev": 0.002740529355346355
+              "edge": -0.009978862283178902,
+              "ev": -0.01905055526788696
             },
             {
               "label": "Under",
               "odds": -110,
-              "win": 0.46437825385042175,
-              "push": 0.021791084623233314,
-              "conditional": 0.47472298253544537,
+              "win": 0.48616933847365507,
+              "push": 0,
+              "conditional": 0.48616933847365507,
               "breakEven": 0.5238095238095238,
               "market": 0.5,
-              "edge": -0.049086541274078466,
-              "ev": -0.09166861257141606
+              "edge": -0.03764018533586877,
+              "ev": -0.07185853564120398
             }
           ]
         },
@@ -670,8 +637,8 @@
           "market": "moneyline",
           "book": "caesars",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:03.103Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.431Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -700,11 +667,77 @@
           ]
         },
         {
+          "market": "spread",
+          "book": "draftkings",
+          "line": -13.5,
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:01.095Z",
+          "tip": "2026-11-24T03:00:00Z",
+          "bookCount": 9,
+          "sides": [
+            {
+              "label": "LAL",
+              "odds": -103,
+              "win": 0.4912504781240966,
+              "push": 0,
+              "conditional": 0.4912504781240966,
+              "breakEven": 0.5073891625615764,
+              "market": 0.48481627695110846,
+              "edge": -0.01613868443747979,
+              "ev": -0.031807310104935815
+            },
+            {
+              "label": "UTA",
+              "odds": -117,
+              "win": 0.5087495218759034,
+              "push": 0,
+              "conditional": 0.5087495218759034,
+              "breakEven": 0.5391705069124424,
+              "market": 0.5151837230488916,
+              "edge": -0.030420985036539006,
+              "ev": -0.05642182694811082
+            }
+          ]
+        },
+        {
+          "market": "total",
+          "book": "draftkings",
+          "line": 225.5,
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:01.095Z",
+          "tip": "2026-11-24T03:00:00Z",
+          "bookCount": 9,
+          "sides": [
+            {
+              "label": "Over",
+              "odds": -106,
+              "win": 0.5138306615263449,
+              "push": 0,
+              "conditional": 0.5138306615263449,
+              "breakEven": 0.5145631067961165,
+              "market": 0.4903184165232359,
+              "edge": -0.0007324452697715644,
+              "ev": -0.0014234313733296755
+            },
+            {
+              "label": "Under",
+              "odds": -115,
+              "win": 0.48616933847365507,
+              "push": 0,
+              "conditional": 0.48616933847365507,
+              "breakEven": 0.5348837209302325,
+              "market": 0.5096815834767643,
+              "edge": -0.04871438245657744,
+              "ev": -0.09107471502751446
+            }
+          ]
+        },
+        {
           "market": "moneyline",
           "book": "draftkings",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:00.524Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:01.095Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -736,8 +769,8 @@
           "market": "spread",
           "book": "fanatics",
           "line": -13,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.722Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.527Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -766,44 +799,11 @@
           ]
         },
         {
-          "market": "total",
-          "book": "fanatics",
-          "line": 225,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.722Z",
-          "tip": "2026-11-24T03:00:00Z",
-          "bookCount": 9,
-          "sides": [
-            {
-              "label": "Over",
-              "odds": -110,
-              "win": 0.5138306615263449,
-              "push": 0.021791084623233314,
-              "conditional": 0.5252770174645547,
-              "breakEven": 0.5238095238095238,
-              "market": 0.5,
-              "edge": 0.0014674936550308493,
-              "ev": 0.002740529355346355
-            },
-            {
-              "label": "Under",
-              "odds": -110,
-              "win": 0.46437825385042175,
-              "push": 0.021791084623233314,
-              "conditional": 0.47472298253544537,
-              "breakEven": 0.5238095238095238,
-              "market": 0.5,
-              "edge": -0.049086541274078466,
-              "ev": -0.09166861257141606
-            }
-          ]
-        },
-        {
           "market": "moneyline",
           "book": "fanatics",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.722Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.527Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -835,8 +835,8 @@
           "market": "spread",
           "book": "fanduel",
           "line": -13.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:20.552Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:20.551Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -868,8 +868,8 @@
           "market": "total",
           "book": "fanduel",
           "line": 225.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:20.552Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:20.551Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -901,8 +901,8 @@
           "market": "moneyline",
           "book": "fanduel",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:20.552Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:20.551Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -934,8 +934,8 @@
           "market": "spread",
           "book": "rebet",
           "line": -13.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:46.027Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:45.666Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -967,8 +967,8 @@
           "market": "total",
           "book": "rebet",
           "line": 225.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:46.027Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:45.666Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -1000,8 +1000,8 @@
           "market": "moneyline",
           "book": "rebet",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:46.027Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:45.666Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1137,8 +1137,8 @@
           "market": "spread",
           "book": "ballybet",
           "line": 7.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:15.647Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:15.531Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1170,8 +1170,8 @@
           "market": "total",
           "book": "ballybet",
           "line": 223.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:15.647Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:15.531Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -1203,8 +1203,8 @@
           "market": "moneyline",
           "book": "ballybet",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:15.647Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:15.531Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1236,8 +1236,8 @@
           "market": "spread",
           "book": "betmgm",
           "line": 8.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.912Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.332Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1269,8 +1269,8 @@
           "market": "total",
           "book": "betmgm",
           "line": 223.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.912Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.332Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -1302,8 +1302,8 @@
           "market": "moneyline",
           "book": "betmgm",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.912Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.332Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1335,8 +1335,8 @@
           "market": "spread",
           "book": "betparx",
           "line": 7.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:35.670Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:35.632Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1368,8 +1368,8 @@
           "market": "total",
           "book": "betparx",
           "line": 223.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:35.670Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:35.632Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -1401,8 +1401,8 @@
           "market": "moneyline",
           "book": "betparx",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:35.670Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:35.632Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1434,8 +1434,8 @@
           "market": "spread",
           "book": "betrivers",
           "line": 7.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:06.019Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:06.118Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1467,8 +1467,8 @@
           "market": "total",
           "book": "betrivers",
           "line": 223.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:06.019Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:06.118Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -1500,8 +1500,8 @@
           "market": "moneyline",
           "book": "betrivers",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:06.019Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:06.118Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1533,8 +1533,8 @@
           "market": "spread",
           "book": "betway",
           "line": 8.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:28.784Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:28.177Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1565,33 +1565,33 @@
         {
           "market": "total",
           "book": "betway",
-          "line": 223.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:28.784Z",
+          "line": 222.5,
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:28.177Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
             {
               "label": "Over",
-              "odds": -110,
-              "win": 0.5078615054508825,
+              "odds": -115,
+              "win": 0.529670388272305,
               "push": 0,
-              "conditional": 0.5078615054508825,
-              "breakEven": 0.5238095238095238,
-              "market": 0.5,
-              "edge": -0.015948018358641347,
-              "ev": -0.030446216866497067
+              "conditional": 0.529670388272305,
+              "breakEven": 0.5348837209302325,
+              "market": 0.5108342361863488,
+              "edge": -0.005213332657927561,
+              "ev": -0.009746665403951638
             },
             {
               "label": "Under",
-              "odds": -110,
-              "win": 0.4921384945491175,
+              "odds": -105,
+              "win": 0.47032961172769505,
               "push": 0,
-              "conditional": 0.4921384945491175,
-              "breakEven": 0.5238095238095238,
-              "market": 0.5,
-              "edge": -0.031671029260406325,
-              "ev": -0.06046287404259387
+              "conditional": 0.47032961172769505,
+              "breakEven": 0.5121951219512195,
+              "market": 0.4891657638136511,
+              "edge": -0.04186551022352447,
+              "ev": -0.0817374247221192
             }
           ]
         },
@@ -1599,8 +1599,8 @@
           "market": "moneyline",
           "book": "betway",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:28.784Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:28.177Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1632,8 +1632,8 @@
           "market": "spread",
           "book": "caesars",
           "line": 8,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:03.103Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.431Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1664,9 +1664,9 @@
         {
           "market": "total",
           "book": "caesars",
-          "line": 223.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:03.103Z",
+          "line": 223,
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.431Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -1674,23 +1674,23 @@
               "label": "Over",
               "odds": -115,
               "win": 0.5078615054508825,
-              "push": 0,
-              "conditional": 0.5078615054508825,
+              "push": 0.02180888282142246,
+              "conditional": 0.5191843357929081,
               "breakEven": 0.5348837209302325,
               "market": 0.5108342361863488,
-              "edge": -0.02702221547935002,
-              "ev": -0.05051979415704577
+              "edge": -0.015699385137324384,
+              "ev": -0.028710911335623313
             },
             {
               "label": "Under",
               "odds": -105,
-              "win": 0.4921384945491175,
-              "push": 0,
-              "conditional": 0.4921384945491175,
+              "win": 0.47032961172769505,
+              "push": 0.02180888282142246,
+              "conditional": 0.48081566420709193,
               "breakEven": 0.5121951219512195,
               "market": 0.4891657638136511,
-              "edge": -0.020056627402102012,
-              "ev": -0.03915817730886584
+              "edge": -0.03137945774412759,
+              "ev": -0.05992854190069674
             }
           ]
         },
@@ -1698,8 +1698,8 @@
           "market": "moneyline",
           "book": "caesars",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:03.103Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.431Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1731,8 +1731,8 @@
           "market": "spread",
           "book": "draftkings",
           "line": 8.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:00.524Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:01.095Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1763,33 +1763,33 @@
         {
           "market": "total",
           "book": "draftkings",
-          "line": 223.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:00.524Z",
+          "line": 222.5,
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:01.095Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
             {
               "label": "Over",
-              "odds": -108,
-              "win": 0.5078615054508825,
+              "odds": -115,
+              "win": 0.529670388272305,
               "push": 0,
-              "conditional": 0.5078615054508825,
-              "breakEven": 0.5192307692307693,
-              "market": 0.4956702459300312,
-              "edge": -0.011369263779886785,
-              "ev": -0.021896359872374482
+              "conditional": 0.529670388272305,
+              "breakEven": 0.5348837209302325,
+              "market": 0.5108342361863488,
+              "edge": -0.005213332657927561,
+              "ev": -0.009746665403951638
             },
             {
               "label": "Under",
-              "odds": -112,
-              "win": 0.4921384945491175,
+              "odds": -105,
+              "win": 0.47032961172769505,
               "push": 0,
-              "conditional": 0.4921384945491175,
-              "breakEven": 0.5283018867924528,
-              "market": 0.5043297540699688,
-              "edge": -0.03616339224333531,
-              "ev": -0.06845213531774186
+              "conditional": 0.47032961172769505,
+              "breakEven": 0.5121951219512195,
+              "market": 0.4891657638136511,
+              "edge": -0.04186551022352447,
+              "ev": -0.0817374247221192
             }
           ]
         },
@@ -1797,8 +1797,8 @@
           "market": "moneyline",
           "book": "draftkings",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:00.524Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:39:01.095Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1830,8 +1830,8 @@
           "market": "spread",
           "book": "fanatics",
           "line": 8.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.722Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.527Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1862,9 +1862,9 @@
         {
           "market": "total",
           "book": "fanatics",
-          "line": 223.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.722Z",
+          "line": 223,
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.527Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -1872,23 +1872,23 @@
               "label": "Over",
               "odds": -110,
               "win": 0.5078615054508825,
-              "push": 0,
-              "conditional": 0.5078615054508825,
+              "push": 0.02180888282142246,
+              "conditional": 0.5191843357929081,
               "breakEven": 0.5238095238095238,
               "market": 0.5,
-              "edge": -0.015948018358641347,
-              "ev": -0.030446216866497067
+              "edge": -0.004625188016615711,
+              "ev": -0.008637334045074607
             },
             {
               "label": "Under",
               "odds": -110,
-              "win": 0.4921384945491175,
-              "push": 0,
-              "conditional": 0.4921384945491175,
+              "win": 0.47032961172769505,
+              "push": 0.02180888282142246,
+              "conditional": 0.48081566420709193,
               "breakEven": 0.5238095238095238,
               "market": 0.5,
-              "edge": -0.031671029260406325,
-              "ev": -0.06046287404259387
+              "edge": -0.042993859602431905,
+              "ev": -0.08028913115297792
             }
           ]
         },
@@ -1896,8 +1896,8 @@
           "market": "moneyline",
           "book": "fanatics",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:02.722Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:02.527Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1929,8 +1929,8 @@
           "market": "spread",
           "book": "fanduel",
           "line": 8.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:20.552Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:20.551Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -1962,8 +1962,8 @@
           "market": "total",
           "book": "fanduel",
           "line": 223.5,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:20.552Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:20.551Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 9,
           "sides": [
@@ -1995,8 +1995,8 @@
           "market": "moneyline",
           "book": "fanduel",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:06:20.552Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:20.551Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -2028,8 +2028,8 @@
           "market": "spread",
           "book": "rebet",
           "line": 8,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:46.027Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:45.666Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
@@ -2061,8 +2061,8 @@
           "market": "moneyline",
           "book": "rebet",
           "line": 0,
-          "quoteAt": "2026-11-24T02:04:27Z",
-          "sourceUpdatedAt": "2026-11-24T02:05:46.027Z",
+          "quoteAt": "2026-11-24T02:37:13Z",
+          "sourceUpdatedAt": "2026-11-24T02:38:45.666Z",
           "tip": "2026-11-24T03:00:00Z",
           "bookCount": 10,
           "sides": [
