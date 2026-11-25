@@ -105,6 +105,20 @@ func main() {
 		Combos:      buildComboRecord(comboSettled, 120),
 		Lines:       buildLinesRecord(*dir),
 	}
+	// The in-game tracker is observational: the saved pregame pick remains
+	// immutable, while current box scores and strictly post-tip quotes are
+	// included in the same public/Whop board payload. No second unauthenticated
+	// static endpoint is introduced for private deployments.
+	if raw, e := os.ReadFile(filepath.Join(*dir, "halftime.json")); e == nil {
+		var live struct {
+			Schema int `json:"schema"`
+			Date string `json:"date"`
+			CapturedAt string `json:"capturedAt"`
+		}
+		if json.Unmarshal(raw, &live) == nil && live.Schema == 1 && live.Date == *date {
+			site.Halftime = raw
+		}
+	}
 	site.GameRecord, err = gameboard.LoadResults(*dir)
 	if err != nil {
 		fatal(err)
