@@ -4,6 +4,16 @@ on:
     paths:
       - 'scripts/archive_forward_evidence.py'
       - 'cmd/predict/**'
+      - 'cmd/halftime/**'
+      - 'site/src/InGame.jsx'
+      - 'site/src/inGameData.js'
+      - 'site/src/inGameData.test.js'
+      - 'site/src/ingame.scss'
+      - 'scripts/publish_in_game.py'
+      - 'scripts/test_publish_in_game.py'
+      - '.github/workflows/halftime.yml'
+      - 'cmd/export/export.go'
+      - 'cmd/export/main.go'
       - 'scripts/publish_v5_lab.py'
       - 'scripts/test_publish_v5_lab.py'
       - 'site/src/V5LiveEvidence.jsx'
@@ -90,6 +100,7 @@ jobs:
           python3 -m unittest discover -s scripts -p test_verify_pregame_injuries.py -v
           python3 -m unittest discover -s scripts -p test_fast_pregame.py -v
           python3 -m unittest discover -s scripts -p test_workflow_mode.py -v
+          python3 -m unittest discover -s scripts -p test_publish_in_game.py -v
       - uses: actions/setup-node@v4
         with:
           node-version: 22
