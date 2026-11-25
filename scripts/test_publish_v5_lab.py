@@ -38,7 +38,7 @@ class V5PublicEvidenceTests(unittest.TestCase):
         payload=json.dumps(raw)
         self.assertEqual(raw["policy"],"rotation-v5")
         self.assertEqual(raw["stats"][1]["stat"],"threes")
-        for sensitive in ("PRIVATE","444","privateLine","private-player","22.5",'"line"'):
+        for sensitive in ("PRIVATE",'"playerId"','"player_id"',"privateLine","private-player","22.5",'"line"'):
             self.assertNotIn(sensitive,payload)
 
     def test_no_fabricated_score_from_single_slate(self):
