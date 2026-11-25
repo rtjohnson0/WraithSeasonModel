@@ -1,0 +1,80 @@
+name: Wraith halftime quick check
+
+on:
+  workflow_dispatch:
+  # Best-effort five-minute polls during evening NBA games. GitHub
+  # scheduling is not guaranteed; dispatch manually during halftime.
+  schedule:
+    - cron: '*/5 0-4,22-23 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: wraith-halftime-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: github.ref_name == github.event.repository.default_branch && (vars.WRAITH_DELIVERY || 'public') == 'public'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Fetch only in-game player stats and verified post-tip offers
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+        run: |
+          test -n "$BALLDONTLIE_API_KEY" || { echo "Missing BALLDONTLIE_API_KEY"; exit 1; }
+          timeout 180s go run ./cmd/halftime -data data -out data/halftime.json
+
+      - name: Determine whether original picks have usable live stats
+        id: eligible
+        run: |
+          python3 - <<'PY'
+          import json,os
+          r=json.load(open('data/halftime.json'))
+          n=sum(bool(p.get('hasLiveStats')) for p in r.get('plays',[]))
+          enabled=n>0
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write(f"publish={str(enabled).lower()}\n")
+          print(f"Verified current-game box scores for {n} original prop comparisons.")
+          PY
+
+      - name: Overlay onto latest public board; leave pregame lines unchanged
+        if: steps.eligible.outputs.publish == 'true'
+        run: python3 scripts/publish_in_game.py
+
+      - uses: actions/setup-node@v4
+        if: steps.eligible.outputs.publish == 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Build only the public site (no data downloads or model retraining)
+        if: steps.eligible.outputs.publish == 'true'
+        working-directory: site
+        run: |
+          npm ci
+          npm run build
+
+      - uses: actions/configure-pages@v5
+        if: steps.eligible.outputs.publish == 'true'
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.eligible.outputs.publish == 'true'
+        with:
+          path: site/dist
+      - uses: actions/deploy-pages@v4
+        id: deployment
+        if: steps.eligible.outputs.publish == 'true'

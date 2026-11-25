@@ -299,6 +299,7 @@ type Record struct {
 
 // Site is everything the website reads.
 type Site struct {
+	Halftime json.RawMessage `json:"halftime,omitempty"`
 	HistoricalCombos     ComboRecord         `json:"historicalCombos,omitempty"`
 	ResultAudits         []json.RawMessage   `json:"resultAudits,omitempty"`
 	SideAudit            json.RawMessage     `json:"sideAudit,omitempty"`
