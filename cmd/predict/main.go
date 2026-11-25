@@ -263,15 +263,18 @@ func main() {
 
 	out := map[int]string{}
 	injPath := filepath.Join(snapDir, fmt.Sprintf("injuries_%s.jsonl", *date))
-	if o, err := props.LoadOut(injPath, *doubtful); err == nil {
-		out = o
-	} else if strings.HasPrefix(config, "lineup") {
-		fatal(fmt.Errorf("lineup model requires a current injury snapshot; refresh cmd/pull snapshot before predicting"))
+	// A completed same-capture league-wide report is mandatory. The old
+	// append-only per-player status reader could preserve a stale "Out"
+	// when that player disappeared from a newer report.
+	statuses, _, injuryErr := props.LoadCapturedInjuries(snapDir, *date, runAt)
+	if injuryErr != nil {
+		fatal(fmt.Errorf("cannot issue new picks without current injuries for both teams: %w", injuryErr))
 	}
-
-	statuses, _ := props.LoadStatuses(injPath)
-	if statuses == nil {
-		statuses = map[int]string{}
+	for pid, status := range statuses {
+		st := strings.ToLower(status)
+		if strings.Contains(st, "out") || (*doubtful && strings.Contains(st, "doubtful")) {
+			out[pid] = status
+		}
 	}
 	if inj := loadESPN(snapDir, *date); len(inj) > 0 {
 		byName := map[string]int{}
