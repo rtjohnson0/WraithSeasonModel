@@ -6,6 +6,7 @@ import './board-design.scss'
 import './record-design.scss'
 import './v21-lab.scss'
 import './v21-games.scss'
+import './ingame.scss'
 
 // A render error should show a message, not a blank page.
 class Boundary extends React.Component {

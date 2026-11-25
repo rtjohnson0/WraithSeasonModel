@@ -4,6 +4,7 @@ import Record from './Record.jsx'
 import Combos from './Combos.jsx'
 import V2 from './V2.jsx'
 import V21Lab from './V21Lab.jsx'
+import InGame from './InGame.jsx'
 import About from './About.jsx'
 
 const PRIVATE_BOARD = import.meta.env.VITE_PRIVATE_BOARD === 'true'
@@ -14,6 +15,7 @@ const PAGES = [
   ['combos', 'Combos'],
   ['record', 'Record'],
   ['v2', 'V2 test'],
+  ['ingame', 'In-Game'], 
   ['lab', 'V2.1 Lab'],
   ['about', 'How it works'],
 ]
@@ -106,6 +108,7 @@ export default function App() {
         {site && page === 'record' && <Record site={site} />}
         {site && page === 'v2' && <V2 site={site} />}
         {site && page === 'lab' && <V21Lab />}
+        {site && page === 'ingame' && <InGame site={site} />}
         {site && page === 'about' && <About site={site} />}
       </main>
 
