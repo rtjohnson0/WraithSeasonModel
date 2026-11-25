@@ -759,10 +759,28 @@ func snapshotOnce(c *bdl.Client, date string) error {
 	err = c.Paginate("/nba/v1/player_injuries", url.Values{}, func(raw json.RawMessage) error {
 		return writeWrapped(injOut, captured, raw)
 	})
-	injOut.Close()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "injuries:", err)
+	if closeErr := injOut.Close(); err == nil {
+		err = closeErr
 	}
+	if err != nil {
+		// The injury source must be complete before any new slate is published.
+		// Continuing with no statuses silently treats absent teammates as healthy
+		// and invalidates both teams' projected minutes and usage.
+		return fmt.Errorf("incomplete current injury report: %w", err)
+	}
+
+	// A successful empty list can be legitimate. Save a timestamped
+	// completion receipt so a pretip run can distinguish it from a failed
+	// or missing fetch; no player-level medical data is included.
+	receipt := struct {
+		Date string `json:"date"`
+		CapturedAt string `json:"captured_at"`
+		Games int `json:"games"`
+		InjuriesComplete bool `json:"injuries_complete"`
+	}{Date: date, CapturedAt: captured, Games:len(ids), InjuriesComplete:true}
+	receiptBody, err := json.MarshalIndent(receipt, "", "  ")
+	if err != nil { return err }
+	if err := os.WriteFile(filepath.Join(dataDir, "snapshots", fmt.Sprintf("injury_health_%s.json", date)), receiptBody, 0o644); err != nil { return err }
 
 	// 5. ESPN's injury list, a second opinion on the report above. Best effort: a failure here
 	// never stops the snapshot (see internal/espn).

@@ -24,8 +24,8 @@ on:
       mode:
         description: What to run
         type: choice
-        default: daily
-        options: [bootstrap, daily, pretip, site]
+        default: fast
+        options: [fast, daily, pretip, site, bootstrap]
 
 permissions:
   actions: read
@@ -84,7 +84,8 @@ jobs:
           cache: false # Standard-library-only module: no go.sum to hash.
 
       - name: Check source and merge regression tests
-        if: steps.mode.outputs.active == 'true'
+        # Fast mode uses already-reviewed main and runs only the live data path.
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'fast'
         run: |
           go test ./...
           python3 -m unittest discover -s scripts -p 'test_*.py'
@@ -110,7 +111,7 @@ jobs:
       # Separate, resumable historical sportsbook openings; never restores an
       # old model or calibration. Raw opening prices stay in ignored caches.
       - name: Restore independent historical prop odds backfill
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site' && steps.mode.outputs.mode != 'fast'
         uses: actions/cache/restore@v4
         with:
           path: data/prop_backfill
@@ -119,13 +120,13 @@ jobs:
             prop-history-v1-${{ github.ref_name }}-
 
       - name: Import immutable opening odds without replacing existing originals
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site' && steps.mode.outputs.mode != 'fast'
         run: python3 scripts/prop_history_cache.py --mode import
 
       # Merge the quote-only near-tip snapshot cache after regular inputs. This
       # never overwrites tracked prediction logs or changes the selection policy.
       - name: Restore near-tip quote evidence
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site' && steps.mode.outputs.mode != 'fast'
         uses: actions/cache/restore@v4
         with:
           path: data/near_tip_snapshots
@@ -134,11 +135,11 @@ jobs:
             close-quotes-v1-${{ github.ref_name }}-
 
       - name: Merge independent near-tip quotes without replacing old evidence
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site' && steps.mode.outputs.mode != 'fast'
         run: python3 scripts/merge_near_tip_snapshots.py --source data/near_tip_snapshots --target data/snapshots
 
       - name: Import latest background tracking batch
-        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site'
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode != 'site' && steps.mode.outputs.mode != 'fast'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 scripts/import_context_artifact.py || echo "Background context import unavailable; cached inputs retained"
@@ -194,6 +195,14 @@ jobs:
           if [ "$MONTH" -ge 8 ]; then CUR=$YEAR; else CUR=$((YEAR-1)); fi
           go run ./cmd/pull advanced -seasons "$((CUR-1)),$CUR"
 
+      - name: Fast cached pregame refresh
+        if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'fast'
+        timeout-minutes: 12
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+          SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
+        run: bash scripts/fast_pregame.sh
+
       - name: Morning run
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'daily'
         env:
@@ -201,12 +210,13 @@ jobs:
           SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
         run: bash scripts/daily.sh
 
-      - name: Pre-tip run
+      - name: Pre-tip run (same cached fast path)
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'pretip'
+        timeout-minutes: 12
         env:
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
           SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
-        run: bash scripts/pretip.sh
+        run: bash scripts/fast_pregame.sh
 
       - name: Restore missing published board on source-only pushes
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'site'

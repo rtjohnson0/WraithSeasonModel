@@ -10,7 +10,7 @@ def select(event, requested, schedule, branch, default_branch, now=None):
     if event == 'push':
         return ('daily' if requested == 'daily' else 'site'), True
     if event == 'workflow_dispatch':
-        if requested not in {'bootstrap', 'daily', 'pretip', 'site'}:
+        if requested not in {'bootstrap', 'daily', 'pretip', 'site', 'fast'}:
             raise ValueError('Unknown workflow mode')
         return requested, True
     now = now or datetime.now(ZoneInfo('America/New_York'))
