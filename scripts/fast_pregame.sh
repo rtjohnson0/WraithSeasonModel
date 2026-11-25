@@ -23,6 +23,11 @@ echo "== FAST: fetch NEW pregame sportsbook lines, game odds and injury statuses
 # Do not fall back to yesterday's sportsbook odds if this fails.
 timeout 360s go run ./cmd/pull snapshot
 
+# Complete current BDL injuries for ALL scheduled teams are mandatory.
+# This check fails closed if the API was throttled, the report is older than
+# 30 minutes, or the schedule lacks a home/away team. Never reuse yesterday's.
+python3 scripts/verify_pregame_injuries.py
+
 echo "== FAST: latest projected lineups (bounded; missing context remains unknown) =="
 timeout 90s go run ./cmd/pull context -live || echo "Projected lineups unavailable; only verified earlier context is usable"
 
