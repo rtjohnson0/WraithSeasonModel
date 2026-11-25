@@ -66,7 +66,7 @@ jobs:
         if: steps.eligible.outputs.publish == 'true'
         working-directory: site
         run: |
-          npm ci --ignore-scripts
+          npm ci
           npm run build
 
       - uses: actions/configure-pages@v5
