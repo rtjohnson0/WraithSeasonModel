@@ -146,6 +146,22 @@ func run(c *bdl.Client,dir,date string,now time.Time)(Report,error){
  if snapshot==nil||snapshot.Date!=date{return Report{},errors.New("no matching saved pregame board; do not reconstruct from a new live book")}
  var v2 struct {Date string `json:"date"`;Plays []picklog.Entry `json:"plays"`}
  if raw,err:=os.ReadFile(filepath.Join(dir,"v2.json"));err==nil{_ = json.Unmarshal(raw,&v2)}
+ // A later pretip refresh may replace v2.json with only future games.
+ // Restore each originally posted started-game V5 entry from the immutable
+ // verified log, but do NOT resurrect removed pregame picks for unstarted games.
+ if v2.Date==date {
+  seen:=map[string]bool{}
+  for _,p:=range v2.Plays {seen[p.ID()]=true}
+  history,err:=picklog.Load(filepath.Join(dir,"v2_guardedlog.jsonl"))
+  if err==nil {
+   for _,p:=range history {
+    if p.Date==date && !seen[p.ID()] {
+     v2.Plays=append(v2.Plays,p)
+     seen[p.ID()]=true
+    }
+   }
+  }
+ }
  report:=Report{Schema:1,Date:date,CapturedAt:now.UTC().Format(time.RFC3339),DataStatus:"Live game boxes; market probabilities are sportsbook-implied, not model predictions",Plays:[]Progress{}}
  var league struct{Data []struct{ID int `json:"id"`;Status string `json:"status"`;Date string `json:"date"`} `json:"data"`}
  q:=url.Values{"dates[]":{date}}
