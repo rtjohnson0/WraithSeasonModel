@@ -12,6 +12,8 @@ class ModeTests(unittest.TestCase):
             self.assertEqual(select('schedule','',f'17 {rejected} * * *','main','main',now),('daily',False))
     def test_manual_mode_and_branch(self):
         self.assertEqual(select('workflow_dispatch','site','','main','main'),('site',True))
+        self.assertEqual(select('workflow_dispatch','fast','','main','main'),('fast',True))
+        self.assertEqual(select('workflow_dispatch','daily','','main','main'),('daily',True))
         self.assertEqual(select('push','','','main','main'),('site',True))
         self.assertEqual(select('push','daily','','main','main'),('daily',True))
         with self.assertRaises(ValueError):select('workflow_dispatch','site','','feature','main')
