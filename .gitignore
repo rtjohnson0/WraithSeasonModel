@@ -36,8 +36,6 @@ __pycache__/
 *.pyc
 
 !data/board.json
-# Same-day, public-board-only read-only in-game monitoring snapshot.
-!data/halftime.json
 
 !data/gameboard.json
 
