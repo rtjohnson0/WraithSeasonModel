@@ -54,13 +54,13 @@ type rotationForecast struct {
 func freshRotationStatuses(injuryPath, snapDir, date string, now time.Time, b *feat.Builder, roster map[int]int, games map[int]props.GameInfo) map[int]availability.Status {
 	// Only statuses in the most recent COMPLETED injury batch are usable.
 	// Earlier append-only records can be stale even when <30 minutes old.
-	_, at, err := props.LoadCapturedInjuries(snapDir, date, now)
+	_, captureAt, err := props.LoadCapturedInjuries(snapDir, date, now)
 	if err != nil {
 		return map[int]availability.Status{}
 	}
 	statuses := availability.FreshStatuses(injuryPath, now, 30*time.Minute)
 	for pid, st := range statuses {
-		if st.At != at {
+		if st.At != captureAt {
 			delete(statuses, pid)
 			continue
 		}
