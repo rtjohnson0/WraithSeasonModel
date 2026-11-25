@@ -42,13 +42,13 @@ export default function InGame({ site }) {
             <div><small>Original pick</small><strong>{p.originalSide} {p.originalLine}</strong><em>{oddsText(p.originalOdds)} · pregame</em></div>
             <div><small>Live box score</small><strong>{p.hasLiveStats?p.current:'—'}</strong><em>{p.hasLiveStats?(p.remainingToOver===0?'Over original line cleared':`${p.remainingToOver} more to clear original Over`):'Live score unavailable'}</em></div>
           </div>
-          {live && <div className="ingame-market">
+          {live && market && <div className="ingame-market">
             <p className="ingame-market-head">CURRENT IN-PLAY FULL-GAME BOOK · {live.book}</p>
             <strong>O/U {live.line}</strong>
             <div className="ingame-market-pcts"><span>Over <b>{Math.round(market.over*100)}%</b> <small>{oddsText(live.overOdds)}</small></span><span>Under <b>{Math.round(market.under*100)}%</b> <small>{oddsText(live.underOdds)}</small></span></div>
             <small>Book-updated {new Date(live.updatedAt).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}. Market-implied only, NOT a V2 probability.</small>
           </div>}
-          {!live && <div className="ingame-absent">Live sportsbook line not verified. Original line is for comparison only; don't treat it as a currently available bet.</div>}
+          {(!live || !market) && <div className="ingame-absent">Live sportsbook line not verified. Original line is for comparison only; don't treat it as a currently available bet.</div>}
         </article>
       })}</div>
     </>}
