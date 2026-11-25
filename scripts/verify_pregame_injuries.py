@@ -59,9 +59,9 @@ def verify(snapshot_dir: Path, now: datetime):
     unique_games = set()
     home_teams, away_teams = set(), set()
     for game in games:
-        if not isinstance(game, dict) or game.get("date") != date:
+        if not isinstance(game, dict) or game.get("Date") != date:
             raise ValueError("Missing game/date identity")
-        game_id, home, away = game.get("id"), game.get("home"), game.get("visitor")
+        game_id, home, away = game.get("ID"), game.get("Home"), game.get("Visitor")
         if not all(type(x) is int and x > 0 for x in (game_id, home, away)) or home == away:
             raise ValueError("Missing home or away team identity")
         if game_id in unique_games:
