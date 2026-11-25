@@ -210,12 +210,13 @@ jobs:
           SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
         run: bash scripts/daily.sh
 
-      - name: Pre-tip run
+      - name: Pre-tip run (same cached fast path)
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'pretip'
+        timeout-minutes: 12
         env:
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
           SPORTSGAMEODDS_API_KEY: ${{ secrets.SPORTSGAMEODDS_API_KEY }}
-        run: bash scripts/pretip.sh
+        run: bash scripts/fast_pregame.sh
 
       - name: Restore missing published board on source-only pushes
         if: steps.mode.outputs.active == 'true' && steps.mode.outputs.mode == 'site'
