@@ -40,7 +40,7 @@ export default function InGame({ site }) {
           <h2>{p.player}</h2><p className="ingame-sub">{p.matchup || 'Matchup pending'} · {statLabel[p.stat]||p.stat}</p>
           <div className="ingame-statgrid">
             <div><small>Original pick</small><strong>{p.originalSide} {p.originalLine}</strong><em>{oddsText(p.originalOdds)} · pregame</em></div>
-            <div><small>Live box score</small><strong>{p.hasLiveStats?p.current:'—'}</strong><em>{p.hasLiveStats?(p.remainingToOver===0?'Over original line cleared':`${p.remainingToOver} more to clear original Over`):'Live score unavailable'}</em></div>
+            <div><small>Live box score</small><strong>{p.hasLiveStats?p.current:'—'}</strong><em>{p.hasLiveStats?(p.originalSide==='UNDER'?(p.atOrAboveLine?'Original Under appears exceeded':'Original Under still below line'):(p.remainingToOver===0?'Over original line cleared':`${p.remainingToOver} more to clear original Over`)):'Live score unavailable'}</em></div>
           </div>
           {p.halftimeBox && <div className="ingame-halfbox">
             <p className="ingame-market-head">RECORDED AT HALFTIME · FIRST-HALF BOX</p>
