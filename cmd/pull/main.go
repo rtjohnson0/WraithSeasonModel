@@ -708,8 +708,7 @@ func snapshotOnce(c *bdl.Client, date string) error {
 		if err != nil {
 			return err
 		}
-		if err := empty.Close(); err != nil { return err }
-		return fmt.Errorf("no games on %s; no new pregame board can be generated", date)
+		return empty.Close()
 	}
 
 	// 2. Live player props, one call per game.
