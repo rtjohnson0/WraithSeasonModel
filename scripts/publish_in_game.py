@@ -33,6 +33,23 @@ def accept(board, halftime):
         raise ValueError("Refusing to publish an outdated in-game snapshot")
     # Work with a fresh JSON object, preserving the entire original public
     # dashboard: records, source timestamps, historical picks, game markets.
+    # Preserve a verified halftime-only box after the game resumes. Never
+    # manufacture halftime values from a 3Q/4Q cumulative score.
+    previous = board.get("halftime")
+    if isinstance(previous, dict) and previous.get("date") == date:
+        old = {}
+        for p in previous.get("plays", []):
+            if isinstance(p, dict) and isinstance(p.get("halftimeBox"), dict):
+                k = (p.get("model"), p.get("gameId"), p.get("player"),
+                     p.get("stat"), p.get("originalLine"), p.get("originalSide"))
+                old[k] = p["halftimeBox"]
+        for p in halftime["plays"]:
+            if not isinstance(p, dict):
+                continue
+            k = (p.get("model"), p.get("gameId"), p.get("player"),
+                 p.get("stat"), p.get("originalLine"), p.get("originalSide"))
+            if not isinstance(p.get("halftimeBox"), dict) and k in old:
+                p["halftimeBox"] = old[k]
     out = dict(board)
     out["halftime"] = halftime
     out["generatedAt"] = instant.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
