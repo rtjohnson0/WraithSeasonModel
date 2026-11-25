@@ -42,6 +42,15 @@ export default function InGame({ site }) {
             <div><small>Original pick</small><strong>{p.originalSide} {p.originalLine}</strong><em>{oddsText(p.originalOdds)} · pregame</em></div>
             <div><small>Live box score</small><strong>{p.hasLiveStats?p.current:'—'}</strong><em>{p.hasLiveStats?(p.remainingToOver===0?'Over original line cleared':`${p.remainingToOver} more to clear original Over`):'Live score unavailable'}</em></div>
           </div>
+          {p.halftimeBox && <div className="ingame-halfbox">
+            <p className="ingame-market-head">RECORDED AT HALFTIME · FIRST-HALF BOX</p>
+            <div className="ingame-halfbox-values">
+              <span><b>{p.halftimeBox.points}</b><small>PTS</small></span>
+              <span><b>{p.halftimeBox.rebounds}</b><small>REB</small></span>
+              <span><b>{p.halftimeBox.assists}</b><small>AST</small></span>
+              <span><b>{p.halftimeBox.threes}</b><small>3PM</small></span>
+            </div>
+          </div>}
           {live && market && <div className="ingame-market">
             <p className="ingame-market-head">CURRENT IN-PLAY FULL-GAME BOOK · {live.book}</p>
             <strong>O/U {live.line}</strong>
