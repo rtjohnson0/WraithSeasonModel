@@ -44,3 +44,21 @@ func TestMarketImpliedIsNotV2Probability(t *testing.T) {
  over,under:=noVig(-125,105)
  if !(over>0.5 && over<0.6 && under<0.5){t.Fatalf("incorrect no-vig odds %v %v",over,under)}
 }
+
+
+func TestDedicatedLiveBoxGetsBothTeamStatsWithoutGuessingAbsentPlayers(t *testing.T){
+ live:=json.RawMessage(`{
+ "date":"2026-11-25","status":"Halftime",
+ "home_team":{"id":7,"players":[
+  {"player":{"id":101},"pts":12,"reb":3,"ast":4,"fg3m":2},
+  {"player":{"id":102},"pts":null,"reb":0,"ast":0,"fg3m":0}]},
+ "visitor_team":{"id":16,"players":[
+  {"player":{"id":201},"pts":15,"reb":5,"ast":2,"fg3m":1}]}
+ }`)
+ game,stats,ok:=parseLiveBox(live,map[string]int{"7/16":222})
+ if !ok||game.ID!=222||game.Status!="Halftime"||len(stats)!=2{
+  t.Fatalf("live box should map home and away and exclude incomplete rows: %#v %#v",game,stats)
+ }
+ if stats[101].Assists!=4||stats[201].Threes!=1{t.Fatal("incorrect halftime data",stats)}
+ if _,_,ok:=parseLiveBox(live,map[string]int{"7/28":222});ok{t.Fatal("unmatched game cannot use another team's live box")}
+}
