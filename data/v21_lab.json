@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "policy": "v21-minute-guard-and-cap-20261121",
-  "generatedAt": "2026-11-25T05:40:20Z",
+  "generatedAt": "2026-11-25T22:27:36Z",
   "through": "2026-11-21",
   "model": "rotation-v4",
   "status": "insufficient_evaluation_dates",
