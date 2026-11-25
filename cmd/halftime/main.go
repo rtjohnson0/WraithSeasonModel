@@ -145,6 +145,45 @@ func makeProgress(entries []picklog.Entry,model string,game Game,stats map[int]S
  }
  return out
 }
+// The dedicated BDL live box-score endpoint returns cumulative player totals
+// nested inside BOTH teams, not the historical /stats page format. Resolve
+// game IDs by original schedule team IDs if a provider record omits the ID.
+type apiBoxPlayer struct {
+ Player struct{ID int `json:"id"`} `json:"player"`
+ Pts *float64 `json:"pts"`
+ Reb *float64 `json:"reb"`
+ Ast *float64 `json:"ast"`
+ Fg3m *float64 `json:"fg3m"`
+}
+type apiBoxTeam struct {
+ ID int `json:"id"`
+ Players []apiBoxPlayer `json:"players"`
+}
+func parseLiveBox(raw json.RawMessage, known map[string]int)(Game,map[int]StatLine,bool){
+ var b struct{
+  ID int `json:"id"`
+  GameID int `json:"game_id"`
+  Date string `json:"date"`
+  Status string `json:"status"`
+  Home apiBoxTeam `json:"home_team"`
+  Away apiBoxTeam `json:"visitor_team"`
+ }
+ if json.Unmarshal(raw,&b)!=nil||!running(b.Status)||b.Home.ID<=0||b.Away.ID<=0 {return Game{},nil,false}
+ expected:=known[fmt.Sprintf("%d/%d",b.Home.ID,b.Away.ID)]
+ if expected<=0 {return Game{},nil,false}
+ id:=b.ID
+ if id==0 {id=b.GameID}
+ if id>0&&id!=expected{return Game{},nil,false}
+ stats:=map[int]StatLine{}
+ for _,team:=range []apiBoxTeam{b.Home,b.Away}{
+  for _,p:=range team.Players{
+   if p.Player.ID<=0||p.Pts==nil||p.Reb==nil||p.Ast==nil||p.Fg3m==nil {continue}
+   stats[p.Player.ID]=StatLine{GameID:expected,PlayerID:p.Player.ID,
+    Points:*p.Pts,Rebounds:*p.Reb,Assists:*p.Ast,Threes:*p.Fg3m}
+  }
+ }
+ return Game{ID:expected,Status:b.Status,Date:b.Date},stats,true
+}
 func run(c *bdl.Client,dir,date string,now time.Time)(Report,error){
  snapshot,err:=boardstate.Load(dir)
  if err!=nil{return Report{},err}
@@ -168,29 +207,40 @@ func run(c *bdl.Client,dir,date string,now time.Time)(Report,error){
   }
  }
  report:=Report{Schema:1,Date:date,CapturedAt:now.UTC().Format(time.RFC3339),DataStatus:"Live game boxes; market probabilities are sportsbook-implied, not model predictions",Plays:[]Progress{}}
- var league struct{Data []struct{ID int `json:"id"`;Status string `json:"status"`;Date string `json:"date"`} `json:"data"`}
- q:=url.Values{"dates[]":{date}}
- raw,err:=c.Get("/nba/v1/games",q)
+ var league struct{Data []struct{
+  ID int `json:"id"`
+  Date string `json:"date"`
+  Home struct{ID int `json:"id"`} `json:"home_team"`
+  Away struct{ID int `json:"id"`} `json:"visitor_team"`
+ } `json:"data"`}
+ raw,err:=c.Get("/nba/v1/games",url.Values{"dates[]":{date}})
  if err!=nil{return report,err}
  if err=json.Unmarshal(raw,&league);err!=nil{return report,err}
  saved:=map[int]bool{}
  for _,g:=range snapshot.Games{saved[g.ID]=true}
+ known:=map[string]int{}
  for _,g:=range league.Data{
-  if !saved[g.ID]||!running(g.Status){continue}
-  game:=Game{ID:g.ID,Status:g.Status,Date:g.Date}
-  stats:=map[int]StatLine{}
-  query:=url.Values{"game_ids[]":{strconv.Itoa(g.ID)}}
-  err:=c.Paginate("/nba/v1/stats",query,func(raw json.RawMessage)error{
-   stat,ok:=parseStats(raw);if ok&&stat.GameID==g.ID{stats[stat.PlayerID]=stat};return nil
-  })
-  if err!=nil{continue} // never show an unverified 0 as a live score
+  if saved[g.ID]&&g.Date==date&&g.Home.ID>0&&g.Away.ID>0{
+   known[fmt.Sprintf("%d/%d",g.Home.ID,g.Away.ID)]=g.ID
+  }
+ }
+ // One dedicated live-box request replaces repeated historical-stats
+ // requests for every in-progress game. No score is inferred from absence.
+ current,err:=c.Get("/nba/v1/box_scores/live",url.Values{})
+ if err!=nil{return report,err}
+ var boxes struct{Data []json.RawMessage `json:"data"`}
+ if err=json.Unmarshal(current,&boxes);err!=nil{return report,err}
+ for _,raw:=range boxes.Data{
+  game,stats,ok:=parseLiveBox(raw,known)
+  if !ok||game.Date!=date{continue}
   offers:=map[string]props.Line{}
-  if halftime(g.Status){
-   // One small quote request; unavailable/closed/stale live markets are omitted.
-   if raw,e:=c.Get("/nba/v2/odds/player_props",url.Values{"game_id":{strconv.Itoa(g.ID)}});e==nil{
+  if halftime(game.Status){
+   // One bounded quote request per actual halftime game; missing live
+   // prices are not guessed or replaced with pregame odds.
+   if quotes,e:=c.Get("/nba/v2/odds/player_props",url.Values{"game_id":{strconv.Itoa(game.ID)}});e==nil{
     tip:=now
-    for _,item:=range snapshot.Games{if item.ID==g.ID{if v,e:=time.Parse(time.RFC3339,item.Tip);e==nil{tip=v}}}
-    offers=parseLiveOffers(raw,g.ID,now,tip)
+    for _,item:=range snapshot.Games{if item.ID==game.ID{if v,e:=time.Parse(time.RFC3339,item.Tip);e==nil{tip=v}}}
+    offers=parseLiveOffers(quotes,game.ID,now,tip)
    }
   }
   report.Plays=append(report.Plays,makeProgress(snapshot.Plays,"Board",game,stats,offers,report.CapturedAt)...)
