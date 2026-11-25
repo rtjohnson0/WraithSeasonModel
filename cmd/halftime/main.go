@@ -43,6 +43,7 @@ type Offer struct {
  UnderMarketProb float64 `json:"underMarketProb"`
  UpdatedAt string `json:"updatedAt"`
 }
+type Box struct { Points float64 `json:"points"`; Rebounds float64 `json:"rebounds"`; Assists float64 `json:"assists"`; Threes float64 `json:"threes"` }
 type Progress struct {
  Model string `json:"model"`
  GameID int `json:"gameId"`
@@ -60,6 +61,8 @@ type Progress struct {
  RemainingToOver int `json:"remainingToOver"`
  AtOrAboveLine bool `json:"atOrAboveLine"`
  HasLiveStats bool `json:"hasLiveStats"`
+ Box *Box `json:"box,omitempty"`
+ HalftimeBox *Box `json:"halftimeBox,omitempty"`
  Live *Offer `json:"live,omitempty"`
 }
 type Report struct { Schema int `json:"schema"`; Date string `json:"date"`; CapturedAt string `json:"capturedAt"`; DataStatus string `json:"dataStatus"`; Plays []Progress `json:"plays"` }
@@ -128,6 +131,8 @@ func makeProgress(entries []picklog.Entry,model string,game Game,stats map[int]S
   s,exists:=stats[p.PlayerID]
   progress:=Progress{Model:model,GameID:game.ID,Player:p.Player,Stat:p.Stat,OriginalLine:p.Line,OriginalSide:p.Side,OriginalOdds:p.Odds,OriginalProb:p.Prob,OriginalAt:p.LoggedAt,Tip:p.Tip,Matchup:p.Matchup,GameStatus:game.Status,HasLiveStats:exists}
   if exists {
+   progress.Box=&Box{Points:s.Points,Rebounds:s.Rebounds,Assists:s.Assists,Threes:s.Threes}
+   if halftime(game.Status) {progress.HalftimeBox=progress.Box}
    progress.Current=statValue(s,p.Stat)
    progress.RemainingToOver=thresholdRemaining(p.Line,progress.Current)
    progress.AtOrAboveLine=progress.Current>=p.Line
