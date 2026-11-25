@@ -1,7 +1,7 @@
 {
   "activeStats": [],
-  "at": "2026-11-25T03:37:32Z",
-  "before": "2026-11-24",
+  "at": "2026-11-25T05:34:08Z",
+  "before": "2026-11-25",
   "byStat": {
     "pa": {
       "eligibleDates": 7,
@@ -52,8 +52,7 @@
   "evidenceUnit": "date-clustered paired log-loss improvement; each slate counts once",
   "excluded": {
     "different model version": 2089,
-    "final actuals pending or identity review": 123,
-    "forecast date not completed": 131,
+    "final actuals pending or identity review": 254,
     "quote timing or book checks": 136
   },
   "gainVsBook": -0.0016871856032731616,
