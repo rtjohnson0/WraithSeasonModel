@@ -33,6 +33,7 @@ type rotationForecast struct {
 	fallback    bool
 	contextual  bool
 	guarded     bool // rotation-v5: supported-only capped minutes and 3PA-based 3PM
+	fastDetails bool // skip costly descriptive scenarios, not the actual predictions or replay context
 	gameMinutes *gamecontext.Model
 	primary     *predictor.Model
 	pregame     map[int]opportunity.Projected
@@ -358,10 +359,10 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 	}
 	if f.contextual {
 		c.Opportunities = f.impacts.SignalsFor(row.G.PlayerID, f.date)
-		c.TrackingProfile = f.impacts.StylesFor(row.G.PlayerID, f.date)
+		if !f.fastDetails { c.TrackingProfile = f.impacts.StylesFor(row.G.PlayerID, f.date) }
 		e := f.gameEstimate(row)
 		c.GameContext = &e
-		c.WorkloadScenarios = f.workloadScenarios(s, base, row, market, weight, corr)
+		if !f.fastDetails { c.WorkloadScenarios = f.workloadScenarios(s, base, row, market, weight, corr) }
 		for _, scenario := range c.WorkloadScenarios {
 			if scenario.Player == "Primary minutes forecast" && scenario.Probability != nil && !s.Stat.IsCombo() {
 				c.WorkloadReview = &rotation.WorkloadReview{Policy: "minutes-sensitivity-v1", BaselineMinutes: scenario.Minutes, BaselineProbability: *scenario.Probability, DirectionChanges: *scenario.Probability < .5}
@@ -403,7 +404,7 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 		return c
 	}
 	ids := []int{}
-	for pid := range f.scenarios[row.G.TeamID] {
+	if !f.fastDetails { for pid := range f.scenarios[row.G.TeamID] {
 		if pid != s.PlayerID {
 			ids = append(ids, pid)
 		}
@@ -472,6 +473,7 @@ func (f *rotationForecast) context(s scored, base predictor.Pred, row *feat.Row,
 		}
 		c.Scenarios = append(c.Scenarios, scenario)
 	}
+	} // fast pregame keeps verified current rotation context but skips alternative scenario simulation
 	return c
 }
 func (f *rotationForecast) decorate(s scored, base predictor.Pred, row *feat.Row, market, weight float64, corr combo.Corr) scored {
