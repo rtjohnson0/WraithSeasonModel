@@ -5,7 +5,6 @@ package main
 
 import (
  "encoding/json"
- "errors"
  "flag"
  "fmt"
  "math"
@@ -187,13 +186,30 @@ func parseLiveBox(raw json.RawMessage, known map[string]int)(Game,map[int]StatLi
 func run(c *bdl.Client,dir,date string,now time.Time)(Report,error){
  snapshot,err:=boardstate.Load(dir)
  if err!=nil{return Report{},err}
- if snapshot==nil||snapshot.Date!=date{return Report{},errors.New("no matching saved pregame board; do not reconstruct from a new live book")}
+ if snapshot==nil||snapshot.Date!=date{
+  // An overnight game can be in progress after the site has moved to
+  // tomorrow's slate. Rehydrate a READ-ONLY comparison from immutable
+  // verified pre-tip picks, never from current in-play sportsbook offers.
+  entries,e:=picklog.Load(filepath.Join(dir,"picklog.jsonl"))
+  if e!=nil{return Report{},e}
+  snapshot=&boardstate.Snapshot{Date:date}
+  seen:=map[int]bool{}
+  for _,p:=range entries{
+   if p.Date!=date||!p.Verified()||p.GameID<=0||p.PlayerID<=0{continue}
+   snapshot.Plays=append(snapshot.Plays,p)
+   if !seen[p.GameID]{
+    snapshot.Games=append(snapshot.Games,boardstate.Game{ID:p.GameID,Tip:p.Tip,Matchup:p.Matchup})
+    seen[p.GameID]=true
+   }
+  }
+ }
  var v2 struct {Date string `json:"date"`;Plays []picklog.Entry `json:"plays"`}
  if raw,err:=os.ReadFile(filepath.Join(dir,"v2.json"));err==nil{_ = json.Unmarshal(raw,&v2)}
  // A later pretip refresh may replace v2.json with only future games.
  // Restore each originally posted started-game V5 entry from the immutable
  // verified log, but do NOT resurrect removed pregame picks for unstarted games.
- if v2.Date==date {
+ if v2.Date!=date { v2.Date=date; v2.Plays=nil }
+ {
   seen:=map[string]bool{}
   for _,p:=range v2.Plays {seen[p.ID()]=true}
   history,err:=picklog.Load(filepath.Join(dir,"v2_guardedlog.jsonl"))
@@ -218,6 +234,11 @@ func run(c *bdl.Client,dir,date string,now time.Time)(Report,error){
  if err=json.Unmarshal(raw,&league);err!=nil{return report,err}
  saved:=map[int]bool{}
  for _,g:=range snapshot.Games{saved[g.ID]=true}
+ for _,p:=range v2.Plays{
+  if p.Date==date&&p.Verified()&&p.PlayerID>0&&p.GameID>0 {
+   saved[p.GameID]=true
+  }
+ }
  known:=map[string]int{}
  for _,g:=range league.Data{
   if saved[g.ID]&&g.Date==date&&g.Home.ID>0&&g.Away.ID>0{
@@ -240,6 +261,7 @@ func run(c *bdl.Client,dir,date string,now time.Time)(Report,error){
    if quotes,e:=c.Get("/nba/v2/odds/player_props",url.Values{"game_id":{strconv.Itoa(game.ID)}});e==nil{
     tip:=now
     for _,item:=range snapshot.Games{if item.ID==game.ID{if v,e:=time.Parse(time.RFC3339,item.Tip);e==nil{tip=v}}}
+    if tip.Equal(now) {for _,p:=range v2.Plays{if p.GameID==game.ID{if v,e:=time.Parse(time.RFC3339,p.Tip);e==nil{tip=v;break}}}}
     offers=parseLiveOffers(quotes,game.ID,now,tip)
    }
   }
