@@ -50,13 +50,14 @@
       }
     ]
   },
-  "at": "2026-11-27T19:43:31Z",
+  "at": "2026-11-27T23:09:48Z",
   "through": "2026-11-25",
   "config": "pregame-7af6e4",
   "modelVersion": 6,
   "accepted": 2927,
   "excluded": {
     "final_identity_or_source_unverified": 139,
+    "not_completed_date": 527,
     "training_cutoff_or_configuration_invalid": 6411
   },
   "slices": [
