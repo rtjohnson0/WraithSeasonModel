@@ -56,6 +56,9 @@ on:
       - 'scripts/verify_pregame_injuries.py'
       - 'scripts/test_verify_pregame_injuries.py'
       - 'scripts/test_fast_pregame.py'
+      - 'scripts/publish_game_market.py'
+      - 'scripts/test_publish_game_market.py'
+      - '.github/workflows/game-market-refresh.yml'
       - 'scripts/workflow_mode.py'
       - 'scripts/test_workflow_mode.py'
       - 'internal/props/injury_capture.go'
@@ -99,6 +102,7 @@ jobs:
           python3 -m unittest discover -s scripts -p test_publish_v5_lab.py -v
           python3 -m unittest discover -s scripts -p test_verify_pregame_injuries.py -v
           python3 -m unittest discover -s scripts -p test_fast_pregame.py -v
+          python3 -m unittest discover -s scripts -p test_publish_game_market.py -v
           python3 -m unittest discover -s scripts -p test_workflow_mode.py -v
           python3 -m unittest discover -s scripts -p test_publish_in_game.py -v
       - uses: actions/setup-node@v4

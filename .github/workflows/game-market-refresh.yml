@@ -1,0 +1,82 @@
+name: Wraith game markets quick refresh
+
+on:
+  workflow_dispatch:
+  # Adding this workflow to main performs an immediate targeted refresh.
+  push:
+    paths:
+      - '.github/workflows/game-market-refresh.yml'
+
+permissions:
+  actions: read
+  contents: read
+  pages: write
+  id-token: write
+
+# Do not deploy while the full Daily is updating the same dashboard.
+concurrency:
+  group: wraithpicks-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  markets:
+    if: github.ref_name == github.event.repository.default_branch && (vars.WRAITH_DELIVERY || 'public') == 'public'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Restore historical training inputs and latest game schedule
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/stats_*.jsonl
+            data/advanced_*.jsonl
+            data/context
+            data/snapshots
+            data/players_active.jsonl
+          key: inputs-v2-main-${{ github.run_id }}
+          restore-keys: |
+            inputs-v2-main-
+
+      - name: Read only current betting odds (no training, injuries or prop rewrite)
+        env:
+          BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
+        run: |
+          test -n "$BALLDONTLIE_API_KEY" || { echo "BALLDONTLIE_API_KEY secret is missing"; exit 1; }
+          timeout 120s go run ./cmd/pull oddsrefresh
+
+      - name: Rebuild moneyline spread and total boards
+        run: |
+          test -s data/gamecal_research.json
+          test -s data/stats_2026.jsonl
+          go run ./cmd/games
+          go run ./cmd/gamepace
+
+      - name: Verify current bookmaker quotes and preserve all V1/V2 player props
+        run: |
+          python3 -m unittest discover -s scripts -p test_publish_game_market.py -v
+          python3 scripts/publish_game_market.py
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Build current dashboard
+        working-directory: site
+        run: |
+          npm ci
+          npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+      - uses: actions/deploy-pages@v4
+        id: deployment
