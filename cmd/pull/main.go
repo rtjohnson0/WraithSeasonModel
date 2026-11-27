@@ -73,6 +73,8 @@ func main() {
 		err = runProps(c, args)
 	case "gameodds":
 		err = runGameOdds(c, args)
+	case "oddsrefresh":
+		err = runOddsRefresh(c, args)
 	case "injuries":
 		err = runInjuries(c)
 	case "players":
@@ -103,6 +105,7 @@ commands:
   advanced  -seasons 2022,2023     per-game advanced stats (usage, pace, shares); add -new for a fast daily refresh
   props     -season 2025           opening player-prop lines for that season's games
   gameodds  -season 2025           opening spread, moneyline and total for that season's games
+  oddsrefresh [-date D]           fresh current-game moneyline/spread/total snapshot; no season pulls
   injuries                         current injury report
   snapshot  [-date D] [-every 30m] save today's games, live props, game odds and injuries
                                    with timestamps under data/snapshots
@@ -623,6 +626,37 @@ func runInjuries(c *bdl.Client) error {
 	}
 	fmt.Printf("wrote %d injury rows to %s\n", n, filepath.Join(dataDir, "injuries.jsonl"))
 	return nil
+}
+
+// runOddsRefresh fetches only the current game markets, immediately before
+// their projection. The 30-minute capture window must NOT be counted from
+// the earlier player-prop snapshot when a full Daily run takes 30+ minutes.
+// This never modifies roster, injury, prop, training or settlement inputs.
+func runOddsRefresh(c *bdl.Client, args []string) error {
+ fs := flag.NewFlagSet("oddsrefresh", flag.ExitOnError)
+ date := fs.String("date", "", "game date YYYY-MM-DD (default today, US Eastern)")
+ fs.Parse(args)
+ if *date == "" { *date = todayEastern() }
+ if _, err := time.Parse("2006-01-02", *date); err != nil { return fmt.Errorf("invalid oddsrefresh date: %w", err) }
+ q := url.Values{}
+ q.Add("dates[]", *date)
+ var rows []json.RawMessage
+ if err := c.Paginate("/nba/v2/odds", q, func(raw json.RawMessage) error {
+  var o struct { GameID int `json:"game_id"`; Vendor string `json:"vendor"` }
+  if err := json.Unmarshal(raw, &o); err != nil { return err }
+  if o.GameID > 0 && o.Vendor != "" { rows = append(rows, raw) }
+  return nil
+ }); err != nil { return fmt.Errorf("fresh game odds unavailable (existing snapshots retained): %w", err) }
+ if len(rows) == 0 { return fmt.Errorf("no game odds returned for %s; existing snapshots retained", *date) }
+ captured := time.Now().UTC().Format(time.RFC3339)
+ out, err := create(fmt.Sprintf("snapshots/odds_%s.jsonl", *date), true)
+ if err != nil { return err }
+ for _, row := range rows {
+  if err := writeWrapped(out, captured, row); err != nil { out.Close(); return err }
+ }
+ if err := out.Close(); err != nil { return err }
+ fmt.Printf("Game odds refreshed: %d vendor/game rows at %s for %s (no pregame prop or injury sources modified)\n", len(rows), captured, *date)
+ return nil
 }
 
 // ---- snapshot: build your own line history ----
