@@ -27,6 +27,7 @@ go run ./cmd/rotationaudit -policy rotation-v4 -phase3 -v21lab -out run_evidence
 go run ./cmd/rotationaudit -policy rotation-v5 -out run_evidence/guarded-v5 || echo "Guarded V5 evaluation unavailable"
 # The private question file is consumed and deleted by the following aggregate-only shadow report.
 python3 scripts/phase3_v2_shadow.py || echo "Phase 3 shadow unavailable; production board unchanged"
+go run ./cmd/pull oddsrefresh || echo "Fresh game odds unavailable; stale prices remain ineligible"
 go run ./cmd/games || echo "game lines skipped"
 go run ./cmd/gamepace || echo "Game challenger unavailable; original game board retained"
 
