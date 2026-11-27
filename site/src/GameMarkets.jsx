@@ -12,7 +12,17 @@ function Market({ game, market, now, evidence, experimental=false }) {
   const quotes = (game.quotes || []).filter((q) => q.market === market && visibleQuote(q))
   const [book, setBook] = useState('')
   const q = quotes.find((q) => q.book === book) || bestGameQuote(game, quotes, now)
-  if (!q) return null
+  if (!q) {
+    const projected = market === 'spread'
+      ? `Projected margin: ${game.margin >= 0 ? game.home : game.away} by ${Number.isFinite(game.margin) ? Math.abs(game.margin).toFixed(1) : '—'}`
+      : market === 'total'
+        ? `Projected total: ${Number.isFinite(game.total) ? game.total.toFixed(1) : '—'}`
+        : `Projected winner: ${Number.isFinite(game.margin) ? (game.margin >= 0 ? game.home : game.away) : 'Unavailable'}`
+    return <div className="market-play market-no-quote" role="status">
+      <span><strong>{market === 'spread' ? 'Spread' : market === 'total' ? 'Game total' : 'Moneyline'}</strong> · {projected}</span>
+      <p className="small">No verified paired sportsbook {market === 'spread' ? 'spread line and odds' : 'line and odds'} for this matchup. Model projection only; no selectable bet or estimated cover percentage without a real line.</p>
+    </div>
+  }
   const e = explainGame(game,q)
   const qualifies=e.primary.conditional>=.55 && e.primary.edge>=.01 && (evidence?.[market]||0)>=2
   const far=market==='total'?Math.abs(game.total-game.marketTotal)>7:Math.abs(game.margin-game.marketMargin)>4
