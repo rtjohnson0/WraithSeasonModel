@@ -16,7 +16,7 @@ export default function V2({ site }) {
       </section>
     )
   }
-  const view = { ...site, modelLabel: 'V2', hideGameRecord:true, gameRecord:[], gameMarkets:site.gameMarkets, comboHealth:null, board: v2.board, record: v2.record, archive:v2.archive, historicalCombos:v2.historicalCombos, combos: v2.combos, lines: null }
+  const view = { ...site, modelLabel: 'V2', hideGameRecord:true, gameRecord:[], gameMarkets:site.gameChallenger?.games?.length ? site.gameChallenger : site.gameMarkets, comboHealth:null, board: v2.board, record: v2.record, archive:v2.archive, historicalCombos:v2.historicalCombos, combos: v2.combos, lines: null }
   return (
     <div className="v2page">
       <section className="day">
