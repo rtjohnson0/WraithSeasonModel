@@ -3,6 +3,7 @@ import Board, { Seg } from './Board.jsx'
 import Combos from './Combos.jsx'
 import Record from './Record.jsx'
 import GamePace from './GamePace.jsx'
+import { v2MarketSource } from './v2MarketSource.js'
 
 // The challenger model: the same board, combos and record pages, fed with V2's plays and results.
 export default function V2({ site }) {
@@ -16,7 +17,7 @@ export default function V2({ site }) {
       </section>
     )
   }
-  const view = { ...site, modelLabel: 'V2', hideGameRecord:true, gameRecord:[], gameMarkets:site.gameMarkets, comboHealth:null, board: v2.board, record: v2.record, archive:v2.archive, historicalCombos:v2.historicalCombos, combos: v2.combos, lines: null }
+  const view = { ...site, modelLabel: 'V2', hideGameRecord:true, gameRecord:[], gameMarkets:v2MarketSource(site), comboHealth:null, board: v2.board, record: v2.record, archive:v2.archive, historicalCombos:v2.historicalCombos, combos: v2.combos, lines: null }
   return (
     <div className="v2page">
       <section className="day">
