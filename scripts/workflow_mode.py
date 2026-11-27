@@ -1,4 +1,6 @@
 """Select DST-correct Eastern run slots, using cron rather than queue start hour."""
+# Maintainers can explicitly request full Daily on a push using the
+# [refresh-models] commit marker; otherwise pushes remain site-only.
 import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
