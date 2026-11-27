@@ -23,6 +23,28 @@ echo "== FAST: fetch NEW pregame sportsbook lines, game odds and injury statuses
 # Do not fall back to yesterday's sportsbook odds if this fails.
 timeout 360s go run ./cmd/pull snapshot
 
+# Off-night: a legitimately empty game slate does not require a fake injury
+# receipt. Do not generate/overwrite a new predictions board in that case.
+if python3 - <<'PY'
+import json
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+today = datetime.now(ZoneInfo("America/New_York")).date().isoformat()
+path = Path("data/snapshots") / f"schedule_{today}.json"
+if not path.is_file():
+    raise SystemExit(1)
+try:
+    schedule = json.loads(path.read_text())
+except (ValueError, OSError):
+    raise SystemExit(1)
+raise SystemExit(0 if schedule.get("date") == today and schedule.get("games") == [] else 1)
+PY
+then
+  echo "FAST: no scheduled NBA games tonight; original board and models preserved."
+  exit 0
+fi
+
 # Complete current BDL injuries for ALL scheduled teams are mandatory.
 # This check fails closed if the API was throttled, the report is older than
 # 30 minutes, or the schedule lacks a home/away team. Never reuse yesterday's.
@@ -36,7 +58,8 @@ timeout 90s go run ./cmd/sgo snapshot || echo "Supplemental quotes unavailable; 
 
 echo "== FAST: generate current player props, combos and V2 =="
 # The predictor validates quote capture freshness; missing/stale quotes fail closed.
-go run ./cmd/predict -rotationpolicy "$policy"
+# Skip only research-only alternative scenario simulations. Same quotes, rotations, primary and V5 probabilities.
+timeout 540s go run ./cmd/predict -rotationpolicy "$policy" -fastdetails
 
 echo "== FAST: refresh live moneyline, spread and totals =="
 go run ./cmd/games

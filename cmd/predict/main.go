@@ -147,6 +147,7 @@ func main() {
 	valueMinROI := flag.Float64("valueminroi", .04, "value research: minimum forecast return conditional on no push")
 	launchGate := flag.Bool("evidencegate", true, "require recent verified forward evidence for a staked PICK; unproven plays remain visible as PAPER")
 	rotationPolicy := flag.String("rotationpolicy", rotation.Policy, "V2: rotation-v1/v2/v3/v4 or rotation-v5 (guarded minutes and 3PA-based threes; independently tracked)")
+	fastDetails := flag.Bool("fastdetails", false, "skip only non-predictive V2 scenario simulations for pregame refresh; preserve forecast and audit inputs")
 	flag.Parse()
 	if !rotation.KnownPolicy(*rotationPolicy) {
 		fatal(fmt.Errorf("unknown rotation policy %q", *rotationPolicy))
@@ -463,6 +464,7 @@ func main() {
 		rotations.fallback = *rotationPolicy == rotation.FallbackPolicy || *rotationPolicy == rotation.ContextPolicy || *rotationPolicy == rotation.GuardedPolicy
 		rotations.contextual = *rotationPolicy == rotation.ContextPolicy || *rotationPolicy == rotation.GuardedPolicy
 		rotations.guarded = *rotationPolicy == rotation.GuardedPolicy
+		rotations.fastDetails = *fastDetails
 		rotations.configureRoles(rotationRows)
 		if err := rotations.configureContext(*dir, rotationRows, games, runAt); err != nil {
 			fatal(err)

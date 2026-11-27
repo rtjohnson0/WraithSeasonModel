@@ -16,6 +16,16 @@ class FastPregamePathTests(unittest.TestCase):
         self.assertIn("data/stats_", script)
         self.assertIn("go run ./cmd/pull snapshot", script)
 
+    def test_fast_predict_skips_only_non_selection_scenarios(self):
+        script = (ROOT / "scripts/fast_pregame.sh").read_text(encoding="utf-8")
+        self.assertIn('-fastdetails', script)
+        self.assertIn('go run ./cmd/predict', script)
+        self.assertIn('cmd/pull snapshot', script)
+        # Only diagnostic scenario fields are optional; current injury check
+        # remains mandatory and is never masked by an echo fallback.
+        self.assertNotIn('verify_pregame_injuries.py ||', script)
+        self.assertIn('schedule.get("games") == []', script)
+
     def test_complete_injuries_must_be_checked_before_picks(self):
         script = (ROOT / "scripts/fast_pregame.sh").read_text(encoding="utf-8")
         self.assertLess(script.index("go run ./cmd/pull snapshot"),
