@@ -648,14 +648,30 @@ func runOddsRefresh(c *bdl.Client, args []string) error {
   return nil
  }); err != nil { return fmt.Errorf("fresh game odds unavailable (existing snapshots retained): %w", err) }
  if len(rows) == 0 { return fmt.Errorf("no game odds returned for %s; existing snapshots retained", *date) }
+ // A separate GitHub Action does not share the old day's ephemeral input
+ // cache. Fetch the *schedule only* (IDs, teams and tip times) so these
+ // quotes can be validated against an authoritative, current NBA slate.
+ // Never create a new prop quote, injury status, or historical prediction.
+ var games []json.RawMessage
+ if err := c.Paginate("/nba/v1/games", q, func(raw json.RawMessage) error {
+  var game struct { ID int `json:"id"` }
+  if e := json.Unmarshal(raw, &game); e != nil { return e }
+  if game.ID <= 0 { return fmt.Errorf("invalid game identity in odds refresh") }
+  games = append(games, raw)
+  return nil
+ }); err != nil { return fmt.Errorf("current game schedule unavailable; refusing game-market refresh: %w", err) }
+ if len(games) == 0 { return fmt.Errorf("no current games to match odds to on %s", *date) }
  captured := time.Now().UTC().Format(time.RFC3339)
+ if err := props.SaveSchedule(filepath.Join(dataDir, "snapshots"), *date, captured, games); err != nil {
+  return fmt.Errorf("game market schedule could not be verified: %w", err)
+ }
  out, err := create(fmt.Sprintf("snapshots/odds_%s.jsonl", *date), true)
  if err != nil { return err }
  for _, row := range rows {
   if err := writeWrapped(out, captured, row); err != nil { out.Close(); return err }
  }
  if err := out.Close(); err != nil { return err }
- fmt.Printf("Game odds refreshed: %d vendor/game rows at %s for %s (no pregame prop or injury sources modified)\n", len(rows), captured, *date)
+ fmt.Printf("Game odds refreshed: %d vendor/game rows and %d verified scheduled games at %s for %s (no player props, injuries or model weights modified)\n", len(rows), len(games), captured, *date)
  return nil
 }
 
