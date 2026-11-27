@@ -62,6 +62,9 @@ echo "== FAST: generate current player props, combos and V2 =="
 timeout 540s go run ./cmd/predict -rotationpolicy "$policy" -fastdetails
 
 echo "== FAST: refresh live moneyline, spread and totals =="
+# Player projections can take longer than the 30-minute quote window.
+# Refresh ONLY whole-game odds immediately before game model evaluation.
+timeout 120s go run ./cmd/pull oddsrefresh || echo "Fresh game odds unavailable; game markets stay empty rather than using stale prices"
 go run ./cmd/games
 
 echo "== FAST: current boards generated; cached training/history unchanged =="
