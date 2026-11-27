@@ -6,6 +6,7 @@ on:
   push:
     paths:
       - '.github/workflows/game-market-refresh.yml'
+      - 'cmd/pull/main.go'
 
 permissions:
   actions: read
@@ -32,7 +33,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
-      - name: Restore historical training inputs and latest game schedule
+      - name: Restore historical training inputs (optional cached input snapshots)
         uses: actions/cache/restore@v4
         with:
           path: |
@@ -45,7 +46,7 @@ jobs:
           restore-keys: |
             inputs-v2-main-
 
-      - name: Read only current betting odds (no training, injuries or prop rewrite)
+      - name: Fetch current game schedule and whole-game odds only (no training, injuries or prop rewrite)
         env:
           BALLDONTLIE_API_KEY: ${{ secrets.BALLDONTLIE_API_KEY }}
         run: |
