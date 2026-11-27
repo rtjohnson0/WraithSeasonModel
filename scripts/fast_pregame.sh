@@ -36,7 +36,8 @@ timeout 90s go run ./cmd/sgo snapshot || echo "Supplemental quotes unavailable; 
 
 echo "== FAST: generate current player props, combos and V2 =="
 # The predictor validates quote capture freshness; missing/stale quotes fail closed.
-go run ./cmd/predict -rotationpolicy "$policy"
+# Skip only research-only alternative scenario simulations. Same quotes, rotations, primary and V5 probabilities.
+timeout 540s go run ./cmd/predict -rotationpolicy "$policy" -fastdetails
 
 echo "== FAST: refresh live moneyline, spread and totals =="
 go run ./cmd/games
